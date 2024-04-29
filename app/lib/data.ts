@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { Pool } from 'pg';
 import {
   CustomerField,
   CustomersTableType,
@@ -15,14 +15,20 @@ export async function fetchRevenue() {
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
 
   try {
+    const client = new Pool({
+      user:process.env.DB_USER,
+      host:process.env.DB_HOST,
+      database:process.env.DB_NAME,
+      password:process.env.DB_PASSWORD,
+      port:process.env.DB_PORT
+    })
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
     // console.log('Fetching revenue data...');
     // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
+    const data = await client.query('SELECT * FROM revenue');
     // console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
