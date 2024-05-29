@@ -23,9 +23,9 @@ export default async function RevenueChart() {
 
   return (
     <div className="w-full md:col-span-4">
-      <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-        Recent Revenue
-      </h2>
+        <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+            Overview
+        </h2>
       {/* NOTE: comment in this code when you get to this point in the course */}
 
       { <div className="rounded-xl bg-gray-50 p-4">

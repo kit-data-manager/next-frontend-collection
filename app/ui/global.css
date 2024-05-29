@@ -16,3 +16,11 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+data-card {
+  --mainBG: white;
+  --darkerBG: lightgray;
+  --tagText: #333;
+}
+
+

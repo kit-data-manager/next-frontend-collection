@@ -1,63 +1,39 @@
-import {
-  BanknotesIcon,
-  ClockIcon,
-  UserGroupIcon,
-  InboxIcon,
-} from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts';
-import { fetchCardData } from '@/app/lib/data';
+import {fetchCardData} from '@/app/lib/data';
+import {Card} from "@/app/ui/card";
 
-const iconMap = {
-  collected: BanknotesIcon,
-  customers: UserGroupIcon,
-  pending: ClockIcon,
-  invoices: InboxIcon,
-};
 
-export default async function CardWrapper() {
-  const {
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  } = await fetchCardData();
-  return (
-    <>
-      <Card title="Collected" value={totalPaidInvoices} type="collected" />
-      <Card title="Pending" value={totalPendingInvoices} type="pending" />
-      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <Card
-        title="Total Customers"
-        value={numberOfCustomers}
-        type="customers"
-      />
-    </>
-  );
+export default async function OverallStatusCardWrapper() {
+    const {
+        numberOfInvoices,
+        numberOfCustomers,
+        totalPaidInvoices,
+        totalPendingInvoices,
+    } = await fetchCardData();
+
+    return (
+        <>
+            <Card title="Data Repo" subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'} detailsRef={"/"}/>
+            <Card title="Metadata Repo" status={-1} visitRef={'/metastore'} detailsRef={"/"}/>
+            <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'} detailsRef={"/"}/>
+            <Card title="Keycloak" status={0}/>
+        </>
+    );
 }
 
-export function Card({
-  title,
-  value,
-  type,
-}: {
-  title: string;
-  value: number | string;
-  type: 'invoices' | 'customers' | 'pending' | 'collected';
-}) {
-  const Icon = iconMap[type];
+export async function BaseRepoStatusCardWrapper() {
+    const {
+        numberOfInvoices,
+        numberOfCustomers,
+        totalPaidInvoices,
+        totalPendingInvoices,
+    } = await fetchCardData();
 
-  return (
-    <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
-      <div className="flex p-4">
-        {Icon ? <Icon className="h-5 w-5 text-gray-700" /> : null}
-        <h3 className="ml-2 text-sm font-medium">{title}</h3>
-      </div>
-      <p
-        className={`${lusitana.className}
-          truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
-      >
-        {value}
-      </p>
-    </div>
-  );
+    return (
+        <>
+            <Card title="Database" subtitle={"PostgreSQL"} status={1}/>
+            <Card title="Harddisk" subtitle={"45GB free"} status={1}/>
+            <Card title="RabbitMQ" subtitle={"v3.11.7"} status={0}/>
+            <Card title="Elastic" subtitle={"Status: yellow"} status={-1}/>
+        </>
+    );
 }

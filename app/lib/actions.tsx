@@ -14,6 +14,9 @@ const FormSchema = z.object({
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+
+
 export async function createInvoice(formData: FormData) {
     const { customerId, amount, status } = CreateInvoice.parse({
         customerId: formData.get('customerId'),
@@ -43,4 +46,52 @@ export async function createInvoice(formData: FormData) {
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 
+}
+
+export async function updateInvoice(id: string, formData: FormData) {
+    const { customerId, amount, status } = UpdateInvoice.parse({
+        customerId: formData.get('customerId'),
+        amount: formData.get('amount'),
+        status: formData.get('status'),
+    });
+    try {
+        const client = new Pool({
+            user:process.env.DB_USER,
+            host:process.env.DB_HOST,
+            database:process.env.DB_NAME,
+            password:process.env.DB_PASSWORD,
+            port:process.env.DB_PORT
+        })
+    const amountInCents = amount * 100;
+
+    const values = [customerId, amountInCents, status, id]
+
+    await client.query('UPDATE invoices SET customer_id = $1, amount = $2, status = $3 WHERE id = $4', values);
+
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch customer table.');
+    }
+    revalidatePath('/dashboard/invoices');
+    redirect('/dashboard/invoices');
+}
+
+export async function deleteInvoice(id: string) {
+    throw new Error('Failed to Delete Invoice');
+
+    try {
+        const client = new Pool({
+            user:process.env.DB_USER,
+            host:process.env.DB_HOST,
+            database:process.env.DB_NAME,
+            password:process.env.DB_PASSWORD,
+            port:process.env.DB_PORT
+        })
+
+    await client.query('DELETE FROM invoices WHERE id = \'' + id + '\'');
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch customer table.');
+    }
+    revalidatePath('/dashboard/invoices');
 }

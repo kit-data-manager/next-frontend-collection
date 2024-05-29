@@ -190,7 +190,6 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
   noStore()
-  try {
     const client = new Pool({
       user:process.env.DB_USER,
       host:process.env.DB_HOST,
@@ -205,8 +204,7 @@ export async function fetchInvoiceById(id: string) {
         invoices.amount, \
         invoices.status \
       FROM invoices \
-      WHERE invoices.id = ' + id
-    );
+      WHERE invoices.id = \'' + id + '\'');
 
     const invoice = data.rows.map((invoice) => ({
       ...invoice,
@@ -215,10 +213,7 @@ export async function fetchInvoiceById(id: string) {
     }));
 
     return invoice[0];
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
-  }
+
 }
 
 export async function fetchCustomers() {
