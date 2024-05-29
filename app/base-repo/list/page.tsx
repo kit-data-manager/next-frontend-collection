@@ -14,9 +14,10 @@ import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
 import {DataCard} from "data-card-react";
 import {formatDateToLocal} from "@/app/lib/utils";
 import Pagination from "@/app/ui/invoices/pagination";
+import {fetchDataResources} from "@/app/lib/base-repo/data";
 
 export default async function Page() {
-    const resources = [{
+   /* const resources = [{
         "id": "123445",
         "name": "Test",
         "date": "2024-12-12"
@@ -41,7 +42,10 @@ export default async function Page() {
             "name": "Test5",
             "date": "2024-12-12"
         }];//await fetchFilteredInvoices(query, currentPage);
+*/
 
+    const resources = await fetchDataResources();
+    console.log(resources);
     return (
         <main>
             <Breadcrumbs
@@ -55,7 +59,7 @@ export default async function Page() {
                 ]}
             />
             <div className="mt-6 flow-root">
-                <div class="w-full flex justify-end">
+                <div className="w-full flex justify-end">
                 <button className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400 float-end text-center inline-flex items-center">
                     <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                 </button>
@@ -66,12 +70,12 @@ export default async function Page() {
 
                             return (<div key={i}>
                                 <DataCard
-                                    data-title={resource.name}
+                                    data-title={resource.titles[0].value}
                                     sub-title={"SubTest"}
                                     variant="default"
                                     image-url={"https://via.placeholder.com/100?text=placeholder"}
                                     body-text={"This is the description"}
-                                    textRight={{'label': 'Test', 'value': formatDateToLocal(resource.date)}}
+                                    textRight={{'label': 'State', 'value': resource.state}}
                                     children-data={undefined}
                                     tags={[{"label": "Test", "value": "val"}]}
                                     actionButtons={[{
