@@ -6,7 +6,13 @@
 export type DataResource = {
   id: string;
   titles: Title[];
+  creators: Creator[];
+  descriptions: Description[];
+  acls: Acl[];
+  rights: Right[];
+  embargoDate: string;
   state: string;
+  children: ContentInformation[];
 };
 
 export type Title = {
@@ -14,6 +20,40 @@ export type Title = {
   value: string;
   titleType: string;
 };
+
+export type Creator = {
+  id: string;
+  familyName: string;
+  givenName: string;
+};
+
+export type Description = {
+  id: string;
+  type: string;
+  description: string;
+};
+
+export type Acl = {
+  id: string;
+  sid: string;
+  permission: string;
+};
+
+export type Right = {
+  id: string;
+  schemeId: string;
+  schemeUri: string;
+};
+
+export type ContentInformation = {
+  id: string;
+  relativePath: string;
+  contentUri: string;
+  mediaType: string;
+  hash: string;
+  size: number;
+  tags: string[];
+}
 
 
 export type User = {

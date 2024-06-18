@@ -6,7 +6,8 @@ import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoices } from '@/app/lib/data';
 import {DataCard} from "data-card-react";
 import {UpdateDataResource} from "@/app/ui/dataresources/buttons";
-import {fetchDataResources} from "@/app/lib/base-repo/data";
+//import {fetchDataResources} from "@/app/lib/base-repo/data";
+import useSWR from "swr";
 
 export default async function Listing({
                                                 query,
@@ -16,8 +17,7 @@ export default async function Listing({
     currentPage: number;
 }) {
 
-    const resources = await fetchDataResources();
-    console.log(resources);
+   // const resources = await fetchDataResources();
     /*const resources = [{
         "id":1,
         "image_url": "",
@@ -28,6 +28,12 @@ export default async function Listing({
         "amount": 123
     }];//await fetchFilteredInvoices(query, currentPage);
 */
+    const fetcher = (url) => fetch(url).then((res) => res.json());
+
+   // const { data, isLoading, error } = useSWR(key, fetcher, options);
+    const { data: resources } = useSWR("http://localhost:8090/api/v1/dataresources/", fetcher);
+    console.log(resources);
+
     return (
         <div className="mt-6 flow-root">
             <div className="inline-block min-w-full align-middle">
