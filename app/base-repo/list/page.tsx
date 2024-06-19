@@ -3,10 +3,11 @@
 import OverallStatusCardWrapper, {BaseRepoStatusCardWrapper} from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import {lusitana} from '@/app/ui/fonts';
-import {Suspense, useState} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import {RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton} from '@/app/ui/skeletons';
 import SystemStats from "@/app/ui/dashboard/system-stats";
 import LatestActivities from "@/app/ui/dashboard/latest-activities";
+import { Listen } from '@stencil/core';
 import {
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
@@ -69,7 +70,17 @@ export default function Page({ searchParams }: {
         }
     }
 
-    const fetcher = (url) => fetch(url).then(function(response){
+    useEffect(() => {
+        const COLOR_CHANGE_BREAKPOINT_IN_PX = 800
+
+        const editResource = () => {
+            console.log("TEST!");
+        }
+
+        window.addEventListener('editResource', editResource)
+    }, []) // no dependencies
+
+    const fetcher = (url:string) => fetch(url).then(function(response){
         setState(response.headers.get("Content-Range"));
         return response.json();
     });
@@ -94,6 +105,10 @@ export default function Page({ searchParams }: {
             {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json()).then(data => resource["children"] = data);
     });
 
+    function someMethod(event){
+        console.log("Here", event.detail.eventIdentifier);
+    }
+
     return (
         <main>
             <Breadcrumbs
@@ -114,36 +129,44 @@ export default function Page({ searchParams }: {
                 </div>
                 <div className="block min-w-full">
                     <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-                        {resources.map((resource, i) => {
+                        {resources.map((resource:DataResource, i:number) => {
                             return (<div key={i}>
-                                <DataCard
-                                    data-title={getTitle(resource)}
-                                    sub-title={getSubtitle(resource)}
-                                    variant="default"
-                                    children-variant="default"
-                                    image-url={getThumb(resource)}
-                                    body-text={getDescription(resource)}
-                                    textRight={{'label': resource.publisher, 'value': resource.publicationYear}}
-                                    children-data={getChildren(resource)}
-                                    tags={getTags(resource)}
-                                    actionButtons={[{
-                                        "label": "Edit",
-                                        "urlTarget": "_self",
-                                        "iconName": "material-symbols-light:edit-square-outline",
-                                        "url": `/base-repo/${resource.id}/edit`
-                                    },
-                                        {
-                                            "label": "Download",
-                                            "iconName": "material-symbols-light:download",
-                                            "urlTarget": "_blank",
-                                            "url": 'http://localhost:8081/api/v1/dataresources/' + resource.id
-                                        }]}
-                                ></DataCard>
-                            </div>);
+                                    <DataCard
+                                        data-title={getTitle(resource)}
+                                        sub-title={getSubtitle(resource)}
+                                        variant="default"
+                                        children-variant="default"
+                                        image-url={getThumb(resource)}
+                                        body-text={getDescription(resource)}
+                                        textRight={{'label': resource.publisher, 'value': resource.publicationYear}}
+                                        children-data={getChildren(resource)}
+                                        tags={getTags(resource)}
+                                        actionButtons={[{
+                                            "label": "Edit",
+                                            "urlTarget": "_self",
+                                            "iconName": "material-symbols-light:edit-square-outline",
+                                            "eventIdentifier": "editResource_" + resource.id,
+                                            //"url": `/base-repo/${resource.id}/edit`
+                                        },
+                                            {
+                                                "label": "Download",
+                                                "iconName": "material-symbols-light:download",
+                                                "urlTarget": "_blank",
+                                                "url": 'http://localhost:8081/api/v1/dataresources/' + resource.id
+                                            }]}
+                                        onActionClick={ev => someMethod(ev)}
+                                    ></DataCard>
+                                    <hr/>
+                                    <script>
+                                        const todoListElement = document.querySelector('data-card');
+                                        todoListElement.addEventListener('editResource', event => { /* your listener */})
+                                    </script>
+                                </div>
+                            );
                         })}
                     </div>
                     <div className="mt-5 flex w-full justify-center">
-                        <Pagination totalPages={totalPages}/>
+                    <Pagination totalPages={totalPages}/>
                     </div>
                 </div>
             </div>

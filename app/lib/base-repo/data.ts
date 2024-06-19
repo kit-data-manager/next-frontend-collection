@@ -5,7 +5,7 @@ import {DataResource} from "@/app/lib/definitions";
 export async function fetchDataResources() : Promise<DataResource[]> {
     noStore()
     try {
-        const res = await fetch(`http://localhost:8090/api/v1/dataresources/`);
+        const res = await fetch(`http://localhost:8081/api/v1/dataresources/`);
         console.log('Data fetch completed.');
         return res.json();
     } catch (error) {

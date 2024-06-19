@@ -7,6 +7,8 @@ export type DataResource = {
   id: string;
   titles: Title[];
   creators: Creator[];
+  publisher: string;
+  publicationYear: string;
   descriptions: Description[];
   acls: Acl[];
   rights: Right[];

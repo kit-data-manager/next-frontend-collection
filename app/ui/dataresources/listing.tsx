@@ -8,6 +8,7 @@ import {DataCard} from "data-card-react";
 import {UpdateDataResource} from "@/app/ui/dataresources/buttons";
 //import {fetchDataResources} from "@/app/lib/base-repo/data";
 import useSWR from "swr";
+import {DataResource} from "@/app/lib/definitions";
 
 export default async function Listing({
                                                 query,
@@ -28,32 +29,40 @@ export default async function Listing({
         "amount": 123
     }];//await fetchFilteredInvoices(query, currentPage);
 */
-    const fetcher = (url) => fetch(url).then((res) => res.json());
+    const fetcher = (url:string) => fetch(url).then((res) => res.json());
 
    // const { data, isLoading, error } = useSWR(key, fetcher, options);
     const { data: resources } = useSWR("http://localhost:8090/api/v1/dataresources/", fetcher);
-    console.log(resources);
 
     return (
         <div className="mt-6 flow-root">
             <div className="inline-block min-w-full align-middle">
                 <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
                     <div>
-                        {resources?.map((resource) => (
+                        {resources?.map(function(resource:DataResource) {
+                        return (
+                            <div key={resource.id}>
                             <DataCard
-                                key={resource.id}
                                 data-title={resource.titles[0].value}
                                 sub-title={"SubTest"}
                                 variant="default"
                                 children-variant="minimal"
                                 image-url={"https://via.placeholder.com/100?text=placeholder"}
                                 body-text={"This is the description"}
-                                textRight={{'label':'State', 'value':resource.state}}
+                                textRight={{'label': 'State', 'value': resource.state}}
                                 children-data={undefined}
-                                tags={[{"label":"Test", "value":"val"}]}
-                                actionButtons={[{"label":"edit", "urlTarget":"_self", "url": `dataresources/${resource.id}/view`}]}
+                                tags={[{"label": "Test", "value": "val"}]}
+                                actionButtons={[{
+                                    "label": "edit",
+                                    "urlTarget": "_self",
+                                    "url": `dataresources/${resource.id}/view`
+                                }]}
                             ></DataCard>
-                        ))}
+                                <p>test 123</p>
+                            </div>
+                        )
+                        })
+                        }
                     </div>
                 </div>
             </div>

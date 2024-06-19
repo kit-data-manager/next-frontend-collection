@@ -3,12 +3,12 @@ import {Card} from "@/app/ui/card";
 
 
 export default async function OverallStatusCardWrapper() {
-    const {
+   /* const {
         numberOfInvoices,
         numberOfCustomers,
         totalPaidInvoices,
         totalPendingInvoices,
-    } = await fetchCardData();
+    } = await fetchCardData();*/
 
     return (
         <>
@@ -21,12 +21,12 @@ export default async function OverallStatusCardWrapper() {
 }
 
 export async function BaseRepoStatusCardWrapper() {
-    const {
+   /* const {
         numberOfInvoices,
         numberOfCustomers,
         totalPaidInvoices,
         totalPendingInvoices,
-    } = await fetchCardData();
+    } = await fetchCardData();*/
 
     return (
         <>
