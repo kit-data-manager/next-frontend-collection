@@ -21,7 +21,7 @@ export const getSubtitle = (resource: DataResource) => {
     if (resource.titles) {
         resource.titles.map((title, i) => {
             if (title.titleType === "SUBTITLE") {
-                subTitleValue = {"value": title.value};
+                subTitleValue = title.value;
             }
         });
     }
@@ -34,14 +34,21 @@ export const getSubtitle = (resource: DataResource) => {
 }
 
 const getCreatorsAsSubtitle = (resource: DataResource) => {
-    let subTitleValue = "";
+    let subTitleValue = undefined;
     if(resource.creators) {
         resource.creators.map((creator, i) => {
-            if (creator.givenName === "SELF") {
-               subTitleValue += "Anonymous Creator"
-            } else {
-               subTitleValue += (creator.familyName) ? creator.familyName + "," : "";
-               subTitleValue += (creator.givenName) ? creator.givenName : "";
+            if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
+                if(creator.familyName && creator.givenName){
+                    if(!subTitleValue) subTitleValue = "";
+                    subTitleValue += '<a href=\' https://orcid.org/orcid-search/search?firstName=' +
+                        creator.givenName +
+                        '&lastName=' +
+                        creator.familyName + '\' target=\'_blank\'">' +
+                        creator.familyName + "," + creator.givenName +
+                        '</a>'
+                }else{
+                    subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
+                }
             }
             if (i < resource.creators.length - 1) {
                 subTitleValue += ", ";
@@ -49,15 +56,18 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
         });
     }
 
-    return {"value": subTitleValue};
+    if(!subTitleValue){
+        subTitleValue = "Anonymous User";
+    }
+    return subTitleValue;
 }
 
 export const getDescription = (resource: DataResource) => {
-    let descriptionValue = {"value": "No description available."};
+    let descriptionValue = "No description available.";
     if (resource.descriptions) {
         resource.descriptions.map((description, i) => {
             if (description.type === "ABSTRACT") {
-                descriptionValue = {"value": description.description};
+                descriptionValue = description.description;
             }
         });
     }

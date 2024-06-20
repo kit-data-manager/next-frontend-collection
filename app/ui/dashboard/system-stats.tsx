@@ -4,57 +4,51 @@ import {
     CircleStackIcon,
     LockOpenIcon,
     LockClosedIcon,
-    UserIcon,
-    XCircleIcon,
-    PlusCircleIcon
+    UserIcon
 } from '@heroicons/react/24/outline';
 
 import {lusitana} from '@/app/ui/fonts';
-import clsx from "clsx/clsx";
 import {Card} from "@/app/ui/card";
-
-const iconMap = {
-    INITIAL: PlusCircleIcon,
-    TERMINAL: XCircleIcon
-};
-
+import {fetchContentOverview} from "@/app/lib/base-repo/data";
+import {formatNumber, humanFileSize} from "@/app/lib/utils";
 
 export default async function SystemStats() {
-    // const latestInvoices = await fetchLatestInvoices();
 
-    {/**SELECT sna.type, sna.managed_type, com.author, com.commit_date FROM
-     jv_snapshot as sna, jv_commit as com WHERE com.commit_pk = sna.global_id_fk AND
-     managed_type IN ('edu.kit.datamanager.repo.domain.ContentInformation', 'edu.kit.datamanager.repo.domain.DataResource');*/
-    }
+    const {uniqueUsers,
+        resources,
+        openResources,
+        closedResources,
+        files,
+        size} = await fetchContentOverview();
 
     const stats = [{
         "text": "Unique Users",
-        "value": "12",
+        "value": formatNumber(uniqueUsers),
         "icon": UserIcon
     },
         {
             "text": "Resources",
-            "value": "1.100",
+            "value": formatNumber(resources),
             "icon": DocumentIcon
         },
         {
             "text": "Public Resources",
-            "value": "552",
+            "value": formatNumber(openResources),
             "icon": LockOpenIcon
         },
         {
             "text": "Protected Resources",
-            "value": "548",
+            "value": formatNumber(closedResources),
             "icon": LockClosedIcon
         },
         {
             "text": "Files",
-            "value": "2.201",
+            "value": formatNumber(files),
             "icon": DocumentTextIcon
         },
         {
             "text": "File Size",
-            "value": "20 GB",
+            "value": humanFileSize(size),
             "icon": CircleStackIcon
         }
     ]

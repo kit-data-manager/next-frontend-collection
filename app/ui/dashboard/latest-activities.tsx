@@ -10,6 +10,9 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import {lusitana} from '@/app/ui/fonts';
 import {fetchLatestInvoices} from '@/app/lib/data';
+import {fetchLatestActivities} from "@/app/lib/base-repo/data";
+import {formatDateToLocal} from "@/app/lib/utils";
+import {Creator} from "@/app/ui/general/creator";
 
 const iconMap = {
     INITIAL: PlusCircleIcon,
@@ -17,9 +20,9 @@ const iconMap = {
     TERMINAL: XCircleIcon
 };
 export default async function LatestActivities() {
-    // const latestInvoices = await fetchLatestInvoices();
+    const latestActivities = await fetchLatestActivities()
 
-    const latestActivities = [
+        /*[
         {
             "id": 1,
             "type": "INITIAL",
@@ -62,16 +65,11 @@ export default async function LatestActivities() {
             "author": "SELF",
             "commit_date": "2023-12-06 19:03:29.858"
         },
-    ]
+    ]*/
 
-    {/**SELECT sna.type, sna.managed_type, com.author, com.commit_date FROM
-     jv_snapshot as sna, jv_commit as com WHERE com.commit_pk = sna.global_id_fk AND
-     managed_type IN ('edu.kit.datamanager.repo.domain.ContentInformation', 'edu.kit.datamanager.repo.domain.DataResource');*/
-    }
+
 
     return (
-
-
         <div className="flex w-full flex-col md:col-span-4">
             <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                 Latest Activities
@@ -81,7 +79,6 @@ export default async function LatestActivities() {
                 {<div className="bg-white px-6">
                     {latestActivities.map((activity, i) => {
                         const Icon = iconMap[activity.type];
-
                         return (
                             <div
                                 key={activity.id}
@@ -101,19 +98,19 @@ export default async function LatestActivities() {
                                     }/> : null}
                                     <div className="min-w-0">
                                         <p className="truncate text-sm font-semibold md:text-base">
-                                            {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "Resource" : "File"}
+                                            {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
                                             {activity.type == "TERMINAL" ? " deleted" : ""}
                                             {activity.type == "UPDATE" ? " updated" : ""}
                                             {activity.type == "INITIAL" ? " created" : ""}
                                         </p>
-                                        <p className="hidden text-xs text-gray-500 sm:block">
-                                            {activity.author}
-                                        </p>
+                                        <span className="text-xs text-gray-500 sm:block">
+                                            <Creator firstname={activity.author}/>
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex min-w-0 items-start">
                                 <span className={`${lusitana.className} antialiased top-0 right-0 h-8 truncate text-xs font-small md:text-small`}>
-                                    {activity.commit_date}
+                                    {formatDateToLocal(activity.commit_date)}
                                 </span>
                                 </div>
                             </div>

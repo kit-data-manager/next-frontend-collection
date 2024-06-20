@@ -1,21 +1,13 @@
 'use client'
 
-import OverallStatusCardWrapper, {BaseRepoStatusCardWrapper} from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
-import {lusitana} from '@/app/ui/fonts';
-import {Suspense, useEffect, useState} from 'react';
-import {RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton} from '@/app/ui/skeletons';
-import SystemStats from "@/app/ui/dashboard/system-stats";
-import LatestActivities from "@/app/ui/dashboard/latest-activities";
-import { Listen } from '@stencil/core';
+import {useState} from 'react';
+
 import {
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
 import {DataCard} from "data-card-react";
-import {formatDateToLocal} from "@/app/lib/utils";
 import Pagination from "@/app/ui/invoices/pagination";
-//import {fetchDataResources} from "@/app/lib/base-repo/data";
 import useSWR from "swr";
 import {DataResource} from "@/app/lib/definitions";
 import {
@@ -36,49 +28,14 @@ export default function Page({ searchParams }: {
 }) {
     const page = searchParams.page;
     const size =  searchParams.size ?  searchParams.size : 10;
-    const [contentRange, setContentRange] = useState("");
+    const [totalPages, setTotalPages] = useState(0);
 
-    /* const resources = [{
-         "id": "123445",
-         "name": "Test",
-         "date": "2024-12-12"
-     },
-         {
-             "id": "1233",
-             "name": "Test2",
-             "date": "2024-12-12"
-         },
-         {
-             "id": "412223",
-             "name": "Test3",
-             "date": "2024-12-12"
-         },
-         {
-             "id": "12333",
-             "name": "Test4",
-             "date": "2024-12-12"
-         },
-         {
-             "id": "1123412",
-             "name": "Test5",
-             "date": "2024-12-12"
-         }];//await fetchFilteredInvoices(query, currentPage);
- */
-    const setState = (r: string) => {
-        if(r) {
-            setContentRange(r);
+    const setState = (rangeHeader: string) => {
+        if(rangeHeader) {
+            let totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/")+1);
+            setTotalPages(Math.ceil(totalElements / size));
         }
     }
-
-    useEffect(() => {
-        const COLOR_CHANGE_BREAKPOINT_IN_PX = 800
-
-        const editResource = () => {
-            console.log("TEST!");
-        }
-
-        window.addEventListener('editResource', editResource)
-    }, []) // no dependencies
 
     const fetcher = (url:string) => fetch(url).then(function(response){
         setState(response.headers.get("Content-Range"));
@@ -98,8 +55,7 @@ export default function Page({ searchParams }: {
     if (!resources) {
         return <p>Failed to load resources.</p>;
     }
-    let totalElements = contentRange.substring(contentRange.lastIndexOf("/")+1);
-    const totalPages = Math.ceil(totalElements / size);
+
     resources.map((resource, i) => {
         fetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
             {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json()).then(data => resource["children"] = data);
@@ -146,21 +102,16 @@ export default function Page({ searchParams }: {
                                             "urlTarget": "_self",
                                             "iconName": "material-symbols-light:edit-square-outline",
                                             "eventIdentifier": "editResource_" + resource.id,
-                                            //"url": `/base-repo/${resource.id}/edit`
                                         },
                                             {
                                                 "label": "Download",
                                                 "iconName": "material-symbols-light:download",
                                                 "urlTarget": "_blank",
-                                                "url": 'http://localhost:8081/api/v1/dataresources/' + resource.id
+                                                "eventIdentifier": "downloadResource_" + resource.id,
                                             }]}
                                         onActionClick={ev => someMethod(ev)}
                                     ></DataCard>
                                     <hr/>
-                                    <script>
-                                        const todoListElement = document.querySelector('data-card');
-                                        todoListElement.addEventListener('editResource', event => { /* your listener */})
-                                    </script>
                                 </div>
                             );
                         })}

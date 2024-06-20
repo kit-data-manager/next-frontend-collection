@@ -1,8 +1,7 @@
-import OverallStatusCardWrapper, {BaseRepoStatusCardWrapper} from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
+import {BaseRepoStatusCardWrapper} from '@/app/ui/dashboard/cards';
 import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
-import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
+import {  CardsSkeleton } from '@/app/ui/skeletons';
 import SystemStats from "@/app/ui/dashboard/system-stats";
 import LatestActivities from "@/app/ui/dashboard/latest-activities";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
