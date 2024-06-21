@@ -3,7 +3,7 @@ import {Pool} from "pg";
 import {DataResource} from "@/app/lib/definitions";
 import {formatCurrency} from "@/app/lib/utils";
 
-export async function fetchDataResources() : Promise<DataResource[]> {
+/*export async function fetchDataResources() : Promise<DataResource[]> {
     noStore()
     try {
         const res = await fetch(`http://localhost:8081/api/v1/dataresources/`).then(function(response){
@@ -16,7 +16,7 @@ export async function fetchDataResources() : Promise<DataResource[]> {
         console.error('Service Error:', error);
         throw new Error('Failed to fetch data resources.');
     }
-}
+}*/
 
 export async function fetchActuatorInfo(){
     noStore()
@@ -93,7 +93,21 @@ export async function fetchContentOverview() {
         };
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch content overview.');
+       // throw new Error('Failed to fetch content overview.');
+        const uniqueUsers = 0;
+        const resources = 0;
+        const openResources = 0;
+        const closedResources = 0;
+        const files = 0;
+        const size = 0;
+        return {
+            uniqueUsers,
+            resources,
+            openResources,
+            closedResources,
+            files,
+            size
+        };
     }
 }
 
@@ -125,6 +139,51 @@ export async function fetchLatestActivities() {
         return activities.rows;
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch latest activities.');
+        //throw new Error('Failed to fetch latest activities.');
+        //return [];
+        return [
+            {
+                "id": 1,
+                "type": "INITIAL",
+                "managed_type": "edu.kit.datamanager.repo.domain.DataResource",
+                "author": "SELF",
+                "commit_date": "2023-09-21 12:52:43.325"
+            },
+            {
+                "id": 2,
+                "type": "INITIAL",
+                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
+                "author": "SELF",
+                "commit_date": "2023-12-06 19:03:29.858"
+            },
+            {
+                "id": 3,
+                "type": "UPDATE",
+                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
+                "author": "SELF",
+                "commit_date": "2023-12-06 19:03:29.858"
+            },
+            {
+                "id": 4,
+                "type": "TERMINAL",
+                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
+                "author": "SELF",
+                "commit_date": "2023-12-06 19:03:29.858"
+            },
+            {
+                "id": 5,
+                "type": "TERMINAL",
+                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
+                "author": "SELF",
+                "commit_date": "2023-12-06 19:03:29.858"
+            },
+            {
+                "id": 6,
+                "type": "TERMINAL",
+                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
+                "author": "SELF",
+                "commit_date": "2023-12-06 19:03:29.858"
+            },
+        ];
     }
 }

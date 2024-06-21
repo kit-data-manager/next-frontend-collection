@@ -23,7 +23,7 @@ export default async function OverallStatusCardWrapper() {
     );
 }
 
-function statusStringToInt(status){
+function statusStringToInt(status:string){
     switch(status){
         case "UP": return 1;
         case "DOWN": return 0;
