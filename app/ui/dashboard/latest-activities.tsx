@@ -13,7 +13,7 @@ import {fetchLatestInvoices} from '@/app/lib/data';
 import {fetchLatestActivities} from "@/app/lib/base-repo/data";
 import {formatDateToLocal} from "@/app/lib/utils";
 import {Creator} from "@/app/ui/general/creator";
-
+import * as React from "react";
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
@@ -21,52 +21,6 @@ const iconMap = {
 };
 export default async function LatestActivities() {
     const latestActivities = await fetchLatestActivities()
-
-        /*[
-        {
-            "id": 1,
-            "type": "INITIAL",
-            "managed_type": "edu.kit.datamanager.repo.domain.DataResource",
-            "author": "SELF",
-            "commit_date": "2023-09-21 12:52:43.325"
-        },
-        {
-            "id": 2,
-            "type": "INITIAL",
-            "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-            "author": "SELF",
-            "commit_date": "2023-12-06 19:03:29.858"
-        },
-        {
-            "id": 3,
-            "type": "UPDATE",
-            "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-            "author": "SELF",
-            "commit_date": "2023-12-06 19:03:29.858"
-        },
-        {
-            "id": 4,
-            "type": "TERMINAL",
-            "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-            "author": "SELF",
-            "commit_date": "2023-12-06 19:03:29.858"
-        },
-        {
-            "id": 5,
-            "type": "TERMINAL",
-            "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-            "author": "SELF",
-            "commit_date": "2023-12-06 19:03:29.858"
-        },
-        {
-            "id": 6,
-            "type": "TERMINAL",
-            "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-            "author": "SELF",
-            "commit_date": "2023-12-06 19:03:29.858"
-        },
-    ]*/
-
 
     return (
         <div className="flex w-full flex-col md:col-span-4">
@@ -100,12 +54,7 @@ export default async function LatestActivities() {
                             return (
                                 <div
                                     key={activity.id}
-                                    className={clsx(
-                                        'flex flex-row items-center justify-between py-4 gap-2 border-t border-b p-2',
-                                        {
-
-                                        },
-                                    )}
+                                    className='flex flex-row items-center justify-between py-4 gap-2 border-t border-b p-2'
                                 >
                                     <div className="flex items-center">
                                         {Icon ? <Icon className={clsx(`h-5 w-5  mr-5`, {

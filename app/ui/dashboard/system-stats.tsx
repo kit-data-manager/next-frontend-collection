@@ -58,7 +58,7 @@ export default async function SystemStats() {
             <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                 Content Overview
             </h2>
-            <div class="grid grid-cols-2 gap-4 px-4 py-8">
+            <div className="grid grid-cols-2 gap-4 px-4 py-8">
                 {stats.map((stat, i) => {
                     const Icon = stat.icon;
                     return (

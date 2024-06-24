@@ -57,6 +57,20 @@ export type ContentInformation = {
   tags: string[];
 }
 
+export type Tag = {
+  color?: string;
+  text?: string;
+  iconName?: string;
+  url?: string;
+}
+
+
+
+
+
+
+
+
 
 export type User = {
   id: string;

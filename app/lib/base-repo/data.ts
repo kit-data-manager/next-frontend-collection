@@ -20,38 +20,66 @@ import {formatCurrency} from "@/app/lib/utils";
 
 export async function fetchActuatorInfo(){
     noStore()
+
+    let database = "unknown";
+    let databaseStatus = "unknown";
+    let harddisk = 0;
+    let harddiskStatus = "unknown";
+    let rabbitMqStatus = "unknown";
+    let rabbitMq = "unknown";
+    let elasticStatus = "unknown";
+    let elastic = "unknown";
+
     try {
-        console.log("Fetch");
         const res = await fetch(`http://localhost:8081/actuator/health`).then(res => res.json());
 
-        let database = res.components.db.details.database;
-        let databaseStatus = res.components.db.status;
-        let harddisk = res.components.diskSpace.details.free;
-        let harddiskStatus = res.components.diskSpace.status;
-        let rabbitMqStatus = res.components.rabbitMQMessagingService.status;
-        let rabbitMq = "unknown";
-        let elasticStatus = "UNKNOWN";
-        let elastic = "unknown";
-
-        return {
-            databaseStatus,
-            database,
-            harddiskStatus,
-            harddisk,
-            rabbitMqStatus,
-            rabbitMq,
-            elasticStatus,
-            elastic
+        database = res.components.db.details.database;
+        databaseStatus = res.components.db.status;
+        harddisk = res.components.diskSpace.details.free;
+        harddiskStatus = res.components.diskSpace.status;
+        rabbitMqStatus = res.components.rabbitMQMessagingService.status;
+        rabbitMq = "unknown";
+        if(res.components.hasOwnProperty("rabbit") &&
+            res.components.rabbit.hasOwnProperty("details") &&
+            res.components.rabbit.details.hasOwnProperty("version")){
+            rabbitMq = res.components.rabbit.details.version;
         }
-
+        elasticStatus = "unknown";
+        elastic = "unknown";
+        if(res.components.hasOwnProperty("elasticsearch") &&
+            res.components.elasticsearch.hasOwnProperty("status") &&
+            res.components.elasticsearch.hasOwnProperty("details") &&
+            res.components.elasticsearch.details.hasOwnProperty("status")){
+             elasticStatus = res.components.elasticsearch.status;
+             elastic = res.components.elasticsearch.details.status;
+        }
     } catch (error) {
-        console.error('Service Error:', error);
-        throw new Error('Failed to fetch actuator info.');
+        console.error('Failed to fetch actuator info. Service Error:', error);
+    }
+
+    return {
+        databaseStatus,
+        database,
+        harddiskStatus,
+        harddisk,
+        rabbitMqStatus,
+        rabbitMq,
+        elasticStatus,
+        elastic
     }
 }
 
 export async function fetchContentOverview() {
     noStore()
+
+    //initial values (defaults if database query fails)
+    let uniqueUsers = 0;
+    let resources = 0;
+    let openResources = 0;
+    let closedResources = 0;
+    let files = 0;
+    let size = 0;
+
     try {
         const client = new Pool({
             user:process.env.DB_USER,
@@ -61,13 +89,15 @@ export async function fetchContentOverview() {
             port:process.env.DB_PORT
         })
 
-        let uniqueUsersPromise = client.query("SELECT COUNT(DISTINCT sid) FROM acl_entry");
-        let resourcesPromise = client.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')");
-        let openResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid='anonymousUser'");
-        let closedResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid!='anonymousUser'");
-        let filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
-        let sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+        //build queries
+        const uniqueUsersPromise = client.query("SELECT COUNT(DISTINCT sid) FROM acl_entry");
+        const resourcesPromise = client.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')");
+        const openResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid='anonymousUser'");
+        const closedResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid!='anonymousUser'");
+        const filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+        const sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
 
+        //wait for all query results
         const data = await Promise.all([
             uniqueUsersPromise,
             resourcesPromise,
@@ -76,39 +106,27 @@ export async function fetchContentOverview() {
             filesPromise,
             sizePromise
         ]);
-        const uniqueUsers = Number(data[0].rows[0].count ?? '0');
-        const resources = Number(data[1].rows[0].count ?? '0');
-        const openResources = Number(data[2].rows[0].count ?? '0');
-        const closedResources = Number(data[3].rows[0].count ?? '0');
-        const files = Number(data[4].rows[0].count ?? '0');
-        const size = Number(data[5].rows[0].sum ?? '0');
 
-        return {
-            uniqueUsers,
-            resources,
-            openResources,
-            closedResources,
-            files,
-            size
-        };
+        //extract information from query results
+        uniqueUsers = Number(data[0].rows[0].count ?? '0');
+        resources = Number(data[1].rows[0].count ?? '0');
+        openResources = Number(data[2].rows[0].count ?? '0');
+        closedResources = Number(data[3].rows[0].count ?? '0');
+        files = Number(data[4].rows[0].count ?? '0');
+        size = Number(data[5].rows[0].sum ?? '0');
     } catch (error) {
-        console.error('Database Error:', error);
-       // throw new Error('Failed to fetch content overview.');
-        const uniqueUsers = 0;
-        const resources = 0;
-        const openResources = 0;
-        const closedResources = 0;
-        const files = 0;
-        const size = 0;
-        return {
-            uniqueUsers,
-            resources,
-            openResources,
-            closedResources,
-            files,
-            size
-        };
+        console.error('Failed to fetch content overview. Database Error:', error);
     }
+
+    //return results
+    return {
+        uniqueUsers,
+        resources,
+        openResources,
+        closedResources,
+        files,
+        size
+    };
 }
 
 export async function fetchLatestActivities() {
@@ -138,10 +156,10 @@ export async function fetchLatestActivities() {
             LIMIT 6');
         return activities.rows;
     } catch (error) {
-        console.error('Database Error:', error);
-        //throw new Error('Failed to fetch latest activities.');
-        //return [];
-        return [
+        console.error('Failed to fetch latest activities. Database Error:', error);
+        return [];
+
+        /*return [
             {
                 "id": 1,
                 "type": "INITIAL",
@@ -184,6 +202,6 @@ export async function fetchLatestActivities() {
                 "author": "SELF",
                 "commit_date": "2023-12-06 19:03:29.858"
             },
-        ];
+        ];*/
     }
 }

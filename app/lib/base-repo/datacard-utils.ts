@@ -1,4 +1,4 @@
-import {DataResource} from "@/app/lib/definitions";
+import {DataResource, Tag} from "@/app/lib/definitions";
 
 export const getTitle = (resource: DataResource) => {
 
@@ -34,7 +34,7 @@ export const getSubtitle = (resource: DataResource) => {
 }
 
 const getCreatorsAsSubtitle = (resource: DataResource) => {
-    let subTitleValue = undefined;
+    let subTitleValue: string = '';
     if(resource.creators) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
@@ -56,7 +56,7 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
         });
     }
 
-    if(!subTitleValue){
+    if(subTitleValue.length == 0){
         subTitleValue = "Anonymous User";
     }
     return subTitleValue;
@@ -75,19 +75,19 @@ export const getDescription = (resource: DataResource) => {
 }
 
 export const getTags = (resource: DataResource) => {
-    //state
-    let tags = [];
+    //state tags
+    let tags: Tag[] = [];
     if (resource.state === "VOLATILE") {
-        tags.push({"color": "#90EE90", "text": "Volatile", "iconName": "f7:pin-slash"});
+        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash"});
     } else if (resource.state === "FIXED") {
-        tags.push({"color": "yellow", "text": "Fixed", "iconName": "f7:pin"});
+        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin"});
     } else if (resource.state === "REVOKED") {
-        tags.push({"color": "#FFD580", "text": "Revoked", "iconName": "bytesize:trash"});
+        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash"});
     } else if (resource.state === "GONE") {
-        tags.push({"color": "#FFCCCB", "text": "Gone", "iconName": "bytesize:trash"});
+        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash"});
     }
 
-    //access
+    //access tags
     let open = false;
     resource.acls.map((acl, i) => {
         if (acl.sid === "anonymousUser") {
@@ -100,7 +100,7 @@ export const getTags = (resource: DataResource) => {
         tags.push({"color": "#FFCCCB", "text": "Protected", "iconName": "zondicons:lock-closed"});
     }
 
-    //rights
+    //rights tag
     if (resource.rights && resource.rights.length > 0) {
         tags.push({
             "color": "#90EE90",
@@ -112,6 +112,7 @@ export const getTags = (resource: DataResource) => {
         tags.push({"color": "#FFCCCB", "text": "Unlicensed", "iconName": "mynaui:copyright-slash"});
     }
 
+    //embargo tag
     if (resource.embargoDate) {
         tags.push({"color": "#FFCCCB", "text": "Embargo", "iconName": "tdesign:secured"});
     }
@@ -120,7 +121,7 @@ export const getTags = (resource: DataResource) => {
 }
 
 export const getThumb = (resource: DataResource) => {
-    let thumb = "https://via.placeholder.com/192?text=placeholder";
+    let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
     if (resource.children && resource.children.length > 0) {
         resource.children.map((content, i) => {
             content.tags.map((tag, i) =>{
@@ -150,12 +151,14 @@ export const getChildren = (resource: DataResource) => {
                 "label": "Edit",
                 "urlTarget": "_self",
                 "iconName": "material-symbols-light:edit-square-outline",
-                "url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}/edit`
+                "eventIdentifier": "editContent_" + resource.id + "_" + content.relativePath
+                //"url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}/edit`
             }, {
                 "label": "Download",
                 "iconName": "material-symbols-light:download",
                 "urlTarget": "_blank",
-                "url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}`
+                "eventIdentifier": "downloadContent_" + resource.id + "_" + content.relativePath
+                //"url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}`
             }]);
 
             children.push(child);
