@@ -1,22 +1,25 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
 import {DataResource} from "@/app/lib/definitions";
-import {formatCurrency} from "@/app/lib/utils";
 
-/*export async function fetchDataResources() : Promise<DataResource[]> {
+export async function fetchDataResource(id:string) : Promise<DataResource> {
     noStore()
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/dataresources/`).then(function(response){
+        const res = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`).then(function(response){
             return response.json();
         });
-        console.log('Data fetch completed.');
+
+       const content = await fetch("http://localhost:8081/api/v1/dataresources/" + res.id + "/data/",
+            {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json());
+
+       res["children"] = content;
         console.log(res);
         return res;
     } catch (error) {
         console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resources.');
+        throw new Error('Failed to fetch data resource.');
     }
-}*/
+}
 
 export async function fetchActuatorInfo(){
     noStore()

@@ -3,10 +3,10 @@
 import {useState} from 'react';
 
 import {
+    PencilIcon,
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
-import {DataCard} from "data-card-react";
 import Pagination from "@/app/ui/invoices/pagination";
 import useSWR from "swr";
 import {DataResource} from "@/app/lib/definitions";
@@ -18,6 +18,9 @@ import {
     getChildren,
     getThumb
 } from "@/app/lib/base-repo/datacard-utils";
+import { DataCard } from "data-card-react";
+import {useRouter} from "next/navigation";
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function Page({ searchParams }: {
     searchParams?: {
@@ -29,6 +32,13 @@ export default function Page({ searchParams }: {
     const page = searchParams.page;
     const size =  searchParams.size ?  searchParams.size : 10;
     const [totalPages, setTotalPages] = useState(0);
+    const { replace } = useRouter();
+
+    const handleSearch = useDebouncedCallback((event) => {
+        const eventIdentifier =event.detail.eventIdentifier;
+        let resourceId = eventIdentifier.substring(eventIdentifier.lastIndexOf("_") + 1);
+        replace('/base-repo/' + resourceId + "/view");
+    });
 
     const setState = (rangeHeader: string) => {
         if(rangeHeader) {
@@ -42,7 +52,7 @@ export default function Page({ searchParams }: {
         return response.json();
     });
 
-    const { data: resources, isLoading, isError: error, } = useSWR(`http://localhost:8081/api/v1/dataresources/?page=${page-1}&size=${size}`, fetcher);
+    const { data: resources, isLoading, isError: error } = useSWR(`http://localhost:8081/api/v1/dataresources/?page=${page-1}&size=${size}`, fetcher);
 
     if (error) {
         return <p>Failed to fetch</p>;
@@ -54,15 +64,6 @@ export default function Page({ searchParams }: {
 
     if (!resources) {
         return <p>Failed to load resources.</p>;
-    }
-
-    resources.map((resource, i) => {
-        fetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
-            {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json()).then(data => resource["children"] = data);
-    });
-
-    function someMethod(event){
-        console.log("Here", event.detail.eventIdentifier);
     }
 
     return (
@@ -95,9 +96,14 @@ export default function Page({ searchParams }: {
                                         image-url={getThumb(resource)}
                                         body-text={getDescription(resource)}
                                         textRight={{'label': resource.publisher, 'value': resource.publicationYear}}
-                                        children-data={getChildren(resource)}
+                                        children-data={undefined}
                                         tags={getTags(resource)}
                                         actionButtons={[{
+                                            "label": "View",
+                                            "urlTarget": "_self",
+                                            "iconName": "material-symbols-light:edit-square-outline",
+                                            "eventIdentifier": "viewResource_" + resource.id,
+                                        },{
                                             "label": "Edit",
                                             "urlTarget": "_self",
                                             "iconName": "material-symbols-light:edit-square-outline",
@@ -109,7 +115,7 @@ export default function Page({ searchParams }: {
                                                 "urlTarget": "_blank",
                                                 "eventIdentifier": "downloadResource_" + resource.id,
                                             }]}
-                                        onActionClick={ev => someMethod(ev)}
+                                        onActionClick={ev => handleSearch(ev)}
                                     ></DataCard>
                                     <hr/>
                                 </div>

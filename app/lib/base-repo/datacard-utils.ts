@@ -71,7 +71,7 @@ export const getDescription = (resource: DataResource) => {
             }
         });
     }
-    return JSON.stringify(descriptionValue);
+    return descriptionValue;
 }
 
 export const getTags = (resource: DataResource) => {
@@ -117,7 +117,7 @@ export const getTags = (resource: DataResource) => {
         tags.push({"color": "#FFCCCB", "text": "Embargo", "iconName": "tdesign:secured"});
     }
 
-    return JSON.stringify(tags);
+    return tags;
 }
 
 export const getThumb = (resource: DataResource) => {
@@ -143,11 +143,11 @@ export const getChildren = (resource: DataResource) => {
             let child = {};
             child["dataTitle"] = content.relativePath;
             child["subTitle"] = content.hash;
-            child["text-right"] = JSON.stringify({
+            child["text-right"] = {
                 "label": content.mediaType,
                 "value": content.size + " bytes"
-            });
-            child["actionButtons"] = JSON.stringify([{
+            };
+            child["actionButtons"] = [{
                 "label": "Edit",
                 "urlTarget": "_self",
                 "iconName": "material-symbols-light:edit-square-outline",
@@ -159,7 +159,7 @@ export const getChildren = (resource: DataResource) => {
                 "urlTarget": "_blank",
                 "eventIdentifier": "downloadContent_" + resource.id + "_" + content.relativePath
                 //"url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}`
-            }]);
+            }];
 
             children.push(child);
         });

@@ -7,9 +7,7 @@ import {
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import Image from 'next/image';
 import {lusitana} from '@/app/ui/fonts';
-import {fetchLatestInvoices} from '@/app/lib/data';
 import {fetchLatestActivities} from "@/app/lib/base-repo/data";
 import {formatDateToLocal} from "@/app/lib/utils";
 import {Creator} from "@/app/ui/general/creator";

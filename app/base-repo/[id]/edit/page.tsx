@@ -1,11 +1,11 @@
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import Editor from "@/app/ui/dataresources/editor"
-import { promises as fs } from 'fs';
+import {fetchDataResource} from "@/app/lib/base-repo/data";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    const file = await fs.readFile(process.cwd() + '/app/data.json', 'utf8');
-    const schema = JSON.parse(file);
+    const data = await fetch('/data.json').then(response => response.json());
+    const schema = JSON.parse(data);
 
     /*const [invoice, customers] = await Promise.all([
         fetchInvoiceById(id),
