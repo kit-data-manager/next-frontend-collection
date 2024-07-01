@@ -1,6 +1,7 @@
+'use client'
+
 import React, { useRef, useEffect } from "react";
 import './JsonForm.css'
-import {Suspense} from 'react';
 
 const useScript = (id , url) => {
     useEffect(() => {
@@ -44,40 +45,56 @@ export default function JsonForm(props) {
     let setEditorReady = props.setEditorReady;
 
     const elementRef = useRef();
-
+    console.log("Create form");
     const defaultOptions = {
         iconlib: "fontawesome5",
-        object_layout: "default",
+        object_layout: "table",
         schema: props.schema,
         display_required_only: false,
-        compact:false,
+        compact:true,
+        titleHidden: true,
         disable_edit_json: true,
+        remove_empty_properties: true,
+        disable_properties: true,
         prompt_before_delete: true,
-        required_by_default: true,
         no_additional_properties: true,
         show_errors: "interaction",
         theme: "tailwind",
+        use_name_attributes	: true,
+        template: 'handlebars',
+        ajax: true,
         startval: props.data || {}
     };
 
-
+    console.log("Import scripts");
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useScript('jsoneditor' ,'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.15.0/dist/jsoneditor.min.js')
     useScript('tailwind','https://cdn.tailwindcss.com/')
+    useScript('handlebars', 'https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js')
+    useScript('autocomplete','https://unpkg.com/@trevoreyre/autocomplete-js')
+    useScript('cleave','https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js')
+    useScript('jsoneditor' ,'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')
+    //useScript('dompurify' ,'https://cdn.jsdelivr.net/npm/dompurify@latest/dist/purify.min.js')
 
+    console.log("Import css");
     useCss('fontawesome5','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
-    useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.15.0/src/themes/html.min.css')
+    useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css')
 
     const validate = function(){
         const errors = jsoneditor.validate();
-
+        console.log(errors);
         return errors.length === 0;
     }
     const setUpEditor = () =>{
+        console.log("Setup editor");
         jsoneditor = new window.JSONEditor(elementRef.current, defaultOptions);
         jsoneditor.on('change' , () => {
+            console.log("Change");
             if(validate()) {
+                console.log("Valid");
                 props.onChange(jsoneditor.getValue());
+            }else{
+                console.log("INVALID");
+                props.onChange(undefined);
             }
         })
         jsoneditor.on('ready', () => {
@@ -89,8 +106,10 @@ export default function JsonForm(props) {
         });
     }
     const initJsoneditor = function () {
+        console.log("Init editor");
         // destroy old JSONEditor instance if exists
         if (jsoneditor) {
+            console.log("Destroying editor");
             jsoneditor.destroy();
         }
 
@@ -99,7 +118,9 @@ export default function JsonForm(props) {
         }else{
             const inter =  setInterval(() => {
                 if(window.JSONEditor){
+                    console.log("Setup editor");
                     setUpEditor()
+                    console.log("Clear Interval");
                     clearInterval(inter)
                 }
             }, 1000);

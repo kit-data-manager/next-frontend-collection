@@ -1,23 +1,38 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
+import {revalidatePath} from "next/cache";
+import {redirect} from "next/navigation";
 import {DataResource} from "@/app/lib/definitions";
 
-export async function fetchDataResource(id:string) : Promise<DataResource> {
+
+export async function fetchDataResources(page:string, size:string){
     noStore()
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`).then(function(response){
-            return response.json();
+        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page}&size=${size}&sort=lastUpdate,desc`).
+        then(function(response){
+           return response.json();
         });
 
-       const content = await fetch("http://localhost:8081/api/v1/dataresources/" + res.id + "/data/",
-            {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json());
-
-       res["children"] = content;
-        console.log(res);
         return res;
     } catch (error) {
         console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resource.');
+        throw new Error('Failed to fetch data resources.');
+    }
+}
+
+export async function fetchDataResourcePages(size){
+    noStore()
+    try {
+        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`).then(function(response){
+            const rangeHeader = response.headers.get("Content-Range");
+            const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/")+1);
+            const totalPages = Math.ceil(totalElements / size);
+            return totalPages;
+        });
+        return res;
+    } catch (error) {
+        console.error('Service Error:', error);
+        throw new Error('Failed to fetch data resources.');
     }
 }
 
@@ -148,8 +163,9 @@ export async function fetchLatestActivities() {
             SELECT \
                 sna.type, \
                 sna.managed_type, \
+                sna.state, \
                 com.author, \
-                com.commit_date \
+                com.commit_date\
             FROM \
                 jv_snapshot as sna, \
                 jv_commit as com \
@@ -208,3 +224,4 @@ export async function fetchLatestActivities() {
         ];*/
     }
 }
+

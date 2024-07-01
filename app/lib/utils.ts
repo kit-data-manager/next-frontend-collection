@@ -1,4 +1,6 @@
 import { Revenue } from './definitions';
+import {useDebouncedCallback} from "use-debounce";
+import {useRouter} from "next/navigation";
 
 export const formatCurrency = (amount: number) => {
   return (amount / 100).toLocaleString('en-US', {
@@ -84,4 +86,24 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     '...',
     totalPages,
   ];
+};
+
+export const eventIdentifierToPath = (eventIdentifier: string) => {
+
+  let parts = eventIdentifier.split("_");
+
+  switch (parts[0]) {
+    case "viewResource":
+      return '/base-repo/resources/' + parts[1] + "/view";
+    case "editResource":
+      return '/base-repo/resources/' + parts[1] + "/edit";
+    case "downloadResource":
+      return '/base-repo/resources/' + parts[1] + "/download";
+    case "editContent":
+      return '/base-repo/resources/' + parts[1] + "/edit_content?path=" + parts[2];
+    case "downloadContent":
+      return '/base-repo/resources/' + parts[1] + "/download_content?path=" + parts[2];
+    default:
+      throw new Error('Invalid event identifier ' + eventIdentifier);
+  }
 };

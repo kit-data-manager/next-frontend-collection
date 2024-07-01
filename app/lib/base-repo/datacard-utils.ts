@@ -21,7 +21,7 @@ export const getSubtitle = (resource: DataResource) => {
     if (resource.titles) {
         resource.titles.map((title, i) => {
             if (title.titleType === "SUBTITLE") {
-                subTitleValue = title.value;
+                subTitleValue = {"value": title.value};
             }
         });
     }
@@ -30,7 +30,7 @@ export const getSubtitle = (resource: DataResource) => {
         subTitleValue = getCreatorsAsSubtitle(resource);
     }
 
-    return JSON.stringify(subTitleValue);
+    return subTitleValue;
 }
 
 const getCreatorsAsSubtitle = (resource: DataResource) => {
@@ -59,7 +59,7 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
     if(subTitleValue.length == 0){
         subTitleValue = "Anonymous User";
     }
-    return subTitleValue;
+    return {"value":subTitleValue};
 }
 
 export const getDescription = (resource: DataResource) => {
@@ -71,7 +71,7 @@ export const getDescription = (resource: DataResource) => {
             }
         });
     }
-    return descriptionValue;
+    return {"value":descriptionValue};
 }
 
 export const getTags = (resource: DataResource) => {
@@ -141,24 +141,20 @@ export const getChildren = (resource: DataResource) => {
         children = []
         resource.children.map((content, i) => {
             let child = {};
-            child["dataTitle"] = content.relativePath;
-            child["subTitle"] = content.hash;
+            child["dataTitle"] =  {"value": content.relativePath};
+            child["subTitle"] =  {"value" : content.hash};
             child["text-right"] = {
                 "label": content.mediaType,
                 "value": content.size + " bytes"
             };
             child["actionButtons"] = [{
-                "label": "Edit",
                 "urlTarget": "_self",
                 "iconName": "material-symbols-light:edit-square-outline",
                 "eventIdentifier": "editContent_" + resource.id + "_" + content.relativePath
-                //"url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}/edit`
             }, {
-                "label": "Download",
                 "iconName": "material-symbols-light:download",
                 "urlTarget": "_blank",
                 "eventIdentifier": "downloadContent_" + resource.id + "_" + content.relativePath
-                //"url": `http://localhost:8081/api/v1/dataresources/${resource.id}/data/${content.relativePath}`
             }];
 
             children.push(child);

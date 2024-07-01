@@ -16,9 +16,9 @@ import clsx from 'clsx';
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/', icon: HomeIcon },
-  { name: 'Service Status', href: '/base-repo/', icon: ChartPieIcon},
-  { name: 'Resources List', href: '/base-repo/list', icon: ListBulletIcon },
-  { name: 'Create Resource', href: '/base-repo/create', icon: PlusCircleIcon },
+  { name: 'Overview', href: '/base-repo', icon: ChartPieIcon},
+  { name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon },
+  { name: 'Create Resource', href: '/base-repo/resource/create', icon: PlusCircleIcon },
 ];
 
 export default function NavLinksDataResources() {

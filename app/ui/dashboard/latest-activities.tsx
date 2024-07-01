@@ -12,6 +12,7 @@ import {fetchLatestActivities} from "@/app/lib/base-repo/data";
 import {formatDateToLocal} from "@/app/lib/utils";
 import {Creator} from "@/app/ui/general/creator";
 import * as React from "react";
+import Link from "next/link";
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
@@ -49,6 +50,8 @@ export default async function LatestActivities() {
                     {
                         latestActivities.map((activity, i) => {
                             const Icon = iconMap[activity.type];
+                            const id = JSON.parse(activity.state).id;
+                            console.log(id);
                             return (
                                 <div
                                     key={activity.id}
@@ -62,12 +65,20 @@ export default async function LatestActivities() {
                                         })
                                         }/> : null}
                                         <div className="min-w-0">
-                                            <p className="truncate text-sm font-semibold md:text-base">
-                                                {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
-                                                {activity.type == "TERMINAL" ? " deleted" : ""}
-                                                {activity.type == "UPDATE" ? " updated" : ""}
-                                                {activity.type == "INITIAL" ? " created" : ""}
-                                            </p>
+                                            {(activity.type === "INITIAL" || activity.type === "UPDATE") ? (
+                                                <Link className="truncate text-sm font-semibold md:text-base hover:bg-sky-100 hover:text-blue-600" href={`/base-repo/resources/${id}/view`}>
+                                                    {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
+                                                    {activity.type === "UPDATE" ? " updated" : ""}
+                                                    {activity.type === "INITIAL" ? " created" : ""}
+                                                </Link>
+                                            ) : (
+                                                <p className="truncate text-sm font-semibold md:text-base">
+                                                    {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
+                                                    {activity.type === "TERMINAL" ? " deleted" : ""}
+                                                </p>
+                                            )
+
+                                            }
                                             <span className="text-xs text-gray-500 sm:block">
                                             <Creator firstname={activity.author}/>
                                         </span>

@@ -1,9 +1,8 @@
 'use client'
 
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import {formatDateToLocal} from "@/app/lib/utils";
+import {eventIdentifierToPath, formatDateToLocal} from "@/app/lib/utils";
 import {DataCard} from "data-card-react";
-import {fetchDataResource} from "@/app/lib/base-repo/data";
 import useSWR from "swr";
 import {
     getChildren,
@@ -13,16 +12,19 @@ import {
     getThumb,
     getTitle
 } from "@/app/lib/base-repo/datacard-utils";
+import {useDebouncedCallback} from "use-debounce";
+import {useRouter} from "next/navigation";
+import {fetchDataResource} from "@/app/lib/base-repo/client";
+
 
 export default function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    /*const [invoice, customers] = await Promise.all([
-        fetchInvoiceById(id),
-        fetchCustomers(),
-    ]);
-    if (!invoice) {
-        notFound();
-    }*/
+    const { replace } = useRouter();
+
+    const handleAction = useDebouncedCallback((event) => {
+        const eventIdentifier:string = event.detail.eventIdentifier;
+        replace(eventIdentifierToPath(eventIdentifier));
+    });
 
     const fetcher = (url:string) => fetch(url).then(function(response){
         return response.json();
@@ -42,11 +44,11 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     if (resourceLoading || contentLoading) {
-        return <p>Loading resources...</p>;
+        return <p>Loading resource...</p>;
     }
 
     if (!resource || !content) {
-        return <p>Failed to load resources.</p>;
+        return <p>Failed to load resource.</p>;
     }
 
     resource["children"] = content;
@@ -55,10 +57,11 @@ export default function Page({ params }: { params: { id: string } }) {
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'DataResources', href: '/dashboard/dataresources' },
+                    { label: 'Overview', href: '/base-repo' },
+                    { label: 'Resources', href: '/base-repo/resources' },
                     {
-                        label: 'View DataResource',
-                        href: `/dashboard/dataresources/${id}/view`,
+                        label: `View Resource #${id}`,
+                        href: `/base-repo/resources/${id}/view`,
                         active: true,
                     },
                 ]}
@@ -78,22 +81,19 @@ export default function Page({ params }: { params: { id: string } }) {
                             children-data={getChildren(resource)}
                             tags={getTags(resource)}
                             actionButtons={[{
-                            "label": "View",
-                            "urlTarget": "_self",
-                            "iconName": "material-symbols-light:edit-square-outline",
-                            "eventIdentifier": "viewResource_" + resource.id,
-                        },{
+                                    "label": "Download",
+                                    "iconName": "material-symbols-light:download",
+                                    "urlTarget": "_blank",
+                                    "eventIdentifier": "downloadResource_" + resource.id,
+                            },
+                            {
                             "label": "Edit",
                             "urlTarget": "_self",
                             "iconName": "material-symbols-light:edit-square-outline",
                             "eventIdentifier": "editResource_" + resource.id,
-                        },
-                            {
-                                "label": "Download",
-                                "iconName": "material-symbols-light:download",
-                                "urlTarget": "_blank",
-                                "eventIdentifier": "downloadResource_" + resource.id,
-                            }]}
+                            }
+                            ]}
+                            onActionClick={ev => handleAction(ev)}
                             ></DataCard>
                         </div>
                     </div>

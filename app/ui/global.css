@@ -18,9 +18,57 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 data-card {
-  --mainBG: white;
-  --darkerBG: lightgray;
+  --mainBG: #FAFAFA;
+  --darkerBG: #bdbdbd;
+  --lighterBG: #FAFAFA;
   --tagText: #333;
 }
+
+data-card::part(detailed-card-container){
+  background-color: var(--lighterBG);
+}
+
+data-card::part(card-container){
+  border-left-color: var(--darkerBG);
+  border-left-style: solid;
+  border-left-width: 0.1em;
+  border-right-color: var(--darkerBG);
+  border-right-style: solid;
+  border-right-width: 0.1em;
+}
+
+div[data-schematype='array'] > p, div[data-schematype='object'] > p{
+  font-size: 10px;
+}
+
+.json-editor-btntype-properties{
+  width: 120px;
+  height: 35px;
+}
+
+
+.je-object__container:not(.w-full){
+  margin-left: 20px;
+}
+
+.je-object__container:not(.w-full) > .je-object__title > span{
+  font-size: 14px;
+  color: #777777;
+}
+
+p[style='color: red;']{
+  font-size: 10px;
+  font-weight: bold;
+}
+p[style='color: red;']:before{
+  content: '! ';
+  font-size: 14px;
+}
+
+p[style='color: red;']:after{
+  content: ' !';
+  font-size: 14px;
+}
+
 
 
