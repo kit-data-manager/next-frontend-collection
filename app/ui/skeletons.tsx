@@ -1,4 +1,8 @@
 // Loading animation
+import {DataResource} from "@/app/lib/definitions";
+import DataResourceDataCardWrapper from "@/app/ui/general/datacard";
+import Pagination from "@/app/ui/general/pagination";
+
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
@@ -215,4 +219,32 @@ export function InvoicesTableSkeleton() {
       </div>
     </div>
   );
+}
+
+
+export function DataCardSkeleton(){
+    return (
+        <div className="mb-2 w-full rounded-md bg-white p-4">
+            <div className="flex items-center data-card justify-between border-b border-gray-100 pb-8">
+                <div className="flex items-center">
+                    <div className="mr-2 h-24 w-24 rounded bg-gray-100"></div>
+                </div>
+                <h1 className="text-gray-400">Loading</h1>
+            </div>
+        </div>
+    );
+}
+
+export function ListingSkeleton(){
+    return (
+        <div className="block min-w-full">
+            <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+                <DataCardSkeleton/>
+                <DataCardSkeleton/>
+                <DataCardSkeleton/>
+                <DataCardSkeleton/>
+                <DataCardSkeleton/>
+            </div>
+        </div>
+)
 }

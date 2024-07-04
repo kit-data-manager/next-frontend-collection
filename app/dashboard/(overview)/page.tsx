@@ -1,9 +1,9 @@
-import OverallStatusCardWrapper from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestActivities from '@/app/ui/dashboard/latest-activities';
 import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
+import OverallStatusCardWrapper from "@/app/ui/dashboard/system-status-cards";
+import RevenueChart from "@/app/ui/general/revenue-chart";
 
 export default async function Page() {
 

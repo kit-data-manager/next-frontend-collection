@@ -2,7 +2,7 @@ import AcmeLogo from '@/app/ui/acme-logo';
 import {inter, lusitana} from '@/app/ui/fonts';
 import {Suspense} from "react";
 import {CardsSkeleton} from "@/app/ui/skeletons";
-import OverallStatusCardWrapper from "@/app/ui/dashboard/cards";
+import OverallStatusCardWrapper from "@/app/ui/dashboard/system-status-cards";
 
 export default function Page() {
     const username = "anonymous";

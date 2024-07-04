@@ -1,7 +1,6 @@
-import {Card} from "@/app/ui/card";
 import {fetchActuatorInfo} from "@/app/lib/base-repo/data";
 import {humanFileSize} from "@/app/lib/utils";
-
+import {Card} from "@/app/ui/general/card";
 
 export default async function OverallStatusCardWrapper() {
     return (

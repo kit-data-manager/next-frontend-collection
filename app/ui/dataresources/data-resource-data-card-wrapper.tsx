@@ -2,13 +2,14 @@
 
 import { DataCard } from "data-card-react";
 import {getDescription, getSubtitle, getTags, getThumb, getTitle} from "@/app/lib/base-repo/datacard-utils";
-import {DataResource} from "@/app/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import {eventIdentifierToPath} from "@/app/lib/utils";
 import {useRouter} from "next/navigation";
 
-export default function NextDataCard(data:DataResource, index:Number){
+export default function DataResourceDataCardWrapper(props){
     const { replace } = useRouter();
+    const key = props.key;
+    const data = props.data;
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier:string = event.detail.eventIdentifier;
@@ -20,7 +21,7 @@ export default function NextDataCard(data:DataResource, index:Number){
             <DataCard
                 variant="default"
                 children-variant="default"
-                key={index}
+                key={key}
                 data-title={getTitle(data)}
                 sub-title={getSubtitle(data)}
                 image-url={getThumb(data)}

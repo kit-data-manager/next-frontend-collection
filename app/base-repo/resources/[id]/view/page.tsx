@@ -1,12 +1,12 @@
 'use client'
 
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import Breadcrumbs from '@/app/ui/general/breadcrumbs';
 import {eventIdentifierToPath, formatDateToLocal} from "@/app/lib/utils";
 import {DataCard} from "data-card-react";
 import useSWR from "swr";
 import {
     getChildren,
-    getDescription,
+    getDescription, getMetadata,
     getSubtitle,
     getTags,
     getThumb,
@@ -14,16 +14,15 @@ import {
 } from "@/app/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
-import {fetchDataResource} from "@/app/lib/base-repo/client";
 
 
 export default function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    const { replace } = useRouter();
+    const router = useRouter();
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier:string = event.detail.eventIdentifier;
-        replace(eventIdentifierToPath(eventIdentifier));
+        router.replace(eventIdentifierToPath(eventIdentifier));
     });
 
     const fetcher = (url:string) => fetch(url).then(function(response){
@@ -80,6 +79,7 @@ export default function Page({ params }: { params: { id: string } }) {
                             textRight={{'label': resource.publisher, 'value': resource.publicationYear}}
                             children-data={getChildren(resource)}
                             tags={getTags(resource)}
+                            metadata={getMetadata(resource)}
                             actionButtons={[{
                                     "label": "Download",
                                     "iconName": "material-symbols-light:download",

@@ -9,14 +9,40 @@ export type DataResource = {
   creators: Creator[];
   publisher: string;
   publicationYear: string;
+  language: string;
+  resourceType: ResourceType;
   descriptions: Description[];
+  relatedIdentifiers: RelatedIdentifier[];
+  dates: Date[];
   acls: Acl[];
   rights: Right[];
+  subjects: Subject[];
   embargoDate: string;
   state: string;
+  lastUpdate: string;
   children: ContentInformation[];
 };
 
+export type RelatedIdentifier = {
+  identifierType: string;
+  value: string;
+  relationType: string;
+}
+
+export type Subject = {
+  value: string;
+  valueUri: string;
+}
+
+export type ResourceType = {
+  value: string;
+  typeGeneral: string;
+}
+
+export type Date = {
+  value: string;
+  type: string;
+}
 export type Title = {
   id: string;
   value: string;
@@ -49,6 +75,7 @@ export type Right = {
 
 export type ContentInformation = {
   id: string;
+  parentResource: DataResource;
   relativePath: string;
   contentUri: string;
   mediaType: string;

@@ -1,10 +1,10 @@
-import {BaseRepoStatusCardWrapper} from '@/app/ui/dashboard/cards';
 import { lusitana } from '@/app/ui/fonts';
-import { Suspense } from 'react';
-import {  CardsSkeleton } from '@/app/ui/skeletons';
-import SystemStats from "@/app/ui/dashboard/system-stats";
+import {CardsSkeleton } from '@/app/ui/skeletons';
+import DataRepositoryStats from "@/app/ui/dashboard/data-repository-stats";
 import LatestActivities from "@/app/ui/dashboard/latest-activities";
-import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
+import Breadcrumbs from "@/app/ui/general/breadcrumbs";
+import { Suspense } from 'react';
+import {BaseRepoStatusCardWrapper} from "@/app/ui/dashboard/system-status-cards";
 
 export default async function Page() {
 
@@ -26,7 +26,7 @@ export default async function Page() {
             </div>
 
             <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
-                <div><SystemStats/></div>
+                <div><DataRepositoryStats/></div>
                 <div><LatestActivities/></div>
             </div>
         </main>

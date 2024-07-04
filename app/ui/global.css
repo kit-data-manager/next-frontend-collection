@@ -22,7 +22,17 @@ data-card {
   --darkerBG: #bdbdbd;
   --lighterBG: #FAFAFA;
   --tagText: #333;
+  font-size: 12px;
 }
+
+data-card::part(detailed_label){
+    font-weight: bold;
+}
+
+data-card::part(detailed_value){
+  margin-left: 4px;
+}
+
 
 data-card::part(detailed-card-container){
   background-color: var(--lighterBG);
@@ -44,10 +54,12 @@ div[data-schematype='array'] > p, div[data-schematype='object'] > p{
 .json-editor-btntype-properties{
   width: 120px;
   height: 35px;
+  border-radius: 0.375rem!important;
+  background-color: rgb(59 130 246)!important;
 }
 
 
-.je-object__container:not(.w-full){
+.je-object__container:not(.w-full):not([data-schemaid='root']){
   margin-left: 20px;
 }
 

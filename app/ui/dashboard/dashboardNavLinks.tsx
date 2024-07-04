@@ -17,7 +17,7 @@ const links = [
   { name: 'MetadataManagement', href: '/metadata/', icon: UserGroupIcon },
 ];
 
-export default function NavLinks() {
+export default function DashboardNavLinks() {
   const pathname = usePathname();
 
   return (

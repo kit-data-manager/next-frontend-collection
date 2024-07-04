@@ -8,11 +8,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 import {lusitana} from '@/app/ui/fonts';
-import {Card} from "@/app/ui/card";
+import {Card} from "@/app/ui/general/card";
 import {fetchContentOverview} from "@/app/lib/base-repo/data";
 import {formatNumber, humanFileSize} from "@/app/lib/utils";
 
-export default async function SystemStats() {
+export default async function DataRepositoryStats() {
 
     const {uniqueUsers,
         resources,

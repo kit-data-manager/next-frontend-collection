@@ -28,7 +28,6 @@ export const formatDateToLocal = (
 };
 
 export const formatNumber = (value: number, fractionDigits:number=0) =>{
-
   return Intl.NumberFormat("de-DE", {maximumFractionDigits: fractionDigits}).format(value);
 }
 

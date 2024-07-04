@@ -1,4 +1,5 @@
 import {DataResource, Tag} from "@/app/lib/definitions";
+import {formatDateToLocal} from "@/app/lib/utils";
 
 export const getTitle = (resource: DataResource) => {
 
@@ -21,7 +22,7 @@ export const getSubtitle = (resource: DataResource) => {
     if (resource.titles) {
         resource.titles.map((title, i) => {
             if (title.titleType === "SUBTITLE") {
-                subTitleValue = {"value": title.value};
+                subTitleValue = JSON.stringify({"value": title.value});
             }
         });
     }
@@ -35,18 +36,18 @@ export const getSubtitle = (resource: DataResource) => {
 
 const getCreatorsAsSubtitle = (resource: DataResource) => {
     let subTitleValue: string = '';
-    if(resource.creators) {
+    if (resource.creators) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
-                if(creator.familyName && creator.givenName){
-                    if(!subTitleValue) subTitleValue = "";
+                if (creator.familyName && creator.givenName) {
+                    if (!subTitleValue) subTitleValue = "";
                     subTitleValue += '<a href=\' https://orcid.org/orcid-search/search?firstName=' +
                         creator.givenName +
                         '&lastName=' +
                         creator.familyName + '\' target=\'_blank\'">' +
                         creator.familyName + "," + creator.givenName +
                         '</a>'
-                }else{
+                } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }
             }
@@ -56,10 +57,10 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
         });
     }
 
-    if(subTitleValue.length == 0){
+    if (subTitleValue.length == 0) {
         subTitleValue = "Anonymous User";
     }
-    return {"value":subTitleValue};
+    return JSON.stringify({"value": subTitleValue});
 }
 
 export const getDescription = (resource: DataResource) => {
@@ -71,7 +72,7 @@ export const getDescription = (resource: DataResource) => {
             }
         });
     }
-    return {"value":descriptionValue};
+    return JSON.stringify({"value": descriptionValue});
 }
 
 export const getTags = (resource: DataResource) => {
@@ -112,11 +113,6 @@ export const getTags = (resource: DataResource) => {
         tags.push({"color": "#FFCCCB", "text": "Unlicensed", "iconName": "mynaui:copyright-slash"});
     }
 
-    //embargo tag
-    if (resource.embargoDate) {
-        tags.push({"color": "#FFCCCB", "text": "Embargo", "iconName": "tdesign:secured"});
-    }
-
     return tags;
 }
 
@@ -124,8 +120,8 @@ export const getThumb = (resource: DataResource) => {
     let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
     if (resource.children && resource.children.length > 0) {
         resource.children.map((content, i) => {
-            content.tags.map((tag, i) =>{
-                if(tag.toLocaleLowerCase() === "thumb"){
+            content.tags.map((tag, i) => {
+                if (tag.toLocaleLowerCase() === "thumb") {
                     thumb = content.contentUri;
                 }
             });
@@ -135,26 +131,111 @@ export const getThumb = (resource: DataResource) => {
     return thumb;
 }
 
+export const getMetadata = (resource: DataResource) => {
+    let elements = [];
+
+    elements.push({
+        label: "ResourceType",
+        value: resource.resourceType.value + "/" + resource.resourceType.typeGeneral
+    });
+
+    if (resource.language) {
+        elements.push({
+            label: "Language",
+            value: resource.language
+        });
+    }
+
+    if (resource.dates) {
+        resource.dates.map((date, i) => {
+            if (date.type === "CREATED") {
+                elements.push({
+                    label: "Creation Date",
+                    value: formatDateToLocal(date.value)
+                });
+            }
+        });
+    }
+
+    elements.push({
+        label: "Last Update",
+        value: formatDateToLocal(resource.lastUpdate)
+    });
+
+    if (resource.embargoDate) {
+        elements.push({
+            label: "Embargo",
+            value: resource.embargoDate
+        });
+    } else {
+        elements.push({
+            label: "Embargo",
+            value: "None"
+        });
+    }
+
+    if (resource.subjects) {
+        elements.push({
+            label: "Subjects"
+        });
+        resource.subjects.map((subject, i) => {
+            if (subject.valueUri) {
+                elements.push({
+                    value: `${subject.value}`,
+                    url: subject.valueUri
+                });
+            } else {
+                elements.push({
+                    value: `${subject.value}`,
+                });
+            }
+        });
+    }
+
+    if (resource.relatedIdentifiers) {
+        elements.push({
+            label: "Related Identifiers"
+        });
+        resource.relatedIdentifiers.map((identifier, i) => {
+            if (identifier.identifierType === "URL") {
+                elements.push({
+                    value: `${identifier.relationType}`,
+                    url: identifier.value
+                });
+            }
+        });
+    }
+
+
+    return elements;
+}
+
 export const getChildren = (resource: DataResource) => {
     let children = undefined;
     if (resource.children && resource.children.length > 0) {
         children = []
         resource.children.map((content, i) => {
             let child = {};
-            child["dataTitle"] =  {"value": content.relativePath};
-            child["subTitle"] =  {"value" : content.hash};
+            let tags = [];
+
+            if (content.tags && content.tags.includes("thumb")) {
+                tags.push({
+                    "color": "#90EE90",
+                    "text": "Thumb",
+                });
+            }
+
+            child["dataTitle"] = {"value": content.relativePath};
+            child["subTitle"] = {"value": content.hash};
+            child["tags"] = JSON.stringify(tags);
             child["text-right"] = {
                 "label": content.mediaType,
                 "value": content.size + " bytes"
             };
             child["actionButtons"] = [{
-                "urlTarget": "_self",
-                "iconName": "material-symbols-light:edit-square-outline",
-                "eventIdentifier": "editContent_" + resource.id + "_" + content.relativePath
-            }, {
+                "label": "Download",
                 "iconName": "material-symbols-light:download",
-                "urlTarget": "_blank",
-                "eventIdentifier": "downloadContent_" + resource.id + "_" + content.relativePath
+                "url": `http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`
             }];
 
             children.push(child);

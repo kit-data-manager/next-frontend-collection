@@ -3,29 +3,47 @@ import {Pool} from "pg";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
 import {DataResource} from "@/app/lib/definitions";
+import {promises as fs} from 'fs';
 
 
-export async function fetchDataResources(page:string, size:string){
+export async function fetchDataResources(page: Number, size: Number) {
     noStore()
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page}&size=${size}&sort=lastUpdate,desc`).
-        then(function(response){
-           return response.json();
-        });
-
-        return res;
+        const result = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`).then(response => response.json());
+        return result;
     } catch (error) {
         console.error('Service Error:', error);
         throw new Error('Failed to fetch data resources.');
     }
 }
 
-export async function fetchDataResourcePages(size){
+export async function loadContent(resource: DataResource) {
+    const finalResource = await fetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
+        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(response => response.json()).then(json => {
+        resource.children = json;
+        return resource;
+    });
+
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    return finalResource;
+}
+
+export async function updateThumbState(id: string, path: string, addRemove:boolean){
+    if(addRemove){
+        console.log("Add thumb state ", id, "/data/", path);
+    }else{
+        console.log("Remove thumb state ", id, "/data/", path);
+    }
+}
+
+
+export async function fetchDataResourcePages(size) {
     noStore()
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`).then(function(response){
+        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`).then(function (response) {
             const rangeHeader = response.headers.get("Content-Range");
-            const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/")+1);
+            const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1);
             const totalPages = Math.ceil(totalElements / size);
             return totalPages;
         });
@@ -36,7 +54,40 @@ export async function fetchDataResourcePages(size){
     }
 }
 
-export async function fetchActuatorInfo(){
+export async function fetchDataResource(id: string) {
+    noStore()
+    try {
+        const result = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+            {headers: {"Accept": "application/json"}}).then(response => response.json());
+
+        return result;
+    } catch (error) {
+        console.error('Service Error:', error);
+        throw new Error('Failed to fetch data resources.');
+    }
+}
+
+export async function fetchDataResourceEtag(id: string) {
+    noStore()
+    try {
+        const result = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+            {headers: {"Accept": "application/json"}}).then(response => {
+            return response.headers.get("ETag");
+        });
+
+        return result;
+    } catch (error) {
+        console.error('Service Error:', error);
+        throw new Error('Failed to fetch data resources.');
+    }
+}
+
+export async function loadSchema(schemaPath: string) {
+    const file = await fs.readFile(process.cwd() + "/" + schemaPath, 'utf8').then(result => JSON.parse(result));
+    return file;
+}
+
+export async function fetchActuatorInfo() {
     noStore()
 
     let database = "unknown";
@@ -57,19 +108,19 @@ export async function fetchActuatorInfo(){
         harddiskStatus = res.components.diskSpace.status;
         rabbitMqStatus = res.components.rabbitMQMessagingService.status;
         rabbitMq = "unknown";
-        if(res.components.hasOwnProperty("rabbit") &&
+        if (res.components.hasOwnProperty("rabbit") &&
             res.components.rabbit.hasOwnProperty("details") &&
-            res.components.rabbit.details.hasOwnProperty("version")){
+            res.components.rabbit.details.hasOwnProperty("version")) {
             rabbitMq = res.components.rabbit.details.version;
         }
         elasticStatus = "unknown";
         elastic = "unknown";
-        if(res.components.hasOwnProperty("elasticsearch") &&
+        if (res.components.hasOwnProperty("elasticsearch") &&
             res.components.elasticsearch.hasOwnProperty("status") &&
             res.components.elasticsearch.hasOwnProperty("details") &&
-            res.components.elasticsearch.details.hasOwnProperty("status")){
-             elasticStatus = res.components.elasticsearch.status;
-             elastic = res.components.elasticsearch.details.status;
+            res.components.elasticsearch.details.hasOwnProperty("status")) {
+            elasticStatus = res.components.elasticsearch.status;
+            elastic = res.components.elasticsearch.details.status;
         }
     } catch (error) {
         console.error('Failed to fetch actuator info. Service Error:', error);
@@ -100,11 +151,11 @@ export async function fetchContentOverview() {
 
     try {
         const client = new Pool({
-            user:process.env.DB_USER,
-            host:process.env.DB_HOST,
-            database:process.env.DB_NAME,
-            password:process.env.DB_PASSWORD,
-            port:process.env.DB_PORT
+            user: process.env.DB_USER,
+            host: process.env.DB_HOST,
+            database: process.env.DB_NAME,
+            password: process.env.DB_PASSWORD,
+            port: process.env.DB_PORT
         })
 
         //build queries
@@ -152,11 +203,11 @@ export async function fetchLatestActivities() {
 
     try {
         const client = new Pool({
-            user:process.env.DB_USER,
-            host:process.env.DB_HOST,
-            database:process.env.DB_NAME,
-            password:process.env.DB_PASSWORD,
-            port:process.env.DB_PORT
+            user: process.env.DB_USER,
+            host: process.env.DB_HOST,
+            database: process.env.DB_NAME,
+            password: process.env.DB_PASSWORD,
+            port: process.env.DB_PORT
         })
 
         const activities = await client.query(' \

@@ -1,28 +1,12 @@
-//'use client'
-import {useState} from 'react';
-
 import {
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
-import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
-import Pagination from "@/app/ui/invoices/pagination";
-import useSWR from "swr";
-import {DataResource} from "@/app/lib/definitions";
-import {
-    getDescription,
-    getSubtitle,
-    getTitle,
-    getTags,
-    getThumb
-} from "@/app/lib/base-repo/datacard-utils";
-import {redirect, useRouter} from "next/navigation";
-import {useDebouncedCallback } from 'use-debounce';
-import {eventIdentifierToPath} from "@/app/lib/utils";
-import {DataCard} from "data-card-react";
-import NextDataCard from "@/app/ui/general/datacard";
-import {fetchDataResourcePages, fetchDataResources} from "@/app/lib/base-repo/data";
-import {revalidatePath} from "next/cache";
+import Breadcrumbs from "@/app/ui/general/breadcrumbs";
 import Link from "next/link";
+import {InvoicesTableSkeleton, ListingSkeleton} from "@/app/ui/skeletons";
+import { Suspense } from 'react';
+import DataResourceListing from "@/app/ui/dataresources/data-resource-listing";
+
 
 export default async function Page({ searchParams }: {
     searchParams?: {
@@ -31,31 +15,9 @@ export default async function Page({ searchParams }: {
         page?: string;
     };
 }) {
-    const page = searchParams.page ?  searchParams.page : 1;
-    const size =  searchParams.size ?  searchParams.size : 10;
-   // const [totalPages, setTotalPages] = useState(0);
-   // const { replace } = useRouter();
-//let totalPages = 1;
-    /*const handleAction = useDebouncedCallback((event) => {
-        const eventIdentifier:string = event.detail.eventIdentifier;
-        replace(eventIdentifierToPath(eventIdentifier));
-    });*/
+    const page:Number = searchParams.page ?  Number.parseInt(searchParams.page) : 1;
+    const size =  searchParams.size ?  Number.parseInt(searchParams.size) : 10;
 
-    /*const setState = (rangeHeader: string) => {
-        if(rangeHeader) {
-            let totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/")+1);
-            totalPages = Math.ceil(totalElements / size);
-        }
-    }*/
-
-   /* const fetcher = (url:string) => fetch(url).then(function(response){
-        setState(response.headers.get("Content-Range"));
-        return response.json();
-    });*/
-
-    function confirmCreateResource() {
-        redirect('/base-repo/resources/create');
-    }
 /*
     let resources = [{
         id: "test",
@@ -65,9 +27,6 @@ export default async function Page({ searchParams }: {
         publicationYear: 2024
     }]*/
 
-    const resources = await fetchDataResources(page, size);
-    const totalPages = await fetchDataResourcePages(size);
-    console.log(totalPages);
 
     return (
         <main>
@@ -88,20 +47,9 @@ export default async function Page({ searchParams }: {
                     <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                 </Link>
                 </div>
-                <div className="block min-w-full">
-                    <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-                        {resources.map((resource:DataResource, i:number) => {
-                            return (
-                                <NextDataCard key={i} id={resource.id} titles={resource.titles} creators={resource.creators} publisher={resource.publisher} publicationYear={resource.publicationYear}
-                                                  descriptions={resource.descriptions} acls={resource.acls} rights={resource.rights} embargoDate={resource.embargoDate} state={resource.state}/>
-
-                            );
-                        })}
-                    </div>
-                    <div className="mt-5 flex w-full justify-center">
-                    <Pagination totalPages={totalPages}/>
-                    </div>
-                </div>
+                <Suspense key={"test"} fallback={<ListingSkeleton />}>
+                    <DataResourceListing page={page} size={size}/>
+                </Suspense>
             </div>
         </main>
     );

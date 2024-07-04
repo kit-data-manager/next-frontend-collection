@@ -1,41 +1,21 @@
-'use client'
+import Breadcrumbs from '@/app/ui/general/breadcrumbs';
+import DataResourceEditor from '@/app/ui/dataresources/data-resource-editor'
+import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/app/lib/base-repo/data";
+import Popup from "@/app/ui/general/popup";
+import React from "react";
+import { ToastContainer } from 'react-toastify';
 
-import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import Editor from "@/app/ui/dataresources/editor"
-import useSWR from "swr";
-import BuildView from "@/app/ui/dataresources/editor2";
-import {useState} from "react";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
-    const [etag, setEtag] = useState("");
+        const [resource, etag, schema] = await Promise.all([
+        fetchDataResource(id),
+        fetchDataResourceEtag(id),
+        loadSchema("public/definitions/base-repo/models/resourceModel.json")]);
+        let contentPromise = loadContent(resource);
+        const [content] = await Promise.all([contentPromise]);
 
-    const fetcher = (url:string) => fetch(url).then(function(response){
-        console.log("Fetch")
-        setEtag(response.headers.get("ETag"));
-        console.log("Set ETag ", etag)
-        return response.json();
-    });
-
-    const res = fetch("/base-repo/api?id=" + id);
-    console.log("RESULT ", res.jsonResource);
-
-    const { data: resource,isLoading:resourceLoading, isError: resourceError  } = useSWR("http://localhost:8081/api/v1/dataresources/" + id, fetcher);
-    const { data: schema, isLoading:schemaLoading, isError: schemaError  } = useSWR("http://localhost:3000/definitions/base-repo/models/resourceModel.json", fetcher);
-
-    if (resourceError || schemaError) {
-        return <p>Failed to fetch</p>;
-    }
-
-    if (resourceLoading || schemaLoading) {
-        return <p>Loading resource...</p>;
-    }
-
-    if (!resource || !schema) {
-        return <p>Failed to load resource.</p>;
-    }
-
-    return (
+        return (
         <main>
             <Breadcrumbs
                 breadcrumbs={[
@@ -51,10 +31,12 @@ export default async function Page({ params }: { params: { id: string } }) {
             <div className="mt-6 flow-root">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-                        <Editor schema={schema} data={resource} etag={etag}/>
+                        <DataResourceEditor schema={schema} data={resource} content={content.children} etag={etag}/>
                     </div>
                 </div>
             </div>
+            <Popup/>
+            <ToastContainer />
         </main>
     );
 }
