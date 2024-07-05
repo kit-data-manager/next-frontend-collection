@@ -3,9 +3,15 @@ import {inter, lusitana} from '@/app/ui/fonts';
 import {Suspense} from "react";
 import {CardsSkeleton} from "@/app/ui/skeletons";
 import OverallStatusCardWrapper from "@/app/ui/dashboard/system-status-cards";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
-export default function Page() {
-    const username = "anonymous";
+export default async function Page() {
+    let username = "anonymous";
+    const session = await getServerSession(authOptions)
+    if (session) {
+        username = session.user ? session.user.name : "anonymous";
+    }
 
     return (
         <main className="flex min-h-screen flex-col p-6">

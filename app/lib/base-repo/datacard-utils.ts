@@ -41,12 +41,7 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
                 if (creator.familyName && creator.givenName) {
                     if (!subTitleValue) subTitleValue = "";
-                    subTitleValue += '<a href=\' https://orcid.org/orcid-search/search?firstName=' +
-                        creator.givenName +
-                        '&lastName=' +
-                        creator.familyName + '\' target=\'_blank\'">' +
-                        creator.familyName + "," + creator.givenName +
-                        '</a>'
+                    subTitleValue += `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="myclass" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank">${creator.familyName}, ${creator.givenName}</a>`
                 } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }
@@ -60,7 +55,7 @@ const getCreatorsAsSubtitle = (resource: DataResource) => {
     if (subTitleValue.length == 0) {
         subTitleValue = "Anonymous User";
     }
-    return JSON.stringify({"value": subTitleValue});
+    return subTitleValue;
 }
 
 export const getDescription = (resource: DataResource) => {

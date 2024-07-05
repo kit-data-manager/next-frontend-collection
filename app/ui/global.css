@@ -12,6 +12,13 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
+data-card::part(myclass){
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+}
+
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
