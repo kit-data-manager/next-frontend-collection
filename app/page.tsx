@@ -1,17 +1,24 @@
 import AcmeLogo from '@/app/ui/acme-logo';
 import {inter, lusitana} from '@/app/ui/fonts';
-import {Suspense} from "react";
+import React, {Suspense} from "react";
 import {CardsSkeleton} from "@/app/ui/skeletons";
 import OverallStatusCardWrapper from "@/app/ui/dashboard/system-status-cards";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {ToastContainer} from "react-toastify";
 
 export default async function Page() {
     let username = "anonymous";
-    const session = await getServerSession(authOptions)
-    if (session) {
-        username = session.user ? session.user.name : "anonymous";
+    let session = undefined;
+    let authError = false;
+    try {
+        session = await getServerSession(authOptions)
+    } catch (error) {
+        console.log("Session error");
+         authError = true;
     }
+
+        username = (!authError && session.user) ? session.user.name : "Anonymous User";
 
     return (
         <main className="flex min-h-screen flex-col p-6">

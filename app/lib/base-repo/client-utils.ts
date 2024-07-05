@@ -2,7 +2,6 @@
 
 import {ContentInformation, DataResource} from "@/app/lib/definitions";
 import {toast} from "react-toastify";
-import {Router} from "next/router";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export function removeTagFromContent(element:ContentInformation, tag:string, redirectPath?:string){

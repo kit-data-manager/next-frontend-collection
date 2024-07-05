@@ -2,6 +2,7 @@ import {DataResource} from "@/app/lib/definitions";
 import Pagination from "@/app/ui/general/pagination";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/app/lib/base-repo/data";
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
+import {notFound} from "next/navigation";
 
 export default async function DataResourceListing({page,size}: {
     page: number;
@@ -13,6 +14,10 @@ export default async function DataResourceListing({page,size}: {
         fetchDataResources(page, size),
         fetchDataResourcePages(size)
     ]);
+
+    if(!resources){
+        notFound();
+    }
 
     //load content for all resources
     const resourcesWithContent = resources.map((element:DataResource) => {

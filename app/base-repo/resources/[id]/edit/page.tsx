@@ -1,26 +1,30 @@
 import Breadcrumbs from '@/app/ui/general/breadcrumbs';
 import DataResourceEditor from '@/app/ui/dataresources/data-resource-editor'
 import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/app/lib/base-repo/data";
-import Popup from "@/app/ui/general/popup";
 import React from "react";
-import { ToastContainer } from 'react-toastify';
+import {notFound} from "next/navigation";
+import {ToastContainer} from "react-toastify";
 
-
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({params}: { params: { id: string } }) {
     const id = params.id;
-        const [resource, etag, schema] = await Promise.all([
+    const [resource, etag, schema] = await Promise.all([
         fetchDataResource(id),
         fetchDataResourceEtag(id),
         loadSchema("public/definitions/base-repo/models/resourceModel.json")]);
-        let contentPromise = loadContent(resource);
-        const [content] = await Promise.all([contentPromise]);
 
-        return (
+    if (!resource) {
+        notFound();
+    }
+
+    let contentPromise = loadContent(resource);
+    const [content] = await Promise.all([contentPromise]);
+
+    return (
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Overview', href: '/base-repo' },
-                    { label: 'Resources', href: '/base-repo/resources' },
+                    {label: 'Overview', href: '/base-repo'},
+                    {label: 'Resources', href: '/base-repo/resources'},
                     {
                         label: `Edit Resource #${id}`,
                         href: `/base-repo/resources/${id}/edit`,
@@ -35,8 +39,8 @@ export default async function Page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
             </div>
-            <Popup/>
-            <ToastContainer />
+            <ToastContainer/>
+
         </main>
     );
 }

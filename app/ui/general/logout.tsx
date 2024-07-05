@@ -1,0 +1,9 @@
+"use client"
+
+import federatedLogout from "@/app/lib/federatedLogout";
+
+export default function Logout() {
+    return <button onClick={() => federatedLogout()}>
+       Logout
+    </button>
+}

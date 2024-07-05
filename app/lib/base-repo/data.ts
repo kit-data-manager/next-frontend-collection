@@ -9,30 +9,30 @@ import {promises as fs} from 'fs';
 export async function fetchDataResources(page: Number, size: Number) {
     noStore()
     try {
-        const result = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`).then(response => response.json());
-        return result;
+        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
+        const data = await result.json();
+
+        return data;
     } catch (error) {
         console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resources.');
+        return undefined;
     }
 }
 
 export async function loadContent(resource: DataResource) {
-    const finalResource = await fetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
-        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(response => response.json()).then(json => {
-        resource.children = json;
-        return resource;
-    });
+    const response = await myFetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
+        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}});
 
-    //await new Promise((resolve) => setTimeout(resolve, 3000));
+    const json = await response.json();
 
-    return finalResource;
+    resource.children = json;
+    return resource;
 }
 
-export async function updateThumbState(id: string, path: string, addRemove:boolean){
-    if(addRemove){
+export async function updateThumbState(id: string, path: string, addRemove: boolean) {
+    if (addRemove) {
         console.log("Add thumb state ", id, "/data/", path);
-    }else{
+    } else {
         console.log("Remove thumb state ", id, "/data/", path);
     }
 }
@@ -41,44 +41,44 @@ export async function updateThumbState(id: string, path: string, addRemove:boole
 export async function fetchDataResourcePages(size) {
     noStore()
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`).then(function (response) {
-            const rangeHeader = response.headers.get("Content-Range");
-            const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1);
-            const totalPages = Math.ceil(totalElements / size);
-            return totalPages;
-        });
-        return res;
+        const response = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`)
+        const rangeHeader = await response.headers.get("Content-Range");
+        const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1);
+        const totalPages = Math.ceil(totalElements / size);
+        return totalPages;
     } catch (error) {
-        console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resources.');
+        console.error('Failed to fetch resource page count. Error:', error);
+        return undefined;
     }
 }
 
 export async function fetchDataResource(id: string) {
     noStore()
     try {
-        const result = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`,
-            {headers: {"Accept": "application/json"}}).then(response => response.json());
+        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+            {headers: {"Accept": "application/json"}});
 
-        return result;
+        const data = await result.json();
+
+        return data;
     } catch (error) {
-        console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resources.');
+        console.error('Failed to fetch resource. Error:', error);
+        return undefined;
     }
 }
 
 export async function fetchDataResourceEtag(id: string) {
     noStore()
     try {
-        const result = await fetch(`http://localhost:8081/api/v1/dataresources/${id}`,
-            {headers: {"Accept": "application/json"}}).then(response => {
-            return response.headers.get("ETag");
-        });
+        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+            {headers: {"Accept": "application/json"}});
 
-        return result;
+        const etag = await result.headers.get("ETag");
+
+        return etag;
     } catch (error) {
-        console.error('Service Error:', error);
-        throw new Error('Failed to fetch data resources.');
+        console.error('Failed to fetch resource ETag. Error:', error);
+        return undefined;
     }
 }
 
@@ -100,30 +100,32 @@ export async function fetchActuatorInfo() {
     let elastic = "unknown";
 
     try {
-        const res = await fetch(`http://localhost:8081/actuator/health`).then(res => res.json());
+        const response = await myFetch(`http://localhost:8081/actuator/health`);
 
-        database = res.components.db.details.database;
-        databaseStatus = res.components.db.status;
-        harddisk = res.components.diskSpace.details.free;
-        harddiskStatus = res.components.diskSpace.status;
-        rabbitMqStatus = res.components.rabbitMQMessagingService.status;
+        const json = await response.json();
+
+        database = json.components.db.details.database;
+        databaseStatus = json.components.db.status;
+        harddisk = json.components.diskSpace.details.free;
+        harddiskStatus = json.components.diskSpace.status;
+        rabbitMqStatus = json.components.rabbitMQMessagingService.status;
         rabbitMq = "unknown";
-        if (res.components.hasOwnProperty("rabbit") &&
-            res.components.rabbit.hasOwnProperty("details") &&
-            res.components.rabbit.details.hasOwnProperty("version")) {
-            rabbitMq = res.components.rabbit.details.version;
+        if (json.components.hasOwnProperty("rabbit") &&
+            json.components.rabbit.hasOwnProperty("details") &&
+            json.components.rabbit.details.hasOwnProperty("version")) {
+            rabbitMq = json.components.rabbit.details.version;
         }
         elasticStatus = "unknown";
         elastic = "unknown";
-        if (res.components.hasOwnProperty("elasticsearch") &&
-            res.components.elasticsearch.hasOwnProperty("status") &&
-            res.components.elasticsearch.hasOwnProperty("details") &&
-            res.components.elasticsearch.details.hasOwnProperty("status")) {
-            elasticStatus = res.components.elasticsearch.status;
-            elastic = res.components.elasticsearch.details.status;
+        if (json.components.hasOwnProperty("elasticsearch") &&
+            json.components.elasticsearch.hasOwnProperty("status") &&
+            json.components.elasticsearch.hasOwnProperty("details") &&
+            json.components.elasticsearch.details.hasOwnProperty("status")) {
+            elasticStatus = json.components.elasticsearch.status;
+            elastic = json.components.elasticsearch.details.status;
         }
     } catch (error) {
-        console.error('Failed to fetch actuator info. Service Error:', error);
+        console.error('Failed to fetch actuator info. Error:', error);
     }
 
     return {
@@ -221,9 +223,9 @@ export async function fetchLatestActivities() {
                 jv_snapshot as sna, \
                 jv_commit as com \
             WHERE \
-                com.commit_pk = sna.global_id_fk AND \
+                com.commit_pk = sna.commit_fk AND \
                 sna.managed_type IN (\'edu.kit.datamanager.repo.domain.ContentInformation\', \'edu.kit.datamanager.repo.domain.DataResource\') \
-            LIMIT 6');
+            ORDER BY com.commit_date DESC LIMIT 6');
         return activities.rows;
     } catch (error) {
         console.error('Failed to fetch latest activities. Database Error:', error);
@@ -276,3 +278,17 @@ export async function fetchLatestActivities() {
     }
 }
 
+class ResponseError extends Error {
+    constructor(message, res) {
+        super(message);
+        this.response = res;
+    }
+}
+
+export async function myFetch(...options) {
+    const res = await fetch(...options);
+    if (!res.ok) {
+        throw new ResponseError('Bad fetch response', res);
+    }
+    return res;
+}
