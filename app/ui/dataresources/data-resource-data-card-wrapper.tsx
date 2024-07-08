@@ -13,6 +13,8 @@ import {useDebouncedCallback} from "use-debounce";
 import {eventIdentifierToPath} from "@/app/lib/utils";
 import {useRouter} from "next/navigation";
 
+import {ValueLabelObj} from "d"
+
 export default function DataResourceDataCardWrapper(props) {
     const {replace} = useRouter();
     const key = props.key;
@@ -24,16 +26,8 @@ export default function DataResourceDataCardWrapper(props) {
         replace(eventIdentifierToPath(eventIdentifier));
     });
 
-    let buttons = [{
-        "label": "Edit",
-        "iconName": "material-symbols-light:edit-square-outline",
-        "eventIdentifier": "editResource_" + data.id,
-    },
-        {
-            "label": "Download",
-            "iconName": "material-symbols-light:download",
-            "eventIdentifier": "downloadResource_" + data.id,
-        }];
+
+    let buttons = [];
 
     if (variant != "detailed") {
         buttons.push({
@@ -42,6 +36,18 @@ export default function DataResourceDataCardWrapper(props) {
             "eventIdentifier": "viewResource_" + data.id,
         });
     }
+
+    buttons.push({
+            "label": "Edit",
+            "iconName": "material-symbols-light:edit-square-outline",
+            "eventIdentifier": "editResource_" + data.id,
+        },
+        {
+            "label": "Download",
+            "iconName": "material-symbols-light:download",
+            "eventIdentifier": "downloadResource_" + data.id,
+        });
+
 
     return (
         <div>
