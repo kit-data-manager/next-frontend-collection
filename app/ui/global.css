@@ -40,7 +40,6 @@ data-card::part(detailed_value){
   margin-left: 4px;
 }
 
-
 data-card::part(detailed-card-container){
   background-color: var(--lighterBG);
 }
@@ -51,6 +50,14 @@ data-card::part(card-container){
   border-width: 0.1em;
   margin-bottom:6px;
 }
+
+data-card::part(child-data-card){
+  border-color: var(--darkerBG);
+  border-style: solid;
+  border-width: 0.1em;
+  margin-bottom:6px;
+}
+ww
 data-card::part(image-wrapper) {
   box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }

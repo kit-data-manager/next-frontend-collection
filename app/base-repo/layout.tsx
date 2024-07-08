@@ -1,6 +1,5 @@
 import SideNavDataResources from "@/app/ui/dataresources/data-resource-side-nav";
 import React from "react";
-import Popup from "@/app/ui/general/popup";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
