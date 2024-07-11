@@ -10,7 +10,7 @@ import {
 import {lusitana} from '@/app/ui/fonts';
 import {Card} from "@/app/ui/general/card";
 import {fetchContentOverview} from "@/app/lib/base-repo/data";
-import {formatNumber, humanFileSize} from "@/app/lib/utils";
+import {formatNumber, humanFileSize} from "@/app/lib/format-utils";
 
 export default async function DataRepositoryStats() {
 

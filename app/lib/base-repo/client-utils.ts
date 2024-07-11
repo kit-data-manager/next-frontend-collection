@@ -76,7 +76,7 @@ export function assignTagToContent(element:ContentInformation, tag:string, redir
     fetcher(`http://localhost:8081/api/v1/dataresources/${element.parentResource.id}/data/${element.relativePath}`);
 }
 
-export function updateDataResource(resource:JSON, etag:string, router?:AppRouterInstance, redirectPath?:string){
+export function updateDataResource(resource:object, etag:string){
     const fetcher = (url:string) => fetch(url, {
         method: "PUT",
         headers: {
@@ -84,52 +84,15 @@ export function updateDataResource(resource:JSON, etag:string, router?:AppRouter
             "If-Match": etag
         },
         body: JSON.stringify(resource)
-    }).then(function(response){
+    }).then(response => {
         return response.status
-    }).then((status) => {
-        if(status == 200) {
-            toast.info("Resource successfully updated.", {
-                "onClose": () => {
-                    if (router && redirectPath) {
-                        router.push('/base-repo/resources');
-                        router.refresh();
-                    }
-                }
-            });
-        }else{
-            toast.error("Failed to update resource. Status: " + status);
-        }
-    })
+    });
 
     return fetcher("http://localhost:8081/api/v1/dataresources/" + resource["id"]);
 }
 
 export function deleteContent(element:ContentInformation, redirectPath?:string){
-    const fetcher = (url:string) => fetch(url,
-        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(response => {
-        return response.headers.get("ETag");
-    }).then( etag => {
-        return fetch(url, {
-            method: "DELETE",
-            headers: {
-                "If-Match": etag
-            },
-        }).then(function(response){
-            return response.status;
-        });
-    }).then(status => {
-        if(status == 204) {
-            toast.info("Content " + element.relativePath + " successfully removed.",{
-                "onClose": () =>{
-                    if(redirectPath) {
-                        window.document.location = redirectPath;
-                    }
-                }
-            });
-        }else{
-            toast.error("Failed to remove content. Status: " + status);
-        }
-    });
-
-    fetcher(`http://localhost:8081/api/v1/dataresources/${element.parentResource.id}/data/${element.relativePath}`);
+    return fetch(`http://localhost:3000/api/delete?resourceId=${element.parentResource.id}&filename=${element.relativePath}`).then(response => {
+      return response.status;
+    })
 }

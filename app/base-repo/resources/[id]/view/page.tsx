@@ -3,6 +3,7 @@ import {notFound} from "next/navigation";
 import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/app/lib/base-repo/data";
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
 import React from "react";
+import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/app/lib/event-utils";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
@@ -16,7 +17,10 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     //load content for all resources
     const resourcesWithContent =  await loadContent(resource);
-
+    const actionEvents = [
+        editEventIdentifier(id),
+        downloadEventIdentifier(id)
+    ];
     return (
         <main>
             <Breadcrumbs
@@ -34,7 +38,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 <div className="block min-w-full min-h-full align-middle">
                     <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
                         <div>
-                            <DataResourceDataCardWrapper key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"}></DataResourceDataCardWrapper>
+                            <DataResourceDataCardWrapper key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"} actionEvents={actionEvents}></DataResourceDataCardWrapper>
                         </div>
                     </div>
                 </div>

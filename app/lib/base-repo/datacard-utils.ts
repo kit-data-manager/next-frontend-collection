@@ -1,7 +1,8 @@
-import {DataResource, Tag} from "@/app/lib/definitions";
-import {formatDateToLocal} from "@/app/lib/utils";
+import {ContentInformation, DataResource, Tag} from "@/app/lib/definitions";
+import {formatDateToLocal, humanFileSize} from "@/app/lib/format-utils";
+import {deleteContentEventIdentifier, getActionButton} from "@/app/lib/event-utils";
 
-export const getTitle = (resource: DataResource) => {
+export const titleForDataResource = (resource: DataResource) => {
 
     let titleValue = {"value": "Resource #" + resource.id};
     if (resource.titles) {
@@ -17,7 +18,7 @@ export const getTitle = (resource: DataResource) => {
     return JSON.stringify(titleValue);
 }
 
-export const getSubtitle = (resource: DataResource) => {
+export const subtitleForDataResource = (resource: DataResource) => {
     let subTitleValue = undefined;
     if (resource.titles) {
         resource.titles.map((title, i) => {
@@ -28,37 +29,13 @@ export const getSubtitle = (resource: DataResource) => {
     }
 
     if (!subTitleValue) {
-        subTitleValue = getCreatorsAsSubtitle(resource);
+        subTitleValue = generateSubtitleFromCreator(resource);
     }
 
     return subTitleValue;
 }
 
-const getCreatorsAsSubtitle = (resource: DataResource) => {
-    let subTitleValue: string = '';
-    if (resource.creators) {
-        resource.creators.map((creator, i) => {
-            if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
-                if (creator.familyName && creator.givenName) {
-                    if (!subTitleValue) subTitleValue = "";
-                    subTitleValue += `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="myclass" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank">${creator.familyName}, ${creator.givenName}</a>`
-                } else {
-                    subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
-                }
-            }
-            if (i < resource.creators.length - 1) {
-                subTitleValue += ", ";
-            }
-        });
-    }
-
-    if (subTitleValue.length == 0) {
-        subTitleValue = "Anonymous User";
-    }
-    return subTitleValue;
-}
-
-export const getDescription = (resource: DataResource) => {
+export const descriptionForDataResource = (resource: DataResource) => {
     let descriptionValue = "No description available.";
     if (resource.descriptions) {
         resource.descriptions.map((description, i) => {
@@ -70,7 +47,11 @@ export const getDescription = (resource: DataResource) => {
     return JSON.stringify({"value": descriptionValue});
 }
 
-export const getTags = (resource: DataResource) => {
+export const rightTextForDataResource = (resource: DataResource) => {
+    return JSON.stringify({'label': resource.publisher, 'value': resource.publicationYear});
+}
+
+export const tagsForDataResource = (resource: DataResource) => {
     //state tags
     let tags: Tag[] = [];
     if (resource.state === "VOLATILE") {
@@ -111,7 +92,7 @@ export const getTags = (resource: DataResource) => {
     return tags;
 }
 
-export const getThumb = (resource: DataResource) => {
+export const thumbForDataResource = (resource: DataResource) => {
     let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
     if (resource.children && resource.children.length > 0) {
         resource.children.map((content, i) => {
@@ -126,7 +107,7 @@ export const getThumb = (resource: DataResource) => {
     return thumb;
 }
 
-export const getMetadata = (resource: DataResource) => {
+export const metadataForDataResource = (resource: DataResource) => {
     let elements = [];
 
     elements.push({
@@ -205,35 +186,17 @@ export const getMetadata = (resource: DataResource) => {
     return elements;
 }
 
-export const getChildren = (resource: DataResource) => {
+export const childrenForDataResource = (resource: DataResource) => {
     let children = undefined;
     if (resource.children && resource.children.length > 0) {
         children = []
         resource.children.map((content, i) => {
-            let child = {};
-            let tags = [];
+            let actionButtons = [
+                getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
+            ];
 
-            if (content.tags && content.tags.includes("thumb")) {
-                tags.push({
-                    "color": "#90EE90",
-                    "text": "Thumb",
-                });
-            }
-
-            child["dataTitle"] = {"value": content.relativePath};
-            child["subTitle"] = {"value": content.hash};
-            child["tags"] = JSON.stringify(tags);
-            child["text-right"] = {
-                "label": content.mediaType,
-                "value": content.size + " bytes"
-            };
-            child["actionButtons"] = [{
-                "label": "Download",
-                "iconName": "material-symbols-light:download",
-                "url": `http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`
-            }];
-
-            children.push(child);
+            console.log("CHILD BITTON ", actionButtons);
+            children.push(propertiesForContentInformation(resource.id, content, actionButtons));
         });
         return JSON.stringify(children);
     }
@@ -241,5 +204,68 @@ export const getChildren = (resource: DataResource) => {
     return children;
 }
 
+export const propertiesForDataResource = (resource: DataResource) => {
+    return {
+        "data-title": titleForDataResource(resource),
+        "sub-title": subtitleForDataResource(resource),
+        "image-url": thumbForDataResource(resource),
+        "body-text": descriptionForDataResource(resource),
+        "textRight": rightTextForDataResource(resource),
+        "metadata": metadataForDataResource(resource),
+        "children-data": childrenForDataResource(resource),
+        "tags": tagsForDataResource(resource),
+    }
+}
+
+export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: object[]) => {
+    let tags = [];
+    if (content.tags && content.tags.includes("thumb")) {
+        tags.push({
+            "color": "#90EE90",
+            "text": "Thumb",
+        });
+    }
+
+    if (actionButtons) {
+        return {
+            "data-title": JSON.stringify({value: content.relativePath}),
+            "sub-title": JSON.stringify({value: content.hash}),
+            "textRight": JSON.stringify({label: content.mediaType, value: humanFileSize(content.size)}),
+            "tags": JSON.stringify(tags),
+            "actionButtons": actionButtons
+        }
+    } else {
+        return {
+            "data-title": JSON.stringify({value: content.relativePath}),
+            "sub-title": JSON.stringify({value: content.hash}),
+            "textRight": JSON.stringify({label: content.mediaType, value: humanFileSize(content.size)}),
+            "tags": JSON.stringify(tags)
+        }
+    }
+}
+
+function generateSubtitleFromCreator(resource: DataResource) {
+    let subTitleValue: string = '';
+    if (resource.creators) {
+        resource.creators.map((creator, i) => {
+            if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
+                if (creator.familyName && creator.givenName) {
+                    if (!subTitleValue) subTitleValue = "";
+                    subTitleValue += `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="myclass" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank">${creator.familyName}, ${creator.givenName}</a>`
+                } else {
+                    subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
+                }
+            }
+            if (i < resource.creators.length - 1) {
+                subTitleValue += ", ";
+            }
+        });
+    }
+
+    if (subTitleValue.length == 0) {
+        subTitleValue = "Anonymous User";
+    }
+    return subTitleValue;
+}
 
 

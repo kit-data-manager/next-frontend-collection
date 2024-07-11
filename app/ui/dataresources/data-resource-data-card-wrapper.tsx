@@ -1,25 +1,24 @@
 'use client'
 
 import {DataCard} from "data-card-react";
-import {
-    getChildren,
-    getDescription, getMetadata,
-    getSubtitle,
-    getTags,
-    getThumb,
-    getTitle
-} from "@/app/lib/base-repo/datacard-utils";
+import {propertiesForContentInformation, propertiesForDataResource} from "@/app/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
-import {eventIdentifierToPath} from "@/app/lib/utils";
 import {useRouter} from "next/navigation";
 
-import {ValueLabelObj} from "d"
+import {
+    downloadEventIdentifier,
+    editEventIdentifier,
+    eventIdentifierToPath, getActionButton,
+    viewEventIdentifier
+} from "@/app/lib/event-utils";
 
 export default function DataResourceDataCardWrapper(props) {
     const {replace} = useRouter();
     const key = props.key;
     const data = props.data;
     const variant = props.variant ? props.variant : "default";
+    const childVariant = props.children-variant ? props.children-variant : "default";
+    const actionEvents = props.actionEvents ? props.actionEvents : [];
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
@@ -29,43 +28,25 @@ export default function DataResourceDataCardWrapper(props) {
 
     let buttons = [];
 
-    if (variant != "detailed") {
-        buttons.push({
-            "label": "View",
-            "iconName": "material-symbols-light:edit-square-outline",
-            "eventIdentifier": "viewResource_" + data.id,
-        });
+    actionEvents.map((eventIdentifier) => {
+        buttons.push(getActionButton(eventIdentifier));
+    })
+
+    let miscProperties = undefined;
+    if(data.hasOwnProperty("titles")){
+        miscProperties = propertiesForDataResource(data);
+    }else{
+        miscProperties = propertiesForContentInformation(data.parentResource.id, data);
     }
-
-    buttons.push({
-            "label": "Edit",
-            "iconName": "material-symbols-light:edit-square-outline",
-            "eventIdentifier": "editResource_" + data.id,
-        },
-        {
-            "label": "Download",
-            "iconName": "material-symbols-light:download",
-            "eventIdentifier": "downloadResource_" + data.id,
-        });
-
-
+       
     return (
         <div>
-            <DataCard
-                variant={variant}
-                children-variant="default"
-                key={key}
-                data-title={getTitle(data)}
-                sub-title={getSubtitle(data)}
-                image-url={getThumb(data)}
-                body-text={getDescription(data)}
-                textRight={{'label': data.publisher, 'value': data.publicationYear}}
-                children-data={getChildren(data)}
-                tags={getTags(data)}
-                metadata={getMetadata(data)}
-                actionButtons={buttons}
-                onActionClick={ev => handleAction(ev)}
-            >
+            <DataCard key={key}
+                      variant={variant}
+                      children-variant={childVariant}
+                      actionButtons={buttons}
+                      onActionClick={ev => handleAction(ev)}
+                      {...miscProperties}>
             </DataCard>
         </div>
     )

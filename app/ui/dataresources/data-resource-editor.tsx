@@ -10,13 +10,22 @@ import {lusitana} from "@/app/ui/fonts";
 import {ContentInformation} from "@/app/lib/definitions";
 import {DataCard} from "data-card-react";
 import {useDebouncedCallback} from "use-debounce";
-import {humanFileSize} from "@/app/lib/utils";
 import 'react-toastify/dist/ReactToastify.css';
 import {
-    assignTagToContent, deleteContent, downloadContent,
+    assignTagToContent, deleteContent,
     removeTagFromContent,
     updateDataResource
 } from "@/app/lib/base-repo/client-utils";
+import {humanFileSize} from "@/app/lib/format-utils";
+import {
+    deleteContentEventIdentifier,
+    downloadContentEventIdentifier,
+    getActionButton,
+    REPO_EVENTS
+} from "@/app/lib/event-utils";
+import {propertiesForContentInformation} from "@/app/lib/base-repo/datacard-utils";
+import {toast} from "react-toastify";
+import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
 
 export default function DataResourceEditor(props) {
     const [confirm, setConfirm] = useState(false);
@@ -38,7 +47,19 @@ export default function DataResourceEditor(props) {
     }
 
     function doUpdateDataResource() {
-        updateDataResource(currentData, etag, router, '/base-repo/resources');
+        const redirectPath = `/base-repo/resources/${currentData.id}/view`;
+        updateDataResource(currentData, etag, router, ).then((status) => {
+            if(status == 200) {
+                toast.info("Resource successfully updated.", {
+                    "onClose": () => {
+                        router.push(redirectPath);
+                        router.refresh();
+                    }
+                });
+            }else{
+                toast.error("Failed to update resource. Status: " + status);
+            }
+        })
     }
 
     const handleAction = useDebouncedCallback((event) => {
@@ -46,14 +67,26 @@ export default function DataResourceEditor(props) {
         let parts = eventIdentifier.split("_");
         const contentIndex = Number.parseInt(parts[1]);
         const selectedContent: ContentInformation = currentContent[contentIndex];
+        const redirectPath = `/base-repo/resources/${currentData.id}/view`;
 
-        if(parts[0] === "deleteContent"){
+
+        if(parts[0] === REPO_EVENTS.DELETE_CONTENT){
             if(window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")){
-                deleteContent(selectedContent, path);
+                deleteContent(selectedContent, path).then(status => {
+                    if(status == 204) {
+                        toast.info("Content " + selectedContent.relativePath + " successfully removed.",{
+                            "onClose": () =>{
+                                router.push(redirectPath);
+                                router.refresh();
+                            }
+                        });
+                    }else{
+                        toast.error("Failed to remove content. Status: " + status);
+                    }
+                })
             }
         }else {
             //otherwise, handle add/remove thumb event
-
             currentContent.forEach((element: ContentInformation) => {
                 removeTagFromContent(element, "thumb");
             });
@@ -92,29 +125,17 @@ export default function DataResourceEditor(props) {
                             }
                         })
                     }
+                   let actionEvents=[
+                        downloadContentEventIdentifier(element.parentResource.id, element.relativePath),
+                        deleteContentEventIdentifier(i)
+                    ];
 
                     return (
-                <DataCard
-                    variant="default"
-                    key={i}
-                    data-title={JSON.stringify({value: element.relativePath})}
-                    sub-title={JSON.stringify({value: element.hash})}
-                    textRight={JSON.stringify({label: element.mediaType, value: humanFileSize(element.size)})}
-                    tags={JSON.stringify(tags)}
-                    actionButtons={[
-                        {
-                            "label": "Download",
-                            "iconName": "material-symbols-light:download",
-                            "url": `http://localhost:3000/api/download?resourceId=${element.parentResource.id}&filename=${element.relativePath}`,
-                        },{
-                            "label": "Remove",
-                            "iconName": "material-symbols-light:delete-outline",
-                            "eventIdentifier": `deleteContent_${i}`,
-                        }]
-                    }
-                    onActionClick={ev => handleAction(ev)}
-                >
-                </DataCard>
+                        <DataResourceDataCardWrapper
+                            key={i}
+                            data={element}
+                            onActionClick={ev => handleAction(ev)}
+                            actionEvents={actionEvents}></DataResourceDataCardWrapper>
                     )
             })}
             </div>
@@ -131,7 +152,7 @@ export default function DataResourceEditor(props) {
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Cancel"}
                                     confirmCallback={() => doUpdateDataResource()}
-                                    cancelHref={"/base-repo/resources"}
+                                    cancelHref={`/base-repo/resources/${currentData.id}`}
                                     confirm = {confirm}
                                    >
             </ConfirmCancelComponent>

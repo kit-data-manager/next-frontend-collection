@@ -9,10 +9,10 @@ import {
 import clsx from 'clsx';
 import {lusitana} from '@/app/ui/fonts';
 import {fetchLatestActivities} from "@/app/lib/base-repo/data";
-import {formatDateToLocal} from "@/app/lib/utils";
 import {Creator} from "@/app/ui/dataresources/creator";
 import * as React from "react";
 import Link from "next/link";
+import {formatDateToLocal} from "@/app/lib/format-utils";
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
