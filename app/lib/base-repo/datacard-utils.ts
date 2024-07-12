@@ -195,7 +195,6 @@ export const childrenForDataResource = (resource: DataResource) => {
                 getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
             ];
 
-            console.log("CHILD BITTON ", actionButtons);
             children.push(propertiesForContentInformation(resource.id, content, actionButtons));
         });
         return JSON.stringify(children);

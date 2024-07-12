@@ -67,16 +67,16 @@ export default function DataResourceEditor(props) {
         let parts = eventIdentifier.split("_");
         const contentIndex = Number.parseInt(parts[1]);
         const selectedContent: ContentInformation = currentContent[contentIndex];
-        const redirectPath = `/base-repo/resources/${currentData.id}/view`;
+        const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
 
 
         if(parts[0] === REPO_EVENTS.DELETE_CONTENT){
             if(window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")){
-                deleteContent(selectedContent, path).then(status => {
+                deleteContent(selectedContent, redirectPath).then(status => {
                     if(status == 204) {
                         toast.info("Content " + selectedContent.relativePath + " successfully removed.",{
                             "onClose": () =>{
-                                router.push(redirectPath);
+                                window.document.location redirectPath);
                                 router.refresh();
                             }
                         });

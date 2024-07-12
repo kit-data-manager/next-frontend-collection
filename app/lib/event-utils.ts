@@ -5,6 +5,7 @@ const EDIT_PATH = "edit";
 const DOWNLOAD_RESOURCE_PATH = "download";
 const EDIT_CONTENT_PATH = "edit_content?path=";
 const DOWNLOAD_CONTENT_PATH = "download_content?path=";
+const DELETE_CONTENT_PATH = "delete_content?path=";
 export const enum REPO_EVENTS {
     "VIEW_RESOURCE" = "viewResource",
     "EDIT_RESOURCE" = "editResource",
@@ -30,6 +31,8 @@ export const eventIdentifierToPath = (eventIdentifier: string) => {
             return `${REPO_BASE_PATH}${parts[1]}/${EDIT_CONTENT_PATH}${parts[2]}`;
         case REPO_EVENTS.DOWNLOAD_CONTENT:
             return `${REPO_BASE_PATH}${parts[1]}/${DOWNLOAD_CONTENT_PATH}${parts[2]}`;
+        case REPO_EVENTS.DELETE_CONTENT:
+            return `${REPO_BASE_PATH}${parts[1]}/${DELETE_CONTENT_PATH}${parts[2]}`;
         default:
             throw new Error('Invalid event identifier ' + eventIdentifier);
     }
@@ -41,12 +44,12 @@ export function getActionButton(eventIdentifier:string){
     let iconName = undefined;
     let isUrl = false;
 
-    if(eventIdentifier.startsWith("http")){
+    if(eventIdentifier.startsWith("http") && eventIdentifier.indexOf("download?") > 0) {
         //TODO: Urls only for downloads so far. Change in case of other requirements.
         label = "Download";
         iconName = "material-symbols-light:download";
         isUrl = true;
-    }else {
+    }else{
         switch (parts[0]) {
             case REPO_EVENTS.VIEW_RESOURCE:
                 label = "View";
@@ -63,10 +66,6 @@ export function getActionButton(eventIdentifier:string){
             case REPO_EVENTS.EDIT_CONTENT:
                 label = "Edit";
                 iconName = "material-symbols-light:edit-square-outline";
-                break;
-            case REPO_EVENTS.DOWNLOAD_CONTENT:
-                label = "Download";
-                iconName = "material-symbols-light:download";
                 break;
             case REPO_EVENTS.DELETE_CONTENT:
                 label = "Remove";
@@ -100,10 +99,11 @@ export const editContentEventIdentifier = (resourceId:string, contentPath: strin
 }
 
 export const downloadContentEventIdentifier = (resourceId:string, contentPath: string) :string => {
-    return `${REPO_EVENTS.DOWNLOAD_CONTENT}_${resourceId}_${contentPath}`;
+    return `http://localhost:3000/api/download?resourceId=${resourceId}&filename=${contentPath}`
+    //`${REPO_EVENTS.DOWNLOAD_CONTENT}_${resourceId}_${contentPath}`;
 }
 
-export const deleteContentEventIdentifier = (id:number) :string => {
+export const deleteContentEventIdentifier = (id: number) :string => {
     return `${REPO_EVENTS.DELETE_CONTENT}_${id}`;
 }
 

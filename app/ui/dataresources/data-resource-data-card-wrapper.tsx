@@ -13,18 +13,18 @@ import {
 } from "@/app/lib/event-utils";
 
 export default function DataResourceDataCardWrapper(props) {
+    const handleAction = useDebouncedCallback((event) => {
+        const eventIdentifier: string = event.detail.eventIdentifier;
+        replace(eventIdentifierToPath(eventIdentifier));
+    });
+
     const {replace} = useRouter();
     const key = props.key;
     const data = props.data;
     const variant = props.variant ? props.variant : "default";
     const childVariant = props.children-variant ? props.children-variant : "default";
     const actionEvents = props.actionEvents ? props.actionEvents : [];
-
-    const handleAction = useDebouncedCallback((event) => {
-        const eventIdentifier: string = event.detail.eventIdentifier;
-        replace(eventIdentifierToPath(eventIdentifier));
-    });
-
+    const actionCallback = props.onActionClick ? props.onActionClick : handleAction;
 
     let buttons = [];
 
@@ -45,7 +45,7 @@ export default function DataResourceDataCardWrapper(props) {
                       variant={variant}
                       children-variant={childVariant}
                       actionButtons={buttons}
-                      onActionClick={ev => handleAction(ev)}
+                      onActionClick={ev => actionCallback(ev)}
                       {...miscProperties}>
             </DataCard>
         </div>
