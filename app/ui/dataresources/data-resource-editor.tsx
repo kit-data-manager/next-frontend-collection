@@ -12,7 +12,7 @@ import {DataCard} from "data-card-react";
 import {useDebouncedCallback} from "use-debounce";
 import 'react-toastify/dist/ReactToastify.css';
 import {
-    assignTagToContent, deleteContent,
+    assignTagToContent, createDataResource, deleteContent,
     removeTagFromContent,
     updateDataResource
 } from "@/app/lib/base-repo/client-utils";
@@ -32,10 +32,14 @@ export default function DataResourceEditor(props) {
     const [editorReady, setEditorReady] = useState(false);
     const [currentData, setCurrentData] = useState(props.data ? props.data : {});
 
-    const [currentContent, setCurrentContent] = useState(props.content ? props.content : {});
+    const [currentContent, setCurrentContent] = useState(props.content ? props.content : []);
     const router = useRouter();
     const etag = props.etag;
     const path = usePathname();
+
+    console.log(currentContent);
+
+    //create: No data, no content, no etag
 
     function dataChanged(data) {
         if(data === undefined){
@@ -48,7 +52,7 @@ export default function DataResourceEditor(props) {
 
     function doUpdateDataResource() {
         const redirectPath = `/base-repo/resources/${currentData.id}/view`;
-        updateDataResource(currentData, etag, router, ).then((status) => {
+        updateDataResource(currentData, etag).then((status) => {
             if(status == 200) {
                 toast.info("Resource successfully updated.", {
                     "onClose": () => {
@@ -59,6 +63,26 @@ export default function DataResourceEditor(props) {
             }else{
                 toast.error("Failed to update resource. Status: " + status);
             }
+        })
+    }
+
+    function doCreateDataResource() {
+        createDataResource(currentData).then((response) => {
+            if(response.status == 201) {
+                toast.info("Resource successfully created.", {
+                    "onClose": () => {
+                        Promise.resolve();
+                    }
+                });
+            }else{
+                toast.error("Failed to create resource. Status: " + response.status);
+                Promise.reject("Failed to create resource.");
+            }
+            return response.json();
+        }).then(json => {
+            const redirectPath = `/base-repo/resources/${json.id}/edit`;
+            router.push(redirectPath);
+            router.refresh();
         })
     }
 
@@ -76,7 +100,7 @@ export default function DataResourceEditor(props) {
                     if(status == 204) {
                         toast.info("Content " + selectedContent.relativePath + " successfully removed.",{
                             "onClose": () =>{
-                                window.document.location redirectPath);
+                                router.push(redirectPath);
                                 router.refresh();
                             }
                         });
@@ -97,11 +121,15 @@ export default function DataResourceEditor(props) {
 
     return (
         <div className="mt-6 flow-root">
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                File Upload
-            </h2>
-            <ContentUpload id={currentData.id}></ContentUpload>
+            {currentData.length > 0 ?
+            <>
+                <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+                    File Upload
+                </h2>
+                <ContentUpload id={currentData.id}></ContentUpload> </> : null
+            }
 
+            {currentContent ?
             <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
                 {currentContent.map((element:ContentInformation, i:number) => {
                     let tags = [];
@@ -139,6 +167,7 @@ export default function DataResourceEditor(props) {
                     )
             })}
             </div>
+            : null }
             <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                 Resource Metadata
             </h2>
@@ -149,13 +178,23 @@ export default function DataResourceEditor(props) {
             }>Loading Editor...</span>
 
             <JsonForm id="DataResource" schema={props.schema} data={currentData} setEditorReady={setEditorReady} onChange={(d) => dataChanged(d)}></JsonForm>
-            <ConfirmCancelComponent confirmLabel={"Commit"}
+            {etag ?
+                <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Cancel"}
                                     confirmCallback={() => doUpdateDataResource()}
                                     cancelHref={`/base-repo/resources/${currentData.id}`}
                                     confirm = {confirm}
                                    >
-            </ConfirmCancelComponent>
+                </ConfirmCancelComponent>:
+                <ConfirmCancelComponent confirmLabel={"Create"}
+                                        cancelLabel={"Cancel"}
+                                        confirmCallback={() => doCreateDataResource()}
+                                        cancelHref={`/base-repo/resources`}
+                                        confirm = {confirm}
+                >
+                </ConfirmCancelComponent>
+            }
+
         </div>
     )
 }

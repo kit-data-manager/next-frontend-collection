@@ -91,6 +91,18 @@ export function updateDataResource(resource:object, etag:string){
     return fetcher("http://localhost:8081/api/v1/dataresources/" + resource["id"]);
 }
 
+export function createDataResource(resource:object){
+    const fetcher = (url:string) => fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify(resource)
+    });
+
+    return fetcher("http://localhost:8081/api/v1/dataresources/");
+}
+
 export function deleteContent(element:ContentInformation, redirectPath?:string){
     return fetch(`http://localhost:3000/api/delete?resourceId=${element.parentResource.id}&filename=${element.relativePath}`).then(response => {
       return response.status;
