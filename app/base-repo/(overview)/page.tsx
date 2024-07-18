@@ -7,12 +7,13 @@ import { Suspense } from 'react';
 import {BaseRepoStatusCardWrapper} from "@/app/ui/dashboard/system-status-cards";
 
 export default async function Page() {
+    const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
 
     return (
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'base-repo', href: '/base-repo', active: true},
+                    { label: `${repoInstanceName}`, href: '/base-repo', active: true},
                 ]}
             />
             {/**Badges*/}

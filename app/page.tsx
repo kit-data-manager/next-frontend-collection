@@ -5,25 +5,6 @@ import {CardsSkeleton} from "@/app/ui/skeletons";
 import OverallStatusCardWrapper, {HeaderStatusCardWrapper} from "@/app/ui/dashboard/system-status-cards";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
-import {
-    buildFacetConfigFromConfig,
-    buildSearchOptionsFromConfig,
-    buildSortOptionsFromConfig, getFacetFields
-} from "@/app/lib/config-helper";
-import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
-import {
-    ErrorBoundary,
-    Facet, Paging,
-    PagingInfo,
-    Results, ResultsPerPage,
-    SearchBox,
-    SearchProvider,
-    Sorting,
-    WithSearch
-} from "@elastic/react-search-ui";
-import {Layout} from "@elastic/react-search-ui-views";
-import MyBooleanFacet from "@/app/ui/general/MyBooleanFacet";
-import DataCardResultView from "@/app/ui/search/DataCardResultView";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/app/ui/general/site-search";
 

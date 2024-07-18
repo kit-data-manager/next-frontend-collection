@@ -4,8 +4,6 @@ import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/app/lib
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/app/lib/event-utils";
-import MyLoader from "@/app/ui/dataresources/MyLoader";
-import {Suspense} from "preact/compat";
 
 export default async function DataResourceListing({page,size}: {
     page: number;

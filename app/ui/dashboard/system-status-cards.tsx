@@ -5,10 +5,13 @@ import {Card} from "@/app/ui/general/card";
 import {humanFileSize} from "@/app/lib/format-utils";
 
 export default async function OverallStatusCardWrapper() {
+    const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
+    const metastoreInstanceName= process.env.METASTORE_INSTANCE_NAME ? process.env.METASTORE_INSTANCE_NAME : "Metadata Repository";
+
     return (
         <>
-            <Card title="Data Repo" subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'} detailsRef={"/"}/>
-            <Card title="Metadata Repo" status={-1} visitRef={'/metastore'} detailsRef={"/"}/>
+            <Card title={repoInstanceName} subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'} detailsRef={"/"}/>
+            <Card title={metastoreInstanceName} status={-1} visitRef={'/metastore'} detailsRef={"/"}/>
             <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'} detailsRef={"/"}/>
             <Card title="Keycloak" status={0}/>
         </>

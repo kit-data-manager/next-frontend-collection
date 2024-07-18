@@ -7,7 +7,8 @@ import SessionGuard from "@/app/ui/general/SessionGuard";
 export default function RootLayout({children}: {
     children: React.ReactNode;
 }) {
-    const securityEnabled = false;
+
+    const securityEnabled = process.env.KEYCLOAK_CLIENT_ID != '';
 
     return (
         <html lang="en">
