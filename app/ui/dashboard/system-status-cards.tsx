@@ -1,3 +1,5 @@
+"use server";
+
 import {fetchActuatorInfo} from "@/app/lib/base-repo/data";
 import {Card} from "@/app/ui/general/card";
 import {humanFileSize} from "@/app/lib/format-utils";
@@ -9,6 +11,17 @@ export default async function OverallStatusCardWrapper() {
             <Card title="Metadata Repo" status={-1} visitRef={'/metastore'} detailsRef={"/"}/>
             <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'} detailsRef={"/"}/>
             <Card title="Keycloak" status={0}/>
+        </>
+    );
+}
+
+export async function HeaderStatusCardWrapper() {
+    return (
+        <>
+            <Card title="Keycloak" status={0}/>
+            <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'}/>
+            <Card title="Metadata Repo" status={-1} visitRef={'/metastore'}/>
+            <Card title="Data Repo" subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'}/>
         </>
     );
 }

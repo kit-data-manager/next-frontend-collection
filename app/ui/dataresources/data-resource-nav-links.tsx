@@ -15,8 +15,10 @@ import clsx from 'clsx';
 const links = [
   { name: 'Home', href: '/', icon: HomeIcon },
   { name: 'Overview', href: '/base-repo', icon: ChartPieIcon},
+  { name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon },
   { name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon },
   { name: 'Create Resource', href: '/base-repo/resource/create', icon: PlusCircleIcon },
+
 ];
 
 export default function NavLinksDataResources() {

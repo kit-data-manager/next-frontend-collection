@@ -13,7 +13,6 @@ export default async function SideNavDataResources() {
     try {
         session = await getServerSession(authOptions)
     } catch (error) {
-        console.log("Session error");
         authError = true;
     }
     return (

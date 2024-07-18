@@ -1,7 +1,5 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {revalidatePath} from "next/cache";
-import {redirect} from "next/navigation";
 import {DataResource} from "@/app/lib/definitions";
 import {promises as fs} from 'fs';
 
@@ -11,7 +9,7 @@ export async function fetchDataResources(page: Number, size: Number) {
     try {
         const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
         const data = await result.json();
-
+        await new Promise(resolve => setTimeout(resolve, 3000));
         return data;
     } catch (error) {
         console.error('Service Error:', error);

@@ -4,6 +4,8 @@ import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/app/lib
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/app/lib/event-utils";
+import MyLoader from "@/app/ui/dataresources/MyLoader";
+import {Suspense} from "preact/compat";
 
 export default async function DataResourceListing({page,size}: {
     page: number;
@@ -30,8 +32,6 @@ export default async function DataResourceListing({page,size}: {
     //wait for content load promises
     const finalResources:DataResource[] = await Promise.all(resourcesWithContent);
 
-
-
     return (
         <div className="block min-w-full">
             <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
@@ -43,9 +43,10 @@ export default async function DataResourceListing({page,size}: {
                     ];
 
                     return (
-                        <DataResourceDataCardWrapper key={element.id} data={element} actionEvents={actionEvents}></DataResourceDataCardWrapper>
+                            <DataResourceDataCardWrapper key={element.id} data={element} actionEvents={actionEvents}></DataResourceDataCardWrapper>
                     );
                 })}
+
             </div>
 
             <div className="mt-5 flex w-full justify-center">

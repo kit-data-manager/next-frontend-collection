@@ -1,0 +1,62 @@
+{
+  "debug": false,
+  "alwaysSearchOnInitialLoad": false,
+  "host": "http://localhost:8081/api/v1",
+  "indices": [
+    {
+      "name": "baserepo",
+      "searchFields": [
+        "id",
+        "metadata.publisher",
+        "metadata.titles.value",
+        "metadata.descriptions",
+        "metadata.resourceType",
+        "metadata.content.relativePath"
+      ],
+      "resultFields": [
+        "id",
+        "_index",
+        "metadata.titles",
+        "metadata.publisher",
+        "metadata.publicationYear",
+        "metadata.descriptions",
+        "metadata.resourceType",
+        "created",
+        "lastUpdate",
+        "metadata.content"
+      ],
+      "facets": [
+        {
+          "key": "_index",
+          "label": "Index"
+        },
+        {
+          "key": "metadata.resourceType.typeGeneral",
+          "label": "Resource Type"
+        },
+        {
+          "key": "metadata.publisher.keyword",
+          "label": "Publisher"
+        }, {
+          "key": "metadata.publicationYear",
+          "label": "Publication Year",
+          "type": "date_year"
+        },
+        {
+          "key": "created",
+          "label": "Created",
+          "type": "date_time"
+        },
+        {
+          "key": "lastUpdate",
+          "label": "Last Update",
+          "type": "date_time"
+        }
+      ]
+    }
+  ],
+  "disjunctiveFacets": [
+    "metadata.resourceType.typeGeneral",
+    "metadata.publicationYear"
+  ]
+}

@@ -7,6 +7,7 @@ import {InvoicesTableSkeleton, ListingSkeleton} from "@/app/ui/skeletons";
 import {Suspense} from 'react';
 import DataResourceListing from "@/app/ui/dataresources/data-resource-listing";
 import {Button} from "@/app/ui/button";
+import MyLoader from "@/app/ui/dataresources/MyLoader";
 
 
 export default async function Page({searchParams}: {
@@ -18,16 +19,6 @@ export default async function Page({searchParams}: {
 }) {
     const page: Number = searchParams.page ? Number.parseInt(searchParams.page) : 1;
     const size = searchParams.size ? Number.parseInt(searchParams.size) : 10;
-
-    /*
-        let resources = [{
-            id: "test",
-            titles:[{value:"test"}],
-            acls:[{sid:"SELF", permission:"READ"}],
-            publisher:"jejkal",
-            publicationYear: 2024
-        }]*/
-
 
     return (
         <main>
@@ -49,7 +40,7 @@ export default async function Page({searchParams}: {
                         <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                     </Link>
                 </div>
-                <Suspense key={"test"} fallback={<ListingSkeleton/>}>
+                <Suspense fallback={<MyLoader/>}>
                     <DataResourceListing page={page} size={size}/>
                 </Suspense>
             </div>

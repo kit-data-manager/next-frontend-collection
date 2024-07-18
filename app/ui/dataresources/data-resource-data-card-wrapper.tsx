@@ -6,13 +6,12 @@ import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
 
 import {
-    downloadEventIdentifier,
-    editEventIdentifier,
-    eventIdentifierToPath, getActionButton,
-    viewEventIdentifier
+    eventIdentifierToPath,
+    getActionButton
 } from "@/app/lib/event-utils";
 
 export default function DataResourceDataCardWrapper(props) {
+
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
         replace(eventIdentifierToPath(eventIdentifier));
