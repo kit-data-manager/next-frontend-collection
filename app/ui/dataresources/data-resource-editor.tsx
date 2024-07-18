@@ -33,15 +33,12 @@ export default function DataResourceEditor(props) {
     const [currentData, setCurrentData] = useState(props.data ? props.data : {});
 
     const [currentContent, setCurrentContent] = useState(props.content ? props.content : []);
+    const createMode = props.createMode;
     const router = useRouter();
     const etag = props.etag;
     const path = usePathname();
 
-    console.log(currentContent);
-
-    //create: No data, no content, no etag
-
-    function dataChanged(data) {
+    function dataChanged(data:object) {
         if(data === undefined){
             setConfirm(false);
         }else {
@@ -54,7 +51,7 @@ export default function DataResourceEditor(props) {
         const redirectPath = `/base-repo/resources/${currentData.id}/view`;
         updateDataResource(currentData, etag).then((status) => {
             if(status == 200) {
-                toast.info("Resource successfully updated.", {
+                toast.success("Resource successfully updated.", {
                     "onClose": () => {
                         router.push(redirectPath);
                         router.refresh();
@@ -67,24 +64,28 @@ export default function DataResourceEditor(props) {
     }
 
     function doCreateDataResource() {
+        const id = toast.loading("Creating resource...")
+
         createDataResource(currentData).then((response) => {
             if(response.status == 201) {
-                toast.info("Resource successfully created.", {
-                    "onClose": () => {
-                        Promise.resolve();
-                    }
-                });
+                return response.json();
             }else{
-                toast.error("Failed to create resource. Status: " + response.status);
+                toast.update(id, { render: "Failed to create resource.", type: "error", isLoading: false });
                 Promise.reject("Failed to create resource.");
             }
-            return response.json();
         }).then(json => {
-            const redirectPath = `/base-repo/resources/${json.id}/edit`;
-            router.push(redirectPath);
-            router.refresh();
-        })
+             toast.update(id, { render: "Resource created.", type: "success", isLoading: false,   autoClose: 3000,
+                 "onClose": () => {
+                     const redirectPath = `/base-repo/resources/${json.id}/edit`;
+                     router.push(redirectPath);
+                     router.refresh();
+                 } });
+         })
     }
+
+
+
+
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier:string = event.detail.eventIdentifier;
@@ -98,7 +99,7 @@ export default function DataResourceEditor(props) {
             if(window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")){
                 deleteContent(selectedContent, redirectPath).then(status => {
                     if(status == 204) {
-                        toast.info("Content " + selectedContent.relativePath + " successfully removed.",{
+                        toast.success("Content " + selectedContent.relativePath + " successfully removed.",{
                             "onClose": () =>{
                                 router.push(redirectPath);
                                 router.refresh();
@@ -121,7 +122,7 @@ export default function DataResourceEditor(props) {
 
     return (
         <div className="mt-6 flow-root">
-            {currentData.length > 0 ?
+            {!createMode ?
             <>
                 <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                     File Upload

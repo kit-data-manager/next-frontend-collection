@@ -44,7 +44,8 @@ export default function ContentUpload(props) {
         if(failed > 0) {
             toast.error(`Failed to upload ${failed} file(s).`);
         }
-        toast.info(`Successfully uploaded ${successful} file(s).`,{
+
+        toast.success(`Successfully uploaded ${successful} file(s).`,{
             "onClose": () =>{
                 window.document.location=path;
             }

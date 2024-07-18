@@ -25,7 +25,7 @@ export function removeTagFromContent(element:ContentInformation, tag:string, red
             });
         }).then(status => {
             if(status == 204) {
-                toast.info("Thumb tag successfully removed from " + element.relativePath + ".", {
+                toast.success("Thumb tag successfully removed from " + element.relativePath + ".", {
                     "onClose": () => {
                         if(redirectPath) {
                             //reload page after 3 seconds wait
