@@ -35,7 +35,7 @@ export default function DataResourceDataCardWrapper(props) {
     if(data.hasOwnProperty("titles")){
         miscProperties = propertiesForDataResource(data);
     }else{
-        miscProperties = propertiesForContentInformation(data.parentResource.id, data);
+        miscProperties = propertiesForContentInformation(data.parentResource.id, data );
     }
        
     return (

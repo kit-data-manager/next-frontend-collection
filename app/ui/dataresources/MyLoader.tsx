@@ -1,14 +1,22 @@
 import React from "react"
-import ContentLoader from "react-content-loader"
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+export function MyLoader(props){
+        let elems = Array.from(Array(10).keys())
 
-const MyLoader = (props) => (
-    <div className="min-w-full rounded-lg">
-            <ContentLoader viewBox="0 0 500 300" height={"100vh"} width={"100%"} {...props}>
-                    <rect x="60" y="10" width="500" height="5"/>
-                    <circle cx="20" cy="20" r="20"/>
-            </ContentLoader>
-    </div>
-
+        return(
+        <div className="block min-w-full">
+        <div className="rounded-lg bg-gray-50 p-2 row-gap-4 md:pt-0">
+                <SkeletonTheme baseColor="#EFEFEF" highlightColor="#DDD" >
+                {elems.map((elem:number, i:number) => {
+                   return (
+                       <Skeleton key={i} className={"mt-5"} width={(Math.floor(Math.random() * (100 - 70) ) + 70) + "%"} {...props}/>
+                   )
+                })}
+                </SkeletonTheme>
+        </div>
+</div>
 )
+}
 
 export default MyLoader

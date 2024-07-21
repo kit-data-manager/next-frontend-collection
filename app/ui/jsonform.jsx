@@ -45,7 +45,6 @@ export default function JsonForm(props) {
     let setEditorReady = props.setEditorReady;
 
     const elementRef = useRef();
-    console.log("Create form");
     const defaultOptions = {
         iconlib: "fontawesome5",
         object_layout: "table",
@@ -90,10 +89,8 @@ export default function JsonForm(props) {
         jsoneditor.on('change' , () => {
             console.log("Change");
             if(validate()) {
-                console.log("Valid");
                 props.onChange(jsoneditor.getValue());
             }else{
-                console.log("INVALID");
                 props.onChange(undefined);
             }
         })
@@ -106,10 +103,8 @@ export default function JsonForm(props) {
         });
     }
     const initJsoneditor = function () {
-        console.log("Init editor");
         // destroy old JSONEditor instance if exists
         if (jsoneditor) {
-            console.log("Destroying editor");
             jsoneditor.destroy();
         }
 
@@ -118,9 +113,7 @@ export default function JsonForm(props) {
         }else{
             const inter =  setInterval(() => {
                 if(window.JSONEditor){
-                    console.log("Setup editor");
                     setUpEditor()
-                    console.log("Clear Interval");
                     clearInterval(inter)
                 }
             }, 1000);

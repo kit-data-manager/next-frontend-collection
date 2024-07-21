@@ -59,6 +59,7 @@
     "react-dom": "18.2.0",
     "react-feather": "^2.0.10",
     "react-jsonschema-form": "^1.8.1",
+    "react-loading-skeleton": "^3.4.0",
     "react-toastify": "^10.0.5",
     "styled-components": "^6.1.11",
     "swr": "^2.2.5",

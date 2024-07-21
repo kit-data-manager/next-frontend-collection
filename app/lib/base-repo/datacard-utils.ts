@@ -15,13 +15,22 @@ export const propertiesForDataResource = (resource: DataResource) => {
     }
 }
 
-export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: object[]) => {
+export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: object[], disableChangeThumb?: boolean) => {
     let tags = [];
-    if (content.tags && content.tags.includes("thumb")) {
-        tags.push({
-            "color": "#90EE90",
+
+    if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
+        let isThumb = content.tags && content.tags.includes("thumb");
+        let thumbTag = {
+            "color": isThumb ? "#90EE90" : "#FFCCCB",
             "text": "Thumb",
-        });
+            "eventIdentifier": isThumb ? `unmakeThumb_${content.relativePath}` : `makeThumb_${content.relativePath}`
+        };
+
+        if(disableChangeThumb){
+            delete thumbTag["eventIdentifier"];
+        }
+
+        tags.push(thumbTag);
     }
 
     if (actionButtons) {
@@ -264,7 +273,7 @@ const childrenForDataResource = (resource: DataResource) => {
                 getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
             ];
 
-            children.push(propertiesForContentInformation(resource.id, content, actionButtons));
+            children.push(propertiesForContentInformation(resource.id, content, actionButtons, true));
         });
         return JSON.stringify(children);
     }

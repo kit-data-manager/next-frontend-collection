@@ -91,7 +91,12 @@ export type Tag = {
   url?: string;
 }
 
-
+export type FilterForm = {
+  id: string;
+  publisher: string;
+  publicationYear: string;
+  state: 'VOLATILE' | 'FIXED';
+};
 
 
 

@@ -1,16 +1,37 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {DataResource} from "@/app/lib/definitions";
+import {DataResource, FilterForm} from "@/app/lib/definitions";
 import {promises as fs} from 'fs';
+import fetch from "node-fetch";
 
 
-export async function fetchDataResources(page: Number, size: Number) {
+export async function fetchDataResources(page: Number, size: Number, filter?: FilterForm) {
     noStore()
     try {
+    if(filter){
+        let resource:DataResource = {} as DataResource;
+        resource.id = filter.id;
+        resource.publisher = filter.publisher;
+        resource.publicationYear = filter.publicationYear;
+        resource.state = filter.state;
+        console.log("POST ", resource);
+        const result = await fetch(`http://localhost:8081/api/v1/dataresources/search?page=${page - 1}&size=${size}&sort=lastUpdate,desc`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(resource)
+            })
+        const data = await result.json();
+        console.log("Status ", result.status);
+        console.log("Data ", data);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        return data;
+    }else{
         const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
         const data = await result.json();
         await new Promise(resolve => setTimeout(resolve, 3000));
         return data;
+    }
+
     } catch (error) {
         console.error('Service Error:', error);
         return undefined;

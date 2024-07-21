@@ -7,6 +7,9 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/app/ui/general/site-search";
+import {
+    ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 
 export default async function Page() {
     let username = "anonymous";
@@ -19,6 +22,17 @@ export default async function Page() {
     }
 
     username = (!authError && session.user) ? session.user.name : "Anonymous User";
+    const searchEnabled= process.env.SEARCH_BASE_URL != undefined;
+
+    /*
+
+                    <Link
+                        href="/login"
+                        className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+                    >
+                        <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6"/>
+                    </Link>
+     */
 
     return (
         <main className="flex min-h-screen flex-col p-6">
@@ -50,17 +64,20 @@ export default async function Page() {
                         <OverallStatusCardWrapper/>
                     </Suspense>
                 </div>
-                <h2 className={`${lusitana.className} mt-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                    Search
-                </h2>
-
-                    {/* <Linkc
-                        href="/login"
-                        className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-                    >
-                        <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6"/>
-                    </Link>*/}
-                    <SiteSearch/>
+                { searchEnabled ?
+                    <>
+                    <h2 className={`${lusitana.className} mt-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+                        Search
+                    </h2><SiteSearch/>
+                    </> :
+                    <div className="flex justify-center gap-6 rounded-lg bg-gray-50 px-6 pt-10 md:h-3/5 md:px-20 grid-cols-3">
+                        <ExclamationTriangleIcon className="w-6 h-6 text-red-700"/>
+                        <p className={`${inter.className} antialiased text-l text-gray-800 md:text-l md:leading-normal`}>
+                            Search is disabled for that instance. Please navigate directly to one of the configures services.
+                        </p>
+                        <ExclamationTriangleIcon className="w-6 h-6 text-red-700"/>
+                    </div>
+                }
             </div>
 
             <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-12">

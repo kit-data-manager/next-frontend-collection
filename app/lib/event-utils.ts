@@ -103,7 +103,7 @@ export const downloadContentEventIdentifier = (resourceId:string, contentPath: s
     //`${REPO_EVENTS.DOWNLOAD_CONTENT}_${resourceId}_${contentPath}`;
 }
 
-export const deleteContentEventIdentifier = (id: number) :string => {
-    return `${REPO_EVENTS.DELETE_CONTENT}_${id}`;
+export const deleteContentEventIdentifier = (path: string) :string => {
+    return `${REPO_EVENTS.DELETE_CONTENT}_${path}`;
 }
 

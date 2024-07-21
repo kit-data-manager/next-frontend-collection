@@ -26,6 +26,7 @@ import {
 import {propertiesForContentInformation} from "@/app/lib/base-repo/datacard-utils";
 import {toast} from "react-toastify";
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
+import MyLoader from "@/app/ui/dataresources/MyLoader";
 
 export default function DataResourceEditor(props) {
     const [confirm, setConfirm] = useState(false);
@@ -39,7 +40,7 @@ export default function DataResourceEditor(props) {
     const path = usePathname();
 
     function dataChanged(data:object) {
-        if(data === undefined){
+        if(!data){
             setConfirm(false);
         }else {
             setCurrentData(data);
@@ -74,7 +75,7 @@ export default function DataResourceEditor(props) {
                 Promise.reject("Failed to create resource.");
             }
         }).then(json => {
-             toast.update(id, { render: "Resource created.", type: "success", isLoading: false,   autoClose: 3000,
+             toast.update(id, { render: "Resource created.", type: "success", isLoading: false, autoClose: 3000,
                  "onClose": () => {
                      const redirectPath = `/base-repo/resources/${json.id}/edit`;
                      router.push(redirectPath);
@@ -83,17 +84,15 @@ export default function DataResourceEditor(props) {
          })
     }
 
-
-
-
-
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier:string = event.detail.eventIdentifier;
         let parts = eventIdentifier.split("_");
-        const contentIndex = Number.parseInt(parts[1]);
-        const selectedContent: ContentInformation = currentContent[contentIndex];
-        const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
+        const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_")+1);
+        //const selectedContent: ContentInformation = currentContent[contentIndex];
 
+        const selectedContent: ContentInformation = currentContent.find((element) => element.relativePath === contentPath);
+
+        const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
 
         if(parts[0] === REPO_EVENTS.DELETE_CONTENT){
             if(window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")){
@@ -133,30 +132,9 @@ export default function DataResourceEditor(props) {
             {currentContent ?
             <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
                 {currentContent.map((element:ContentInformation, i:number) => {
-                    let tags = [];
-                    if(['jpg','jpeg','gif','png'].some(ext => element.relativePath.toLowerCase().endsWith(ext))) {
-                        let isThumb = element.tags && element.tags.includes("thumb");
-                        let thumbTag = {
-                            "color": isThumb ? "#90EE90" : "#FFCCCB",
-                            "text": "Thumb",
-                            "eventIdentifier": isThumb ? `unmakeThumb_${i}` : `makeThumb_${i}`
-                        };
-                        tags.push(thumbTag);
-                    }
-
-                    if(element.tags) {
-                        element.tags.map((tag) => {
-                            if (tag.toLowerCase() != "thumb"){
-                                tags.push({
-                                    "color": "rgb(186 230 253)",
-                                    "text": tag
-                                })
-                            }
-                        })
-                    }
                    let actionEvents=[
                         downloadContentEventIdentifier(element.parentResource.id, element.relativePath),
-                        deleteContentEventIdentifier(i)
+                        deleteContentEventIdentifier(element.relativePath)
                     ];
 
                     return (
@@ -172,11 +150,14 @@ export default function DataResourceEditor(props) {
             <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                 Resource Metadata
             </h2>
-            <span className={clsx("bg-blue-100 font-bold px-5 py-[7px] rounded",
+            {editorReady ? null :
+            <MyLoader count={2} />
+            }
+            {/* <span className={clsx("bg-blue-100 font-bold px-5 py-[7px] rounded",
                 {
                     'hidden': editorReady
                 })
-            }>Loading Editor...</span>
+            }>Loading Editor...</span>*/}
 
             <JsonForm id="DataResource" schema={props.schema} data={currentData} setEditorReady={setEditorReady} onChange={(d) => dataChanged(d)}></JsonForm>
             {etag ?

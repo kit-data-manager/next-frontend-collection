@@ -7,10 +7,9 @@ import { redirect } from 'next/navigation';
 
 const FormSchema = z.object({
     id: z.string(),
-    customerId: z.string(),
-    amount: z.coerce.number(),
-    status: z.enum(['pending', 'paid']),
-    date: z.string(),
+    publisher: z.string(),
+    publicationYear: z.string(),
+    state: z.enum(['Volatile', 'Fixed']),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -48,32 +47,40 @@ export async function createInvoice(formData: FormData) {
 
 }
 
-export async function updateInvoice(id: string, formData: FormData) {
-    const { customerId, amount, status } = UpdateInvoice.parse({
-        customerId: formData.get('customerId'),
-        amount: formData.get('amount'),
-        status: formData.get('status'),
-    });
-    try {
-        const client = new Pool({
-            user:process.env.DB_USER,
-            host:process.env.DB_HOST,
-            database:process.env.DB_NAME,
-            password:process.env.DB_PASSWORD,
-            port:process.env.DB_PORT
-        })
-    const amountInCents = amount * 100;
+export async function updateInvoice (id: string, formData: FormData) {
 
-    const values = [customerId, amountInCents, status, id]
+}
 
-    await client.query('UPDATE invoices SET customer_id = $1, amount = $2, status = $3 WHERE id = $4', values);
+export async function filterResources(formData: FormData) {
+    const resourceId = formData.get("id");
+    const publisher = formData.get("publisher");
+    const state = formData.get("state");
+    const pubYear = formData.get("publicationYear");
 
-    } catch (err) {
-        console.error('Database Error:', err);
-        throw new Error('Failed to fetch customer table.');
+    revalidatePath('/base-repo/resources/');
+    let path:string = '/base-repo/resources';
+
+    if(resourceId || publisher || state || pubYear){
+        path += "?";
     }
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
+
+    if(resourceId){
+        path += `resourceId=${resourceId}&`;
+    }
+
+    if(publisher){
+        path += `publisher=${publisher}&`;
+    }
+
+    if(state){
+        path += `state=${state}&`;
+    }
+
+    if(pubYear){
+        path += `publicationYear=${pubYear}`;
+    }
+
+    redirect(path);
 }
 
 export async function deleteInvoice(id: string) {

@@ -1,18 +1,21 @@
-import {DataResource} from "@/app/lib/definitions";
+import {DataResource, FilterForm} from "@/app/lib/definitions";
 import Pagination from "@/app/ui/general/pagination";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/app/lib/base-repo/data";
 import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/app/lib/event-utils";
 
-export default async function DataResourceListing({page,size}: {
+export default async function DataResourceListing({page,size, filter}: {
     page: number;
     size: number;
+    filter: FilterForm;
 }) {
+
+    console.log(filter);
 
     //load resources and total pages
     const [resources, totalPages] = await Promise.all([
-        fetchDataResources(page, size),
+        fetchDataResources(page, size, filter),
         fetchDataResourcePages(size)
     ]);
 
@@ -39,9 +42,8 @@ export default async function DataResourceListing({page,size}: {
                         editEventIdentifier(element.id),
                         downloadEventIdentifier(element.id)
                     ];
-
                     return (
-                            <DataResourceDataCardWrapper key={element.id} data={element} actionEvents={actionEvents}></DataResourceDataCardWrapper>
+                        <DataResourceDataCardWrapper key={element.id} data={element} actionEvents={actionEvents}></DataResourceDataCardWrapper>
                     );
                 })}
 
