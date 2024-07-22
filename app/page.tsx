@@ -8,8 +8,10 @@ import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/app/ui/general/site-search";
 import {
-    ExclamationTriangleIcon
+    ExclamationTriangleIcon, GlobeAltIcon
 } from '@heroicons/react/24/outline';
+import {Card} from "@/app/ui/general/card";
+import Login from "@/app/ui/general/login";
 
 export default async function Page() {
     let username = "anonymous";
@@ -23,6 +25,9 @@ export default async function Page() {
 
     username = (!authError && session.user) ? session.user.name : "Anonymous User";
     const searchEnabled= process.env.SEARCH_BASE_URL != undefined;
+    const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
+    const metastoreInstanceName= process.env.METASTORE_INSTANCE_NAME ? process.env.METASTORE_INSTANCE_NAME : "Metadata Repository";
+
 
     /*
 
@@ -36,15 +41,18 @@ export default async function Page() {
 
     return (
         <main className="flex min-h-screen flex-col p-6">
-            <div className="flex h-24 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-24">
+            <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-500 p-4 md:h-30">
                 {<AcmeLogo/>}
-                {/* <div className="flex md:flex md:flex-grow flex-row-reverse space-x-1 gap-6 rounded-lg sm:grid-cols-2 lg:grid-cols-4">
-                <Suspense fallback={<CardsSkeleton/>}>
-                    <HeaderStatusCardWrapper/>
-                </Suspense>
-                </div>*/}
+                <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1">
+                    <a href="/base-repo"
+                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">{repoInstanceName}</a>
+                    <a href=""
+                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">{metastoreInstanceName}</a>
+                    {!authError?
+                    <Login className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300"/>
+                        :null}
+                </div>
             </div>
-
 
             <div className="mt-4 flex grow flex-col gap-4 md:flex-col">
                 <div className="flex justify-center gap-6 rounded-lg bg-gray-50 px-6 pt-10 md:h-3/5 md:px-20">

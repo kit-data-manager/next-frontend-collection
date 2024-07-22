@@ -47,12 +47,12 @@ export function Card({title, subtitle, icon, status, visitRef, detailsRef}: {
 
     return (
         <div
-            className={`${lusitana.className} flex flex-col bg-gray-50 justify-center items-center gap-2 border border-dashed border-gray-500 p-4 rounded-md h-24`}>
+            className={`${lusitana.className} flex flex-col bg-gray-50 justify-center items-center gap-2 border border-dashed border-gray-500 p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
-                {visitRef != undefined ?
+                {visitRef != undefined && status > 0 ?
                     <a className="font-bold text-l underline hover:text-blue-600" href={visitRef}>{title}</a>
                     :
-                    <a className="font-bold text-l" href={visitRef}>{title}</a>
+                    <a className="font-bold text-l">{title}</a>
                 }
                 {CardIcon}
             </div>

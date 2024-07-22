@@ -10,21 +10,10 @@ export default async function OverallStatusCardWrapper() {
 
     return (
         <>
-            <Card title={repoInstanceName} subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'} detailsRef={"/"}/>
+            <Card title={repoInstanceName} subtitle={"v1.2.3"} status={1} visitRef={'/base-repo/resources'} detailsRef={"/base-repo"}/>
             <Card title={metastoreInstanceName} status={-1} visitRef={'/metastore'} detailsRef={"/"}/>
             <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'} detailsRef={"/"}/>
             <Card title="Keycloak" status={0}/>
-        </>
-    );
-}
-
-export async function HeaderStatusCardWrapper() {
-    return (
-        <>
-            <Card title="Keycloak" status={0}/>
-            <Card title="FAIR DO Repo" status={0} visitRef={'/typed-pid-maker'}/>
-            <Card title="Metadata Repo" status={-1} visitRef={'/metastore'}/>
-            <Card title="Data Repo" subtitle={"v1.2.3"} status={1} visitRef={'/base-repo'}/>
         </>
     );
 }

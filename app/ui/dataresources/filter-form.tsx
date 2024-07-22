@@ -11,9 +11,7 @@ import Link from 'next/link';
 import { filterResources } from '@/app/lib/actions';
 import {Button} from "@/app/ui/button";
 
-export default function FilterResourceForm({
-                                            filter
-                                        }: {
+export default function FilterResourceForm({filter}: {
     filter: FilterForm;
 }) {
     const doFilterResources = filterResources.bind(null);

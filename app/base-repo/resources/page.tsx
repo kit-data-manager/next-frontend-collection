@@ -21,6 +21,7 @@ export default async function Page({searchParams}: {
         state?:string;
         publicationYear?:string;
         publisher?:string;
+        reload?:boolean;
     };
 }) {
     const page: Number = searchParams.page ? Number.parseInt(searchParams.page) : 1;

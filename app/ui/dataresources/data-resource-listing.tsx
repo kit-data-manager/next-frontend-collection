@@ -11,7 +11,6 @@ export default async function DataResourceListing({page,size, filter}: {
     filter: FilterForm;
 }) {
 
-    console.log(filter);
 
     //load resources and total pages
     const [resources, totalPages] = await Promise.all([
@@ -19,10 +18,10 @@ export default async function DataResourceListing({page,size, filter}: {
         fetchDataResourcePages(size)
     ]);
 
-    if(!resources){
+
+    if(!resources || resources.length === 0){
         notFound();
     }
-
     //TODO: handle no resources
 
     //load content for all resources

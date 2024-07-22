@@ -10,16 +10,26 @@ export async function fetchDataResources(page: Number, size: Number, filter?: Fi
     try {
     if(filter){
         let resource:DataResource = {} as DataResource;
+        let hasProperty;
         resource.id = filter.id;
         resource.publisher = filter.publisher;
         resource.publicationYear = filter.publicationYear;
         resource.state = filter.state;
-        console.log("POST ", resource);
-        const result = await fetch(`http://localhost:8081/api/v1/dataresources/search?page=${page - 1}&size=${size}&sort=lastUpdate,desc`, {
+        hasProperty = (resource.id != undefined ||
+            resource.publisher!= undefined ||
+            resource.publicationYear!= undefined ||
+            resource.state!= undefined);
+        let result;
+        if(hasProperty){
+        result = await fetch(`http://localhost:8081/api/v1/dataresources/search?page=${page - 1}&size=${size}&sort=lastUpdate,desc`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(resource)
             })
+        }else{
+            result = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`)
+        }
+
         return await result.json();
     }else{
         const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
