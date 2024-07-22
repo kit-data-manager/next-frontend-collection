@@ -21,7 +21,6 @@ export default function FilterResourceForm({
     return (
         <form action={doFilterResources}>
             <div className="rounded-md bg-gray-50 p-4 md:p-6">
-                {/* Customer Name */}
                 <div className="mb-4">
                     <label htmlFor="customer" className="mb-2 block text-sm font-medium">
                         Publisher
@@ -59,7 +58,6 @@ export default function FilterResourceForm({
                     </div>
                 </div>
 
-                {/* Invoice Status */}
                 <fieldset>
                     <legend className="mb-2 block text-sm font-medium">
                         Resource Status
@@ -71,8 +69,8 @@ export default function FilterResourceForm({
                                     id="volatile"
                                     name="state"
                                     type="radio"
-                                    value="Volatile"
-                                    defaultChecked={filter.state === 'Volatile'}
+                                    value="VOLATILE"
+                                    defaultChecked={filter.state === 'VOLATILE'}
                                     className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                                 />
                                 <label
@@ -87,8 +85,8 @@ export default function FilterResourceForm({
                                     id="fixed"
                                     name="status"
                                     type="radio"
-                                    value="Fixed"
-                                    defaultChecked={filter.state === 'Fixed'}
+                                    value="FIXED"
+                                    defaultChecked={filter.state === 'FIXED'}
                                     className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                                 />
                                 <label

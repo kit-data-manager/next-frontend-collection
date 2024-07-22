@@ -20,11 +20,7 @@ export async function fetchDataResources(page: Number, size: Number, filter?: Fi
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(resource)
             })
-        const data = await result.json();
-        console.log("Status ", result.status);
-        console.log("Data ", data);
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        return data;
+        return await result.json();
     }else{
         const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
         const data = await result.json();

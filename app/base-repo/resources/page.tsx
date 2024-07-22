@@ -53,13 +53,14 @@ export default async function Page({searchParams}: {
                     </Link>
                     </div>
                 <div className="w-full flex col-2">
-                 <div className="w-75 bg-gray-50 rounded-lg border items-center justify-between p-2">
-                      <FilterResourceForm filter={filter}/>
-                 </div>
+
                     <div className="w-full">
-                <Suspense fallback={<MyLoader count={3} />}>
-                    <DataResourceListing page={page} size={size} filter={filter}/>
-                </Suspense>
+                        <Suspense fallback={<MyLoader count={3}/>}>
+                            <DataResourceListing page={page} size={size} filter={filter}/>
+                        </Suspense>
+                    </div>
+                    <div className="w-75 bg-gray-50 rounded-lg border items-center justify-between p-2">
+                        <FilterResourceForm filter={filter}/>
                     </div>
                 </div>
             </div>
