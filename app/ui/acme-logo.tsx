@@ -4,9 +4,9 @@ import { lusitana } from '@/app/ui/fonts';
 export default function AcmeLogo() {
   return (
     <div
-      className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
+      className={`${lusitana.className} flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-500 p-4 md:h-30 text-white`}
     >
-      <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" />
+      <GlobeAltIcon className="h-16 w-16 rotate-[15deg] " />
       <p className="text-[44px]">Acme</p>
     </div>
   );

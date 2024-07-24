@@ -12,6 +12,8 @@ import {
 } from '@heroicons/react/24/outline';
 import {Card} from "@/app/ui/general/card";
 import Login from "@/app/ui/general/login";
+import { Icon } from '@iconify/react';
+import {Tooltip} from "flowbite-react";
 
 export default async function Page() {
     let username = "anonymous";
@@ -23,11 +25,12 @@ export default async function Page() {
          authError = true;
     }
 
-    username = (!authError && session.user) ? session.user.name : "Anonymous User";
+    authError = false;
+
+    username = (!authError && session && session.user) ? session.user.name : "Anonymous User";
     const searchEnabled= process.env.SEARCH_BASE_URL != undefined;
     const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName= process.env.METASTORE_INSTANCE_NAME ? process.env.METASTORE_INSTANCE_NAME : "Metadata Repository";
-
 
     /*
 
@@ -37,19 +40,32 @@ export default async function Page() {
                     >
                         <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6"/>
                     </Link>
+
+                    <Icon icon="pepicons-pencil:key-circle" />
      */
 
     return (
         <main className="flex min-h-screen flex-col p-6">
             <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-500 p-4 md:h-30">
                 {<AcmeLogo/>}
-                <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1">
+                <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1 gap-4">
+                    <Tooltip content={repoInstanceName}>
                     <a href="/base-repo"
-                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">{repoInstanceName}</a>
+                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">
+                        <Icon className={"w-12 h-12"} icon="pepicons-pencil:database-circle"></Icon>
+                    </a>
+                    </Tooltip>
+                    <Tooltip content={metastoreInstanceName}>
                     <a href=""
-                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">{metastoreInstanceName}</a>
+                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">
+                        <Icon className={"w-12 h-12"} icon="pepicons-pencil:menu-circle"></Icon>
+                        </a>
+                    </Tooltip>
                     {!authError?
-                    <Login className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300"/>
+                        <Tooltip content="Login">
+                            <Login icon={true} style={"py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300"}/>
+                        </Tooltip>
+
                         :null}
                 </div>
             </div>
