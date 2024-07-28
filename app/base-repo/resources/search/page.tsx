@@ -1,13 +1,13 @@
 "use client";
 
-import Breadcrumbs from '@/app/ui/general/breadcrumbs';
+import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
 import React from "react";
 import {
     buildFacetConfigFromConfig,
     buildSearchOptionsFromConfig,
     buildSortOptionsFromConfig,
     getFacetFields
-} from "../../../lib/config-helper"
+} from "../../../../lib/config-helper"
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import {
     Layout
@@ -26,9 +26,9 @@ import {
 } from "@elastic/react-search-ui";
 import { memo } from 'react'
 
-import MyBooleanFacet from "@/app/ui/general/MyBooleanFacet";
-import DataCardResultView from "@/app/ui/search/DataCardResultView";
-import { useNextRouting } from "../../../lib/useNextRouting";
+import MyBooleanFacet from "@/components/general/MyBooleanFacet";
+import DataCardResultView from "@/components/search/DataCardResultView";
+import { useNextRouting } from "../../../../lib/useNextRouting";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
 export default function Page() {

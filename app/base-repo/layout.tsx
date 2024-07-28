@@ -1,5 +1,7 @@
-import SideNavDataResources from "@/app/ui/dataresources/data-resource-side-nav";
+import SideNavDataResources from "@/components/dataresources/data-resource-side-nav";
 import React from "react";
+import '../global.css';
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (

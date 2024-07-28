@@ -1,6 +1,6 @@
-import Breadcrumbs from '@/app/ui/general/breadcrumbs';
-import DataResourceEditor from '@/app/ui/dataresources/data-resource-editor'
-import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/app/lib/base-repo/data";
+import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
+import DataResourceEditor from '@/components/dataresources/data-resource-editor'
+import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {notFound} from "next/navigation";
 import {ToastContainer} from "react-toastify";

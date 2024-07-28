@@ -1,10 +1,10 @@
-import { lusitana } from '@/app/ui/fonts';
-import {CardsSkeleton } from '@/app/ui/skeletons';
-import DataRepositoryStats from "@/app/ui/dashboard/data-repository-stats";
-import LatestActivities from "@/app/ui/dashboard/latest-activities";
-import Breadcrumbs from "@/app/ui/general/breadcrumbs";
+import { lusitana } from '@/components/fonts';
+import {CardsSkeleton } from '@/components/skeletons';
+import DataRepositoryStats from "@/components/dashboard/data-repository-stats";
+import LatestActivities from "@/components/dashboard/latest-activities";
+import Breadcrumbs from "@/components/Breadcrumbs/breadcrumbs";
 import { Suspense } from 'react';
-import {BaseRepoStatusCardWrapper} from "@/app/ui/dashboard/system-status-cards";
+import {BaseRepoStatusCardWrapper} from "@/components/dashboard/system-status-cards";
 
 export default async function Page() {
     const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";

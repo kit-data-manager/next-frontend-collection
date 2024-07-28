@@ -1,8 +1,8 @@
-import '@/app/ui/global.css';
-import {inter} from '@/app/ui/fonts';
+import '@/app/global.css';
+import {inter} from '@/components/fonts';
 import React from "react";
 import {Providers} from "@/app/Providers";
-import SessionGuard from "@/app/ui/general/SessionGuard";
+import SessionGuard from "@/components/general/SessionGuard";
 
 export default function RootLayout({children}: {
     children: React.ReactNode;
@@ -17,7 +17,10 @@ export default function RootLayout({children}: {
             <SessionGuard>
                 {children}
             </SessionGuard>
-        </Providers> : <>{children}</>
+        </Providers> :
+            <>
+                {children}
+            </>
         }
         </body>
 </html>

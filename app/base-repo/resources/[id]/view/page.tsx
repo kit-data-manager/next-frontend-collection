@@ -1,9 +1,9 @@
-import Breadcrumbs from '@/app/ui/general/breadcrumbs';
+import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
 import {notFound} from "next/navigation";
-import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/app/lib/base-repo/data";
-import DataResourceDataCardWrapper from "@/app/ui/dataresources/data-resource-data-card-wrapper";
+import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
+import DataResourceDataCardWrapper from "@/components/dataresources/data-resource-data-card-wrapper";
 import React from "react";
-import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/app/lib/event-utils";
+import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;

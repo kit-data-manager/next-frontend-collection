@@ -2,14 +2,14 @@ import {
     PencilIcon,
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
-import Breadcrumbs from "@/app/ui/general/breadcrumbs";
+import Breadcrumbs from "@/components/Breadcrumbs/breadcrumbs";
 import Link from "next/link";
-import DataResourceListing from "@/app/ui/dataresources/data-resource-listing";
-import MyLoader from "@/app/ui/dataresources/MyLoader";
+import DataResourceListing from "@/components/dataresources/data-resource-listing";
+import MyLoader from "@/components/dataresources/MyLoader";
 import {Suspense} from 'react';
-import EditInvoiceForm from "@/app/ui/invoices/edit-form";
-import {CustomerField, FilterForm, InvoiceForm} from "@/app/lib/definitions";
-import FilterResourceForm from "@/app/ui/dataresources/filter-form";
+import EditInvoiceForm from "@/components/invoices/edit-form";
+import {CustomerField, FilterForm, InvoiceForm} from "@/lib/definitions";
+import FilterResourceForm from "@/components/dataresources/filter-form";
 
 
 export default async function Page({searchParams}: {

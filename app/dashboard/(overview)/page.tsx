@@ -1,9 +1,9 @@
-import LatestActivities from '@/app/ui/dashboard/latest-activities';
-import { lusitana } from '@/app/ui/fonts';
+import LatestActivities from '@/components/dashboard/latest-activities';
+import { lusitana } from '@/components/fonts';
 import { Suspense } from 'react';
-import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
-import OverallStatusCardWrapper from "@/app/ui/dashboard/system-status-cards";
-import RevenueChart from "@/app/ui/general/revenue-chart";
+import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/components/skeletons';
+import OverallStatusCardWrapper from "@/components/dashboard/system-status-cards";
+import RevenueChart from "@/components/general/revenue-chart";
 
 export default async function Page() {
 

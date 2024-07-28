@@ -1,17 +1,16 @@
-import AcmeLogo from '@/app/ui/acme-logo';
-import {inter, lusitana} from '@/app/ui/fonts';
+import AcmeLogo from '@/components/acme-logo';
+import {inter, lusitana} from '@/components/fonts';
 import React, {memo, Suspense} from "react";
-import {CardsSkeleton} from "@/app/ui/skeletons";
-import OverallStatusCardWrapper, {HeaderStatusCardWrapper} from "@/app/ui/dashboard/system-status-cards";
+import {CardsSkeleton} from "@/components/skeletons";
+import OverallStatusCardWrapper from "@/components/dashboard/system-status-cards";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import SiteSearch from "@/app/ui/general/site-search";
+import SiteSearch from "@/components/general/site-search";
 import {
-    ExclamationTriangleIcon, GlobeAltIcon
+    ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import {Card} from "@/app/ui/general/card";
-import Login from "@/app/ui/general/login";
+import Login from "@/components/general/login";
 import { Icon } from '@iconify/react';
 import {Tooltip} from "flowbite-react";
 
@@ -46,7 +45,7 @@ export default async function Page() {
 
     return (
         <main className="flex min-h-screen flex-col p-6">
-            <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-500 p-4 md:h-30">
+            <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-600 p-4 md:h-30">
                 {<AcmeLogo/>}
                 <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1 gap-4">
                     <Tooltip content={repoInstanceName}>
