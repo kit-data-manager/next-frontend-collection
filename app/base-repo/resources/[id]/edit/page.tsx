@@ -1,9 +1,9 @@
-import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
-import DataResourceEditor from '@/components/dataresources/data-resource-editor'
+import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
 import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {notFound} from "next/navigation";
 import {ToastContainer} from "react-toastify";
+import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 
 export default async function Page({params}: { params: { id: string } }) {
     const id = params.id;
