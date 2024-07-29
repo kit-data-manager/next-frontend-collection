@@ -2,9 +2,9 @@ import { lusitana } from '@/components/fonts';
 import {CardsSkeleton } from '@/components/skeletons';
 import DataRepositoryStats from "@/components/dashboard/data-repository-stats";
 import LatestActivities from "@/components/dashboard/latest-activities";
-import Breadcrumbs from "@/components/Breadcrumbs/breadcrumbs";
 import { Suspense } from 'react';
 import {BaseRepoStatusCardWrapper} from "@/components/dashboard/system-status-cards";
+import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 
 export default async function Page() {
     const repoInstanceName= process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
@@ -16,7 +16,6 @@ export default async function Page() {
                     { label: `${repoInstanceName}`, href: '/base-repo', active: true},
                 ]}
             />
-            {/**Badges*/}
             <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                 Sub-System Status
             </h2>

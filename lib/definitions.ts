@@ -91,18 +91,18 @@ export type Tag = {
   url?: string;
 }
 
-export type FilterForm = {
-  id: string;
-  publisher: string;
-  publicationYear: string;
-  state: 'VOLATILE' | 'FIXED';
-};
+export type Pagination = {
+  size:number;
+  page: number;
+}
 
-
-
-
-
-
+export type DataResourcesSearchParams = {
+  page?: Pagination;
+  id?:string;
+  state?:string;
+  publicationYear?:string;
+  publisher?:string;
+}
 
 export type User = {
   id: string;

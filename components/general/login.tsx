@@ -2,7 +2,7 @@
 import { signIn } from "next-auth/react";
 import {Icon} from "@iconify/react";
 import React from "react";
-export default function Login(icon:boolean, style: string) {
+export default function Login(icon:boolean=false, style: string='') {
     if(icon){
         return (
             <a onClick={() => signIn("keycloak")} className={style}>

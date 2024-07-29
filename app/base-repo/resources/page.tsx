@@ -1,37 +1,30 @@
 import {
-    PencilIcon,
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
-import Breadcrumbs from "@/components/Breadcrumbs/breadcrumbs";
+import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
 import DataResourceListing from "@/components/dataresources/data-resource-listing";
 import MyLoader from "@/components/dataresources/MyLoader";
 import {Suspense} from 'react';
-import EditInvoiceForm from "@/components/invoices/edit-form";
-import {CustomerField, FilterForm, InvoiceForm} from "@/lib/definitions";
-import FilterResourceForm from "@/components/dataresources/filter-form";
+import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
+import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
+import {DataResourcesSearchParams} from "@/lib/definitions";
+import {valueOrDefault} from "@/lib/searchParamHelper";
 
 
 export default async function Page({searchParams}: {
-    searchParams?: {
-        query?: string;
-        size?: number;
-        page?: string;
-        id?:string;
-        state?:string;
-        publicationYear?:string;
-        publisher?:string;
-        reload?:boolean;
-    };
+    searchParams?: DataResourcesSearchParams;
 }) {
-    const page: Number = searchParams.page ? Number.parseInt(searchParams.page) : 1;
-    const size = searchParams.size ? Number.parseInt(searchParams.size) : 10;
+
+
+    const page: number = valueOrDefault(searchParams, "page", 0);
+    const size:number = valueOrDefault(searchParams, "size", 10);
     const filter:FilterForm = {} as FilterForm;
 
-    searchParams.id ? filter.id = searchParams.id : undefined;
-    searchParams.state ? filter.state = searchParams.state : undefined;
-    searchParams.publisher ? filter.publisher = searchParams.publisher : undefined;
-    searchParams.publicationYear ? filter.publicationYear = searchParams.publicationYear : undefined;
+    filter.id = valueOrDefault(searchParams, "id", undefined);
+    filter.state = valueOrDefault(searchParams, "state", undefined);
+    filter.publisher = valueOrDefault(searchParams, "publisher", undefined);
+    filter.publicationYear = valueOrDefault(searchParams, "publicationYear", undefined);
 
     return (
         <main>

@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react";
 import federatedLogout from "@/lib/federatedLogout";
 
 export default function Logout() {

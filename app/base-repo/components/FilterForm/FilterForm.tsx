@@ -1,15 +1,14 @@
 'use client';
 
-import {CustomerField, FilterForm, InvoiceForm} from '@/lib/definitions';
 import {
     CalendarIcon,
     LockClosedIcon,
     LockOpenIcon,
     UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { filterResources } from '@/lib/actions';
 import {Button} from "@/components/button";
+import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
@@ -28,6 +27,7 @@ export default function FilterResourceForm({filter}: {
                             id="publisher"
                             name="publisher"
                             type="text"
+                            placeholder="Publisher"
                             className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                             defaultValue={filter.publisher}
                         >
@@ -60,45 +60,45 @@ export default function FilterResourceForm({filter}: {
                     <legend className="mb-2 block text-sm font-medium">
                         Resource Status
                     </legend>
-                    <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
-                        <div className="m-4 gap-2">
+                    <div className="rounded-md border border-gray-200 bg-white py-3">
+                        <div className="ml-4">
                             <div className="flex items-center">
                                 <input
                                     id="volatile"
                                     name="state"
-                                    type="radio"
+                                    type="checkbox"
                                     value="VOLATILE"
                                     defaultChecked={filter.state === 'VOLATILE'}
                                     className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                                 />
                                 <label
                                     htmlFor="volatile"
-                                    className="ml-2 w-full flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500  px-3 py-1.5 text-xs font-medium text-gray-600"
+                                    className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium text-gray-600"
                                 >
-                                    Volatile <LockOpenIcon className="h-4 w-4" />
+                                    <LockOpenIcon className="h-4 w-4" /> Volatile
                                 </label>
                             </div>
                             <div className="flex items-center">
                                 <input
                                     id="fixed"
                                     name="status"
-                                    type="radio"
+                                    type="checkbox"
                                     value="FIXED"
                                     defaultChecked={filter.state === 'FIXED'}
                                     className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                                 />
                                 <label
                                     htmlFor="fixed"
-                                    className="ml-2  w-full flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
+                                    className="ml-2  w-full flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600"
                                 >
-                                    Fixed <LockClosedIcon className="h-4 w-4" />
+                                    <LockClosedIcon className="h-4 w-4" /> Fixed
                                 </label>
                             </div>
                         </div>
                     </div>
                 </fieldset>
             </div>
-            <div className="mt-6 flex justify-end gap-4">
+            <div className="flex justify-end p-4 md:p-6">
                 <Button type="submit">Filter</Button>
             </div>
         </form>
