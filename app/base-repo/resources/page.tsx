@@ -16,7 +16,6 @@ export default async function Page({searchParams}: {
     searchParams?: DataResourcesSearchParams;
 }) {
 
-
     const page: number = valueOrDefault(searchParams, "page", 0);
     const size:number = valueOrDefault(searchParams, "size", 10);
     const filter:FilterForm = {} as FilterForm;

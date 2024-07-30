@@ -4,7 +4,7 @@ import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import ContentUpload from "@/components/dataresources/content-upload";
+import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
 import {lusitana} from "@/components/fonts";
 import {ContentInformation} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
