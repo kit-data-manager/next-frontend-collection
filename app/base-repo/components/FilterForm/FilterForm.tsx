@@ -7,14 +7,14 @@ import {
     UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { filterResources } from '@/lib/actions';
-import {Button} from "@/components/button";
+import {Button} from "@/components/general/button";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
 }) {
     const doFilterResources = filterResources.bind(null);
-
+console.log(filter);
     return (
         <form action={doFilterResources}>
             <div className="rounded-md bg-gray-50 p-4 md:p-6">
@@ -56,47 +56,65 @@ export default function FilterResourceForm({filter}: {
                     </div>
                 </div>
 
-                <fieldset>
+                <fieldset className="mb-4">
                     <legend className="mb-2 block text-sm font-medium">
                         Resource Status
                     </legend>
                     <div className="rounded-md border border-gray-200 bg-white py-3">
                         <div className="ml-4">
-                            <div className="flex items-center">
-                                <input
-                                    id="volatile"
+                            { ['VOLATILE', 'FIXED'].map(key => {
+                            return (
+                                <div key={key} className="flex items-center">
+                                  <input
+                                    id={key.toLowerCase()}
                                     name="state"
                                     type="checkbox"
-                                    value="VOLATILE"
-                                    defaultChecked={filter.state === 'VOLATILE'}
+                                    value={key}
+                                    defaultChecked={filter.state === key}
                                     className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                                 />
                                 <label
-                                    htmlFor="volatile"
+                                    htmlFor={key.toLowerCase()}
                                     className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium text-gray-600"
                                 >
-                                    <LockOpenIcon className="h-4 w-4" /> Volatile
+                                    {key}
                                 </label>
-                            </div>
-                            <div className="flex items-center">
-                                <input
-                                    id="fixed"
-                                    name="status"
-                                    type="checkbox"
-                                    value="FIXED"
-                                    defaultChecked={filter.state === 'FIXED'}
-                                    className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
-                                />
-                                <label
-                                    htmlFor="fixed"
-                                    className="ml-2  w-full flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600"
-                                >
-                                    <LockClosedIcon className="h-4 w-4" /> Fixed
-                                </label>
-                            </div>
+                            </div>)
+                            }) }
                         </div>
                     </div>
                 </fieldset>
+
+                <fieldset>
+                    <legend className="mb-2 block text-sm font-medium">
+                        General Type
+                    </legend>
+                    <div className="rounded-md border border-gray-200 bg-white py-3">
+                        <div className="ml-4">
+                            { ['AUDIOVISUAL' ,'COLLECTION' , 'DATASET' , 'EVENT' , 'IMAGE' , 'INTERACTIVE_RESOURCE' , 'MODEL' ,
+                            'PHYSICAL_OBJECT' , 'SERVICE' , 'SOFTWARE' , 'SOUND' , 'TEXT' , 'WORKFLOW' , 'OTHER'].map(key => {
+                                return (<div key={key} className="flex items-center">
+                                    <input
+                                        id={key.toLowerCase()}
+                                        name="typeGeneral"
+                                        type="checkbox"
+                                        value={key}
+                                        defaultChecked={filter.typeGeneral === key}
+                                        className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                                    />
+                                    <label
+                                        htmlFor={key.toLowerCase()}
+                                        className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium text-gray-600"
+                                    >
+                                        {key}
+                                    </label>
+                                </div>)
+                            }) }
+                        </div>
+                    </div>
+                </fieldset>
+
+
             </div>
             <div className="flex justify-end p-4 md:p-6">
                 <Button type="submit">Filter</Button>

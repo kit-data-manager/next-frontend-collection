@@ -1,8 +1,7 @@
-import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
-import DataResourceEditor from '@/app/base-repo/components/Editor/data-resource-editor'
-import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
+import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
+import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
+import {loadSchema} from "@/lib/base-repo/data";
 import React from "react";
-import {notFound} from "next/navigation";
 import {ToastContainer} from "react-toastify";
 
 export default async function Page() {

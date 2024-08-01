@@ -56,11 +56,12 @@ export async function filterResources(formData: FormData) {
     const publisher = formData.get("publisher");
     const state = formData.get("state");
     const pubYear = formData.get("publicationYear");
+    const typeGeneral = formData.get("typeGeneral");
 
     revalidatePath('/base-repo/resources/');
     let path:string = '/base-repo/resources';
 
-    if(resourceId || publisher || state || pubYear){
+    if(resourceId || publisher || state || pubYear || typeGeneral){
         path += "?";
     }
 
@@ -78,6 +79,10 @@ export async function filterResources(formData: FormData) {
 
     if(pubYear){
         path += `publicationYear=${pubYear}`;
+    }
+
+    if(typeGeneral){
+        path += `typeGeneral=${typeGeneral}`;
     }
 
     redirect(path);

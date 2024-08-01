@@ -1,6 +1,6 @@
 import capitalize from "@mui/utils/capitalize";
 
-export function Creator({firstname, lastname}: {
+export function CreatorLabel({firstname, lastname}: {
     firstname: string;
     lastname?: string;
 }) {

@@ -1,5 +1,6 @@
 import {toast} from "react-toastify";
 import Uppy from "@uppy/core";
+import {ContentInformation, DataResource} from "@/lib/definitions";
 
 export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:string|null){
     //add filename to metadata
@@ -13,6 +14,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
     //add filename to base-url
     // @ts-ignore
     uppy.off("upload", null).on('upload', (result) => {
+
         for (let i = 0; i < result.fileIDs.length; i++) {
             let fileID = result.fileIDs[i];
             const file = uppy.getFile(fileID);
@@ -24,6 +26,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
             })
         }
     });
+
 
     //add completed handler
     // @ts-ignore

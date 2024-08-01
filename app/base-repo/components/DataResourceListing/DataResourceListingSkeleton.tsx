@@ -1,7 +1,7 @@
 import React from "react"
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-export function MyLoader(props){
+export function DataResourceListingSkeleton(props){
         let elems = Array.from(Array(10).keys())
 
         return(
@@ -19,4 +19,4 @@ export function MyLoader(props){
 )
 }
 
-export default MyLoader
+export default DataResourceListingSkeleton

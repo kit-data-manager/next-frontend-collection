@@ -8,8 +8,10 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import { usePathname } from 'next/navigation'
 import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
+import clsx from "clsx";
 
-export default function ContentUpload(id:string) {
+export default function ContentUpload(params) {
+    const id = params.id;
     const path = usePathname();
 
     const [uppy] = useState(() => new Uppy()

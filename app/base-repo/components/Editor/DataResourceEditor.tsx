@@ -13,8 +13,8 @@ import {
     deleteContentEventIdentifier,
     downloadContentEventIdentifier
 } from "@/lib/event-utils";
-import DataResourceDataCardWrapper from "@/components/dataresources/data-resource-data-card-wrapper";
-import MyLoader from "@/components/dataresources/MyLoader";
+import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
+import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
 import {
     DataChanged,
     DoCreateDataResource,
@@ -53,11 +53,11 @@ export default function DataResourceEditor(props) {
                     ];
 
                     return (
-                        <DataResourceDataCardWrapper
+                        <DataResourceCard
                             key={i}
                             data={element}
                             onActionClick={ev => handleAction(ev, currentData, currentContent, path, router)}
-                            actionEvents={actionEvents}></DataResourceDataCardWrapper>
+                            actionEvents={actionEvents}></DataResourceCard>
                     )
             })}
             </div>
@@ -66,7 +66,7 @@ export default function DataResourceEditor(props) {
                 Resource Metadata
             </h2>
             {editorReady ? null :
-            <MyLoader count={2} />
+            <DataResourceListingSkeleton count={2} />
             }
             {/* <span className={clsx("bg-blue-100 font-bold px-5 py-[7px] rounded",
                 {

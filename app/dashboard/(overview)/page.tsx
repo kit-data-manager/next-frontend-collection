@@ -1,8 +1,8 @@
-import LatestActivities from '@/components/dashboard/latest-activities';
+import LatestActivities from '@/app/base-repo/components/Dashboard/latest-activities';
 import { lusitana } from '@/components/fonts';
 import { Suspense } from 'react';
 import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/components/skeletons';
-import OverallStatusCardWrapper from "@/components/dashboard/system-status-cards";
+import OverallStatusCardWrapper from "@/app/base-repo/components/Dashboard/system-status-cards";
 import RevenueChart from "@/components/general/revenue-chart";
 
 export default async function Page() {

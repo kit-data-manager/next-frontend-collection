@@ -1,4 +1,4 @@
-import SideNavDataResources from "@/components/dataresources/data-resource-side-nav";
+import SideNavDataResources from "@/components/Nav/SideNav";
 import React from "react";
 import '../global.css';
 import NavLinksDataResources from "@/app/base-repo/components/Nav/NavLinksDataResources";

@@ -31,7 +31,14 @@ export const propertiesForContentInformation = (resourceId: string, content: Con
         }
 
         tags.push(thumbTag);
+
     }
+
+    tags.push({
+        "color": "#b6d1fc",
+        "iconName": "heroicons:plus-small-20-solid",
+        "eventIdentifier": `addTag_${content.relativePath}`
+    });
 
     if (actionButtons) {
         return {

@@ -3,8 +3,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
-import DataResourceListing from "@/components/dataresources/data-resource-listing";
-import MyLoader from "@/components/dataresources/MyLoader";
+import DataResourceListing from "@/app/base-repo/components/DataResourceListing/DataResourceListing";
+import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
 import {Suspense} from 'react';
 import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
@@ -48,7 +48,7 @@ export default async function Page({searchParams}: {
                 <div className="w-full flex col-2">
 
                     <div className="w-full">
-                        <Suspense fallback={<MyLoader count={3}/>}>
+                        <Suspense fallback={<DataResourceListingSkeleton count={3}/>}>
                             <DataResourceListing page={page} size={size} filter={filter}/>
                         </Suspense>
                     </div>

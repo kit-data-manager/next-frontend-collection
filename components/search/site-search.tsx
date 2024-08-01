@@ -25,10 +25,10 @@ import {
 } from "@elastic/react-search-ui";
 import { memo } from 'react'
 
-import MyBooleanFacet from "@/components/general/MyBooleanFacet";
+import MyBooleanFacet from "@/components/search/MyBooleanFacet";
 import DataCardResultView from "@/components/search/DataCardResultView";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import MyLayout from "@/components/general/MyLayout";
+import MyLayout from "@/components/search/MyLayout";
 
 export default function SiteSearch() {
 

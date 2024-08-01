@@ -12,7 +12,7 @@ import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {fetchContentOverview} from "@/lib/base-repo/data";
 import {formatNumber, humanFileSize} from "@/lib/format-utils";
 
-export default async function DataRepositoryStats() {
+export default async function RepositoryStats() {
 
     const {
         uniqueUsers,
@@ -57,26 +57,21 @@ export default async function DataRepositoryStats() {
     ]
 
     return (
-        <div className="flex w-full flex-col md:col-span-4">
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                Content Overview
-            </h2>
-            <div className="grid grid-cols-2 gap-4 px-4 py-8">
-                {stats.map((stat, i) => {
-                    const Icon = stat.icon;
-                    return (
-                        <StatusCard key={i}
-                                    cardStatus={
-                                        {
-                                            title: stat.value,
-                                            subtitle: stat.text,
-                                            icon: <Icon className="w-6 h-6"/>,
-                                            status: 0
-                                        }
-                                    }/>
-                    );
-                })}
-            </div>
-        </div>
+        <>
+            {stats.map((stat, i) => {
+                const Icon = stat.icon;
+                return (
+                    <StatusCard key={i}
+                                cardStatus={
+                                    {
+                                        title: stat.value,
+                                        subtitle: stat.text,
+                                        icon: <Icon className="w-6 h-6"/>,
+                                        status: 0
+                                    }
+                                }/>
+                );
+            })}
+        </>
     );
 }

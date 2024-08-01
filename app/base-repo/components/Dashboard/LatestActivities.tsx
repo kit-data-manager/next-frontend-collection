@@ -1,38 +1,32 @@
 import {
     ArrowPathIcon,
-    CircleStackIcon,
-    CodeBracketSquareIcon,
-    HashtagIcon,
     XCircleIcon,
     PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import {lusitana} from '@/components/fonts';
 import {fetchLatestActivities} from "@/lib/base-repo/data";
-import {Creator} from "@/components/dataresources/creator";
+import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel";
 import * as React from "react";
 import Link from "next/link";
 import {formatDateToLocal} from "@/lib/format-utils";
+import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
+import { Suspense } from 'react';
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
     TERMINAL: XCircleIcon
 };
 export default async function LatestActivities() {
-    const latestActivities = await fetchLatestActivities()
 
+    console.log("START");
+    const latestActivities = await fetchLatestActivities()
+    console.log("DONE");
     return (
-        <div className="flex w-full flex-col md:col-span-4">
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                Latest Activities
-            </h2>
-            <div className="flex gap-4 px-4 py-8 grow flex-col justify-between rounded-xl ">
                 <div className="bg-white px-6">
                     {
                         latestActivities.length < 1 ? (
-                        <div
-                            className='flex flex-row items-center justify-between py-4'
-                        >
+                        <div className='flex flex-row items-center justify-between py-4'>
                             <div className="flex items-center">
                                 <XCircleIcon className='h-5 w-5  mr-5 text-green-500'/>
                                 <div className="min-w-0">
@@ -40,7 +34,7 @@ export default async function LatestActivities() {
                                        No activities captured so far.
                                     </p>
                                     <span className="text-xs text-gray-500 sm:block">
-                                            <Creator firstname={"System"}/>
+                                            <CreatorLabel firstname={"System"}/>
                                     </span>
                                 </div>
                             </div>
@@ -51,7 +45,6 @@ export default async function LatestActivities() {
                         latestActivities.map((activity, i) => {
                             const Icon = iconMap[activity.type];
                             const id = JSON.parse(activity.state).id;
-                            console.log(id);
                             return (
                                 <div
                                     key={activity.id}
@@ -80,7 +73,7 @@ export default async function LatestActivities() {
 
                                             }
                                             <span className="text-xs text-gray-500 sm:block">
-                                            <Creator firstname={activity.author}/>
+                                            <CreatorLabel firstname={activity.author}/>
                                         </span>
                                         </div>
                                     </div>
@@ -94,7 +87,4 @@ export default async function LatestActivities() {
                         );
                     })}
                 </div>
-            </div>
-        </div>
-    );
-}
+)}

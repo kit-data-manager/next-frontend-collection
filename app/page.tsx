@@ -2,11 +2,11 @@ import AcmeLogo from '@/components/acme-logo';
 import {inter, lusitana} from '@/components/fonts';
 import React, {memo, Suspense} from "react";
 import {CardsSkeleton} from "@/components/skeletons";
-import OverallStatusCardWrapper from "@/components/dashboard/system-status-cards";
+import OverallStatusCardWrapper from "@/app/base-repo/components/Dashboard/SystemStats";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import SiteSearch from "@/components/general/site-search";
+import SiteSearch from "@/components/search/site-search";
 import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';

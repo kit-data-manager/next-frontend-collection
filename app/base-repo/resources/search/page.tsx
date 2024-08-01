@@ -1,6 +1,6 @@
 "use client";
 
-import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
+import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import React from "react";
 import {
     buildFacetConfigFromConfig,
@@ -26,7 +26,7 @@ import {
 } from "@elastic/react-search-ui";
 import { memo } from 'react'
 
-import MyBooleanFacet from "@/components/general/MyBooleanFacet";
+import MyBooleanFacet from "@/components/search/MyBooleanFacet";
 import DataCardResultView from "@/components/search/DataCardResultView";
 import { useNextRouting } from "../../../../lib/useNextRouting";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
@@ -52,7 +52,7 @@ export default function Page() {
         apiConnector: connector
     }
 
-    const combinedConfig = useNextRouting(config, "http://localhost:3000");
+   // const combinedConfig = useNextRouting(config, "http://localhost:3000");
     return (
         <main>
             <Breadcrumbs

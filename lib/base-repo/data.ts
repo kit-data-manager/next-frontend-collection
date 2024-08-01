@@ -1,6 +1,6 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {DataResource, FilterForm} from "@/lib/definitions";
+import {DataResource, FilterForm, ResourceType} from "@/lib/definitions";
 import {promises as fs} from 'fs';
 import fetch from "node-fetch";
 
@@ -15,10 +15,13 @@ export async function fetchDataResources(page: Number, size: Number, filter?: Fi
         resource.publisher = filter.publisher;
         resource.publicationYear = filter.publicationYear;
         resource.state = filter.state;
+        resource.resourceType = {typeGeneral:filter.typeGeneral} as ResourceType;
+
         hasProperty = (resource.id != undefined ||
             resource.publisher!= undefined ||
             resource.publicationYear!= undefined ||
-            resource.state!= undefined);
+            resource.state!= undefined||
+            resource.resourceType.typeGeneral!= undefined);
         let result;
         if(hasProperty){
         result = await fetch(`http://localhost:8081/api/v1/dataresources/search?page=${page - 1}&size=${size}&sort=lastUpdate,desc`, {
@@ -167,6 +170,7 @@ export async function fetchActuatorInfo() {
 
 export async function fetchContentOverview() {
     noStore()
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     //initial values (defaults if database query fails)
     let uniqueUsers = 0;
@@ -227,7 +231,7 @@ export async function fetchContentOverview() {
 
 export async function fetchLatestActivities() {
     noStore()
-
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
         const client = new Pool({
             user: process.env.DB_USER,

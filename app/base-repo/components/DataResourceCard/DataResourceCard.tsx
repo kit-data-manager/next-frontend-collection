@@ -10,7 +10,7 @@ import {
     getActionButton
 } from "@/lib/event-utils";
 
-export default function DataResourceDataCardWrapper(props) {
+export default function DataResourceCard(props) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;

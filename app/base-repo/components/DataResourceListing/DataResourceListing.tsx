@@ -1,9 +1,10 @@
-import {DataResource, FilterForm} from "@/lib/definitions";
+import {DataResource} from "@/lib/definitions";
 import Pagination from "@/components/general/pagination";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/data";
-import DataResourceDataCardWrapper from "@/components/dataresources/data-resource-data-card-wrapper";
+import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
+import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 
 export default async function DataResourceListing({page,size, filter}: {
     page: number;
@@ -42,7 +43,7 @@ export default async function DataResourceListing({page,size, filter}: {
                         downloadEventIdentifier(element.id)
                     ];
                     return (
-                        <DataResourceDataCardWrapper key={element.id} data={element} actionEvents={actionEvents}></DataResourceDataCardWrapper>
+                        <DataResourceCard key={element.id} data={element} actionEvents={actionEvents}></DataResourceCard>
                     );
                 })}
 

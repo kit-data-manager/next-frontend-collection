@@ -1,9 +1,9 @@
 import Breadcrumbs from '@/components/Breadcrumbs/breadcrumbs';
 import {notFound} from "next/navigation";
-import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
-import DataResourceDataCardWrapper from "@/components/dataresources/data-resource-data-card-wrapper";
+import {fetchDataResource, loadContent} from "@/lib/base-repo/data";
+import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React from "react";
-import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
+import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const id = params.id;
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 <div className="block min-w-full min-h-full align-middle">
                     <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
                         <div>
-                            <DataResourceDataCardWrapper key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"} actionEvents={actionEvents}></DataResourceDataCardWrapper>
+                            <DataResourceCard key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"} actionEvents={actionEvents}></DataResourceCard>
                         </div>
                     </div>
                 </div>

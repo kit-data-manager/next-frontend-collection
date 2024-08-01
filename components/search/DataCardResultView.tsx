@@ -2,7 +2,7 @@ import React from "react";
 import {JSONPath} from 'jsonpath-plus';
 import {createLabeledField, createTag} from "../../lib/dataCardHelpers"
 import {ContentInformation, DataResource, Description, Title} from "@/lib/definitions";
-import DataResourceDataCardWrapper from "@/components/dataresources/data-resource-data-card-wrapper";
+import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 
 function DataCardResultView({result, onClickLink}) {
@@ -216,7 +216,7 @@ function DataCardResultView({result, onClickLink}) {
 
     return (
         <li className="sui-result">
-            <DataResourceDataCardWrapper key={resource.id} data={resource} actionEvents={actionEvents}></DataResourceDataCardWrapper>
+            <DataResourceCard key={resource.id} data={resource} actionEvents={actionEvents}></DataResourceCard>
 
     {/*<DataCard
                 data-title={title}
