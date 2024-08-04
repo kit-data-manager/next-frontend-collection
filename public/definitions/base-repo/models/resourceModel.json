@@ -2,9 +2,6 @@
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "type": "object",
     "headerTemplate": "Data Resource {{#if self.id}} #{{ self.id }} {{else}} (New) {{/if}}",
-    "required": [
-        "titles", "publisher", "publicationYear", "resourceType", "alternateIdentifiers"
-    ],
     "options": {
         "disable_collapse": true,
         "titleHidden": true,
@@ -334,5 +331,8 @@
                 "hidden":true
             }
         }
-    }
+    },
+    "required": [
+        "titles", "publisher", "publicationYear", "resourceType", "alternateIdentifiers"
+    ]
 }

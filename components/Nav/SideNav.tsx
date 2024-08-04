@@ -29,10 +29,10 @@ export default async function SideNavDataResources({children}: {
             </Link>
             <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
                 {children}
-                <div className="h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+                <div className="h-auto w-full grow rounded-md md:block"></div>
                 {!authError ? (
                     <div
-                        className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+                        className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-medium hover:bg-accent md:flex-none md:justify-start md:p-2 md:px-3">
                         {session && session.user ? (
                             <>
                                 <PowerIcon className="w-6 text-[#56EB56]"/>

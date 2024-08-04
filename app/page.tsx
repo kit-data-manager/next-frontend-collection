@@ -44,7 +44,7 @@ export default async function Page() {
      */
 
     return (
-        <main className="flex min-h-screen flex-col p-6">
+        <main className="dark flex min-h-screen flex-col p-6">
             <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-600 p-4 md:h-30">
                 {<AcmeLogo/>}
                 <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1 gap-4">

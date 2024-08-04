@@ -10,16 +10,14 @@ import * as React from "react";
 import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
 
 export default async function Page() {
-    const repoInstanceName = process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
-
     return (
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    {label: `${repoInstanceName}`, href: '/base-repo', active: true},
+                    {label: "Overview", href: '/base-repo', active: true},
                 ]}
             />
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
                 Sub-System Status
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -30,7 +28,7 @@ export default async function Page() {
 
             <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
                         Content Overview
                     </h2>
                     <div className="grid grid-cols-2 gap-4 px-4 py-8">
@@ -41,7 +39,7 @@ export default async function Page() {
                 </div>
 
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
+                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
                         Latest Activities
                     </h2>
                     <div className="flex gap-4 px-4 py-8 grow flex-col justify-between rounded-xl ">

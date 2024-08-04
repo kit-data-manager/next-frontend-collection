@@ -23,17 +23,17 @@ export default async function LatestActivities() {
     const latestActivities = await fetchLatestActivities()
     console.log("DONE");
     return (
-                <div className="bg-white px-6">
+                <div className="px-6">
                     {
                         latestActivities.length < 1 ? (
                         <div className='flex flex-row items-center justify-between py-4'>
                             <div className="flex items-center">
-                                <XCircleIcon className='h-5 w-5  mr-5 text-green-500'/>
+                                <XCircleIcon className='h-5 w-5  mr-5 text-success'/>
                                 <div className="min-w-0">
                                     <p className="truncate text-sm font-semibold md:text-base">
                                        No activities captured so far.
                                     </p>
-                                    <span className="text-xs text-gray-500 sm:block">
+                                    <span className="text-xs text-muted sm:block">
                                             <CreatorLabel firstname={"System"}/>
                                     </span>
                                 </div>
@@ -52,14 +52,14 @@ export default async function LatestActivities() {
                                 >
                                     <div className="flex items-center">
                                         {Icon ? <Icon className={clsx(`h-5 w-5  mr-5`, {
-                                            'text-red-500': activity.type === "TERMINAL",
-                                            'text-yellow-500': activity.type === "UPDATE",
-                                            'text-green-500': activity.type === "INITIAL"
+                                            'text-warn': activity.type === "TERMINAL",
+                                            'text-info': activity.type === "UPDATE",
+                                            'text-success': activity.type === "INITIAL"
                                         })
                                         }/> : null}
                                         <div className="min-w-0">
                                             {(activity.type === "INITIAL" || activity.type === "UPDATE") ? (
-                                                <Link className="truncate text-sm font-semibold md:text-base hover:bg-sky-100 hover:text-blue-600" href={`/base-repo/resources/${id}/view`}>
+                                                <Link className="truncate text-sm font-semibold md:text-base hover:underline" href={`/base-repo/resources/${id}/view`}>
                                                     {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
                                                     {activity.type === "UPDATE" ? " updated" : ""}
                                                     {activity.type === "INITIAL" ? " created" : ""}
@@ -72,7 +72,7 @@ export default async function LatestActivities() {
                                             )
 
                                             }
-                                            <span className="text-xs text-gray-500 sm:block">
+                                            <span className="text-xs sm:block">
                                             <CreatorLabel firstname={activity.author}/>
                                         </span>
                                         </div>

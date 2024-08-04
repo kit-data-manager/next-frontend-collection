@@ -2,8 +2,6 @@
 
 import {
     CalendarIcon,
-    LockClosedIcon,
-    LockOpenIcon,
     UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { filterResources } from '@/lib/actions';
@@ -14,10 +12,10 @@ export default function FilterResourceForm({filter}: {
     filter: FilterForm;
 }) {
     const doFilterResources = filterResources.bind(null);
-console.log(filter);
+
     return (
         <form action={doFilterResources}>
-            <div className="rounded-md bg-gray-50 p-4 md:p-6">
+            <div className="rounded-md p-4 md:p-6">
                 <div className="mb-4">
                     <label htmlFor="customer" className="mb-2 block text-sm font-medium">
                         Publisher
@@ -60,7 +58,7 @@ console.log(filter);
                     <legend className="mb-2 block text-sm font-medium">
                         Resource Status
                     </legend>
-                    <div className="rounded-md border border-gray-200 bg-white py-3">
+                    <div className="rounded-md border py-3">
                         <div className="ml-4">
                             { ['VOLATILE', 'FIXED'].map(key => {
                             return (
@@ -71,7 +69,7 @@ console.log(filter);
                                     type="checkbox"
                                     value={key}
                                     defaultChecked={filter.state === key}
-                                    className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                                    className="h-4 w-4 cursor-pointer  focus:ring-2"
                                 />
                                 <label
                                     htmlFor={key.toLowerCase()}
@@ -89,7 +87,7 @@ console.log(filter);
                     <legend className="mb-2 block text-sm font-medium">
                         General Type
                     </legend>
-                    <div className="rounded-md border border-gray-200 bg-white py-3">
+                    <div className="rounded-md border py-3">
                         <div className="ml-4">
                             { ['AUDIOVISUAL' ,'COLLECTION' , 'DATASET' , 'EVENT' , 'IMAGE' , 'INTERACTIVE_RESOURCE' , 'MODEL' ,
                             'PHYSICAL_OBJECT' , 'SERVICE' , 'SOFTWARE' , 'SOUND' , 'TEXT' , 'WORKFLOW' , 'OTHER'].map(key => {
@@ -100,11 +98,11 @@ console.log(filter);
                                         type="checkbox"
                                         value={key}
                                         defaultChecked={filter.typeGeneral === key}
-                                        className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                                        className="h-4 w-4 cursor-pointer focus:ring-2"
                                     />
                                     <label
                                         htmlFor={key.toLowerCase()}
-                                        className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium text-gray-600"
+                                        className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
                                     >
                                         {key}
                                     </label>

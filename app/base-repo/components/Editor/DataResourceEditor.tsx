@@ -3,6 +3,7 @@
 import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
+import {Button, Label, Modal, TextInput} from "flowbite-react";
 import {usePathname, useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
 import {lusitana} from "@/components/fonts";
@@ -21,6 +22,7 @@ import {
     DoUpdateDataResource,
     HandleEditorAction
 } from "@/app/base-repo/components/Editor/useDataResourceEditor";
+import {Accordion} from "flowbite-react";
 
 export default function DataResourceEditor(props) {
     const [confirm, setConfirm] = useState(false);
@@ -30,68 +32,119 @@ export default function DataResourceEditor(props) {
     const path = usePathname();
 
     const [currentContent, setCurrentContent] = useState(props.content ? props.content : []);
+    const [tag, setTag] = useState("");
+    const [openModal, setOpenModal] = useState(false);
+    const [actionContent, setActionContent] = useState("");
+
     const createMode = props.createMode;
 
-    const handleAction =  useDebouncedCallback(HandleEditorAction);
+    const handleAction = useDebouncedCallback(HandleEditorAction);
+
+    function updateTag(newTag: string) {
+        setTag(newTag);
+    }
+
+    function onCloseModal(success: boolean) {
+        setActionContent("");
+        setOpenModal(false);
+    }
+
+    function assignTag() {
+        console.log("NEW TAG ", tag + "-" + currentData.id + "/data/" + actionContent);
+        setActionContent("");
+        setOpenModal(false);
+    }
+
+    console.log(currentContent);
 
     return (
-        <div className="mt-6 flow-root">
-            {!createMode ?
-            <>
-                <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                    File Upload
-                </h2>
-                <ContentUpload id={currentData.id}></ContentUpload> </> : null
-            }
+        <div>
+        <Accordion>
+            <Accordion.Panel>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>File Upload</Accordion.Title>
+                <Accordion.Content>
+                    {!createMode ?
+                            <ContentUpload id={currentData.id}></ContentUpload> : null
+                    }
+                </Accordion.Content>
+            </Accordion.Panel>
+            <Accordion.Panel>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Current Content</Accordion.Title>
+                <Accordion.Content>
+                    {currentContent ?
+                                <div className="rounded-lg p-2 md:pt-0">
+                                    {currentContent.map((element: ContentInformation, i: number) => {
+                                        let actionEvents = [
+                                            downloadContentEventIdentifier(element.parentResource.id, element.relativePath),
+                                            deleteContentEventIdentifier(element.relativePath)
+                                        ];
 
-            {currentContent ?
-            <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-                {currentContent.map((element:ContentInformation, i:number) => {
-                   let actionEvents=[
-                        downloadContentEventIdentifier(element.parentResource.id, element.relativePath),
-                        deleteContentEventIdentifier(element.relativePath)
-                    ];
+                                        return (
+                                            <DataResourceCard
+                                                key={i}
+                                                data={element}
+                                                onActionClick={ev => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent)}
+                                                actionEvents={actionEvents}></DataResourceCard>
+                                        )
+                                    })}
+                                </div>
+                        : null}
+                </Accordion.Content>
+            </Accordion.Panel>
+            <Accordion.Panel>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Resource Metadata</Accordion.Title>
+                <Accordion.Content>
+                    <>
+                    {editorReady ? null :
+                        <DataResourceListingSkeleton count={2}/>
+                    }
+                    <JsonForm id="DataResource" schema={props.schema} data={currentData} setEditorReady={setEditorReady}
+                              onChange={(d) => DataChanged(d, setConfirm, setCurrentData)}></JsonForm>
+                        {props.etag ?
+                            <ConfirmCancelComponent confirmLabel={"Commit"}
+                                                    cancelLabel={"Cancel"}
+                                                    confirmCallback={() => DoUpdateDataResource(props.etag, currentData, router)}
+                                                    cancelHref={`/base-repo/resources/${currentData.id}`}
+                                                    confirm={confirm}
+                            >
+                            </ConfirmCancelComponent> :
+                            <ConfirmCancelComponent confirmLabel={"Create"}
+                                                    cancelLabel={"Cancel"}
+                                                    confirmCallback={() => DoCreateDataResource(currentData, router)}
+                                                    cancelHref={`/base-repo/resources`}
+                                                    confirm={confirm}
+                            >
+                            </ConfirmCancelComponent>
+                        }
+                        </>
+                </Accordion.Content>
+            </Accordion.Panel>
+        </Accordion>
 
-                    return (
-                        <DataResourceCard
-                            key={i}
-                            data={element}
-                            onActionClick={ev => handleAction(ev, currentData, currentContent, path, router)}
-                            actionEvents={actionEvents}></DataResourceCard>
-                    )
-            })}
-            </div>
-            : null }
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                Resource Metadata
-            </h2>
-            {editorReady ? null :
-            <DataResourceListingSkeleton count={2} />
-            }
-            {/* <span className={clsx("bg-blue-100 font-bold px-5 py-[7px] rounded",
-                {
-                    'hidden': editorReady
-                })
-            }>Loading Editor...</span>*/}
+            <Modal show={openModal} onClose={onCloseModal} size="md" popup>
+                <Modal.Header/>
+                <Modal.Body>
+                    <div className="space-y-6">
+                        <h3 className="text-xl font-medium">Assign new Tag
+                            to {currentContent.relativePath}</h3>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label htmlFor="tag" value="New Tag"/>
+                            </div>
+                            <TextInput
+                                id="tag"
+                                placeholder="newTag"
+                                onChange={(event) => updateTag(event.target.value)}
+                                required
+                            />
+                        </div>
 
-            <JsonForm id="DataResource" schema={props.schema} data={currentData} setEditorReady={setEditorReady} onChange={(d) => DataChanged(d, setConfirm, setCurrentData)}></JsonForm>
-            {props.etag ?
-                <ConfirmCancelComponent confirmLabel={"Commit"}
-                                    cancelLabel={"Cancel"}
-                                    confirmCallback={() => DoUpdateDataResource(props.etag, currentData, router)}
-                                    cancelHref={`/base-repo/resources/${currentData.id}`}
-                                    confirm = {confirm}
-                                   >
-                </ConfirmCancelComponent>:
-                <ConfirmCancelComponent confirmLabel={"Create"}
-                                        cancelLabel={"Cancel"}
-                                        confirmCallback={() => DoCreateDataResource(currentData, router)}
-                                        cancelHref={`/base-repo/resources`}
-                                        confirm = {confirm}
-                >
-                </ConfirmCancelComponent>
-            }
-
+                        <div className="w-full">
+                            <Button onClick={() => assignTag()}>Assign Tag</Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     )
 }

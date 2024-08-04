@@ -17,12 +17,12 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
                 <div className="space-x-4">
                     <Link id="cancelButton"
                           href={cancelHref}
-                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                          className="bg-destructive hover:underline font-bold py-2 px-4 rounded">
                         {cancelLabel}
                     </Link>
                     <button id="confirmButton"
                             onClick={confirmCallback}
-                            className={clsx('bg-blue-500 hover:bg-blue-700 text-white font-bold px-5 py-[7px] rounded',
+                            className={clsx('bg-success hover:underline font-bold px-5 py-[7px] rounded',
                                 { 'opacity-50 cursor-not-allowed': !confirm})}
                                 >
                         {confirmLabel}

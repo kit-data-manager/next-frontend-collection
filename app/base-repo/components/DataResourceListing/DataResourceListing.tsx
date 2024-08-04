@@ -35,7 +35,7 @@ export default async function DataResourceListing({page,size, filter}: {
 
     return (
         <div className="block min-w-full">
-            <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+            <div className="rounded-lg p-2 md:pt-0">
                 {finalResources.map((element:DataResource, i:number) => {
                     const actionEvents = [
                         viewEventIdentifier(element.id),

@@ -21,7 +21,7 @@ export const propertiesForContentInformation = (resourceId: string, content: Con
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
         let isThumb = content.tags && content.tags.includes("thumb");
         let thumbTag = {
-            "color": isThumb ? "#90EE90" : "#FFCCCB",
+            "color": isThumb ? "var(--success)" : "var(--error)",
             "text": "Thumb",
             "eventIdentifier": isThumb ? `unmakeThumb_${content.relativePath}` : `makeThumb_${content.relativePath}`
         };
@@ -31,11 +31,10 @@ export const propertiesForContentInformation = (resourceId: string, content: Con
         }
 
         tags.push(thumbTag);
-
     }
 
     tags.push({
-        "color": "#b6d1fc",
+        "color": "var(--info)",
         "iconName": "heroicons:plus-small-20-solid",
         "eventIdentifier": `addTag_${content.relativePath}`
     });

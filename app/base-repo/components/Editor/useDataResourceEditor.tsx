@@ -54,7 +54,7 @@ export const DoCreateDataResource = (currentData, router) => {
     })
 }
 
-export const HandleEditorAction = (event, currentData, currentContent, path, router) => {
+export const HandleEditorAction = (event, currentData, currentContent, path, setOpenModal, setActionContent) => {
     const eventIdentifier:string = event.detail.eventIdentifier;
     let parts = eventIdentifier.split("_");
     const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_")+1);
@@ -81,12 +81,17 @@ export const HandleEditorAction = (event, currentData, currentContent, path, rou
                 }
             })
         }
-    }else {
+    }else if(parts[0] === "unmakeThumb") {
+        removeTagFromContent(selectedContent, "thumb");
+    }else if(parts[0] === "makeThumb") {
         //otherwise, handle add/remove thumb event
         currentContent.forEach((element: ContentInformation) => {
             removeTagFromContent(element, "thumb");
         });
-
         assignTagToContent(selectedContent, "thumb", path);
+    }else if(parts[0] === "addTag") {
+        console.log("ADD TAG");
+        setActionContent(parts[1]);
+        setOpenModal(true);
     }
 };

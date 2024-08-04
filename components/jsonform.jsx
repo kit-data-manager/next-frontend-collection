@@ -65,7 +65,7 @@ export default function JsonForm(props) {
         startval: props.data || {}
     };
 
-    console.log("Import scripts");
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useScript('tailwind','https://cdn.tailwindcss.com/')
     useScript('handlebars', 'https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js')
@@ -74,7 +74,6 @@ export default function JsonForm(props) {
     useScript('jsoneditor' ,'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')
     //useScript('dompurify' ,'https://cdn.jsdelivr.net/npm/dompurify@latest/dist/purify.min.js')
 
-    console.log("Import css");
     useCss('fontawesome5','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
     useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css')
 
@@ -84,10 +83,9 @@ export default function JsonForm(props) {
         return errors.length === 0;
     }
     const setUpEditor = () =>{
-        console.log("Setup editor");
         jsoneditor = new window.JSONEditor(elementRef.current, defaultOptions);
+
         jsoneditor.on('change' , () => {
-            console.log("Change");
             if(validate()) {
                 props.onChange(jsoneditor.getValue());
             }else{

@@ -1,3 +1,17 @@
 .card{
     width: 100% !important;
 }
+
+
+div[data-schematype]:not([data-schematype="object"]):hover {
+    background-color: var(--accent)!important;
+}
+
+.je-modal{
+    background-color: var(--background)!important;
+    color: var(--foreground)!important;
+}
+
+div[data-theme="tailwind"] .json-editor-btn-collapse {
+    color:var(--secondary-foreground)!important;
+}

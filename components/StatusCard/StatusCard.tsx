@@ -9,7 +9,7 @@ export function StatusCard({cardStatus}: {
 
     if (!cardStatus.icon) {
         if (cardStatus.status > 0) {
-            CardIcon = <svg className="w-6 h-6 fill-current text-green-700" xmlns="http://www.w3.org/2000/svg"
+            CardIcon = <svg className="w-6 h-6 fill-current text-success" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor">
                 <path fillRule="evenodd"
@@ -17,7 +17,7 @@ export function StatusCard({cardStatus}: {
                       clipRule="evenodd"/>
             </svg>
         } else if (cardStatus.status < 0) {
-            CardIcon = <svg className="w-6 h-6 fill-current text-red-700" xmlns="http://www.w3.org/2000/svg"
+            CardIcon = <svg className="w-6 h-6 fill-current text-error" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor">
                 <path fillRule="evenodd"
@@ -25,7 +25,7 @@ export function StatusCard({cardStatus}: {
                       clipRule="evenodd"/>
             </svg>
         } else { //status == 0
-            CardIcon = <svg className="w-6 h-6 fill-current text-gray-700" xmlns="http://www.w3.org/2000/svg"
+            CardIcon = <svg className="w-6 h-6 fill-current text-muted" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor">
                 <path fillRule="evenodd"
@@ -39,10 +39,10 @@ export function StatusCard({cardStatus}: {
 
     return (
         <div
-            className={`${lusitana.className} flex flex-col bg-gray-50 justify-center items-center gap-2 border border-dashed border-gray-500 p-4 rounded-md`}>
+            className={`${lusitana.className} flex flex-col justify-center items-center gap-2 border border-dashed p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
                 {cardStatus.visitRef != undefined && cardStatus.status > 0 ?
-                    <a className="font-bold text-l underline hover:text-blue-600" href={cardStatus.visitRef}>{cardStatus.title}</a>
+                    <a className="font-bold text-l underline hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>
                     :
                     <a className="font-bold text-l">{cardStatus.title}</a>
                 }
@@ -53,10 +53,10 @@ export function StatusCard({cardStatus}: {
             })}>{cardStatus.subtitle}</span>
             {cardStatus.detailsRef ?
             <div className="w-full flex justify-end">
-                <a href={cardStatus.detailsRef} className={clsx("text-gray-400 text-xs font-semibold",
+                <a href={cardStatus.detailsRef} className={clsx("text-xs font-semibold",
                     {
-                        "text-white": cardStatus.detailsRef == undefined,
-                        "hover:text-blue-600": cardStatus.detailsRef != undefined
+                        "bg-primary": cardStatus.detailsRef == undefined,
+                        "hover:underline": cardStatus.detailsRef != undefined
                     })}
                 >details...</a>
             </div>

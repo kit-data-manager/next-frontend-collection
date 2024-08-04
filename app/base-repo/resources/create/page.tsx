@@ -23,7 +23,7 @@ export default async function Page() {
             />
             <div className="mt-6 flow-root">
                 <div className="block min-w-full align-middle">
-                    <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+                    <div className="rounded-lg p-2 md:pt-0">
                         <DataResourceEditor schema={schema} createMode={true}/>
                     </div>
                 </div>

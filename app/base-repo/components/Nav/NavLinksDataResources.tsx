@@ -38,9 +38,9 @@ export default function NavLinksDataResources() {
             key={link.name}
             href={(link.name === "Search" && !searchEnabled) ? {} : link.href}
             className={clsx(
-                'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm hover:bg-sky-100 hover:text-blue-600 font-medium md:flex-none md:justify-start md:p-2 md:px-3',
+                'flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-sm  hover:underline font-medium md:flex-none md:justify-start md:p-2 md:px-3',
                 {
-                  'bg-sky-100 text-blue-600': pathname === link.href,
+                  'underline': pathname === link.href,
                 },
             )}
           >

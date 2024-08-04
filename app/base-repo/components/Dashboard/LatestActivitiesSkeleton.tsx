@@ -6,8 +6,8 @@ export function LatestActivitiesSkeleton(props){
 
     return(
         <div className="block min-w-full">
-            <div className="rounded-lg bg-gray-50 p-2 row-gap-4 md:pt-0">
-                <SkeletonTheme baseColor="#EFEFEF" highlightColor="#DDD" >
+            <div className="rounded-lg p-2 row-gap-4 md:pt-0">
+                <SkeletonTheme baseColor="var(--muted)" highlightColor="var(--muted-foreground)" >
                     {elems.map((elem:number, i:number) => {
                         return (
                             <Skeleton key={i} className={"mt-5"} width={(Math.floor(Math.random() * (100 - 70) ) + 70) + "%"} {...props}/>

@@ -5,6 +5,7 @@ import {propertiesForContentInformation, propertiesForDataResource} from "@/lib/
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
 
+
 import {
     eventIdentifierToPath,
     getActionButton
@@ -16,7 +17,6 @@ export default function DataResourceCard(props) {
         const eventIdentifier: string = event.detail.eventIdentifier;
         replace(eventIdentifierToPath(eventIdentifier));
     });
-
     const {replace} = useRouter();
     const key = props.key;
     const data = props.data;
@@ -47,7 +47,7 @@ export default function DataResourceCard(props) {
                       onActionClick={ev => actionCallback(ev)}
                       {...miscProperties}>
             </DataCard>
-        </div>
+         </div>
     )
 }
 
