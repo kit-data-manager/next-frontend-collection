@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import flowbite from "flowbite-react/tailwind";
 
 const config = {
   darkMode: ["class"],
@@ -6,8 +7,8 @@ const config = {
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}"
-
+    "./src/**/*.{ts,tsx}",
+    flowbite.content()
   ],
   theme: {
     container: {
@@ -122,13 +123,9 @@ const config = {
   },
 
   plugins: [
-      require('flowbite/plugin')({
-        charts: false,
-        forms: false,
-        tooltips: false
-      }),
+      flowbite.plugin(),
       require('@tailwindcss/forms'),
-      require("tailwindcss-animate")
+      require("tailwindcss-animate"),
   ]
 } satisfies Config
 

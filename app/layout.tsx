@@ -5,6 +5,9 @@ import {Providers} from "@/app/Providers";
 import SessionGuard from "@/components/general/SessionGuard";
 import {ThemeProvider} from "@/components/Providers/theme-provider";
 
+import { ThemeModeScript } from "flowbite-react";
+
+
 export default function RootLayout({children}: {
     children: React.ReactNode;
 }) {
@@ -12,6 +15,9 @@ export default function RootLayout({children}: {
     const securityEnabled = process.env.KEYCLOAK_CLIENT_ID != '';
     return (
         <html lang="en">
+        <head>
+            <ThemeModeScript />
+        </head>
         <body className={`${inter.className} antialiased`}>
         <ThemeProvider
             attribute="class"

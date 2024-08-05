@@ -13,6 +13,8 @@ import {
 import { Icon } from '@iconify/react';
 import {Tooltip} from "flowbite-react";
 import Login from "@/components/general/Login";
+import MegaMenu from "@/components/MegaMenu/MegaMenu";
+import MainMenu from "@/components/MegaMenu/MegaMenu";
 
 export default async function Page() {
     let username = "anonymous";
@@ -45,29 +47,7 @@ export default async function Page() {
 
     return (
         <main className="dark flex min-h-screen flex-col p-6">
-            <div className="flex h-30 shrink-0 items-end place-content-between rounded-lg bg-blue-600 p-4 md:h-30">
-                {<AcmeLogo/>}
-                <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1 gap-4">
-                    <Tooltip content={repoInstanceName}>
-                    <a href="/base-repo"
-                       className="py-4 px-2 font-semibold hover:underline transition duration-300">
-                        <Icon className={"w-12 h-12"} icon="pepicons-pencil:database-circle"></Icon>
-                    </a>
-                    </Tooltip>
-                    <Tooltip content={metastoreInstanceName}>
-                    <a href=""
-                       className="py-4 px-2 font-semibold hover:underline transition duration-300">
-                        <Icon className={"w-12 h-12"} icon="pepicons-pencil:menu-circle"></Icon>
-                        </a>
-                    </Tooltip>
-                    {!authError?
-                        <Tooltip content="Login">
-                            <Login icon={true} style={"py-4 px-2 font-semibold hover:text-sky-300 transition duration-300"}/>
-                        </Tooltip>
-
-                        :null}
-                </div>
-            </div>
+            <MainMenu/>
 
             <div className="mt-4 flex grow flex-col gap-4 md:flex-col">
                 <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20">
