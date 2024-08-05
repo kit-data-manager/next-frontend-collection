@@ -73,7 +73,7 @@ export default function FilterResourceForm({filter}: {
                                 />
                                 <label
                                     htmlFor={key.toLowerCase()}
-                                    className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium text-gray-600"
+                                    className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
                                 >
                                     {key}
                                 </label>

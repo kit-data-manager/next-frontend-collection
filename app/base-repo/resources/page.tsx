@@ -40,7 +40,7 @@ export default async function Page({searchParams}: {
             <div className="mt-6 flow-root">
                     <div className="flex justify-end gap-2">
                     <Link
-                        className="mt-4 rounded-md px-4 py-2 mb-6 text-sm transition-colors hover:underline float-end text-center inline-flex items-center"
+                        className="mt-4 rounded-md px-4 bg-secondary py-2 mb-6 text-sm transition-colors hover:underline float-end text-center inline-flex items-center"
                         href='/base-repo/resources/create'>
                         <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                     </Link>

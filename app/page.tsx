@@ -1,6 +1,6 @@
 import AcmeLogo from '@/components/acme-logo';
 import {inter, lusitana} from '@/components/fonts';
-import React, {memo, Suspense} from "react";
+import React, { Suspense} from "react";
 import {CardsSkeleton} from "@/components/skeletons";
 import OverallStatusCardWrapper from "@/app/base-repo/components/Dashboard/SystemStats";
 import {getServerSession} from "next-auth";
@@ -10,9 +10,9 @@ import SiteSearch from "@/components/search/site-search";
 import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import Login from "@/components/general/login";
 import { Icon } from '@iconify/react';
 import {Tooltip} from "flowbite-react";
+import Login from "@/components/general/Login";
 
 export default async function Page() {
     let username = "anonymous";
@@ -50,19 +50,19 @@ export default async function Page() {
                 <div className="flex md:flex md:flex-grow flex-row justify-end space-x-1 gap-4">
                     <Tooltip content={repoInstanceName}>
                     <a href="/base-repo"
-                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">
+                       className="py-4 px-2 font-semibold hover:underline transition duration-300">
                         <Icon className={"w-12 h-12"} icon="pepicons-pencil:database-circle"></Icon>
                     </a>
                     </Tooltip>
                     <Tooltip content={metastoreInstanceName}>
                     <a href=""
-                       className="py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300">
+                       className="py-4 px-2 font-semibold hover:underline transition duration-300">
                         <Icon className={"w-12 h-12"} icon="pepicons-pencil:menu-circle"></Icon>
                         </a>
                     </Tooltip>
                     {!authError?
                         <Tooltip content="Login">
-                            <Login icon={true} style={"py-4 px-2 text-white font-semibold hover:text-sky-300 transition duration-300"}/>
+                            <Login icon={true} style={"py-4 px-2 font-semibold hover:text-sky-300 transition duration-300"}/>
                         </Tooltip>
 
                         :null}
@@ -70,8 +70,8 @@ export default async function Page() {
             </div>
 
             <div className="mt-4 flex grow flex-col gap-4 md:flex-col">
-                <div className="flex justify-center gap-6 rounded-lg bg-gray-50 px-6 pt-10 md:h-3/5 md:px-20">
-                    <p className={`${inter.className} antialiased text-l text-gray-800 md:text-l md:leading-normal`}>
+                <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20">
+                    <p className={`${inter.className} antialiased text-l md:text-l md:leading-normal`}>
                         <strong>Welcome {username}.</strong> This is an instance of the{' '}
                         <a href="https://nextjs.org/learn/" className="text-blue-500">
                             Next Frontend Collection
@@ -82,7 +82,7 @@ export default async function Page() {
                 <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                     Status
                 </h2>
-                 <div className="grid justify-center gap-6 rounded-lg bg-gray-50 px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
+                 <div className="grid justify-center gap-6 rounded-lg  px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
                     <Suspense fallback={<CardsSkeleton/>}>
                         <OverallStatusCardWrapper/>
                     </Suspense>
@@ -93,12 +93,12 @@ export default async function Page() {
                         Search
                     </h2><SiteSearch/>
                     </> :
-                    <div className="flex justify-center gap-6 rounded-lg bg-gray-50 px-6 pt-10 md:h-3/5 md:px-20 grid-cols-3">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-red-700"/>
-                        <p className={`${inter.className} antialiased text-l text-gray-800 md:text-l md:leading-normal`}>
+                    <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20 grid-cols-3">
+                        <ExclamationTriangleIcon className="w-6 h-6 text-error"/>
+                        <p className={`${inter.className} antialiased text-l md:text-l md:leading-normal`}>
                             Search is disabled for that instance. Please navigate directly to one of the configures services.
                         </p>
-                        <ExclamationTriangleIcon className="w-6 h-6 text-red-700"/>
+                        <ExclamationTriangleIcon className="w-6 h-6 text-error"/>
                     </div>
                 }
             </div>

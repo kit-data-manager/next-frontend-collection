@@ -3,7 +3,7 @@
 import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
-import {Button, Label, Modal, TextInput} from "flowbite-react";
+import {Button, CustomFlowbiteTheme, Label, Modal, TextInput} from "flowbite-react";
 import {usePathname, useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
 import {lusitana} from "@/components/fonts";
@@ -57,20 +57,40 @@ export default function DataResourceEditor(props) {
 
     console.log(currentContent);
 
+    const accordionTheme = {
+        root: {
+            base: 'divide-y-2 border-2 divide-primary border-primary dark:divide-primary dark:border-primary',
+        },
+        content: {
+            base: 'p-5 first:rounded-t-lg last:rounded-b-lg',
+        },
+        title: {
+            base: 'flex w-full items-center justify-between p-5 text-left font-medium first:rounded-t-lg last:rounded-b-lg',
+            flush: {
+                off: 'hover:underline focus:ring-4 focus:bg-secondary dark:hover:underline dark:focus:bg-secondary',
+                on: 'bg-secondary',
+            },
+            open: {
+                off: 'bg-secondary',
+                on: 'bg-secondary',
+            },
+        },
+    };
+
     return (
         <div>
-        <Accordion>
-            <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>File Upload</Accordion.Title>
-                <Accordion.Content>
+        <Accordion theme={accordionTheme}>
+            <Accordion.Panel theme={accordionTheme}>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>File Upload</Accordion.Title>
+                <Accordion.Content theme={accordionTheme.content}>
                     {!createMode ?
                             <ContentUpload id={currentData.id}></ContentUpload> : null
                     }
                 </Accordion.Content>
             </Accordion.Panel>
             <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Current Content</Accordion.Title>
-                <Accordion.Content>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>Current Content</Accordion.Title>
+                <Accordion.Content theme={accordionTheme.content}>
                     {currentContent ?
                                 <div className="rounded-lg p-2 md:pt-0">
                                     {currentContent.map((element: ContentInformation, i: number) => {
@@ -92,8 +112,8 @@ export default function DataResourceEditor(props) {
                 </Accordion.Content>
             </Accordion.Panel>
             <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Resource Metadata</Accordion.Title>
-                <Accordion.Content>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>Resource Metadata</Accordion.Title>
+                <Accordion.Content theme={accordionTheme.content}>
                     <>
                     {editorReady ? null :
                         <DataResourceListingSkeleton count={2}/>

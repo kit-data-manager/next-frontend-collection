@@ -123,7 +123,9 @@ const config = {
 
   plugins: [
       require('flowbite/plugin')({
-        accordion: false
+        charts: false,
+        forms: false,
+        tooltips: false
       }),
       require('@tailwindcss/forms'),
       require("tailwindcss-animate")
