@@ -15,7 +15,7 @@ export default function RootLayout({children}: {
     const securityEnabled = process.env.KEYCLOAK_CLIENT_ID != '';
     return (
         <html lang="en">
-        <head>
+        <head className={"dark"}>
             <ThemeModeScript />
         </head>
         <body className={`${inter.className} antialiased`}>

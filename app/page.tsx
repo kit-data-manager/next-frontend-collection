@@ -10,11 +10,7 @@ import SiteSearch from "@/components/search/site-search";
 import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import { Icon } from '@iconify/react';
-import {Tooltip} from "flowbite-react";
-import Login from "@/components/general/Login";
-import MegaMenu from "@/components/MegaMenu/MegaMenu";
-import MainMenu from "@/components/MegaMenu/MegaMenu";
+import MainMenu from "@/components/MainMenu/MainMenu";
 
 export default async function Page() {
     let username = "anonymous";
@@ -46,8 +42,8 @@ export default async function Page() {
      */
 
     return (
-        <main className="dark flex min-h-screen flex-col p-6">
-            <MainMenu/>
+        <main className="flex min-h-screen flex-col p-6">
+            <MainMenu authAvailable={!authError}/>
 
             <div className="mt-4 flex grow flex-col gap-4 md:flex-col">
                 <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20">
