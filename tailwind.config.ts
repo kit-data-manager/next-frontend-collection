@@ -23,8 +23,8 @@ const config = {
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "var(--primary)",
+        foreground: "var(--primary-foreground)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)"
@@ -127,6 +127,6 @@ const config = {
       require('@tailwindcss/forms'),
       require("tailwindcss-animate"),
   ]
-} satisfies Config
+}
 
 export default config;

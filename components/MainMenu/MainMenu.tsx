@@ -35,9 +35,9 @@ export default function MainMenu(props) {
 
     const pathname = usePathname();
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
-console.log(showLogin);
+
     return (
-        <MegaMenu fluid rounded>
+        <MegaMenu fluid rounded className="bg-secondary text-secondary-foreground">
                 <Navbar.Brand href="/">
                     <span
                         className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite</span>
@@ -45,23 +45,25 @@ console.log(showLogin);
                 <div className="order-2 hidden items-end justify-content-end md:flex">
                     {showLogin ?
                         <>
+
                         <a
                         href="#"
                         className="mr-1 rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 md:mr-2 md:px-5 md:py-2.5"
                     >
                         Login
                     </a>
-                    <Button href="#">Sign up</Button>
+                    <Button href="#" className="bg-accent text-accent-foreground">Sign up</Button>
                         </>
                          : null}
+
                     {theme.theme === "light" ? (
                         <SunIcon className="w-6 h-6 m-2 ml-6 shrink-0 " suppressHydrationWarning onClick={() =>
                             theme.setTheme(theme.theme === "light" ? "dark" : "light")
-                        }/>
+                        }></SunIcon>
                     ) : (
                         <MoonIcon className="w-6 h-6 m-2 ml-6 shrink-0" suppressHydrationWarning onClick={() =>
                             theme.setTheme(theme.theme === "light" ? "dark" : "light")
-                        }/>
+                        }></MoonIcon>
                     )}
                 </div>
                 <Navbar.Toggle/>

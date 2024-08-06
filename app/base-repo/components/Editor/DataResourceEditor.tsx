@@ -56,7 +56,7 @@ export default function DataResourceEditor(props) {
     }
 
     console.log(currentContent);
-
+/*
     const accordionTheme = {
         root: {
             base: 'divide-y-2 border-2 divide-primary border-primary dark:divide-primary dark:border-primary',
@@ -76,21 +76,21 @@ export default function DataResourceEditor(props) {
             },
         },
     };
-
+*/
     return (
         <div>
-        <Accordion theme={accordionTheme}>
-            <Accordion.Panel theme={accordionTheme}>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>File Upload</Accordion.Title>
-                <Accordion.Content theme={accordionTheme.content}>
+        <Accordion>
+            <Accordion.Panel>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>File Upload</Accordion.Title>
+                <Accordion.Content>
                     {!createMode ?
                             <ContentUpload id={currentData.id}></ContentUpload> : null
                     }
                 </Accordion.Content>
             </Accordion.Panel>
             <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>Current Content</Accordion.Title>
-                <Accordion.Content theme={accordionTheme.content}>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Current Content</Accordion.Title>
+                <Accordion.Content>
                     {currentContent ?
                                 <div className="rounded-lg p-2 md:pt-0">
                                     {currentContent.map((element: ContentInformation, i: number) => {
@@ -112,8 +112,8 @@ export default function DataResourceEditor(props) {
                 </Accordion.Content>
             </Accordion.Panel>
             <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`} theme={accordionTheme.title}>Resource Metadata</Accordion.Title>
-                <Accordion.Content theme={accordionTheme.content}>
+                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Resource Metadata</Accordion.Title>
+                <Accordion.Content >
                     <>
                     {editorReady ? null :
                         <DataResourceListingSkeleton count={2}/>

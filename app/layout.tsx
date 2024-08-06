@@ -1,4 +1,4 @@
-import '@/app/global.css';
+import './global.css';
 import {inter} from '@/components/fonts';
 import React from "react";
 import {Providers} from "@/app/Providers";
@@ -18,7 +18,7 @@ export default function RootLayout({children}: {
         <head className={"dark"}>
             <ThemeModeScript />
         </head>
-        <body className={`${inter.className} antialiased`}>
+        <body className={`${inter.className} antialiased bg-primary text-primary-foreground`}>
         <ThemeProvider
             attribute="class"
             defaultTheme="dark"

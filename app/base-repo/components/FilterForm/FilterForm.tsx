@@ -115,7 +115,7 @@ export default function FilterResourceForm({filter}: {
 
             </div>
             <div className="flex justify-end p-4 md:p-6">
-                <Button type="submit">Filter</Button>
+                <Button type="submit" className="bg-accent text-accent-foreground">Filter</Button>
             </div>
         </form>
     );

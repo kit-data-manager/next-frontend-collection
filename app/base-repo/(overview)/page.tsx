@@ -17,7 +17,7 @@ export default async function Page() {
                     {label: "Overview", href: '/base-repo', active: true},
                 ]}
             />
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
+            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 text-secondary border-secondary rounded-sm`}>
                 Sub-System Status
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -28,7 +28,7 @@ export default async function Page() {
 
             <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
+                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-secondary rounded-sm`}>
                         Content Overview
                     </h2>
                     <div className="grid grid-cols-2 gap-4 px-4 py-8">
@@ -39,7 +39,7 @@ export default async function Page() {
                 </div>
 
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 rounded-sm`}>
+                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-secondary rounded-sm`}>
                         Latest Activities
                     </h2>
                     <div className="flex gap-4 px-4 py-8 grow flex-col justify-between rounded-xl ">

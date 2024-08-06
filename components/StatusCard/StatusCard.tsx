@@ -39,7 +39,7 @@ export function StatusCard({cardStatus}: {
 
     return (
         <div
-            className={`${lusitana.className} flex flex-col bg-card justify-center items-center gap-2 p-4 rounded-md`}>
+            className={`${lusitana.className} flex flex-col bg-card text-card-foreground justify-center items-center gap-2 p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
                 {cardStatus.visitRef != undefined && cardStatus.status > 0 ?
                     <a className="font-bold text-l underline hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>
