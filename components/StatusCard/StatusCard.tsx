@@ -25,7 +25,7 @@ export function StatusCard({cardStatus}: {
                       clipRule="evenodd"/>
             </svg>
         } else { //status == 0
-            CardIcon = <svg className="w-6 h-6 fill-current text-muted" xmlns="http://www.w3.org/2000/svg"
+            CardIcon = <svg className="w-6 h-6 fill-current text-info" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor">
                 <path fillRule="evenodd"
@@ -39,7 +39,7 @@ export function StatusCard({cardStatus}: {
 
     return (
         <div
-            className={`${lusitana.className} flex flex-col bg-card text-card-foreground justify-center items-center gap-2 p-4 rounded-md`}>
+            className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-center items-center gap-2 p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
                 {cardStatus.visitRef != undefined && cardStatus.status > 0 ?
                     <a className="font-bold text-l underline hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>

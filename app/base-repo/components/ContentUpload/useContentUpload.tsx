@@ -20,7 +20,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
             const file = uppy.getFile(fileID);
             uppy.setFileState(fileID, {
                 xhrUpload: {
-                    ...file.xhrUpload,
+                  //  ...file.xhrUpload,
                     endpoint: `http://localhost:8081/api/v1/dataresources/${resourceId}/data/${encodeURIComponent(file.meta.name)}`
                 }
             })

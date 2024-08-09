@@ -1,3 +1,4 @@
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 
 const REPO_BASE_PATH = "/base-repo/resources/";
 const VIEW_PATH = "view";
@@ -38,16 +39,14 @@ export const eventIdentifierToPath = (eventIdentifier: string) => {
     }
 };
 
-export function getActionButton(eventIdentifier:string){
+export function getActionButton(eventIdentifier:string):ActionButtonInterface{
     let parts = eventIdentifier.split("_");
-    let label = undefined;
-    let iconName = undefined;
+    let label:string = "Download";
+    let iconName:string = "material-symbols-light:download";
     let isUrl = false;
 
     if(eventIdentifier.startsWith("http") && eventIdentifier.indexOf("download?") > 0) {
         //TODO: Urls only for downloads so far. Change in case of other requirements.
-        label = "Download";
-        iconName = "material-symbols-light:download";
         isUrl = true;
     }else{
         switch (parts[0]) {
@@ -77,9 +76,9 @@ export function getActionButton(eventIdentifier:string){
     }
 
     if(isUrl) {
-        return {"label": label, "iconName":iconName, "url": eventIdentifier}
+        return {"label": label, "iconName":iconName, "url": eventIdentifier} as ActionButtonInterface
     }else{
-        return {"label": label, "iconName":iconName, "eventIdentifier": eventIdentifier}
+        return {"label": label, "iconName":iconName, "eventIdentifier": eventIdentifier}  as ActionButtonInterface
     }
 }
 

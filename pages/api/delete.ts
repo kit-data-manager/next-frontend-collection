@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const url = `http://localhost:8081/api/v1/dataresources/${resourceId}/data/${filename}`;
-        let realFilename = filename;
+        let realFilename = filename as string;
         if (realFilename.indexOf("/")) {
             realFilename = realFilename.substring(realFilename.lastIndexOf("/") + 1)
         }
@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return fetch(url, {
                     method: "DELETE",
                     headers: {
-                        "If-Match": etag
+                        "If-Match": etag ? etag : ""
                     },
                 }).then(function(response){
                     return response.status;

@@ -4,13 +4,13 @@ import {NextRequest, NextResponse} from "next/server";
 function logoutParams(token: JWT): Record<string, string> {
     return {
         id_token_hint: token.idToken as string,
-        post_logout_redirect_uri: process.env.NEXTAUTH_URL,
+        post_logout_redirect_uri: process.env.NEXTAUTH_URL as string,
     };
 }
 
 function handleEmptyToken() {
     const response = { error: "No session present" };
-    const responseHeaders = { status: 400 };
+    const responseHeaders = { status: 400 } as Response;
     return NextResponse.json(response, responseHeaders);
 }
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
         };
         const responseHeaders = {
             status: 500,
-        };
+        } as Response;
         return NextResponse.json(response, responseHeaders);
     }
 }

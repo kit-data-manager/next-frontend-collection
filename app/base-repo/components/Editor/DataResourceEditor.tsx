@@ -3,11 +3,11 @@
 import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
-import {Button, CustomFlowbiteTheme, Label, Modal, TextInput} from "flowbite-react";
+import {Button, Label, Modal, TextInput} from "flowbite-react";
 import {usePathname, useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
 import {lusitana} from "@/components/fonts";
-import {ContentInformation} from "@/lib/definitions";
+import {ContentInformation, DataResource} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -23,15 +23,17 @@ import {
     HandleEditorAction
 } from "@/app/base-repo/components/Editor/useDataResourceEditor";
 import {Accordion} from "flowbite-react";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
 
-export default function DataResourceEditor(props) {
+export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
     const [editorReady, setEditorReady] = useState(false);
-    const [currentData, setCurrentData] = useState(props.data ? props.data : {});
-    const router = useRouter();
-    const path = usePathname();
+    const [currentData, setCurrentData] = useState(props.data ? props.data as DataResource : {} as DataResource);
+    const router:AppRouterInstance = useRouter();
+    const path:string|null = usePathname();
 
-    const [currentContent, setCurrentContent] = useState(props.content ? props.content : []);
+    const [currentContent, setCurrentContent] = useState(props.content ? props.content as Array<ContentInformation> : [] as Array<ContentInformation>);
     const [tag, setTag] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const [actionContent, setActionContent] = useState("");
@@ -44,7 +46,7 @@ export default function DataResourceEditor(props) {
         setTag(newTag);
     }
 
-    function onCloseModal(success: boolean) {
+    function onCloseModal() {
         setActionContent("");
         setOpenModal(false);
     }
@@ -55,43 +57,44 @@ export default function DataResourceEditor(props) {
         setOpenModal(false);
     }
 
-    console.log(currentContent);
-/*
     const accordionTheme = {
         root: {
-            base: 'divide-y-2 border-2 divide-primary border-primary dark:divide-primary dark:border-primary',
+            base: 'bg-secondary divide-y-2 border-2 divide-primary border-primary dark:divide-primary dark:border-primary',
+
         },
         content: {
-            base: 'p-5 first:rounded-t-lg last:rounded-b-lg',
+            base: 'p-5 first:rounded-t-lg last:rounded-b-lg background foreground'
         },
         title: {
-            base: 'flex w-full items-center justify-between p-5 text-left font-medium first:rounded-t-lg last:rounded-b-lg',
+            base: `${lusitana.className} flex w-full items-center justify-between p-5 text-left bg-secondary text-secondary-foreground font-medium first:rounded-t-lg last:rounded-b-lg`,
             flush: {
-                off: 'hover:underline focus:ring-4 focus:bg-secondary dark:hover:underline dark:focus:bg-secondary',
+                off: 'hover:underline focus:bg-ring dark:hover:underline bg-secondary text-secondary-foreground',
                 on: 'bg-secondary',
             },
             open: {
-                off: 'bg-secondary',
-                on: 'bg-secondary',
+                off: 'bg-secondary text-secondary-foreground',
+                on: 'bg-secondary text-secondary-foreground',
             },
         },
     };
-*/
+
+
+    //TODO Identify current content for tag assignment in modal to use path there.
     return (
         <div>
-        <Accordion>
-            <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>File Upload</Accordion.Title>
-                <Accordion.Content>
-                    {!createMode ?
-                            <ContentUpload id={currentData.id}></ContentUpload> : null
-                    }
-                </Accordion.Content>
-            </Accordion.Panel>
-            <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Current Content</Accordion.Title>
-                <Accordion.Content>
-                    {currentContent ?
+            <Accordion>
+                {!createMode ?
+                    <Accordion.Panel>
+                        <Accordion.Title theme={accordionTheme.title}>File Upload</Accordion.Title>
+                        <Accordion.Content theme={accordionTheme.content}>
+                            <ContentUpload id={currentData.id}></ContentUpload>
+                        </Accordion.Content>
+                    </Accordion.Panel> : <></>}
+                {!createMode ?
+                    <Accordion.Panel>
+                        <Accordion.Title theme={accordionTheme.title}>Current Content</Accordion.Title>
+                        <Accordion.Content theme={accordionTheme.content}>
+                            {currentContent && currentContent.length > 0 ?
                                 <div className="rounded-lg p-2 md:pt-0">
                                     {currentContent.map((element: ContentInformation, i: number) => {
                                         let actionEvents = [
@@ -103,50 +106,81 @@ export default function DataResourceEditor(props) {
                                             <DataResourceCard
                                                 key={i}
                                                 data={element}
-                                                onActionClick={ev => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent)}
+                                                onActionClick={(ev:DataCardCustomEvent<ActionEvent>) => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent)}
                                                 actionEvents={actionEvents}></DataResourceCard>
                                         )
                                     })}
                                 </div>
-                        : null}
-                </Accordion.Content>
-            </Accordion.Panel>
-            <Accordion.Panel>
-                <Accordion.Title className={`${lusitana.className} mb-4 text-l md:text-xl rounded-sm`}>Resource Metadata</Accordion.Title>
-                <Accordion.Content >
-                    <>
-                    {editorReady ? null :
-                        <DataResourceListingSkeleton count={2}/>
-                    }
-                    <JsonForm id="DataResource" schema={props.schema} data={currentData} setEditorReady={setEditorReady}
-                              onChange={(d) => DataChanged(d, setConfirm, setCurrentData)}></JsonForm>
-                        {props.etag ?
-                            <ConfirmCancelComponent confirmLabel={"Commit"}
-                                                    cancelLabel={"Cancel"}
-                                                    confirmCallback={() => DoUpdateDataResource(props.etag, currentData, router)}
-                                                    cancelHref={`/base-repo/resources/${currentData.id}`}
-                                                    confirm={confirm}
-                            >
-                            </ConfirmCancelComponent> :
-                            <ConfirmCancelComponent confirmLabel={"Create"}
-                                                    cancelLabel={"Cancel"}
-                                                    confirmCallback={() => DoCreateDataResource(currentData, router)}
-                                                    cancelHref={`/base-repo/resources`}
-                                                    confirm={confirm}
-                            >
-                            </ConfirmCancelComponent>
-                        }
+                                : <div className="rounded-lg p-2 md:pt-0"><p className={"text-info text-xl"}>No content
+                                    available</p></div>}
+                        </Accordion.Content>
+                    </Accordion.Panel> : <></>}
+                <Accordion.Panel>
+                    {createMode ?
+                        <>
+                            <Accordion.Title theme={accordionTheme.title} onClick={() => {
+                            }}>Resource Metadata</Accordion.Title>
+                            <Accordion.Content theme={accordionTheme.content} hidden={false}>
+                                <>
+                                    {editorReady ? null :
+                                        <DataResourceListingSkeleton count={2}/>
+                                    }
+                                    <JsonForm id="DataResource" schema={props.schema} data={currentData}
+                                              setEditorReady={setEditorReady}
+                                              onChange={(d:object) => DataChanged(d, setConfirm, setCurrentData)}/>
+                                    {props.etag ?
+                                        <ConfirmCancelComponent confirmLabel={"Commit"}
+                                                                cancelLabel={"Cancel"}
+                                                                confirmCallback={() => DoUpdateDataResource(props.etag, currentData, router)}
+                                                                cancelHref={`/base-repo/resources/${currentData.id}`}
+                                                                confirm={confirm}
+                                        /> :
+                                        <ConfirmCancelComponent confirmLabel={"Create"}
+                                                                cancelLabel={"Cancel"}
+                                                                confirmCallback={() => DoCreateDataResource(currentData, router)}
+                                                                cancelHref={`/base-repo/resources`}
+                                                                confirm={confirm}
+                                        />
+                                    }
+                                </>
+                            </Accordion.Content>
                         </>
-                </Accordion.Content>
-            </Accordion.Panel>
-        </Accordion>
+                        :
+                        <>
+                            <Accordion.Title theme={accordionTheme.title}>Resource Metadata</Accordion.Title>
+                            <Accordion.Content theme={accordionTheme.content}>
+                                <>
+                                    {editorReady ? null :
+                                        <DataResourceListingSkeleton count={2}/>
+                                    }
+                                    <JsonForm id="DataResource" schema={props.schema} data={currentData}
+                                              setEditorReady={setEditorReady}
+                                              onChange={(d:object) => DataChanged(d, setConfirm, setCurrentData)}></JsonForm>
+                                    {props.etag ?
+                                        <ConfirmCancelComponent confirmLabel={"Commit"}
+                                                                cancelLabel={"Cancel"}
+                                                                confirmCallback={() => DoUpdateDataResource(props.etag, currentData, router)}
+                                                                cancelHref={`/base-repo/resources/${currentData.id}`}
+                                                                confirm={confirm}
+                                        /> :
+                                        <ConfirmCancelComponent confirmLabel={"Create"}
+                                                                cancelLabel={"Cancel"}
+                                                                confirmCallback={() => DoCreateDataResource(currentData, router)}
+                                                                cancelHref={`/base-repo/resources`}
+                                                                confirm={confirm}
+                                        />
+                                    }
+                                </>
+                            </Accordion.Content>
+                        </>}
+                </Accordion.Panel>
+            </Accordion>
 
             <Modal show={openModal} onClose={onCloseModal} size="md" popup>
                 <Modal.Header/>
                 <Modal.Body>
                     <div className="space-y-6">
-                        <h3 className="text-xl font-medium">Assign new Tag
-                            to {currentContent.relativePath}</h3>
+                        <h3 className="text-xl font-medium">Assign new Tag</h3>
                         <div>
                             <div className="mb-2 block">
                                 <Label htmlFor="tag" value="New Tag"/>
@@ -154,7 +188,7 @@ export default function DataResourceEditor(props) {
                             <TextInput
                                 id="tag"
                                 placeholder="newTag"
-                                onChange={(event) => updateTag(event.target.value)}
+                                onChange={(event:any) => updateTag(event.target.value)}
                                 required
                             />
                         </div>

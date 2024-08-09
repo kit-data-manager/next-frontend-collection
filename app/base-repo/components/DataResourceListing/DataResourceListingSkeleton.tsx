@@ -1,7 +1,7 @@
 import React from "react"
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-export function DataResourceListingSkeleton(props){
+export function DataResourceListingSkeleton({...props}){
         let elems = Array.from(Array(10).keys())
 
         return(

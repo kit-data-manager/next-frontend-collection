@@ -1,13 +1,15 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {DataResource, FilterForm, ResourceType} from "@/lib/definitions";
+import {Activity, ContentInformation, DataResource, ResourceType} from "@/lib/definitions";
 import {promises as fs} from 'fs';
 import fetch from "node-fetch";
+import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 
 
-export async function fetchDataResources(page: Number, size: Number, filter?: FilterForm) {
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm) {
     noStore()
     try {
+        const realPage = page-1;
     if(filter){
         let resource:DataResource = {} as DataResource;
         let hasProperty;
@@ -24,21 +26,21 @@ export async function fetchDataResources(page: Number, size: Number, filter?: Fi
             resource.resourceType.typeGeneral!= undefined);
         let result;
         if(hasProperty){
-        result = await fetch(`http://localhost:8081/api/v1/dataresources/search?page=${page - 1}&size=${size}&sort=lastUpdate,desc`, {
+        result = await fetch(new URL(`http://localhost:8081/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`), {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(resource)
             })
         }else{
-            result = await fetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`)
+            result = await fetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`))
         }
 
-        return await result.json();
+        return await result.json() as Array<DataResource>;
     }else{
-        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=${page - 1}&size=${size}&sort=lastUpdate,desc`);
+        const result = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`));
         const data = await result.json();
         await new Promise(resolve => setTimeout(resolve, 3000));
-        return data;
+        return data as Array<DataResource>;
     }
 
     } catch (error) {
@@ -48,12 +50,10 @@ export async function fetchDataResources(page: Number, size: Number, filter?: Fi
 }
 
 export async function loadContent(resource: DataResource) {
-    const response = await myFetch("http://localhost:8081/api/v1/dataresources/" + resource.id + "/data/",
+    const response = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${resource.id}/data/`),
         {headers: {"Accept": "application/vnd.datamanager.content-information+json"}});
 
-    const json = await response.json();
-
-    resource.children = json;
+    resource.children = await response.json() as ContentInformation[];
     return resource;
 }
 
@@ -69,7 +69,7 @@ export async function updateThumbState(id: string, path: string, addRemove: bool
 export async function fetchDataResourcePages(size) {
     noStore()
     try {
-        const response = await myFetch(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`)
+        const response = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`))
         const rangeHeader = await response.headers.get("Content-Range");
         const totalElements = rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1);
         const totalPages = Math.ceil(totalElements / size);
@@ -83,7 +83,7 @@ export async function fetchDataResourcePages(size) {
 export async function fetchDataResource(id: string) {
     noStore()
     try {
-        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+        const result = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${id}`),
             {headers: {"Accept": "application/json"}});
 
         const data = await result.json();
@@ -98,7 +98,7 @@ export async function fetchDataResource(id: string) {
 export async function fetchDataResourceEtag(id: string) {
     noStore()
     try {
-        const result = await myFetch(`http://localhost:8081/api/v1/dataresources/${id}`,
+        const result = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${id}`),
             {headers: {"Accept": "application/json"}});
 
         const etag = await result.headers.get("ETag");
@@ -128,7 +128,7 @@ export async function fetchActuatorInfo() {
     let elastic = "unknown";
 
     try {
-        const response = await myFetch(`http://localhost:8081/actuator/health`);
+        const response = await myFetch(new URL(`http://localhost:8081/actuator/health`));
 
         const json = await response.json();
 
@@ -186,7 +186,7 @@ export async function fetchContentOverview() {
             host: process.env.DB_HOST,
             database: process.env.DB_NAME,
             password: process.env.DB_PASSWORD,
-            port: process.env.DB_PORT
+            port: Number(process.env.DB_PORT)
         })
 
         //build queries
@@ -229,7 +229,7 @@ export async function fetchContentOverview() {
     };
 }
 
-export async function fetchLatestActivities() {
+export async function fetchLatestActivities():Promise<Activity[]> {
     noStore()
     await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
@@ -238,7 +238,7 @@ export async function fetchLatestActivities() {
             host: process.env.DB_HOST,
             database: process.env.DB_NAME,
             password: process.env.DB_PASSWORD,
-            port: process.env.DB_PORT
+            port: Number(process.env.DB_PORT)
         })
 
         const activities = await client.query(' \
@@ -308,14 +308,21 @@ export async function fetchLatestActivities() {
 }
 
 class ResponseError extends Error {
+    public response: string;
     constructor(message, res) {
         super(message);
         this.response = res;
     }
 }
 
-export async function myFetch(...options) {
-    const res = await fetch(...options);
+export async function myFetch(url: URL, init?:any) {
+    let res;
+    if(init){
+       res = await fetch(url, init);
+    }else{
+       res = await fetch(url);
+    }
+
     if (!res.ok) {
         throw new ResponseError('Bad fetch response', res);
     }

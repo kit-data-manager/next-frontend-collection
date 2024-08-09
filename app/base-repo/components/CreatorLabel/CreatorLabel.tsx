@@ -5,7 +5,7 @@ export function CreatorLabel({firstname, lastname}: {
     lastname?: string;
 }) {
     let result = ""
-    let link = undefined;
+    let link = "";
     if(firstname === "SELF") {
         result += "Anonymous User";
     }else{

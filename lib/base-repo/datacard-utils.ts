@@ -1,33 +1,40 @@
-import {ContentInformation, DataResource, Tag} from "@/lib/definitions";
+import {ContentInformation, DataResource} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
 import {getActionButton} from "@/lib/event-utils";
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../data-view-web-component";
+import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
 
 export const propertiesForDataResource = (resource: DataResource) => {
     return {
-        "data-title": titleForDataResource(resource),
-        "sub-title": subtitleForDataResource(resource),
-        "image-url": thumbForDataResource(resource),
-        "body-text": descriptionForDataResource(resource),
+        "dataTitle": titleForDataResource(resource),
+        "subTitle": subtitleForDataResource(resource),
+        "imageUrl": thumbForDataResource(resource),
+        "bodyText": descriptionForDataResource(resource),
         "textRight": rightTextForDataResource(resource),
         "metadata": metadataForDataResource(resource),
-        "children-data": childrenForDataResource(resource),
+        "childrenData": childrenForDataResource(resource),
         "tags": tagsForDataResource(resource),
     }
 }
 
-export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: object[], disableChangeThumb?: boolean) => {
-    let tags = [];
+export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: Array<ActionButtonInterface>, disableChangeThumb?: boolean) => {
+    let tags:Array<Tag> = new Array<Tag>;
 
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
         let isThumb = content.tags && content.tags.includes("thumb");
-        let thumbTag = {
-            "color": isThumb ? "var(--success)" : "var(--error)",
-            "text": "Thumb",
-            "eventIdentifier": isThumb ? `unmakeThumb_${content.relativePath}` : `makeThumb_${content.relativePath}`
-        };
-
+        let thumbTag:Tag;
         if(disableChangeThumb){
-            delete thumbTag["eventIdentifier"];
+            thumbTag = {
+                color: isThumb ? "var(--success)" : "var(--error)",
+                text: "Thumb",
+                eventIdentifier: isThumb ? `unmakeThumb_${content.relativePath}` : `makeThumb_${content.relativePath}`
+            }
+        }else{
+            thumbTag = {
+                color: isThumb ? "var(--success)" : "var(--error)",
+                text: "Thumb",
+            }
         }
 
         tags.push(thumbTag);
@@ -37,22 +44,22 @@ export const propertiesForContentInformation = (resourceId: string, content: Con
         "color": "var(--info)",
         "iconName": "heroicons:plus-small-20-solid",
         "eventIdentifier": `addTag_${content.relativePath}`
-    });
+    } as Tag);
 
     if (actionButtons) {
         return {
-            "data-title": JSON.stringify({value: content.relativePath}),
-            "sub-title": JSON.stringify({value: content.hash}),
-            "textRight": JSON.stringify({label: content.mediaType, value: humanFileSize(content.size)}),
-            "tags": JSON.stringify(tags),
+            "dataTitle":{value: content.relativePath} as TextPropType,
+            "subTitle": {value: content.hash} as TextPropType,
+            "textRight": {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
+            "tags": tags ,
             "actionButtons": actionButtons
         }
     } else {
         return {
-            "data-title": JSON.stringify({value: content.relativePath}),
-            "sub-title": JSON.stringify({value: content.hash}),
-            "textRight": JSON.stringify({label: content.mediaType, value: humanFileSize(content.size)}),
-            "tags": JSON.stringify(tags)
+            "dataTitle": {value: content.relativePath} as TextPropType,
+            "subTitle": {value: content.hash} as TextPropType,
+            "textRight": {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
+            "tags": tags
         }
     }
 }
@@ -78,37 +85,33 @@ function generateSubtitleFromCreator(resource: DataResource) {
     if (subTitleValue.length == 0) {
         subTitleValue = "Anonymous User";
     }
-    return subTitleValue;
+    return {"value": subTitleValue} as TextPropType;;
 }
 
 const titleForDataResource = (resource: DataResource) => {
 
-    let titleValue = {"value": "Resource #" + resource.id};
+    let titleValue = {"value": "Resource #" + resource.id} as TextPropType;
     if (resource.titles) {
         resource.titles.map((title, i) => {
             if (!title.titleType) {
-                titleValue = {"value": title.value};
+                titleValue = {"value": title.value} as TextPropType;
             }
         });
     } else {
-        titleValue = {"value": "INVALID RESOURCE (no title)"};
+        titleValue = {"value": "INVALID RESOURCE (no title)"} as TextPropType;
     }
 
-    return JSON.stringify(titleValue);
+    return titleValue;
 }
 
 const subtitleForDataResource = (resource: DataResource) => {
-    let subTitleValue = undefined;
+    let subTitleValue:TextPropType = generateSubtitleFromCreator(resource);
     if (resource.titles) {
         resource.titles.map((title, i) => {
             if (title.titleType === "SUBTITLE") {
-                subTitleValue = JSON.stringify({"value": title.value});
+                subTitleValue = {"value": title.value} as TextPropType;
             }
         });
-    }
-
-    if (!subTitleValue) {
-        subTitleValue = generateSubtitleFromCreator(resource);
     }
 
     return subTitleValue;
@@ -132,15 +135,15 @@ const rightTextForDataResource = (resource: DataResource) => {
 
 const tagsForDataResource = (resource: DataResource) => {
     //state tags
-    let tags: Tag[] = [];
+    let tags: Array<Tag> = new Array<Tag>;
     if (resource.state === "VOLATILE") {
-        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash"});
+        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash"} as Tag);
     } else if (resource.state === "FIXED") {
-        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin"});
+        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin"}  as Tag);
     } else if (resource.state === "REVOKED") {
-        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash"});
+        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash"}  as Tag);
     } else if (resource.state === "GONE") {
-        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash"});
+        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash"}  as Tag);
     }
 
     //access tags
@@ -148,17 +151,17 @@ const tagsForDataResource = (resource: DataResource) => {
     if(resource.acls) {
         resource.acls.map((acl, i) => {
             if (acl.sid === "anonymousUser") {
-                tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"});
+                tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"}  as Tag);
                 open = true;
             }
         });
     }else{
-        tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"});
+        tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"} as Tag);
         open = true;
     }
 
     if (!open) {
-        tags.push({"color": "#FFCCCB", "text": "Protected", "iconName": "zondicons:lock-closed"});
+        tags.push({"color": "#FFCCCB", "text": "Protected", "iconName": "zondicons:lock-closed"} as Tag);
     }
 
     //rights tag
@@ -168,9 +171,9 @@ const tagsForDataResource = (resource: DataResource) => {
             "text": "Licensed",
             "iconName": "mynaui:copyright",
             "url": resource.rights[0].schemeUri
-        });
+        } as Tag);
     } else {
-        tags.push({"color": "#FFCCCB", "text": "Unlicensed", "iconName": "mynaui:copyright-slash"});
+        tags.push({"color": "#FFCCCB", "text": "Unlicensed", "iconName": "mynaui:copyright-slash"} as Tag);
     }
 
     return tags;
@@ -192,18 +195,18 @@ const thumbForDataResource = (resource: DataResource) => {
 }
 
 const metadataForDataResource = (resource: DataResource) => {
-    let elements = [];
+    let elements:Array<ValueLabelObj | ValueLabelObjWithUrl> = new Array<ValueLabelObj | ValueLabelObjWithUrl>;
 
     elements.push({
         label: "ResourceType",
         value: resource.resourceType.value + "/" + resource.resourceType.typeGeneral
-    });
+    } as ValueLabelObj);
 
     if (resource.language) {
         elements.push({
             label: "Language",
             value: resource.language
-        });
+         } as ValueLabelObj);
     }
 
     if (resource.dates) {
@@ -212,7 +215,7 @@ const metadataForDataResource = (resource: DataResource) => {
                 elements.push({
                     label: "Creation Date",
                     value: formatDateToLocal(date.value)
-                });
+                } as ValueLabelObj);
             }
         });
     }
@@ -220,34 +223,34 @@ const metadataForDataResource = (resource: DataResource) => {
     elements.push({
         label: "Last Update",
         value: formatDateToLocal(resource.lastUpdate)
-    });
+    } as ValueLabelObj);
 
     if (resource.embargoDate) {
         elements.push({
             label: "Embargo",
             value: resource.embargoDate
-        });
+        } as ValueLabelObj);
     } else {
         elements.push({
             label: "Embargo",
             value: "None"
-        });
+        } as ValueLabelObj);
     }
 
     if (resource.subjects) {
         elements.push({
             label: "Subjects"
-        });
+        } as ValueLabelObj);
         resource.subjects.map((subject, i) => {
             if (subject.valueUri) {
                 elements.push({
                     value: `${subject.value}`,
                     url: subject.valueUri
-                });
+                } as ValueLabelObjWithUrl);
             } else {
                 elements.push({
                     value: `${subject.value}`,
-                });
+                } as ValueLabelObj);
             }
         });
     }
@@ -255,13 +258,13 @@ const metadataForDataResource = (resource: DataResource) => {
     if (resource.relatedIdentifiers) {
         elements.push({
             label: "Related Identifiers"
-        });
+        } as ValueLabelObj);
         resource.relatedIdentifiers.map((identifier, i) => {
             if (identifier.identifierType === "URL") {
                 elements.push({
                     value: `${identifier.relationType}`,
                     url: identifier.value
-                });
+                } as ValueLabelObjWithUrl);
             }
         });
     }
@@ -271,17 +274,16 @@ const metadataForDataResource = (resource: DataResource) => {
 }
 
 const childrenForDataResource = (resource: DataResource) => {
-    let children = undefined;
+    let children:Array<DataCard> = new Array<DataCard>;
     if (resource.children && resource.children.length > 0) {
-        children = []
         resource.children.map((content, i) => {
             let actionButtons = [
                 getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
             ];
 
-            children.push(propertiesForContentInformation(resource.id, content, actionButtons, true));
+            children.push(propertiesForContentInformation(resource.id, content, actionButtons, true) as DataCard);
         });
-        return JSON.stringify(children);
+        return children;
     }
 
     return children;

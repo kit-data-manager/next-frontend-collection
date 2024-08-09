@@ -6,10 +6,12 @@ import {
     updateDataResource
 } from "@/lib/base-repo/client-utils";
 import {toast} from "react-toastify";
-import {ContentInformation} from "@/lib/definitions";
+import {ContentInformation, DataResource} from "@/lib/definitions";
 import {REPO_EVENTS} from "@/lib/event-utils";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
 
-export const DataChanged = (data:object, setConfirm, setCurrentData) =>{
+export const DataChanged = (data:object, setConfirm:Function, setCurrentData:Function) =>{
     if(!data){
         setConfirm(false);
     }else {
@@ -18,7 +20,7 @@ export const DataChanged = (data:object, setConfirm, setCurrentData) =>{
     }
 }
 
-export const DoUpdateDataResource = (etag: string, currentData, router) => {
+export const DoUpdateDataResource = (etag: string, currentData:DataResource, router:AppRouterInstance) => {
     const redirectPath = `/base-repo/resources/${currentData.id}/view`;
     updateDataResource(currentData, etag).then((status) => {
         if(status == 200) {
@@ -34,7 +36,7 @@ export const DoUpdateDataResource = (etag: string, currentData, router) => {
     })
 }
 
-export const DoCreateDataResource = (currentData, router) => {
+export const DoCreateDataResource = (currentData:DataResource, router:AppRouterInstance) => {
     const id = toast.loading("Creating resource...")
 
     createDataResource(currentData).then((response) => {
@@ -54,14 +56,16 @@ export const DoCreateDataResource = (currentData, router) => {
     })
 }
 
-export const HandleEditorAction = (event, currentData, currentContent, path, setOpenModal, setActionContent) => {
+export const HandleEditorAction = (event:DataCardCustomEvent<ActionEvent>, currentData:DataResource, currentContent:Array<ContentInformation>,
+                                   path:string|null, setOpenModal:Function, setActionContent:Function) => {
     const eventIdentifier:string = event.detail.eventIdentifier;
     let parts = eventIdentifier.split("_");
     const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_")+1);
     //const selectedContent: ContentInformation = currentContent[contentIndex];
 
-    const selectedContent: ContentInformation = currentContent.find((element) => element.relativePath === contentPath);
+    const selectedContent: ContentInformation | undefined = currentContent.find((element) => element.relativePath === contentPath);
 
+    if(selectedContent){
     const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
 
     if(parts[0] === REPO_EVENTS.DELETE_CONTENT){
@@ -93,5 +97,5 @@ export const HandleEditorAction = (event, currentData, currentContent, path, set
         console.log("ADD TAG");
         setActionContent(parts[1]);
         setOpenModal(true);
-    }
+    }}
 };

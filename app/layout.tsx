@@ -7,7 +7,6 @@ import {ThemeProvider} from "@/components/Providers/theme-provider";
 
 import { ThemeModeScript } from "flowbite-react";
 
-
 export default function RootLayout({children}: {
     children: React.ReactNode;
 }) {
@@ -18,7 +17,7 @@ export default function RootLayout({children}: {
         <head className={"dark"}>
             <ThemeModeScript />
         </head>
-        <body className={`${inter.className} antialiased bg-primary text-primary-foreground`}>
+        <body className={`${inter.className} antialiased`}>
         <ThemeProvider
             attribute="class"
             defaultTheme="dark"

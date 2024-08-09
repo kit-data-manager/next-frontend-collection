@@ -19,9 +19,7 @@ const iconMap = {
 };
 export default async function LatestActivities() {
 
-    console.log("START");
     const latestActivities = await fetchLatestActivities()
-    console.log("DONE");
     return (
                 <div className="px-6">
                     {
@@ -43,8 +41,9 @@ export default async function LatestActivities() {
                     }
                     {
                         latestActivities.map((activity, i) => {
+                            // @ts-ignore
                             const Icon = iconMap[activity.type];
-                            const id = JSON.parse(activity.state).id;
+                            const id = activity.id;
                             return (
                                 <div
                                     key={activity.id}

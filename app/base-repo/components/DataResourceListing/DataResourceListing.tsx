@@ -1,10 +1,10 @@
 import {DataResource} from "@/lib/definitions";
-import Pagination from "@/components/general/pagination";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
+import Pagination from "@/components/general/Pagination";
 
 export default async function DataResourceListing({page,size, filter}: {
     page: number;
@@ -19,14 +19,15 @@ export default async function DataResourceListing({page,size, filter}: {
         fetchDataResourcePages(size)
     ]);
 
+const typedRes = resources as Array<DataResource>
 
-    if(!resources || resources.length === 0){
+    if(!typedRes || typedRes.length === 0){
         notFound();
     }
     //TODO: handle no resources
 
     //load content for all resources
-    const resourcesWithContent = resources.map((element:DataResource) => {
+    const resourcesWithContent = typedRes.map((element:DataResource) => {
         return loadContent(element);
     });
 
@@ -43,14 +44,13 @@ export default async function DataResourceListing({page,size, filter}: {
                         downloadEventIdentifier(element.id)
                     ];
                     return (
-                        <DataResourceCard key={element.id} data={element} actionEvents={actionEvents}></DataResourceCard>
+                            <DataResourceCard key={element.id} data={element} actionEvents={actionEvents}></DataResourceCard>
                     );
                 })}
-
             </div>
 
             <div className="mt-5 flex w-full justify-center">
-                <Pagination totalPages={totalPages}/>
+                <Pagination totalPages={totalPages as number}/>
             </div>
         </div>
     );

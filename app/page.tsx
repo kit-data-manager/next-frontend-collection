@@ -1,20 +1,20 @@
-import AcmeLogo from '@/components/acme-logo';
 import {inter, lusitana} from '@/components/fonts';
 import React, { Suspense} from "react";
 import {CardsSkeleton} from "@/components/skeletons";
 import OverallStatusCardWrapper from "@/app/base-repo/components/Dashboard/SystemStats";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/components/search/site-search";
 import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import MainMenu from "@/components/MainMenu/MainMenu";
+import SectionCaption from "@/components/SectionCaption/SectionCaption";
+import {authOptions} from "@/lib/auth-options";
 
 export default async function Page() {
     let username = "anonymous";
-    let session = undefined;
+    let session;
     let authError = false;
     try {
         session = await getServerSession(authOptions);
@@ -55,9 +55,7 @@ export default async function Page() {
                         , brought to you by FAIR Data Commons.
                     </p>
                 </div>
-                <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
-                    Status
-                </h2>
+                <SectionCaption caption={"Status"} level={"h2"}/>
                  <div className="grid justify-center gap-6 rounded-lg  px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
                     <Suspense fallback={<CardsSkeleton/>}>
                         <OverallStatusCardWrapper/>
@@ -79,7 +77,7 @@ export default async function Page() {
                 }
             </div>
 
-            <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-12">
+            <div className="flex h-20 shrink-0 items-end rounded-lg bg-secondary p-4 md:h-12">
             </div>
         </main>
     );

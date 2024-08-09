@@ -3,6 +3,7 @@ import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEd
 import {loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {ToastContainer} from "react-toastify";
+import SectionCaption from "@/components/SectionCaption/SectionCaption";
 
 export default async function Page() {
     const [ schema] = await Promise.all([
@@ -21,7 +22,9 @@ export default async function Page() {
                     },
                 ]}
             />
-            <div className="mt-6 flow-root">
+            <SectionCaption caption={"Create Resource"}/>
+
+            <div className="flow-root">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
                         <DataResourceEditor schema={schema} createMode={true}/>

@@ -7,7 +7,7 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
                                                    {
                                                        confirmLabel: string,
                                                        cancelLabel: string,
-                                                       confirmCallback: any,
+                                                       confirmCallback: () => void,
                                                        cancelHref: string,
                                                        confirm: boolean
                                                    }) {

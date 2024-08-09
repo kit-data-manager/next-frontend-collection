@@ -2,7 +2,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import fetch from 'node-fetch';
 import stream from 'stream';
 import {promisify} from 'util';
-import {toast} from "react-toastify";
+import {ContentInformation} from "@/lib/definitions";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const url = `http://localhost:8081/api/v1/dataresources/${resourceId}/data/${filename}`;
-        let realFilename = filename;
+        let realFilename = filename as string;
         if (realFilename.indexOf("/")) {
             realFilename = realFilename.substring(realFilename.lastIndexOf("/") + 1)
         }
@@ -41,13 +41,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 return response.json();
             }).then(json => {
-                return json["mediaType"];
+                return (json as ContentInformation).mediaType;
             }).then(mediaType => {
                 return fetch(url).then(response => {
-                    res.setHeader('Content-Type', mediaType);
+                    res.setHeader('Content-Type', mediaType as string);
                     res.setHeader('Content-Disposition', `attachment; filename=${realFilename}`);
 
                     //Pipe the file data
+                    //@ts-ignore
                     return pipeline(response.body, res);
                 });
             });

@@ -1,9 +1,12 @@
+
 import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
 import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {notFound} from "next/navigation";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
+import SectionCaption from "@/components/SectionCaption/SectionCaption";
+import {DataResource} from "@/lib/definitions";
 
 export default async function Page({params}: { params: { id: string } }) {
     const id = params.id;
@@ -16,7 +19,7 @@ export default async function Page({params}: { params: { id: string } }) {
         notFound();
     }
 
-    let contentPromise = loadContent(resource);
+    let contentPromise = loadContent(resource as DataResource);
     const [content] = await Promise.all([contentPromise]);
 
     return (
@@ -26,13 +29,15 @@ export default async function Page({params}: { params: { id: string } }) {
                     {label: 'Overview', href: '/base-repo'},
                     {label: 'Resources', href: '/base-repo/resources'},
                     {
-                        label: `Edit Resource #${id}`,
+                        label: `Edit Resource`,
                         href: `/base-repo/resources/${id}/edit`,
                         active: true,
                     },
                 ]}
             />
-            <div className="mt-6 flow-root">
+            <SectionCaption caption={"Edit Resource"}/>
+
+            <div className="flow-root">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
                         <DataResourceEditor schema={schema} data={resource} content={content.children} etag={etag}/>

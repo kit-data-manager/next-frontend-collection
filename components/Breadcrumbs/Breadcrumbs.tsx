@@ -10,8 +10,6 @@ export default function Breadcrumbs({
 }: {
   breadcrumbs: BreadcrumbEntry[];
 }) {
-    console.log("Bread: " , breadcrumbs);
-
   return (
       <Breadcrumb theme={theme.root}>
           {breadcrumbs.map((breadcrumb, index) => {

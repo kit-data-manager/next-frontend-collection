@@ -1,7 +1,7 @@
 import React from "react"
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-export function LatestActivitiesSkeleton(props){
+export function LatestActivitiesSkeleton(props:any){
     let elems = Array.from(Array(10).keys())
 
     return(

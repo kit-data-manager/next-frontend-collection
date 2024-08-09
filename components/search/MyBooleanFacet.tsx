@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { FacetViewProps } from "@elastic/react-search-ui-views/lib/esm/types";
-import {appendClassName} from "@elastic/react-search-ui-views/lib/esm/view-helpers";
+import {FacetViewProps} from "@elastic/react-search-ui-views";
 
 function MyBooleanFacet({
                             className,

@@ -8,6 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
 import * as React from "react";
 import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
+import SectionCaption from "@/components/SectionCaption/SectionCaption";
 
 export default async function Page() {
     return (
@@ -17,9 +18,10 @@ export default async function Page() {
                     {label: "Overview", href: '/base-repo', active: true},
                 ]}
             />
-            <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 text-secondary border-secondary rounded-sm`}>
-                Sub-System Status
-            </h2>
+            <SectionCaption caption={"Overview"}/>
+
+            <SectionCaption caption={"Sub-System Status"} level={"h2"}/>
+
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <Suspense fallback={<CardsSkeleton/>}>
                     <BaseRepoStatusCardWrapper/>
@@ -28,9 +30,8 @@ export default async function Page() {
 
             <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-secondary rounded-sm`}>
-                        Content Overview
-                    </h2>
+                    <SectionCaption caption={"Content Overview"} level={"h2"}/>
+
                     <div className="grid grid-cols-2 gap-4 px-4 py-8">
                         <Suspense fallback={<RepositoryStatsSkeleton/>}>
                             <RepositoryStats/>
@@ -39,9 +40,8 @@ export default async function Page() {
                 </div>
 
                 <div className="flex w-full flex-col">
-                    <h2 className={`${lusitana.className} mb-4 text-l md:text-xl border-b-2 border-secondary rounded-sm`}>
-                        Latest Activities
-                    </h2>
+                    <SectionCaption caption={"Latest Activities"} level={"h2"}/>
+
                     <div className="flex gap-4 px-4 py-8 grow flex-col justify-between rounded-xl ">
                         <Suspense fallback={<LatestActivitiesSkeleton/>}>
                             <LatestActivities/>

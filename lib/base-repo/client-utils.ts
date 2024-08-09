@@ -17,7 +17,7 @@ export function removeTagFromContent(element:ContentInformation, tag:string, red
                 method: "PATCH",
                 headers: {
                     "Content-Type":"application/json-patch+json",
-                    "If-Match": etag
+                    "If-Match": etag ? etag : ""
                 },
                 body: JSON.stringify(patch)
             }).then(function(response){
@@ -41,7 +41,7 @@ export function removeTagFromContent(element:ContentInformation, tag:string, red
     }
 }
 
-export function assignTagToContent(element:ContentInformation, tag:string, redirectPath?:string){
+export function assignTagToContent(element:ContentInformation, tag:string, redirectPath?:string | null){
     const patch = [{"op": "add","path": `/tags/0`, "value": tag}]
 
     const fetcher = (url:string) => fetch(url,
@@ -52,7 +52,7 @@ export function assignTagToContent(element:ContentInformation, tag:string, redir
             method: "PATCH",
             headers: {
                 "Content-Type":"application/json-patch+json",
-                "If-Match": etag
+                "If-Match": etag ? etag : ""
             },
             body: JSON.stringify(patch)
         }).then(function(response){

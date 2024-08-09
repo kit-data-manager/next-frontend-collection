@@ -104,6 +104,15 @@ export type DataResourcesSearchParams = {
   publisher?:string;
 }
 
+export type Activity = {
+  id: number;
+  type: "INITIAL" |"UPDATE" | "TERMINAL";
+  managed_type: string;
+  author: string;
+  commit_date: string;
+
+}
+
 export type User = {
   id: string;
   name: string;

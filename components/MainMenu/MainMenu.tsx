@@ -6,12 +6,10 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from "next/link";
 import {useTheme} from "next-themes"
-
-
 import {usePathname} from "next/navigation";
 import clsx from "clsx";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+
+import {mainMenuTheme} from "@/components/MainMenu/MainMenu.d";
 
 export default function MainMenu(props) {
     const theme = useTheme()
@@ -36,11 +34,12 @@ export default function MainMenu(props) {
     const pathname = usePathname();
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
 
+
     return (
-        <MegaMenu fluid rounded className="bg-secondary text-secondary-foreground">
-                <Navbar.Brand href="/">
+        <MegaMenu fluid rounded theme={mainMenuTheme}>
+                <Navbar.Brand href="/" theme={mainMenuTheme.brand}>
                     <span
-                        className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite</span>
+                        className="self-center whitespace-nowrap text-xl font-semibold text-secondary-foreground">Flowbite</span>
                 </Navbar.Brand>
                 <div className="order-2 hidden items-end justify-content-end md:flex">
                     {showLogin ?
@@ -48,7 +47,7 @@ export default function MainMenu(props) {
 
                         <a
                         href="#"
-                        className="mr-1 rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 md:mr-2 md:px-5 md:py-2.5"
+                        className="mr-1 rounded-lg px-4 py-2 text-sm font-medium hover:udnerline focus:outline-none focus:ring-4 focus:ring-gray-300 dark:hover:underline md:mr-2 md:px-5 md:py-2.5"
                     >
                         Login
                     </a>
@@ -66,10 +65,10 @@ export default function MainMenu(props) {
                         }></MoonIcon>
                     )}
                 </div>
-                <Navbar.Toggle/>
-                <Navbar.Collapse>
-                    <Navbar.Link href="#">Home</Navbar.Link>
-                    <MegaMenu.Dropdown toggle={<>Repo</>} className={"ml-6"}>
+                <Navbar.Toggle theme={mainMenuTheme.toggle}/>
+                <Navbar.Collapse theme={mainMenuTheme.collapse}>
+                    <Navbar.Link href="/" theme={mainMenuTheme.link}>Home</Navbar.Link>
+                    <MegaMenu.Dropdown theme={mainMenuTheme.dropdown} toggle={<>Repo</>}>
                         <ul className="grid grid-cols-3">
                             {linksDataRepo.map((link, cnt) => {
                                 if (link.name === "Search" && !searchEnabled) {
@@ -96,7 +95,7 @@ export default function MainMenu(props) {
                             })}
                         </ul>
                     </MegaMenu.Dropdown>
-                    <MegaMenu.Dropdown toggle={<>MetaRepo</>}>
+                    <MegaMenu.Dropdown theme={mainMenuTheme.dropdown} toggle={<>MetaRepo</>}>
                         <ul className="grid grid-cols-3">
                             {linksMetadataRepo.map((link, cnt) => {
                                 if (link.name === "Search" && !searchEnabled) {
@@ -124,7 +123,7 @@ export default function MainMenu(props) {
                             })}
                         </ul>
                     </MegaMenu.Dropdown>
-                    <Navbar.Link href="#">Contact</Navbar.Link>
+                    <Navbar.Link theme={mainMenuTheme.link} href="#">Contact</Navbar.Link>
                 </Navbar.Collapse>
         </MegaMenu>
     );

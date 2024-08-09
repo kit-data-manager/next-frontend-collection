@@ -10,6 +10,7 @@ import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcesSearchParams} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/searchParamHelper";
+import SectionCaption from "@/components/SectionCaption/SectionCaption";
 
 
 export default async function Page({searchParams}: {
@@ -37,9 +38,9 @@ export default async function Page({searchParams}: {
                     },
                 ]}
             />
-            <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl">Resources</h1>
-            <div className="flow-root">
+            <SectionCaption caption={"Resources"}/>
 
+            <div className="flow-root">
                 <div className="w-full flex col-2">
                     <div className="w-75 rounded-lg border items-center justify-between p-4 md:p-6">
                             <Link
@@ -54,9 +55,6 @@ export default async function Page({searchParams}: {
                             <DataResourceListing page={page} size={size} filter={filter}/>
                         </Suspense>
                     </div>
-
-
-
                 </div>
             </div>
         </main>

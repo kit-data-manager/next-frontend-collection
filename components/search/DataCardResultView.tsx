@@ -1,11 +1,17 @@
+// @ts-nocheck
+
 import React from "react";
 import {JSONPath} from 'jsonpath-plus';
 import {createLabeledField, createTag} from "../../lib/dataCardHelpers"
 import {ContentInformation, DataResource, Description, Title} from "@/lib/definitions";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
+import {Tag} from "../../../data-view-web-component";
 
-function DataCardResultView({result, onClickLink}) {
+function DataCardResultView({result, onClickCallback}: {
+    result: any;
+    onClickCallback?: void;
+}) {
     const TYPE_COLOR = '#1BE7FF'
     const DANGER_COLOR = '#FF5714'
     const WARN_COLOR = '#FFB800'
@@ -64,7 +70,7 @@ function DataCardResultView({result, onClickLink}) {
             description = createLabeledField("No purpose provided.")
         }*/
 
-        let tags = []
+        let tags:Array<Tag> = new Array<Tag>;
         tags.push(createTag("SEM", TYPE_COLOR));
 
         if (JSONPath("$..instrument.eBeamSource.accelerationVoltage.value", result.metadataDocument.raw, undefined, undefined).length) {
