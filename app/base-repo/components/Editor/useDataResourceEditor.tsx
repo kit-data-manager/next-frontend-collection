@@ -61,7 +61,6 @@ export const HandleEditorAction = (event:DataCardCustomEvent<ActionEvent>, curre
     const eventIdentifier:string = event.detail.eventIdentifier;
     let parts = eventIdentifier.split("_");
     const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_")+1);
-    //const selectedContent: ContentInformation = currentContent[contentIndex];
 
     const selectedContent: ContentInformation | undefined = currentContent.find((element) => element.relativePath === contentPath);
 

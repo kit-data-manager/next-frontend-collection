@@ -35,13 +35,14 @@ const typedRes = resources as Array<DataResource>
     const finalResources:DataResource[] = await Promise.all(resourcesWithContent);
 
     return (
-        <div className="block min-w-full">
+        <div>
             <div className="rounded-lg p-2 md:pt-0">
                 {finalResources.map((element:DataResource, i:number) => {
                     const actionEvents = [
                         viewEventIdentifier(element.id),
                         editEventIdentifier(element.id),
                         downloadEventIdentifier(element.id)
+
                     ];
                     return (
                             <DataResourceCard key={element.id} data={element} actionEvents={actionEvents}></DataResourceCard>

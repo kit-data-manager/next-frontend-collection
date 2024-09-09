@@ -39,7 +39,11 @@ export default function DataResourceCard(props:any) {
     }
        
     return (
-        <DataCard key={key} variant={variant} childrenVariant={childVariant} actionButtons={buttons} onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
+        <DataCard key={key}
+                  variant={variant}
+                  childrenVariant={childVariant}
+                  actionButtons={buttons}
+                  onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
     )
 }
 

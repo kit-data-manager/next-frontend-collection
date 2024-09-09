@@ -40,9 +40,9 @@ export default async function Page({searchParams}: {
             />
             <SectionCaption caption={"Resources"}/>
 
-            <div className="flow-root">
-                <div className="w-full flex col-2">
-                    <div className="w-75 rounded-lg border items-center justify-between p-4 md:p-6">
+            <div >
+                <div className="flex col-2">
+                    <div className="flex-none w-1/4 rounded-lg border items-center justify-between p-4 md:p-6">
                             <Link
                                 className="rounded-md px-4 bg-accent text-accent-foreground py-2 text-sm hover:underline inline-flex items-center w-full"
                                 href='/base-repo/resources/create'>
@@ -50,7 +50,7 @@ export default async function Page({searchParams}: {
                             </Link>
                         <FilterResourceForm filter={filter}/>
                     </div>
-                    <div className="w-full">
+                    <div className="w-3/4">
                         <Suspense fallback={<DataResourceListingSkeleton count={3}/>}>
                             <DataResourceListing page={page} size={size} filter={filter}/>
                         </Suspense>
