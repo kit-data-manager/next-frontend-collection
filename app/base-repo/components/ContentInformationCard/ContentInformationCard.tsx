@@ -11,12 +11,15 @@ import {
 } from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 
-export default function DataResourceCard(props:any) {
+export default function ContentInformationCard(props:any) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
         replace(eventIdentifierToPath(eventIdentifier));
+        ///tag events
     });
+
+
     const {replace} = useRouter();
     const key = props.key;
     const data = props.data;
@@ -31,7 +34,7 @@ export default function DataResourceCard(props:any) {
         buttons.push(getActionButton(eventIdentifier as string));
     })
 
-    let miscProperties = propertiesForDataResource(data);
+    let miscProperties = propertiesForContentInformation(data.parentResource.id, data);
 
     return (
         <DataCard key={key}

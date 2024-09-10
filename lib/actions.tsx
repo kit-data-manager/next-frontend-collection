@@ -41,6 +41,9 @@ export async function filterResources(formData: FormData) {
     redirect(path);
 }
 
+
+
+/*
 export async function deleteInvoice(id: string) {
     throw new Error('Failed to Delete Invoice');
 
@@ -59,4 +62,4 @@ export async function deleteInvoice(id: string) {
         throw new Error('Failed to fetch customer table.');
     }
     revalidatePath('/dashboard/invoices');
-}
+}*/

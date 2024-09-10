@@ -19,7 +19,7 @@ export default async function DataResourceListing({page,size, filter}: {
         fetchDataResourcePages(size)
     ]);
 
-const typedRes = resources as Array<DataResource>
+    const typedRes = resources as Array<DataResource>;
 
     if(!typedRes || typedRes.length === 0){
         notFound();
@@ -42,10 +42,13 @@ const typedRes = resources as Array<DataResource>
                         viewEventIdentifier(element.id),
                         editEventIdentifier(element.id),
                         downloadEventIdentifier(element.id)
-
                     ];
                     return (
-                            <DataResourceCard key={element.id} data={element} actionEvents={actionEvents}></DataResourceCard>
+                            <DataResourceCard
+                                key={element.id}
+                                data={element}
+                                actionEvents={actionEvents}
+                            ></DataResourceCard>
                     );
                 })}
             </div>

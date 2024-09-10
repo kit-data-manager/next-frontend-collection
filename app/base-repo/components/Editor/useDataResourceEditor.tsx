@@ -11,90 +11,97 @@ import {REPO_EVENTS} from "@/lib/event-utils";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
 
-export const DataChanged = (data:object, setConfirm:Function, setCurrentData:Function) =>{
-    if(!data){
+export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
+    if (!data) {
         setConfirm(false);
-    }else {
+    } else {
         setCurrentData(data);
         setConfirm(true);
     }
 }
 
-export const DoUpdateDataResource = (etag: string, currentData:DataResource, router:AppRouterInstance) => {
+export const DoUpdateDataResource = (etag: string, currentData: DataResource, router: AppRouterInstance) => {
     const redirectPath = `/base-repo/resources/${currentData.id}/view`;
     updateDataResource(currentData, etag).then((status) => {
-        if(status == 200) {
+        if (status == 200) {
             toast.success("Resource successfully updated.", {
                 "onClose": () => {
                     router.push(redirectPath);
                     router.refresh();
                 }
             });
-        }else{
+        } else {
             toast.error("Failed to update resource. Status: " + status);
         }
     })
 }
 
-export const DoCreateDataResource = (currentData:DataResource, router:AppRouterInstance) => {
+export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance) => {
     const id = toast.loading("Creating resource...")
 
     createDataResource(currentData).then((response) => {
-        if(response.status == 201) {
+        if (response.status == 201) {
             return response.json();
-        }else{
-            toast.update(id, { render: "Failed to create resource.", type: "error", isLoading: false });
+        } else {
+            toast.update(id, {render: "Failed to create resource.", type: "error", isLoading: false});
             Promise.reject("Failed to create resource.");
         }
     }).then(json => {
-        toast.update(id, { render: "Resource created.", type: "success", isLoading: false, autoClose: 3000,
+        toast.update(id, {
+            render: "Resource created.", type: "success", isLoading: false, autoClose: 3000,
             "onClose": () => {
                 const redirectPath = `/base-repo/resources/${json.id}/edit`;
                 router.push(redirectPath);
                 router.refresh();
-            } });
+            }
+        });
     })
 }
 
-export const HandleEditorAction = (event:DataCardCustomEvent<ActionEvent>, currentData:DataResource, currentContent:Array<ContentInformation>,
-                                   path:string|null, setOpenModal:Function, setActionContent:Function) => {
-    const eventIdentifier:string = event.detail.eventIdentifier;
+export const HandleEditorAction = (event: DataCardCustomEvent<ActionEvent>,
+                                   currentData: DataResource,
+                                   currentContent: Array<ContentInformation>,
+                                   path: string | null,
+                                   setOpenModal: Function,
+                                   setActionContent: Function) => {
+    const eventIdentifier: string = event.detail.eventIdentifier;
     let parts = eventIdentifier.split("_");
-    const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_")+1);
+    const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_") + 1);
 
     const selectedContent: ContentInformation | undefined = currentContent.find((element) => element.relativePath === contentPath);
 
-    if(selectedContent){
-    const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
+    if (selectedContent) {
+        const redirectPath = `/base-repo/resources/${currentData.id}/edit`;
 
-    if(parts[0] === REPO_EVENTS.DELETE_CONTENT){
-        if(window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")){
-            deleteContent(selectedContent, redirectPath).then(status => {
-                if(status == 204) {
-                    toast.success("Content " + selectedContent.relativePath + " successfully removed.",{
-                        "onClose": () =>{
-                            if(redirectPath) {
-                                //reload page after 3 seconds wait
-                                window.document.location = redirectPath;
+        if (parts[0] === REPO_EVENTS.DELETE_CONTENT) {
+            if (window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")) {
+                deleteContent(selectedContent, redirectPath).then(status => {
+                    if (status == 204) {
+                        toast.success("Content " + selectedContent.relativePath + " successfully removed.", {
+                            "onClose": () => {
+                                if (redirectPath) {
+                                    //reload page after 3 seconds wait
+                                    window.document.location = redirectPath;
+                                }
                             }
-                        }
-                    });
-                }else{
-                    toast.error("Failed to remove content. Status: " + status);
-                }
-            })
+                        });
+                    } else {
+                        toast.error("Failed to remove content. Status: " + status);
+                    }
+                })
+            }
+        } else if (parts[0] === "unmakeThumb") {
+            removeTagFromContent(selectedContent, "thumb");
+        } else if (parts[0] === "makeThumb") {
+            //otherwise, handle add/remove thumb event
+            currentContent.forEach((element: ContentInformation) => {
+                removeTagFromContent(element, "thumb");
+            });
+            assignTagToContent(selectedContent, "thumb", path);
+        } else if (parts[0] === "addTag") {
+            console.log("ADD TAG");
+            setActionContent(parts[1]);
+            setOpenModal(true);
         }
-    }else if(parts[0] === "unmakeThumb") {
-        removeTagFromContent(selectedContent, "thumb");
-    }else if(parts[0] === "makeThumb") {
-        //otherwise, handle add/remove thumb event
-        currentContent.forEach((element: ContentInformation) => {
-            removeTagFromContent(element, "thumb");
-        });
-        assignTagToContent(selectedContent, "thumb", path);
-    }else if(parts[0] === "addTag") {
-        console.log("ADD TAG");
-        setActionContent(parts[1]);
-        setOpenModal(true);
-    }}
+    }
 };

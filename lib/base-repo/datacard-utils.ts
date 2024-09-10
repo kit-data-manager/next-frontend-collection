@@ -1,6 +1,11 @@
 import {ContentInformation, DataResource} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
-import {getActionButton} from "@/lib/event-utils";
+import {
+    addTagEventIdentifier,
+    getActionButton,
+    makeThumbEventIdentifier,
+    unmakeThumbEventIdentifier
+} from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../data-view-web-component";
 import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
@@ -18,7 +23,10 @@ export const propertiesForDataResource = (resource: DataResource) => {
     }
 }
 
-export const propertiesForContentInformation = (resourceId: string, content: ContentInformation, actionButtons?: Array<ActionButtonInterface>, disableChangeThumb?: boolean) => {
+export const propertiesForContentInformation = (resourceId: string,
+                                                content: ContentInformation,
+                                                actionButtons?: Array<ActionButtonInterface>,
+                                                disableChangeThumb?: boolean) => {
     let tags:Array<Tag> = new Array<Tag>;
 
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
@@ -28,23 +36,25 @@ export const propertiesForContentInformation = (resourceId: string, content: Con
             thumbTag = {
                 color: isThumb ? "var(--success)" : "var(--error)",
                 text: "Thumb",
-                eventIdentifier: isThumb ? `unmakeThumb_${content.relativePath}` : `makeThumb_${content.relativePath}`
             }
         }else{
             thumbTag = {
                 color: isThumb ? "var(--success)" : "var(--error)",
                 text: "Thumb",
+                eventIdentifier: isThumb ? unmakeThumbEventIdentifier(resourceId, content.relativePath) : makeThumbEventIdentifier(resourceId, content.relativePath)
             }
         }
 
         tags.push(thumbTag);
     }
 
-    tags.push({
-        "color": "var(--info)",
-        "iconName": "heroicons:plus-small-20-solid",
-        "eventIdentifier": `addTag_${content.relativePath}`
-    } as Tag);
+    if(!disableChangeThumb) {
+        tags.push({
+            "color": "var(--info)",
+            "iconName": "heroicons:plus-small-20-solid",
+            "eventIdentifier": addTagEventIdentifier(resourceId, content.relativePath)
+        } as Tag);
+    }
 
     if (actionButtons) {
         return {
@@ -278,6 +288,7 @@ const childrenForDataResource = (resource: DataResource) => {
     if (resource.children && resource.children.length > 0) {
         resource.children.map((content, i) => {
             let actionButtons = [
+                //only add download button
                 getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
             ];
 

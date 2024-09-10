@@ -106,8 +106,8 @@ input[type='number']::-webkit-outer-spin-button {
 
 data-card{
   --mainBG: light-dark(#EFEFEF, #1e293b);
-  --darkerBG: light-dark(#9f9d98, #FAFAFA);
-  --lighterBG: light-dark(#FFFFFF, #71717A);
+  --darkerBG: light-dark(#dadad7, #ccd6e5);
+  --lighterBG: light-dark(#FFFFFF, #FAFAFA);
   --tagText: #18181B;
   font-size: 14px;
 }

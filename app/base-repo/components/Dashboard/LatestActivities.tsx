@@ -44,6 +44,7 @@ export default async function LatestActivities() {
                             // @ts-ignore
                             const Icon = iconMap[activity.type];
                             const id = activity.id;
+                            console.log(activity);
                             return (
                                 <div
                                     key={activity.id}
@@ -72,7 +73,8 @@ export default async function LatestActivities() {
 
                                             }
                                             <span className="text-xs sm:block">
-                                            <CreatorLabel firstname={activity.author}/>
+                                              {(activity.type === "TERMINAL" && activity.managed_type === "edu.kit.datamanager.repo.domain.ContentInformation") ?
+                                                  (<p>Unknown</p>) : (<CreatorLabel firstname={activity.author}/>) }
                                         </span>
                                         </div>
                                     </div>

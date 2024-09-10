@@ -26,7 +26,7 @@ export default function FilterResourceForm({filter}: {
                             name="publisher"
                             type="text"
                             placeholder="Publisher"
-                            className="peer block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                            className="peer block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             defaultValue={filter.publisher}
                         >
                         </input>
@@ -47,7 +47,7 @@ export default function FilterResourceForm({filter}: {
                                 step="1"
                                 defaultValue={filter.publicationYear}
                                 placeholder="2024"
-                                className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                                className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             />
                             <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                         </div>

@@ -3,10 +3,10 @@
 import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
-import {Button, Label, Modal, TextInput} from "flowbite-react";
+
+
 import {usePathname, useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
-import {lusitana} from "@/components/fonts";
 import {ContentInformation, DataResource} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,7 +14,6 @@ import {
     deleteContentEventIdentifier,
     downloadContentEventIdentifier
 } from "@/lib/event-utils";
-import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
 import {
     DataChanged,
@@ -22,9 +21,19 @@ import {
     DoUpdateDataResource,
     HandleEditorAction
 } from "@/app/base-repo/components/Editor/useDataResourceEditor";
-import {Accordion} from "flowbite-react";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
+import ContentInformationCard from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {
+    Dialog,
+    DialogContent, DialogDescription, DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
@@ -42,58 +51,33 @@ export default function DataResourceEditor({...props}) {
 
     const handleAction = useDebouncedCallback(HandleEditorAction);
 
-    function updateTag(newTag: string) {
-        setTag(newTag);
-    }
-
-    function onCloseModal() {
-        setActionContent("");
+    function closeModal(){
         setOpenModal(false);
     }
-
     function assignTag() {
+        //empty check
         console.log("NEW TAG ", tag + "-" + currentData.id + "/data/" + actionContent);
         setActionContent("");
         setOpenModal(false);
+        setTag("");
     }
-
-    const accordionTheme = {
-        root: {
-            base: 'bg-secondary divide-y-2 border-2 divide-primary border-primary dark:divide-primary dark:border-primary',
-
-        },
-        content: {
-            base: 'p-5 first:rounded-t-lg last:rounded-b-lg background foreground'
-        },
-        title: {
-            base: `${lusitana.className} flex w-full items-center justify-between p-5 text-left bg-secondary text-secondary-foreground font-medium first:rounded-t-lg last:rounded-b-lg`,
-            flush: {
-                off: 'hover:underline focus:bg-ring dark:hover:underline bg-secondary text-secondary-foreground',
-                on: 'bg-secondary',
-            },
-            open: {
-                off: 'bg-secondary text-secondary-foreground',
-                on: 'bg-secondary text-secondary-foreground',
-            },
-        },
-    };
 
 
     //TODO Identify current content for tag assignment in modal to use path there.
     return (
         <div>
-            <Accordion>
+            <Accordion type="multiple" defaultValue="upload">
                 {!createMode ?
-                    <Accordion.Panel>
-                        <Accordion.Title theme={accordionTheme.title}>File Upload</Accordion.Title>
-                        <Accordion.Content theme={accordionTheme.content}>
+                    <AccordionItem value={"upload"}>
+                        <AccordionTrigger>File Upload</AccordionTrigger>
+                        <AccordionContent>
                             <ContentUpload id={currentData.id}></ContentUpload>
-                        </Accordion.Content>
-                    </Accordion.Panel> : <></>}
+                        </AccordionContent>
+                    </AccordionItem> : <></>}
                 {!createMode ?
-                    <Accordion.Panel>
-                        <Accordion.Title theme={accordionTheme.title}>Current Content</Accordion.Title>
-                        <Accordion.Content theme={accordionTheme.content}>
+                    <AccordionItem value={"content"}>
+                        <AccordionTrigger >Current Content</AccordionTrigger>
+                        <AccordionContent>
                             {currentContent && currentContent.length > 0 ?
                                 <div className="rounded-lg p-2 md:pt-0">
                                     {currentContent.map((element: ContentInformation, i: number) => {
@@ -103,24 +87,24 @@ export default function DataResourceEditor({...props}) {
                                         ];
 
                                         return (
-                                            <DataResourceCard
+                                            <ContentInformationCard
                                                 key={i}
                                                 data={element}
                                                 onActionClick={(ev:DataCardCustomEvent<ActionEvent>) => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent)}
-                                                actionEvents={actionEvents}></DataResourceCard>
+                                                actionEvents={actionEvents}></ContentInformationCard>
                                         )
                                     })}
                                 </div>
                                 : <div className="rounded-lg p-2 md:pt-0"><p className={"text-info text-xl"}>No content
                                     available</p></div>}
-                        </Accordion.Content>
-                    </Accordion.Panel> : <></>}
-                <Accordion.Panel>
+                        </AccordionContent>
+                    </AccordionItem> : <></>}
+                <AccordionItem value={"metadata"}>
                     {createMode ?
                         <>
-                            <Accordion.Title theme={accordionTheme.title} onClick={() => {
-                            }}>Resource Metadata</Accordion.Title>
-                            <Accordion.Content theme={accordionTheme.content} hidden={false}>
+                            <AccordionTrigger onClick={() => {
+                            }}>Resource Metadata</AccordionTrigger>
+                            <AccordionContent hidden={false}>
                                 <>
                                     {editorReady ? null :
                                         <DataResourceListingSkeleton count={2}/>
@@ -143,12 +127,12 @@ export default function DataResourceEditor({...props}) {
                                         />
                                     }
                                 </>
-                            </Accordion.Content>
+                            </AccordionContent>
                         </>
                         :
                         <>
-                            <Accordion.Title theme={accordionTheme.title}>Resource Metadata</Accordion.Title>
-                            <Accordion.Content theme={accordionTheme.content}>
+                            <AccordionTrigger>Resource Metadata</AccordionTrigger>
+                            <AccordionContent>
                                 <>
                                     {editorReady ? null :
                                         <DataResourceListingSkeleton count={2}/>
@@ -171,34 +155,27 @@ export default function DataResourceEditor({...props}) {
                                         />
                                     }
                                 </>
-                            </Accordion.Content>
+                            </AccordionContent>
                         </>}
-                </Accordion.Panel>
+                </AccordionItem>
             </Accordion>
 
-            <Modal show={openModal} onClose={onCloseModal} size="md" popup>
-                <Modal.Header/>
-                <Modal.Body>
-                    <div className="space-y-6">
-                        <h3 className="text-xl font-medium">Assign new Tag</h3>
-                        <div>
-                            <div className="mb-2 block">
-                                <Label htmlFor="tag" value="New Tag"/>
-                            </div>
-                            <TextInput
-                                id="tag"
-                                placeholder="newTag"
-                                onChange={(event:any) => updateTag(event.target.value)}
-                                required
-                            />
+            <Dialog open={openModal} modal={true} onOpenChange={closeModal}>
+                <DialogContent  className="bg-secondary">
+                    <DialogHeader>
+                        <DialogTitle>Add New Tag</DialogTitle>
+                        <DialogDescription  className="secondary">
+                           Provide a tag to add to this content element.
+                        </DialogDescription>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Input type="text" id="tag" placeholder="newTag" className="bg-secondary border-1" onChange={(event:any) => setTag(event.target.value)}/>
                         </div>
-
-                        <div className="w-full">
-                            <Button onClick={() => assignTag()}>Assign Tag</Button>
-                        </div>
-                    </div>
-                </Modal.Body>
-            </Modal>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => assignTag()} className={"bg-accent text-accent-foreground"}>Add</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

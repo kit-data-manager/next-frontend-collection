@@ -13,9 +13,11 @@ export const enum REPO_EVENTS {
     "DOWNLOAD_RESOURCE" = "downloadResource",
     "EDIT_CONTENT" = "editContent",
     "DOWNLOAD_CONTENT" = "downloadContent",
-    "DELETE_CONTENT" = "deleteContent"}
-
-
+    "DELETE_CONTENT" = "deleteContent",
+    "MAKE_THUMB" = "makeThumb",
+    "UNMAKE_THUMB" = "unmakeThumb",
+    "ADD_TAG" = "addTag",
+}
 
 export const eventIdentifierToPath = (eventIdentifier: string) => {
 
@@ -104,5 +106,17 @@ export const downloadContentEventIdentifier = (resourceId:string, contentPath: s
 
 export const deleteContentEventIdentifier = (path: string) :string => {
     return `${REPO_EVENTS.DELETE_CONTENT}_${path}`;
+}
+
+export const makeThumbEventIdentifier = (resourceId: string, contentPath:string) :string => {
+    return `${REPO_EVENTS.MAKE_THUMB}_${contentPath}`;
+}
+
+export const unmakeThumbEventIdentifier = (resourceId: string, contentPath:string) :string => {
+    return `${REPO_EVENTS.UNMAKE_THUMB}_${contentPath}`;
+}
+
+export const addTagEventIdentifier = (resourceId: string, contentPath:string) :string => {
+    return `${REPO_EVENTS.ADD_TAG}_${contentPath}`;
 }
 
