@@ -5,7 +5,7 @@ import {Providers} from "@/app/Providers";
 import SessionGuard from "@/components/general/SessionGuard";
 import {ThemeProvider} from "@/components/Providers/theme-provider";
 
-import { ThemeModeScript } from "flowbite-react";
+//import { ThemeModeScript } from "flowbite-react";
 
 export default function RootLayout({children}: {
     children: React.ReactNode;
@@ -15,12 +15,12 @@ export default function RootLayout({children}: {
     return (
         <html lang="en">
         <head className={"dark"}>
-            <ThemeModeScript />
+            {/*<ThemeModeScript />*/}
         </head>
         <body className={`${inter.className} antialiased`}>
         <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="system"
             enableSystem
             disableTransitionOnChange
         >

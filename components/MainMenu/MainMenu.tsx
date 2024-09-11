@@ -2,7 +2,7 @@
 
 import {Button, MegaMenu, Navbar} from 'flowbite-react';
 import {
-    ChartPieIcon, ListBulletIcon, PlusCircleIcon, SunIcon, MoonIcon
+    ChartPieIcon, ListBulletIcon, PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import Link from "next/link";
 import {useTheme} from "next-themes"
@@ -10,16 +10,25 @@ import {usePathname} from "next/navigation";
 import clsx from "clsx";
 
 import {mainMenuTheme} from "@/components/MainMenu/MainMenu.d";
+import {ThemeModeToggle} from "@/components/ThemeModeToggle/ThemeModeToggle";
+import {
+    NavigationMenu, NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle
+} from "@/components/ui/navigation-menu";
+import {cn} from "@/lib/utils";
+import React from "react";
 
 export default function MainMenu(props) {
     const theme = useTheme()
     const showLogin = props.authAvailable;
 
     const linksDataRepo = [
-        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon},
-        {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon},
-        {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon},
-        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon},
+        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon, description:"Show status information."},
+        {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon, description:"Show status information."},
+        {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Show status information."},
+        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"Show status information."},
     ];
 
     const linksMetadataRepo = [
@@ -36,95 +45,92 @@ export default function MainMenu(props) {
 
 
     return (
-        <MegaMenu fluid rounded theme={mainMenuTheme}>
-                <Navbar.Brand href="/" theme={mainMenuTheme.brand}>
-                    <span
-                        className="self-center whitespace-nowrap text-xl font-semibold text-secondary-foreground">Flowbite</span>
-                </Navbar.Brand>
-                <div className="order-2 hidden items-end justify-content-end md:flex">
-                    {showLogin ?
-                        <>
-
-                        <a
-                        href="#"
-                        className="mr-1 rounded-lg px-4 py-2 text-sm font-medium hover:udnerline focus:outline-none focus:ring-4 focus:ring-gray-300 dark:hover:underline md:mr-2 md:px-5 md:py-2.5"
-                    >
-                        Login
-                    </a>
-                    <Button href="#" className="bg-accent text-accent-foreground">Sign up</Button>
-                        </>
-                         : null}
-
-                    {theme.theme === "light" ? (
-                        <SunIcon className="w-6 h-6 m-2 ml-6 shrink-0 " suppressHydrationWarning onClick={() =>
-                            theme.setTheme(theme.theme === "light" ? "dark" : "light")
-                        }></SunIcon>
-                    ) : (
-                        <MoonIcon className="w-6 h-6 m-2 ml-6 shrink-0" suppressHydrationWarning onClick={() =>
-                            theme.setTheme(theme.theme === "light" ? "dark" : "light")
-                        }></MoonIcon>
-                    )}
-                </div>
-                <Navbar.Toggle theme={mainMenuTheme.toggle}/>
-                <Navbar.Collapse theme={mainMenuTheme.collapse}>
-                    <Navbar.Link href="/" theme={mainMenuTheme.link}>Home</Navbar.Link>
-                    <MegaMenu.Dropdown theme={mainMenuTheme.dropdown} toggle={<>Repo</>}>
-                        <ul className="grid grid-cols-3">
-                            {linksDataRepo.map((link, cnt) => {
-                                if (link.name === "Search" && !searchEnabled) {
-                                    return null;
-                                }
-                                const LinkIcon = link.icon;
-                                return (
-                                    <li key={cnt} className={"space-y-4 p-4"}>
-                                        <Link
-                                            key={link.name}
-                                            href={link.href}
-                                            className={clsx(
-                                                'flex h-[48px] items-center justify-center gap-2 hover:underline font-medium m-2',
-                                                {
-                                                    'underline': pathname === link.href,
-                                                },
-                                            )}
-                                        >
-                                            <LinkIcon className="w-6"/>
-                                            <p className="md:block">{link.name}</p>
-                                        </Link>
-                                    </li>
-                                );
-                            })}
+        <NavigationMenu className="px-2 py-2.5 sm:px-4 ">
+            <NavigationMenuList>
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                        <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                            <li className="row-span-3">
+                                <NavigationMenuLink asChild>
+                                    <a
+                                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                                        href="/"
+                                    >
+                                        <div className="mb-2 mt-4 text-lg font-medium">
+                                            shadcn/ui
+                                        </div>
+                                        <p className="text-sm leading-tight text-muted-foreground">
+                                            Beautifully designed components that you can copy and
+                                            paste into your apps. Accessible. Customizable. Open
+                                            Source.
+                                        </p>
+                                    </a>
+                                </NavigationMenuLink>
+                            </li>
+                            <ListItem href="/docs" title="Introduction">
+                                Re-usable components built using Radix UI and Tailwind CSS.
+                            </ListItem>
+                            <ListItem href="/docs/installation" title="Installation">
+                                How to install dependencies and structure your app.
+                            </ListItem>
+                            <ListItem href="/docs/primitives/typography" title="Typography">
+                                Styles for headings, paragraphs, lists...etc
+                            </ListItem>
                         </ul>
-                    </MegaMenu.Dropdown>
-                    <MegaMenu.Dropdown theme={mainMenuTheme.dropdown} toggle={<>MetaRepo</>}>
-                        <ul className="grid grid-cols-3">
-                            {linksMetadataRepo.map((link, cnt) => {
-                                if (link.name === "Search" && !searchEnabled) {
-                                    return null;
-                                }
-
-                                const LinkIcon = link.icon;
-                                return (
-                                    <li key={cnt} className={"space-y-4 p-4"}>
-                                        <Link
-                                            key={link.name}
-                                            href={link.href}
-                                            className={clsx(
-                                                'flex h-[48px] items-center justify-center gap-2 hover:underline font-medium',
-                                                {
-                                                    'underline': pathname === link.href,
-                                                },
-                                            )}
-                                        >
-                                            <LinkIcon className="w-6"/>
-                                            <p className="md:block">{link.name}</p>
-                                        </Link>
-                                    </li>
-                                );
-                            })}
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                            {linksDataRepo.map((component) => (
+                                <ListItem
+                                    key={component.name}
+                                    title={component.name}
+                                    href={component.href}
+                                >
+                                    {component.description}
+                                </ListItem>
+                            ))}
                         </ul>
-                    </MegaMenu.Dropdown>
-                    <Navbar.Link theme={mainMenuTheme.link} href="#">Contact</Navbar.Link>
-                </Navbar.Collapse>
-        </MegaMenu>
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <Link href="/docs" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            Documentation
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+            </NavigationMenuList>
+        </NavigationMenu>
+
     );
 }
+
+const ListItem = React.forwardRef<
+    React.ElementRef<"a">,
+    React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+    return (
+        <li>
+            <NavigationMenuLink asChild>
+                <a
+                    ref={ref}
+                    className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        className
+                    )}
+                    {...props}
+                >
+                    <div className="text-sm font-medium leading-none">{title}</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        {children}
+                    </p>
+                </a>
+            </NavigationMenuLink>
+        </li>
+    )
+})
+ListItem.displayName = "ListItem"

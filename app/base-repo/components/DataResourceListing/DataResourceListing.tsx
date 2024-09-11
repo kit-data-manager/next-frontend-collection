@@ -38,6 +38,7 @@ export default async function DataResourceListing({page,size, filter}: {
         <div>
             <div className="rounded-lg p-2 md:pt-0">
                 {finalResources.map((element:DataResource, i:number) => {
+                    //make edit optional depending on permissions
                     const actionEvents = [
                         viewEventIdentifier(element.id),
                         editEventIdentifier(element.id),
