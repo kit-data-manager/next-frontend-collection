@@ -41,16 +41,16 @@ export default async function Page({searchParams}: {
             <SectionCaption caption={"Resources"}/>
 
             <div >
-                <div className="flex col-2">
-                    <div className="hidden md:block md:flex-none md:w-auto rounded-lg border items-center justify-between p-4 md:p-6">
+                <div className="flex">
+                    <div className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
                             <Link
-                                className="rounded-md px-4 bg-accent text-accent-foreground py-2 text-sm hover:underline inline-flex items-center w-full"
+                                className="rounded-md px-4 bg-accent text-accent-foreground py-2 text-sm hover:underline inline-flex items-center w-full mb-4"
                                 href='/base-repo/resources/create'>
                                 <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                             </Link>
                         <FilterResourceForm filter={filter}/>
                     </div>
-                    <div className="w-full md:w-auto">
+                    <div className="lg:initial w-full lg:w-2/3 ">
                         <Suspense fallback={<DataResourceListingSkeleton count={3}/>}>
                             <DataResourceListing page={page} size={size} filter={filter}/>
                         </Suspense>

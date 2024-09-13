@@ -5,6 +5,8 @@ import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
+import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
+import React, {useState} from "react";
 
 export default async function DataResourceListing({page,size, filter}: {
     page: number;
@@ -12,13 +14,11 @@ export default async function DataResourceListing({page,size, filter}: {
     filter: FilterForm;
 }) {
 
-
     //load resources and total pages
     const [resources, totalPages] = await Promise.all([
         fetchDataResources(page, size, filter),
         fetchDataResourcePages(size)
     ]);
-
     const typedRes = resources as Array<DataResource>;
 
     if(!typedRes || typedRes.length === 0){
@@ -36,23 +36,24 @@ export default async function DataResourceListing({page,size, filter}: {
 
     return (
         <div>
-            <div className="rounded-lg p-2 md:pt-0">
-                {finalResources.map((element:DataResource, i:number) => {
-                    //make edit optional depending on permissions
-                    const actionEvents = [
-                        viewEventIdentifier(element.id),
-                        editEventIdentifier(element.id),
-                        downloadEventIdentifier(element.id)
-                    ];
-                    return (
+            <div className="rounded-lg p-2 lg:pt-0 lg:w-auto">
+                    {finalResources.map((element:DataResource, i:number) => {
+                        //make edit optional depending on permissions
+                        const actionEvents = [
+                            viewEventIdentifier(element.id),
+                            editEventIdentifier(element.id),
+                            downloadEventIdentifier(element.id)
+                        ];
+                        return (
                             <DataResourceCard
                                 key={element.id}
                                 data={element}
                                 actionEvents={actionEvents}
                             ></DataResourceCard>
-                    );
-                })}
+                        );
+                    })}
             </div>
+
 
             <div className="mt-5 flex w-full justify-center">
                 <Pagination totalPages={totalPages as number}/>

@@ -7,7 +7,7 @@ import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {DataResource} from "@/lib/definitions";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({params}: { params: { id: string } }) {
     const id = params.id;
     const [resource] = await Promise.all([
         fetchDataResource(id),
@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     }
 
     //load content for all resources
-    const resourcesWithContent =  await loadContent(resource as DataResource);
+    const resourcesWithContent = await loadContent(resource as DataResource);
     const actionEvents = [
         editEventIdentifier(id),
         downloadEventIdentifier(id)
@@ -27,8 +27,8 @@ export default async function Page({ params }: { params: { id: string } }) {
         <main>
             <Breadcrumbs
                 breadcrumbs={[
-                    { label: 'Overview', href: '/base-repo' },
-                    { label: 'Resources', href: '/base-repo/resources' },
+                    {label: 'Overview', href: '/base-repo'},
+                    {label: 'Resources', href: '/base-repo/resources'},
                     {
                         label: `View Resource`,
                         href: `/base-repo/resources/${id}/view`,
@@ -38,13 +38,10 @@ export default async function Page({ params }: { params: { id: string } }) {
             />
             <SectionCaption caption={"View Resource"}/>
 
-            <div className="flow-root">
-                <div className="block min-w-full min-h-full align-middle">
-                    <div className="rounded-lg p-2 md:pt-0">
-                        <div>
-                            <DataResourceCard key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"} actionEvents={actionEvents}></DataResourceCard>
-                        </div>
-                    </div>
+            <div className="flex">
+                <div className="rounded-lg p-2 md:pt-0">
+                    <DataResourceCard key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"}
+                                      actionEvents={actionEvents}></DataResourceCard>
                 </div>
             </div>
 

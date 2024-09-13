@@ -15,7 +15,7 @@ export default function FilterResourceForm({filter}: {
 
     return (
         <form action={doFilterResources}>
-            <div className="rounded-md p-4 md:p-6">
+            <div className="rounded-md">
                 <div className="mb-4">
                     <label htmlFor="customer" className="mb-2 block text-sm font-medium">
                         Publisher
@@ -26,7 +26,7 @@ export default function FilterResourceForm({filter}: {
                             name="publisher"
                             type="text"
                             placeholder="Publisher"
-                            className="peer block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
+                            className="peer block w-auto cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             defaultValue={filter.publisher}
                         >
                         </input>
@@ -47,7 +47,7 @@ export default function FilterResourceForm({filter}: {
                                 step="1"
                                 defaultValue={filter.publicationYear}
                                 placeholder="2024"
-                                className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
+                                className="peer block w-auto rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             />
                             <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                         </div>
@@ -58,11 +58,11 @@ export default function FilterResourceForm({filter}: {
                     <legend className="mb-2 block text-sm font-medium">
                         Resource Status
                     </legend>
-                    <div className="rounded-md border py-3">
+                    <div className="rounded-md w-full border py-3">
                         <div className="ml-4">
                             { ['VOLATILE', 'FIXED'].map(key => {
                             return (
-                                <div key={key} className="flex items-center">
+                                <div key={key} className="flex w-auto items-center">
                                   <input
                                     id={key.toLowerCase()}
                                     name="state"
@@ -73,7 +73,7 @@ export default function FilterResourceForm({filter}: {
                                 />
                                 <label
                                     htmlFor={key.toLowerCase()}
-                                    className="ml-2 w-full flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
+                                    className="ml-2 flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
                                 >
                                     {key}
                                 </label>

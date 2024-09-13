@@ -55,20 +55,20 @@ export default async function Page() {
                     </a>
                 </div>
 
-                <div className="flex md:hidden items-end">
+                <div className="flex lg:hidden items-end">
                     <MainMenuMobile authAvailable={!authError}/>
                     <ThemeModeToggle/>
                 </div>
 
-                <nav className="hidden md:flex md:flex-grow justify-center">
+                <nav className="hidden lg:flex lg:flex-grow items-center justify-center">
                     <MainMenu authAvailable={!authError}/>
                     <ThemeModeToggle/>
                 </nav>
 
             </div>
-            <div className="mt-4 flex grow flex-col gap-4 md:flex-col">
-                <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20">
-                    <p className={`${inter.className} antialiased text-l md:text-l md:leading-normal`}>
+            <div className="mt-4 flex grow flex-col gap-4 lg:flex-col">
+                <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 lg:px-20">
+                    <p className={`${inter.className} antialiased text-l lg:text-l lg:leading-normal`}>
                         <strong>Welcome {username}.</strong> This is an instance of the{' '}
                         <a href="https://nextjs.org/learn/" className="text-blue-500">
                             Next Frontend Collection
@@ -88,7 +88,7 @@ export default async function Page() {
                             Search
                         </h2><SiteSearch/>
                     </> :
-                    <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 md:px-20 grid-cols-3">
+                    <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 lg:px-20 grid-cols-3">
                         <ExclamationTriangleIcon className="w-6 h-6 text-error"/>
                         <p className={`${inter.className} antialiased text-l md:text-l md:leading-normal`}>
                             Search is disabled for that instance. Please navigate directly to one of the configures

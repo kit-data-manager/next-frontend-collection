@@ -10,6 +10,8 @@ import {
     getActionButton
 } from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import React, {useEffect, useRef, useState} from "react";
+import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
 
 export default function DataResourceCard(props:any) {
 
@@ -30,15 +32,24 @@ export default function DataResourceCard(props:any) {
     actionEvents.map((eventIdentifier:string) => {
         buttons.push(getActionButton(eventIdentifier as string));
     })
+    const mounted = useRef(false);
+
+    useEffect(() => {
+        console.log("component rerendered");
+        mounted
+    });
 
     let miscProperties = propertiesForDataResource(data);
-
     return (
+        <>
+            <span className={mounted ? "hidden" : "block"}>Loading...</span>
+
         <DataCard key={key}
                   variant={variant}
                   childrenVariant={childVariant}
                   actionButtons={buttons}
                   onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
+        </>
     )
 }
 

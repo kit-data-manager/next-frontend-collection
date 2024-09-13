@@ -138,10 +138,14 @@ data-card::part(detailed_label){
   font-weight: bold;
 }
 
-data-card::part(detailed_value){
-  margin-left: 4px;
+data-card::part(label-value-wrapper){
+  margin-right: 6px;
 }
 
 data-card::part(detailed-card-container){
+  background-color: light-dark(#EFEFEF, #1a2333);
+}
+
+data-card::part(detailed-metadata-container){
   background-color: light-dark(#EFEFEF, #1a2333);
 }

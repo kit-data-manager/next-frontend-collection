@@ -28,12 +28,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
                     </a>
                 </div>
 
-                <div className="flex md:hidden items-center gap-2">
+                <div className="flex lg:hidden items-center gap-2">
                     <MainMenuMobile authAvailable={!authError}/>
                     <ThemeModeToggle/>
                 </div>
 
-                <nav className="hidden md:flex md:flex-grow justify-center p-4 items-center">
+                <nav className="hidden lg:flex md:flex-grow justify-center p-4 items-center">
                     <MainMenu authAvailable={!authError}/>
                     <ThemeModeToggle/>
                 </nav>
