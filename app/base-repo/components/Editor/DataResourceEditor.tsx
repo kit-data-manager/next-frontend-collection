@@ -31,7 +31,6 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
-import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
@@ -66,7 +65,7 @@ export default function DataResourceEditor({...props}) {
     //TODO Identify current content for tag assignment in modal to use path there.
     return (
         <div>
-            <Accordion type="multiple" defaultValue="upload">
+            <Accordion type="multiple" defaultValue={["upload"]}>
                 {!createMode ?
                     <AccordionItem value={"upload"}>
                         <AccordionTrigger>File Upload</AccordionTrigger>

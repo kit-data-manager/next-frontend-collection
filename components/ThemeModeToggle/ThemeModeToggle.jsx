@@ -18,9 +18,9 @@ export function ThemeModeToggle() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-accent text-accent-foreground" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 bg-accent text-accent-foreground" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 bg-accent text-accent-foreground" />
+                <Button variant="ghost"  size="icon" className="justify-content-center">
+                    <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 dark:hidden" />
+                    <Moon className="hidden dark:block rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </DropdownMenuTrigger>

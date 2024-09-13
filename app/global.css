@@ -13,7 +13,7 @@
     --popover: #FFFFFF;
     --popover-foreground: #09090B;
 
-    --primary: #9f9d98;
+    --primary: #EEEEEE;
     --primary-foreground: #09090B;
 
     --secondary: #EFEFEF;
@@ -47,14 +47,14 @@
     --background: #09090B;
     --foreground: #FAFAFA;
 
-    --card: #1e293b;
+    --card: #1a2333;
     --card-foreground: #FAFAFA;
 
     --popover: #09090B;
     --popover-foreground: #FAFAFA;
 
-    --primary: #FAFAFA;
-    --primary-foreground: #18181B;
+    --primary: #18181B;
+    --primary-foreground: #FAFAFA;
 
     --secondary: #27272A;
     --secondary-foreground: #FAFAFA;
@@ -92,6 +92,10 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.tag::after {
+  content: '*';
+}
+
 data-card::part(myclass){
   content: "";
   display: inline-block;
@@ -105,7 +109,7 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 data-card{
-  --mainBG: light-dark(#EFEFEF, #1e293b);
+  --mainBG: light-dark(#EFEFEF, #111822);
   --darkerBG: light-dark(#dadad7, #ccd6e5);
   --lighterBG: light-dark(#FFFFFF, #FAFAFA);
   --tagText: #18181B;
@@ -139,5 +143,5 @@ data-card::part(detailed_value){
 }
 
 data-card::part(detailed-card-container){
-  background-color: light-dark(#EFEFEF, #1e293b);
+  background-color: light-dark(#EFEFEF, #1a2333);
 }

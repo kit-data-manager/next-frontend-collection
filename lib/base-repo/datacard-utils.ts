@@ -29,6 +29,8 @@ export const propertiesForContentInformation = (resourceId: string,
                                                 disableChangeThumb?: boolean) => {
     let tags:Array<Tag> = new Array<Tag>;
 
+   // content.tags = ["test", "bla", "data"];
+
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
         let isThumb = content.tags && content.tags.includes("thumb");
         let thumbTag:Tag;
@@ -46,6 +48,21 @@ export const propertiesForContentInformation = (resourceId: string,
         }
 
         tags.push(thumbTag);
+    }
+
+    if(content.tags){
+        content.tags.forEach( tag =>{
+            let tagElement:Tag = {
+                color: "var(--info)",
+                text: tag,
+            }
+            tags.push(tagElement);
+            let removeTagElement:Tag = {
+                color: "var(--destructive)",
+                text:"x"
+            }
+            tags.push(removeTagElement);
+        });
     }
 
     if(!disableChangeThumb) {

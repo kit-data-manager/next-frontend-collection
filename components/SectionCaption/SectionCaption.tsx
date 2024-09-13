@@ -13,7 +13,7 @@ export default function SectionCaption({caption, level="h1"}: {
             }
 
             {level == "h2" &&
-                <h2 className={`${lusitana.className} mb-4 p-1 text-l md:text-xl border-b-2 text-primary border-primary`}>
+                <h2 className={`${lusitana.className} mb-4 p-1 text-l md:text-xl border-b-2 text-primary-foreground border-primary-foreground`}>
                     {caption}
                 </h2>
             }
