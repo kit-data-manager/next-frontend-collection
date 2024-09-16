@@ -32,18 +32,17 @@ export default function DataResourceCard(props:any) {
     actionEvents.map((eventIdentifier:string) => {
         buttons.push(getActionButton(eventIdentifier as string));
     })
-    const mounted = useRef(false);
+    let [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         console.log("component rerendered");
-        mounted
+        setMounted(true);
     });
 
     let miscProperties = propertiesForDataResource(data);
     return (
         <>
-            <span className={mounted ? "hidden" : "block"}>Loading...</span>
-
+            <DataResourceListingSkeleton className={mounted ? "hidden" : "block"} count={5}/>
         <DataCard key={key}
                   variant={variant}
                   childrenVariant={childVariant}

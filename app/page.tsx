@@ -47,7 +47,7 @@ export default async function Page() {
 
     return (
         <main className="flex min-h-screen flex-col">
-            <div className="container mx-auto flex justify-between items-center py-4">
+            <div className="container mx-10 w-full flex justify-between items-center py-4">
                 <div className="flex items-center">
                     <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
                         <AcmeLogo/>

@@ -2,10 +2,11 @@ import React from "react"
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 export function DataResourceListingSkeleton({...props}){
-        let elems = Array.from(Array(10).keys())
+        let count = props.count ? props.count : 10;
+        let elems = Array.from(Array(count).keys())
 
         return(
-        <div className="block min-w-full">
+        <div className="block min-w-full" {...props}>
         <div className="rounded-lg p-2 row-gap-4 md:pt-0">
                 <SkeletonTheme baseColor="var(--muted)" highlightColor="var(--muted-foreground)" >
                 {elems.map((elem:number, i:number) => {

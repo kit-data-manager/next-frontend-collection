@@ -20,7 +20,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     authError = false;
     return (
         <div className="flex min-h-screen flex-col p-6">
-            <div className="container mx-auto flex justify-between items-center py-4 sticky bg-primary top-0 z-20">
+            <div className="mx-10 flex justify-between items-center py-4 sticky bg-primary top-0 z-20">
                 <div className="flex items-center">
                     <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
                         <AcmeLogo/>
