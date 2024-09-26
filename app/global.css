@@ -92,17 +92,6 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.tag::after {
-  content: '*';
-}
-
-data-card::part(myclass){
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-}
-
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
@@ -123,10 +112,11 @@ data-card::part(card-container) {
   margin-bottom:6px;
   border-radius: var(--radius);
   box-shadow: 2px 2px 3px 0 rgb(0 0 0 / 0.1);
+  height: 160px;
 }
 
 data-card::part(child-data-card){
-  border-color: light-dark(#0c0c0b40, #27272A);
+  border-color: light-dark(#EFEFEF, #1a2333);
   border-style: solid;
   border-width: 0.1em;
   border-radius: var(--radius);
@@ -134,7 +124,7 @@ data-card::part(child-data-card){
   margin-bottom:6px;
 }
 
-data-card::part(detailed_label){
+data-card::part(detailed-label){
   font-weight: bold;
 }
 
@@ -148,4 +138,8 @@ data-card::part(detailed-card-container){
 
 data-card::part(detailed-metadata-container){
   background-color: light-dark(#EFEFEF, #1a2333);
+}
+
+data-card::part(image-wrapper){
+  min-width: 128px;
 }

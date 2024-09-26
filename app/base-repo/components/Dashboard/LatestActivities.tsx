@@ -10,8 +10,6 @@ import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel
 import * as React from "react";
 import Link from "next/link";
 import {formatDateToLocal} from "@/lib/format-utils";
-import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
-import { Suspense } from 'react';
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
@@ -44,14 +42,13 @@ export default async function LatestActivities() {
                             // @ts-ignore
                             const Icon = iconMap[activity.type];
                             const id = activity.id;
-                            console.log(activity);
                             return (
                                 <div
                                     key={activity.id}
                                     className='flex flex-row items-center justify-between py-4 gap-2 border-t border-b p-2'
                                 >
                                     <div className="flex items-center">
-                                        {Icon ? <Icon className={clsx(`h-5 w-5  mr-5`, {
+                                        {Icon ? <Icon className={clsx(`h-5 w-5 mr-5`, {
                                             'text-warn': activity.type === "TERMINAL",
                                             'text-info': activity.type === "UPDATE",
                                             'text-success': activity.type === "INITIAL"

@@ -46,31 +46,38 @@ export function getActionButton(eventIdentifier:string):ActionButtonInterface{
     let label:string = "Download";
     let iconName:string = "material-symbols-light:download";
     let isUrl = false;
+    let tooltip = '';
 
     if(eventIdentifier.startsWith("http") && eventIdentifier.indexOf("download?") > 0) {
         //TODO: Urls only for downloads so far. Change in case of other requirements.
         isUrl = true;
+        tooltip = 'Download Content';
     }else{
         switch (parts[0]) {
             case REPO_EVENTS.VIEW_RESOURCE:
                 label = "View";
                 iconName = "material-symbols-light:edit-square-outline";
+                tooltip = 'View Resource';
                 break;
             case REPO_EVENTS.EDIT_RESOURCE:
                 label = "Edit";
                 iconName = "material-symbols-light:edit-square-outline";
+                tooltip = 'Edit Resource';
                 break;
             case REPO_EVENTS.DOWNLOAD_RESOURCE:
                 label = "Download";
                 iconName = "material-symbols-light:download";
+                tooltip = 'Download Resource';
                 break;
             case REPO_EVENTS.EDIT_CONTENT:
                 label = "Edit";
                 iconName = "material-symbols-light:edit-square-outline";
+                tooltip = 'Edit Content Metadata';
                 break;
             case REPO_EVENTS.DELETE_CONTENT:
                 label = "Remove";
                 iconName = "material-symbols-light:delete-outline";
+                tooltip = 'Delete Content';
                 break;
             default:
                 throw new Error('Invalid event identifier ' + eventIdentifier);
@@ -78,9 +85,9 @@ export function getActionButton(eventIdentifier:string):ActionButtonInterface{
     }
 
     if(isUrl) {
-        return {"label": label, "iconName":iconName, "url": eventIdentifier} as ActionButtonInterface
+        return {label: label, iconName:iconName, url: eventIdentifier, tooltip: tooltip} as ActionButtonInterface
     }else{
-        return {"label": label, "iconName":iconName, "eventIdentifier": eventIdentifier}  as ActionButtonInterface
+        return {label: label, iconName:iconName, eventIdentifier: eventIdentifier,  tooltip: tooltip}  as ActionButtonInterface
     }
 }
 

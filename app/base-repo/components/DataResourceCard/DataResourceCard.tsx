@@ -1,7 +1,7 @@
 'use client'
 
 import {DataCard} from "data-card-react";
-import {propertiesForContentInformation, propertiesForDataResource} from "@/lib/base-repo/datacard-utils";
+import {propertiesForDataResource} from "@/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
 
@@ -10,8 +10,8 @@ import {
     getActionButton
 } from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import React, {useEffect, useRef, useState} from "react";
-import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
+import React, {useEffect, useState} from "react";
+import DataResourceCardSkeleton from "@/app/base-repo/components/DataResourceCard/DataResourceCardSkeleton";
 
 export default function DataResourceCard(props:any) {
 
@@ -35,15 +35,14 @@ export default function DataResourceCard(props:any) {
     let [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        console.log("component rerendered");
         setMounted(true);
-    });
+    }, []);
 
     let miscProperties = propertiesForDataResource(data);
     return (
         <>
-            <DataResourceListingSkeleton className={mounted ? "hidden" : "block"} count={5}/>
-        <DataCard key={key}
+            <DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>
+            <DataCard key={key}
                   variant={variant}
                   childrenVariant={childVariant}
                   actionButtons={buttons}

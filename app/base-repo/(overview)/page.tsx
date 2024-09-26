@@ -1,4 +1,3 @@
-import {lusitana} from '@/components/fonts';
 import {CardsSkeleton} from '@/components/skeletons';
 import RepositoryStats from "@/app/base-repo/components/Dashboard/RepositoryStats";
 import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";

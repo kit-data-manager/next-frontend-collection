@@ -1,47 +1,46 @@
 'use client';
 
-import {Button, MegaMenu, Navbar} from 'flowbite-react';
 import {
     ChartPieIcon, ListBulletIcon, PlusCircleIcon
 } from '@heroicons/react/24/outline';
-import Link from "next/link";
-import {useTheme} from "next-themes"
-import {usePathname} from "next/navigation";
-import clsx from "clsx";
-
-import {mainMenuTheme} from "@/components/MainMenu/MainMenu.d";
-import {ThemeModeToggle} from "@/components/ThemeModeToggle/ThemeModeToggle";
 import {
     NavigationMenu, NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
-    NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle
+    NavigationMenuList, NavigationMenuTrigger
 } from "@/components/ui/navigation-menu";
 import {cn} from "@/lib/utils";
 import React from "react";
 
 export default function MainMenu(props) {
-   // const theme = useTheme()
-    const showLogin = props.authAvailable;
+    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
 
     const linksDataRepo = [
         {name: 'Overview', href: '/base-repo', icon: ChartPieIcon, description:"Show system status information."},
         {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon, description:"Create a new Data Resource."},
-        {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Search for Data Resources."},
-        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"List all Data Resources."},
     ];
+
+    if(searchEnabled){
+       linksDataRepo.push( {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Search for Data Resources."});
+    }
+
+    linksDataRepo.push({name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"List all Data Resources."});
+
 
     const linksMetadataRepo = [
         {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon, description:"Show system status information."},
         {name: 'Create Schema', href: '/metadata-repo/schema/create', icon: PlusCircleIcon, description:"Create a new Metadata Schema."},
-        {name: 'Create Metadata', href: '/metadata-repo/metadata/create', icon: PlusCircleIcon, description:"Create a new Metadata Document."},
-        {name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon, description:"Search for Metadata Documents."},
-        {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon, description:"List all Metadata Schema."},
-        {name: 'Metadata', href: '/metadata-repo/metadata', icon: ListBulletIcon, description:"List all Metadata Documents"},
+        {name: 'Create Metadata', href: '/metadata-repo/metadata/create', icon: PlusCircleIcon, description:"Create a new Metadata Document."}
     ];
 
-    const pathname = usePathname();
-    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
+    if(searchEnabled){
+        linksMetadataRepo.push({name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon, description:"Search for Metadata Documents."});
+    }
+
+    linksMetadataRepo.push(
+        {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon, description:"List all Metadata Schema."},
+        {name: 'Metadata', href: '/metadata-repo/metadata', icon: ListBulletIcon, description:"List all Metadata Documents"}
+    );
 
     return (
         <NavigationMenu className="px-2 py-2.5 sm:px-4">
@@ -77,13 +76,6 @@ export default function MainMenu(props) {
                             ))}
                         </ul>
                     </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/docs" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Documentation
-                        </NavigationMenuLink>
-                    </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>
         </NavigationMenu>

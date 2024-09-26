@@ -11,6 +11,7 @@ import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcesSearchParams} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/searchParamHelper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
+import {Button} from "@/components/ui/button";
 
 
 export default async function Page({searchParams}: {
@@ -18,8 +19,8 @@ export default async function Page({searchParams}: {
 }) {
 
     const page: number = valueOrDefault(searchParams, "page", 0);
-    const size:number = valueOrDefault(searchParams, "size", 10);
-    const filter:FilterForm = {} as FilterForm;
+    const size: number = valueOrDefault(searchParams, "size", 10);
+    const filter: FilterForm = {} as FilterForm;
 
     filter.id = valueOrDefault(searchParams, "id", undefined);
     filter.state = valueOrDefault(searchParams, "state", undefined);
@@ -40,21 +41,22 @@ export default async function Page({searchParams}: {
             />
             <SectionCaption caption={"Resources"}/>
 
-            <div >
-                <div className="flex">
-                    <div className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
-                            <Link
-                                className="rounded-md px-4 bg-accent text-accent-foreground py-2 text-sm hover:underline inline-flex items-center w-full mb-4"
-                                href='/base-repo/resources/create'>
-                                <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
-                            </Link>
-                        <FilterResourceForm filter={filter}/>
-                    </div>
-                    <div className="lg:initial w-full lg:w-2/3 ">
-                        <Suspense fallback={<DataResourceListingSkeleton count={3}/>}>
-                            <DataResourceListing page={page} size={size} filter={filter}/>
-                        </Suspense>
-                    </div>
+            <div className="flex">
+                <div
+                    className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
+                    <Button asChild variant="outline">
+                        <Link
+                            className="items-center w-full mb-4"
+                            href='/base-repo/resources/create'>
+                            <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
+                        </Link>
+                    </Button>
+                    <FilterResourceForm filter={filter}/>
+                </div>
+                <div className="lg:initial w-full lg:w-2/3 ">
+                    <Suspense fallback={<DataResourceListingSkeleton count={3}/>}>
+                        <DataResourceListing page={page} size={size} filter={filter}/>
+                    </Suspense>
                 </div>
             </div>
         </main>

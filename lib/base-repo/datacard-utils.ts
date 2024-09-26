@@ -11,6 +11,19 @@ import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../d
 import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
 
 export const propertiesForDataResource = (resource: DataResource) => {
+    let children:Array<DataCard> = childrenForDataResource(resource);
+
+    if(children.length == 0){
+        return {
+            "dataTitle": titleForDataResource(resource),
+            "subTitle": subtitleForDataResource(resource),
+            "imageUrl": thumbForDataResource(resource),
+            "bodyText": descriptionForDataResource(resource),
+            "textRight": rightTextForDataResource(resource),
+            "metadata": metadataForDataResource(resource),
+            "tags": tagsForDataResource(resource),
+        }
+    }
     return {
         "dataTitle": titleForDataResource(resource),
         "subTitle": subtitleForDataResource(resource),
@@ -19,6 +32,7 @@ export const propertiesForDataResource = (resource: DataResource) => {
         "textRight": rightTextForDataResource(resource),
         "metadata": metadataForDataResource(resource),
         "childrenData": childrenForDataResource(resource),
+        "childrenLabel": "File(s)",
         "tags": tagsForDataResource(resource),
     }
 }
@@ -38,12 +52,14 @@ export const propertiesForContentInformation = (resourceId: string,
             thumbTag = {
                 color: isThumb ? "var(--success)" : "var(--error)",
                 text: "Thumb",
+                tooltip: isThumb ? "Thumbnail for Ressource":"Not Thumbnail for Ressource"
             }
         }else{
             thumbTag = {
                 color: isThumb ? "var(--success)" : "var(--error)",
                 text: "Thumb",
-                eventIdentifier: isThumb ? unmakeThumbEventIdentifier(resourceId, content.relativePath) : makeThumbEventIdentifier(resourceId, content.relativePath)
+                eventIdentifier: isThumb ? unmakeThumbEventIdentifier(resourceId, content.relativePath) : makeThumbEventIdentifier(resourceId, content.relativePath),
+                tooltip: isThumb ? "Click to NOT use this image as resource thumbnail." : "Click to use this image as resource thumbnail."
             }
         }
 
@@ -52,6 +68,7 @@ export const propertiesForContentInformation = (resourceId: string,
 
     if(content.tags){
         content.tags.forEach( tag =>{
+            if(tag.toLowerCase() != "thumb"){
             let tagElement:Tag = {
                 color: "var(--info)",
                 text: tag,
@@ -59,34 +76,38 @@ export const propertiesForContentInformation = (resourceId: string,
             tags.push(tagElement);
             let removeTagElement:Tag = {
                 color: "var(--destructive)",
-                text:"x"
+                text:"x",
+                tooltip: "Click to remove tag '" + tag + "'"
             }
             tags.push(removeTagElement);
+            }
         });
     }
 
     if(!disableChangeThumb) {
         tags.push({
-            "color": "var(--info)",
-            "iconName": "heroicons:plus-small-20-solid",
-            "eventIdentifier": addTagEventIdentifier(resourceId, content.relativePath)
+            color: "var(--info)",
+            iconName: "heroicons:plus-small-20-solid",
+            eventIdentifier: addTagEventIdentifier(resourceId, content.relativePath),
+            tooltip: "Click to add a new tag."
+
         } as Tag);
     }
 
     if (actionButtons) {
         return {
-            "dataTitle":{value: content.relativePath} as TextPropType,
-            "subTitle": {value: content.hash} as TextPropType,
-            "textRight": {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
-            "tags": tags ,
-            "actionButtons": actionButtons
+            dataTitle:{value: content.relativePath} as TextPropType,
+            subTitle: {value: content.hash} as TextPropType,
+            textRight: {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
+            tags: tags,
+            actionButtons: actionButtons
         }
     } else {
         return {
-            "dataTitle": {value: content.relativePath} as TextPropType,
-            "subTitle": {value: content.hash} as TextPropType,
-            "textRight": {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
-            "tags": tags
+            dataTitle: {value: content.relativePath} as TextPropType,
+            subTitle: {value: content.hash} as TextPropType,
+            textRight: {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
+            tags: tags
         }
     }
 }
@@ -112,11 +133,10 @@ function generateSubtitleFromCreator(resource: DataResource) {
     if (subTitleValue.length == 0) {
         subTitleValue = "Anonymous User";
     }
-    return {"value": subTitleValue} as TextPropType;;
+    return {value: subTitleValue} as TextPropType;
 }
 
 const titleForDataResource = (resource: DataResource) => {
-
     let titleValue = {"value": "Resource #" + resource.id} as TextPropType;
     if (resource.titles) {
         resource.titles.map((title, i) => {
@@ -125,7 +145,7 @@ const titleForDataResource = (resource: DataResource) => {
             }
         });
     } else {
-        titleValue = {"value": "INVALID RESOURCE (no title)"} as TextPropType;
+        titleValue = {value: "INVALID RESOURCE (no title)"} as TextPropType;
     }
 
     return titleValue;
@@ -164,13 +184,13 @@ const tagsForDataResource = (resource: DataResource) => {
     //state tags
     let tags: Array<Tag> = new Array<Tag>;
     if (resource.state === "VOLATILE") {
-        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash"} as Tag);
+        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash", tooltip:"The resource can be modified."} as Tag);
     } else if (resource.state === "FIXED") {
-        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin"}  as Tag);
+        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin", tooltip:"The resource cannot be modified."}  as Tag);
     } else if (resource.state === "REVOKED") {
-        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash"}  as Tag);
+        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash", tooltip:"The resource is no longer publicly available."}  as Tag);
     } else if (resource.state === "GONE") {
-        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash"}  as Tag);
+        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash", tooltip:"The resource is no longer available."}  as Tag);
     }
 
     //access tags
@@ -178,17 +198,14 @@ const tagsForDataResource = (resource: DataResource) => {
     if(resource.acls) {
         resource.acls.map((acl, i) => {
             if (acl.sid === "anonymousUser") {
-                tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"}  as Tag);
+                tags.push({color: "#90EE90", text: "Open", iconName: "zondicons:lock-open", tooltip:"The resource is publicly accessible."}  as Tag);
                 open = true;
             }
         });
-    }else{
-        tags.push({"color": "#90EE90", "text": "Open", "iconName": "zondicons:lock-open"} as Tag);
-        open = true;
     }
 
     if (!open) {
-        tags.push({"color": "#FFCCCB", "text": "Protected", "iconName": "zondicons:lock-closed"} as Tag);
+        tags.push({color: "#FFCCCB", text: "Protected", iconName: "zondicons:lock-closed", tooltip: "The resource has access restrictions."} as Tag);
     }
 
     //rights tag
@@ -200,7 +217,7 @@ const tagsForDataResource = (resource: DataResource) => {
             "url": resource.rights[0].schemeUri
         } as Tag);
     } else {
-        tags.push({"color": "#FFCCCB", "text": "Unlicensed", "iconName": "mynaui:copyright-slash"} as Tag);
+        tags.push({color: "#FFCCCB", text: "Unlicensed", iconName: "mynaui:copyright-slash", tooltip:"The resource has no license assigned."} as Tag);
     }
 
     return tags;

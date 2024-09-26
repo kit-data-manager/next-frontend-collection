@@ -1,22 +1,20 @@
 import React from "react"
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-export function LatestActivitiesSkeleton(props:any){
-    let elems = Array.from(Array(10).keys())
+import {lusitana} from "@/components/fonts";
+export function LatestActivitiesSkeleton(props:any) {
+    return (
 
-    return(
-        <div className="block col-span-2 min-w-full">
-            <div className="rounded-lg p-2 row-gap-4 md:pt-0">
-                <SkeletonTheme baseColor="var(--muted)" highlightColor="var(--muted-foreground)" >
-                    {elems.map((elem:number, i:number) => {
-                        return (
-                            <Skeleton key={i} className={"mt-5"} width={(Math.floor(Math.random() * (100 - 70) ) + 70) + "%"} {...props}/>
-                        )
-                    })}
-                </SkeletonTheme>
+        Array(6).fill(0).map((el, index) => (
+            <div key={index}>
+                <div
+                    className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-center items-center gap-2 p-4 rounded-md animate-pulse`}>
+                    <div className="flex gap-2 items-center">
+                        <a className="font-bold text-l animate-pulse">Loading...</a>
+                    </div>
+
+                 </div>
             </div>
-        </div>
+        ))
     )
 }
-
-export default LatestActivitiesSkeleton
+ export default LatestActivitiesSkeleton

@@ -1,6 +1,6 @@
 import {TextPropType, Tag, ActionButtonInterface} from "../../data-view-web-component";
 
-export function createLabeledField( value, label=undefined, defaultValue="Unspecified Title") :TextPropType{
+export function createLabeledField( value:string, label=undefined, defaultValue="Unspecified Title") :TextPropType{
     if(label){
          return {label: label, value: value ? value : defaultValue} as TextPropType;
     }else{
@@ -8,7 +8,7 @@ export function createLabeledField( value, label=undefined, defaultValue="Unspec
     }
 }
 
-export function createTag(value, color, icon = undefined, url=undefined):Tag{
+export function createTag(value:string, color:string, icon = undefined, url=undefined):Tag{
     return {
         "text": value,
         "color": color,
@@ -17,7 +17,7 @@ export function createTag(value, color, icon = undefined, url=undefined):Tag{
     } as Tag;
 }
 
-export function createActionButton(url, label, icon): ActionButtonInterface{
+export function createActionButton(url:string, label:string, icon:string): ActionButtonInterface{
     return {
         "iconName": icon,
         "label": label,

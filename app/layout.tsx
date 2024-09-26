@@ -1,15 +1,16 @@
 import './global.css';
 import {inter} from '@/components/fonts';
 import React from "react";
-import {Providers} from "@/app/Providers";
-import SessionGuard from "@/components/general/SessionGuard";
+import {SecurityProviders} from "@/components/Providers/SecurityProviders";
+import SessionGuard from "@/components/Providers/SessionGuard";
 import {ThemeProvider} from "@/components/Providers/theme-provider";
+import AppHeader from "@/app/base-repo/components/AppHeader/AppHeader";
 
-export default function RootLayout({children}: {
+export default async function RootLayout({children}: {
     children: React.ReactNode;
 }) {
+    const securityEnabled = process.env.KEYCLOAK_CLIENT_ID != '' && process.env.KEYCLOAK_CLIENT_ID != undefined;
 
-    const securityEnabled = process.env.KEYCLOAK_CLIENT_ID != '';
     return (
         <html lang="en">
         <head className={"dark"}>
@@ -22,15 +23,14 @@ export default function RootLayout({children}: {
             enableSystem
             disableTransitionOnChange
         >
-        {securityEnabled ? <Providers>
-                <SessionGuard>
+
+            <SecurityProviders>
+                <AppHeader securityEnabled={securityEnabled}>
                     {children}
-                </SessionGuard>
-            </Providers> :
-            <>
-                {children}
-            </>
-        }
+                </AppHeader>
+            </SecurityProviders>
+
+
         </ThemeProvider>
         </body>
         </html>

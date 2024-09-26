@@ -101,12 +101,10 @@ export default function DataResourceEditor({...props}) {
                 <AccordionItem value={"metadata"}>
                     {createMode ?
                         <>
-                            <AccordionTrigger onClick={() => {
-                            }}>Resource Metadata</AccordionTrigger>
+                            <AccordionTrigger onClick={() => {}}>Resource Metadata</AccordionTrigger>
                             <AccordionContent hidden={false}>
-                                <>
                                     {editorReady ? null :
-                                        <DataResourceListingSkeleton count={2}/>
+                                        <span>Loading editor...</span>
                                     }
                                     <JsonForm id="DataResource" schema={props.schema} data={currentData}
                                               setEditorReady={setEditorReady}
@@ -125,16 +123,14 @@ export default function DataResourceEditor({...props}) {
                                                                 confirm={confirm}
                                         />
                                     }
-                                </>
                             </AccordionContent>
                         </>
                         :
                         <>
                             <AccordionTrigger>Resource Metadata</AccordionTrigger>
                             <AccordionContent>
-                                <>
                                     {editorReady ? null :
-                                        <DataResourceListingSkeleton count={2}/>
+                                        <span>Loading editor...</span>
                                     }
                                     <JsonForm id="DataResource" schema={props.schema} data={currentData}
                                               setEditorReady={setEditorReady}
@@ -153,7 +149,6 @@ export default function DataResourceEditor({...props}) {
                                                                 confirm={confirm}
                                         />
                                     }
-                                </>
                             </AccordionContent>
                         </>}
                 </AccordionItem>

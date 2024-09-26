@@ -1,11 +1,12 @@
 import {clsx} from "clsx";
 import {lusitana} from "@/components/fonts";
 import {CardStatus} from "./StatusCard.d"
+import {ReactElement} from "react";
 
 export function StatusCard({cardStatus}: {
    cardStatus: CardStatus
 }) {
-    let CardIcon;
+    let CardIcon:ReactElement;
 
     if (!cardStatus.icon) {
         if (cardStatus.status > 0) {
@@ -39,12 +40,12 @@ export function StatusCard({cardStatus}: {
 
     return (
         <div
-            className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-center items-center gap-2 p-4 rounded-md`}>
+            className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-start items-center gap-2 p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
                 {cardStatus.visitRef != undefined && cardStatus.status > 0 ?
-                    <a className="font-bold text-l underline hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>
+                    <a className="font-bold text-l underline pointer-events-auto hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>
                     :
-                    <a className="font-bold text-l">{cardStatus.title}</a>
+                    <a className="font-bold text-l pointer-events-none">{cardStatus.title}</a>
                 }
                 {CardIcon}
             </div>
@@ -53,12 +54,7 @@ export function StatusCard({cardStatus}: {
             })}>{cardStatus.subtitle}</span>
             {cardStatus.detailsRef ?
             <div className="w-full flex justify-end">
-                <a href={cardStatus.detailsRef} className={clsx("text-xs font-semibold",
-                    {
-                        "bg-primary": cardStatus.detailsRef == undefined,
-                        "hover:underline": cardStatus.detailsRef != undefined
-                    })}
-                >details...</a>
+                <a href={cardStatus.detailsRef} className="text-xs font-semibold pointer-events-auto hover:underline">details...</a>
             </div>
             :null}
         </div>);

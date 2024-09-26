@@ -1,6 +1,7 @@
-import {AuthOptions} from "next-auth";
+import {AuthOptions, TokenSet} from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import {JWT} from "next-auth/jwt";
+import {User, Account} from "next-auth";
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -14,9 +15,14 @@ export const authOptions: AuthOptions = {
         maxAge: 60 * 30
     },
     callbacks: {
-        async jwt({ token, user, account }) {
-            return { ...token, ...user };
-            /*if (account) {
+        async jwt({token, user, account}: {
+            token: JWT;
+            user: User;
+            account:Account;
+        }){
+            //{ token:JWT, user, account }) {
+         //   return { ...token, ...user };
+            if (account) {
                 token.idToken = account.id_token
                 token.accessToken = account.access_token
                 token.refreshToken = account.refresh_token
@@ -24,7 +30,7 @@ export const authOptions: AuthOptions = {
                 return token
             }
             // we take a buffer of one minute(60 * 1000 ms)
-            if (Date.now() < (token.expiresAt! * 1000 - 60 * 1000)) {
+            if (Date.now() < (token.accessTokenExpired * 1000 - 60 * 1000)) {
                 return token
             } else {
                 try {
@@ -32,12 +38,15 @@ export const authOptions: AuthOptions = {
 
                     const tokens: TokenSet = await response.json()
 
-                    if (!response.ok) throw tokens
+                    if (!response.ok){
+                        console.error("Refreshing access token returned error code. ", error)
+                        return { ...token, error: "RefreshAccessTokenError" }
+                    }
 
                     const updatedToken: JWT = {
                         ...token, // Keep the previous token properties
                         idToken: tokens.id_token,
-                        accessToken: tokens.access_token,
+                        accessToken: tokens.access_token ? token.accessToken : "",
                         expiresAt: Math.floor(Date.now() / 1000 + (tokens.expires_in as number)),
                         refreshToken: tokens.refresh_token ?? token.refreshToken,
                     }
@@ -46,7 +55,7 @@ export const authOptions: AuthOptions = {
                     console.error("Error refreshing access token", error)
                     return { ...token, error: "RefreshAccessTokenError" }
                 }
-            }*/
+            }
         },
         async session({ session, token }) {
             /* session.accessToken = token.accessToken

@@ -39,12 +39,11 @@ export default async function Page({params}: { params: { id: string } }) {
             <SectionCaption caption={"View Resource"}/>
 
             <div className="flex">
-                <div className="rounded-lg p-2 md:pt-0">
+                <div className="rounded-lg grow">
                     <DataResourceCard key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"}
                                       actionEvents={actionEvents}></DataResourceCard>
                 </div>
             </div>
-
         </main>
     );
 }

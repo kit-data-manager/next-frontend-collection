@@ -3,10 +3,11 @@
 import {
     CalendarIcon,
     UserCircleIcon,
+    FunnelIcon, PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import { filterResources } from '@/lib/actions';
-import {Button} from "@/components/general/button";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
+import {Button} from "@/components/ui/button";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
@@ -114,8 +115,8 @@ export default function FilterResourceForm({filter}: {
 
 
             </div>
-            <div className="flex justify-end p-4 md:p-6">
-                <Button type="submit">Filter</Button>
+            <div className="flex justify-end pt-4">
+                <Button type="submit" variant="outline"><FunnelIcon className="h-5 w-5 me-2"/> Filter</Button>
             </div>
         </form>
     );

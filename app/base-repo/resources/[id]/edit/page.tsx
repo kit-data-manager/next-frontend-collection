@@ -37,7 +37,7 @@ export default async function Page({params}: { params: { id: string } }) {
             />
             <SectionCaption caption={"Edit Resource"}/>
 
-            <div className="flow-root">
+            <div className="flex">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
                         <DataResourceEditor schema={schema} data={resource} content={content.children} etag={etag}/>
