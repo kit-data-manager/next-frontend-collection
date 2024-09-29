@@ -2,7 +2,6 @@ import './global.css';
 import {inter} from '@/components/fonts';
 import React from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
-import SessionGuard from "@/components/Providers/SessionGuard";
 import {ThemeProvider} from "@/components/Providers/theme-provider";
 import AppHeader from "@/app/base-repo/components/AppHeader/AppHeader";
 

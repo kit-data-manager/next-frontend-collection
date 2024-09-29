@@ -53,9 +53,13 @@ export function StatusCard({cardStatus}: {
                 "text-white": !cardStatus.subtitle
             })}>{cardStatus.subtitle}</span>
             {cardStatus.detailsRef ?
-            <div className="w-full flex justify-end">
-                <a href={cardStatus.detailsRef} className="text-xs font-semibold pointer-events-auto hover:underline">details...</a>
-            </div>
-            :null}
+                <div className="w-full flex justify-end">
+                    <a href={cardStatus.detailsRef}
+                       className="text-xs font-semibold pointer-events-auto hover:underline">details...</a>
+                </div>
+                :
+                <div className="w-full flex justify-end">
+                    <span className="text-xs font-semibold text-card pointer-events-none">.</span>
+                </div>}
         </div>);
 }

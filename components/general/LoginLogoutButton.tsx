@@ -7,8 +7,10 @@ import federatedLogout from "@/lib/federatedLogout";
 
 export default function LoginLogoutButton({icon, ...props}) {
     const {data: session, status} = useSession();
-
     if (status === "authenticated" && session) {
+        console.log("Status ", status);
+        console.log("Session ", session);
+
         //authenticated || session, show logout
         if (icon) {
             return (

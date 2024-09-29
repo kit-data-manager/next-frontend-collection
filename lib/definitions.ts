@@ -104,6 +104,17 @@ export type DataResourcesSearchParams = {
   publisher?:string;
 }
 
+export type ActuatorInfo = {
+  branch:string;
+  hash:string;
+  buildTime:string;
+  version:string;
+}
+
+export type KeycloakInfo = {
+  realm:string;
+}
+
 export type Activity = {
   id: number;
   type: "INITIAL" |"UPDATE" | "TERMINAL";

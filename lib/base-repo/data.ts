@@ -1,6 +1,6 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {Activity, ContentInformation, DataResource, ResourceType} from "@/lib/definitions";
+import {Activity, ActuatorInfo, ContentInformation, DataResource, KeycloakInfo, ResourceType} from "@/lib/definitions";
 import {promises as fs} from 'fs';
 import fetch from "node-fetch";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
@@ -111,11 +111,39 @@ export async function fetchDataResourceEtag(id: string) {
 }
 
 export async function loadSchema(schemaPath: string) {
-    const file = await fs.readFile(process.cwd() + "/" + schemaPath, 'utf8').then(result => JSON.parse(result));
-    return file;
+    return await fs.readFile(process.cwd() + "/" + schemaPath, 'utf8').then(result => JSON.parse(result));
 }
 
-export async function fetchActuatorInfo() {
+export async function fetchActuatorInfo(baseUrl:string) : Promise<ActuatorInfo>{
+    noStore()
+
+    let branch = "unknown";
+    let hash = "unknown";
+    let buildTime = "unknown";
+    let version = "unknown";
+
+    try {
+        const response = await myFetch(new URL(`${baseUrl}/actuator/info`));
+
+        const json = await response.json();
+
+        branch = json.git.branch;
+        hash = json.git.commit.id;
+        buildTime = json.build.time;
+        version = json.build.version;
+    } catch (error) {
+        console.error('Failed to fetch actuator info. Error:', error);
+    }
+
+    return {
+        branch,
+        hash,
+        buildTime,
+        version
+    } as ActuatorInfo;
+}
+
+export async function fetchActuatorHealth(baseUrl:string) {
     noStore()
 
     let database = "unknown";
@@ -128,7 +156,7 @@ export async function fetchActuatorInfo() {
     let elastic = "unknown";
 
     try {
-        const response = await myFetch(new URL(`http://localhost:8081/actuator/health`));
+        const response = await myFetch(new URL(`${baseUrl}/actuator/health`));
 
         const json = await response.json();
 
@@ -153,7 +181,7 @@ export async function fetchActuatorInfo() {
             elastic = json.components.elasticsearch.details.status;
         }
     } catch (error) {
-        console.error('Failed to fetch actuator info. Error:', error);
+        console.error('Failed to fetch actuator health. Error:', error);
     }
 
     return {
@@ -166,6 +194,25 @@ export async function fetchActuatorInfo() {
         elasticStatus,
         elastic
     }
+}
+
+export async function fetchKeyCloakStatus(realmUrl:string){
+    noStore()
+    let realm = "unknown";
+
+    try {
+        const response = await myFetch(new URL(`${realmUrl}`));
+
+        const json = await response.json();
+
+        realm = json.realm;
+    } catch (error) {
+        console.error('Failed to fetch keycloak info. Error:', error);
+    }
+
+    return {
+      realm
+    } as KeycloakInfo;
 }
 
 export async function fetchContentOverview() {

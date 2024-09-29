@@ -3,7 +3,6 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import {lusitana} from "@/components/fonts";
 
 export function LatestActivitiesSkeleton(props:any){
-    let elems = Array.from(Array(10).keys())
     return (
         <div className="px-6">
             <div

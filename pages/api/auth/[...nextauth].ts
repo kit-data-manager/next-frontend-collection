@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak'
-import CredentialsProvider from "next-auth/providers/credentials"
 
 import type { JWT } from 'next-auth/jwt';
 
@@ -14,7 +13,7 @@ import type { JWT } from 'next-auth/jwt';
  */
 const refreshAccessToken = async (token: JWT) => {
     if (Date.now() > token.refreshTokenExpired) {
-        console.error("Token already expired. Returning RefreshAccessTokenError.");
+        console.error("Refresh token expired. Returning RefreshAccessTokenError.");
         return {
             ...token,
             error: 'RefreshAccessTokenError',
@@ -64,7 +63,7 @@ const refreshAccessToken = async (token: JWT) => {
         };
         }
     } catch (error) {
-        console.error("Some unhandled error occured while token refresh. Returning RefreshAccessTokenError.");
+        console.error("Some unhandled error occurred while token refresh. Returning RefreshAccessTokenError.");
         return {
             ...token,
             error: 'RefreshAccessTokenError',
@@ -87,60 +86,27 @@ const keycloakProvider = KeycloakProvider({
      timeout: 30000
    }
  })
-const credentialsProvider =  CredentialsProvider({
-    // The name to display on the sign in form (e.g. 'Sign in with...')
-    name: 'Credentials',
-    // The credentials is used to generate a suitable form on the sign in page.
-    // You can specify whatever fields you are expecting to be submitted.
-    // e.g. domain, username, password, 2FA token, etc.
-    // You can pass any HTML attribute to the <input> tag through the object.
-    credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" }
-       // password: { label: "Password", type: "password" }
-    },
-    async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        /*const res = await fetch("/your/endpoint", {
-            method: 'POST',
-            body: JSON.stringify(credentials),
-            headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
-*/
-        // If no error and we have user data, return it
-       /* if (res.ok && user) {
-            return user
-        }*/
-        // Return null if user data could not be retrieved
-        return {"username": credentials?.username};
-    }
-})
-
 
 export default NextAuth({
-    providers: [credentialsProvider],
+    providers: [keycloakProvider],
     session: {
         strategy: "jwt"
     },
-    jwt: {
+    /*jwt: {
         signingKey: process.env.SIGNING_KEY,
-    },
+    },*/
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         /**
          * @param  {object} user     User object
          * @param  {object} account  Provider account
          * @param  {object} profile  Provider profile
+         * @param  {string} email    Email
          * @return {boolean|string}  Return `true` to allow sign in
          *                           Return `false` to deny access
          *                           Return `string` to redirect to (eg.: "/unauthorized")
          */
-        async signIn({ user, account, profile, email, credentials }) {
+        async signIn({ user, account, profile, email}) {
             if (account && user) {
                 return true;
             } else {
@@ -152,21 +118,20 @@ export default NextAuth({
         /**
          * @param  {string} url      URL provided as callback URL by the client
          * @param  {string} baseUrl  Default base URL of site (can be used as fallback)
-         * @return {string}          URL the client will be redirect to
+         * @return {string}          URL the client will be redirected to
          */
         async redirect({ url, baseUrl }) {
-            //return url.startsWith(baseUrl) ? url : baseUrl;
             if (url.startsWith("/")) return `${baseUrl}${url}`
             else if (new URL(url).origin === baseUrl) return url
             return baseUrl
         },
         /**
          * @param  {object} session      Session object
+         * @param  {object} user         User object
          * @param  {object} token        User object    (if using database sessions)
          *                               JSON Web Token (if not using database sessions)
          * @return {object}              Session that will be returned to the client
          */
-        //async session(session, token: JWT) {
         async session({ session, user, token }) {
             if (token) {
                 session.user = token.user;
@@ -186,7 +151,7 @@ export default NextAuth({
         async jwt({ token, user, account, profile, isNewUser }) {
             // Initial sign in
             if (account && user) {
-                // Add access_token, refresh_token and expirations to the token right after signin
+                // Add access_token, refresh_token and expirations to the token right after sign in
                 token.accessToken = account.access_token;
                 token.refreshToken = account.refresh_token;
                 token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;

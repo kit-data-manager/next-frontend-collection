@@ -1,7 +1,7 @@
 import {inter, lusitana} from '@/components/fonts';
 import React, {Suspense} from "react";
 import {CardsSkeleton} from "@/components/skeletons";
-import OverallStatusCardWrapper from "@/app/base-repo/components/Dashboard/SystemStats";
+import OverallStatusCardWrapper from "@/components/SystemStats/SystemStats";
 import {getServerSession, Session} from "next-auth";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/components/search/site-search";
