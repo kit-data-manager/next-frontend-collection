@@ -11,8 +11,8 @@ export default async function OverallStatusCardWrapper() {
     const repoInstanceName: string = process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName = process.env.METASTORE_INSTANCE_NAME ? process.env.METASTORE_INSTANCE_NAME : "Metadata Repository";
 
-    const repoAvailable:string = process.env.REPO_AVAILABLE ? process.env.REPO_AVAILABLE : "true";
-    const metaStoreAvailable:string = process.env.REPO_AVAILABLE ? process.env.REPO_AVAILABLE : "false";
+    const repoAvailable:boolean = (process.env.REPO_AVAILABLE ? process.env.REPO_AVAILABLE : "false") == "true";
+    const metaStoreAvailable:boolean = (process.env.METASTORE_AVAILABLE ? process.env.METASTORE_AVAILABLE : "false") == "true";
 
     const repoBaseUrl: string = process.env.REPO_BASE_URL ? process.env.REPO_BASE_URL : '';
     const metaStoreBaseUrl: string = process.env.METASTORE_BASE_URL ? process.env.METASTORE_BASE_URL : '';
@@ -24,12 +24,12 @@ export default async function OverallStatusCardWrapper() {
     let keycloakInfo: KeycloakInfo | undefined = undefined;
     let validTiles = 0;
 
-    if (repoBaseUrl != '') {
+    if (repoAvailable) {
         actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl);
         validTiles++;
     }
 
-    if (metaStoreBaseUrl != '') {
+    if (metaStoreAvailable) {
         actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl);
         validTiles++;
     }
