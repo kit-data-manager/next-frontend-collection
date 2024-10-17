@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import {cn} from "@/lib/utils";
 import React from "react";
+import {useSession} from "next-auth/react";
 
 export default function MainMenu(props) {
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
@@ -25,7 +26,6 @@ export default function MainMenu(props) {
     }
 
     linksDataRepo.push({name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"List all Data Resources."});
-
 
     const linksMetadataRepo = [
         {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon, description:"Show system status information."},

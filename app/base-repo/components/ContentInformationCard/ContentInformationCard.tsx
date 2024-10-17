@@ -34,13 +34,12 @@ export default function ContentInformationCard(props:any) {
         buttons.push(getActionButton(eventIdentifier as string));
     })
 
-    let miscProperties = propertiesForContentInformation(data.parentResource.id, data);
+    let miscProperties = propertiesForContentInformation(data.parentResource.id, data, buttons, false);
 
     return (
         <DataCard key={key}
                   variant={variant}
                   childrenVariant={childVariant}
-                  actionButtons={buttons}
                   onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
     )
 }

@@ -15,7 +15,6 @@ export default function AppHeader({securityEnabled, children}: {
 
     let authenticated:boolean = false;
     const { data: session, status } = useSession()
-    console.log("SESSION ", session?.user);
     if (status === "authenticated") {
         authenticated = true;
     }

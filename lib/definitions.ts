@@ -64,8 +64,15 @@ export type Description = {
 export type Acl = {
   id: string;
   sid: string;
-  permission: string;
+  permission: Permission;
 };
+
+export enum Permission {
+  NONE,
+  READ,
+  WRITE,
+  ADMINISTRATE
+}
 
 export type Right = {
   id: string;

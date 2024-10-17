@@ -1,6 +1,7 @@
 
 import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
-import {fetchDataResource, fetchDataResourceEtag, loadContent, loadSchema} from "@/lib/base-repo/data";
+import {fetchDataResource, fetchDataResourceEtag, loadContent} from "@/lib/base-repo/client_data";
+import {loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {notFound} from "next/navigation";
 import {ToastContainer} from "react-toastify";

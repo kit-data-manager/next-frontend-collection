@@ -18,7 +18,7 @@ const useScript = (id , url) => {
         return () => {
             document.body.removeChild(script);
         }
-    }, [url]);
+    }, [id, url]);
 };
 
 const useCss = (id , url) => {
@@ -37,7 +37,7 @@ const useCss = (id , url) => {
         return () => {
             document.body.removeChild(link);
         }
-    }, [url]);
+    }, [id, url]);
 };
 
 export default function JsonForm(props) {

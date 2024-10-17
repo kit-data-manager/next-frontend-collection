@@ -39,6 +39,7 @@ export default function DataResourceCard(props:any) {
     }, []);
 
     let miscProperties = propertiesForDataResource(data);
+
     return (
         <>
             <DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>

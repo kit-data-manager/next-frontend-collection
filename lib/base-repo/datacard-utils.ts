@@ -45,14 +45,19 @@ export const propertiesForContentInformation = (resourceId: string,
 
    // content.tags = ["test", "bla", "data"];
 
+    let image = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
+
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
         let isThumb = content.tags && content.tags.includes("thumb");
         let thumbTag:Tag;
         if(disableChangeThumb){
+            if(isThumb){
             thumbTag = {
-                color: isThumb ? "var(--success)" : "var(--error)",
+                color: "var(--success)",
                 text: "Thumb",
-                tooltip: isThumb ? "Thumbnail for Ressource":"Not Thumbnail for Ressource"
+                tooltip: "Thumbnail for Resource."
+              }
+              tags.push(thumbTag);
             }
         }else{
             thumbTag = {
@@ -61,9 +66,9 @@ export const propertiesForContentInformation = (resourceId: string,
                 eventIdentifier: isThumb ? unmakeThumbEventIdentifier(resourceId, content.relativePath) : makeThumbEventIdentifier(resourceId, content.relativePath),
                 tooltip: isThumb ? "Click to NOT use this image as resource thumbnail." : "Click to use this image as resource thumbnail."
             }
+            tags.push(thumbTag);
         }
-
-        tags.push(thumbTag);
+        image = content.contentUri;
     }
 
     if(content.tags){
@@ -98,6 +103,7 @@ export const propertiesForContentInformation = (resourceId: string,
         return {
             dataTitle:{value: content.relativePath} as TextPropType,
             subTitle: {value: content.hash} as TextPropType,
+            imageUrl: image,
             textRight: {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
             tags: tags,
             actionButtons: actionButtons
@@ -106,6 +112,7 @@ export const propertiesForContentInformation = (resourceId: string,
         return {
             dataTitle: {value: content.relativePath} as TextPropType,
             subTitle: {value: content.hash} as TextPropType,
+            imageUrl: image,
             textRight: {label: content.mediaType, value: humanFileSize(content.size)} as TextPropType,
             tags: tags
         }
@@ -223,7 +230,7 @@ const tagsForDataResource = (resource: DataResource) => {
     return tags;
 }
 
-const thumbForDataResource = (resource: DataResource) => {
+export const thumbForDataResource = (resource: DataResource) => {
     let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
     if (resource.children && resource.children.length > 0) {
         resource.children.map((content, i) => {

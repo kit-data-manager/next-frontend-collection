@@ -1,49 +1,74 @@
-import {DataResource} from "@/lib/definitions";
-import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/data";
+'use client';
+
+import {DataResource, Permission} from "@/lib/definitions";
+import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
-import DataResourceListingSkeleton from "@/app/base-repo/components/DataResourceListing/DataResourceListingSkeleton";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useSession} from "next-auth/react";
+import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
+import {Blocks} from "react-loader-spinner";
 
-export default async function DataResourceListing({page,size, filter}: {
+export default function DataResourceListing({page,size, filter}: {
     page: number;
     size: number;
     filter: FilterForm;
 }) {
+    const [resources, setResources] = useState([] as Array<DataResource>)
+    const [totalPages, setTotalPages] = useState(0 as number);
+    const [isLoading, setLoading] = useState(true)
+    const { data, status } = useSession();
 
-    //load resources and total pages
-    const [resources, totalPages] = await Promise.all([
-        fetchDataResources(page, size, filter),
-        fetchDataResourcePages(size)
-    ]);
-    const typedRes = resources as Array<DataResource>;
+    useEffect(() => {
+        fetchDataResourcePages(size).
+        then((pages) => setTotalPages(pages ? pages : 0)).
+        then(() => fetchDataResources(page, size, filter)).
+        then(async (result) => {
+            const typedRes = result as Array<DataResource>
+            let promises: Promise<any>[] = [];
+            typedRes.map((element: DataResource) => {
+                promises.push(loadContent(element).then((data) => element.children = data));
+            });
+            await Promise.all(promises);
+            return setResources(typedRes);
+        }).finally(() => setLoading(false));
+    }, [page, size, filter])
 
-    if(!typedRes || typedRes.length === 0){
+    if (true) return (
+        <Blocks
+            height="80"
+            width="80"
+            color="accent"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            visible={true}
+        />
+    )
+
+    if(!resources || resources.length === 0){
         notFound();
     }
-    //TODO: handle no resources
-
-    //load content for all resources
-    const resourcesWithContent = typedRes.map((element:DataResource) => {
-        return loadContent(element);
-    });
-
-    //wait for content load promises
-    const finalResources:DataResource[] = await Promise.all(resourcesWithContent);
 
     return (
         <div>
             <div className="rounded-lg p-2 lg:pt-0 lg:w-auto">
-                    {finalResources.map((element:DataResource, i:number) => {
+                    {resources.map((element:DataResource, i:number) => {
                         //make edit optional depending on permissions
+
                         const actionEvents = [
-                            viewEventIdentifier(element.id),
-                            editEventIdentifier(element.id),
-                            downloadEventIdentifier(element.id)
+                            viewEventIdentifier(element.id)
                         ];
+
+                        let permission:Permission = resourcePermissionForUser(element, data?.user.id);
+                        if(permission.valueOf() > Permission.READ.valueOf()){
+                            actionEvents.push(editEventIdentifier(element.id));
+                        }
+
+                        actionEvents.push(downloadEventIdentifier(element.id));
                         return (
                             <DataResourceCard
                                 key={element.id}

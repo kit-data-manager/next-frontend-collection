@@ -2,7 +2,7 @@ import './global.css';
 import {inter} from '@/components/fonts';
 import React from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
-import {ThemeProvider} from "@/components/Providers/theme-provider";
+import {ThemeProvider} from "@/components/Providers/ThemeProvider";
 import AppHeader from "@/app/base-repo/components/AppHeader/AppHeader";
 
 export default async function RootLayout({children}: {
@@ -16,20 +16,12 @@ export default async function RootLayout({children}: {
             <title>Next Frontend</title>
         </head>
         <body className={`${inter.className} antialiased`}>
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <SecurityProviders>
                 <AppHeader securityEnabled={securityEnabled}>
                     {children}
                 </AppHeader>
             </SecurityProviders>
-
-
         </ThemeProvider>
         </body>
         </html>

@@ -1,28 +1,50 @@
+'use client';
+
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import {notFound} from "next/navigation";
-import {fetchDataResource, loadContent} from "@/lib/base-repo/data";
+import {fetchDataResource, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {DataResource} from "@/lib/definitions";
+import {DataResource, Permission} from "@/lib/definitions";
+import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
+import {useSession} from "next-auth/react";
 
-export default async function Page({params}: { params: { id: string } }) {
+export default function Page({params}: { params: { id: string } }) {
     const id = params.id;
-    const [resource] = await Promise.all([
-        fetchDataResource(id),
-    ]);
+    const [resource, setResource] = useState({} as DataResource);
+    const [isLoading, setLoading] = useState(true)
+    const { data, status } = useSession();
+
+    useEffect(() => {
+        fetchDataResource(id).
+        then((resource) => {
+            loadContent(resource).then((data) => resource.children = data);
+            return setResource(resource);
+        }).
+        finally(() => setLoading(false));
+    }, [id]);
+
+    if (isLoading) return <p>Loading...</p>
 
     if (!resource) {
         notFound();
     }
 
-    //load content for all resources
-    const resourcesWithContent = await loadContent(resource as DataResource);
-    const actionEvents = [
-        editEventIdentifier(id),
-        downloadEventIdentifier(id)
-    ];
+    let permission:Permission = resourcePermissionForUser(resource, data?.user.id);
+
+    if(permission < Permission.READ.valueOf()){
+        notFound();
+    }
+
+    const actionEvents:string[] = [];
+
+    if(permission.valueOf() > Permission.READ.valueOf()){
+        actionEvents.push(editEventIdentifier(id));
+    }
+
+    actionEvents.push(downloadEventIdentifier(id));
     return (
         <main>
             <Breadcrumbs
@@ -40,7 +62,7 @@ export default async function Page({params}: { params: { id: string } }) {
 
             <div className="flex">
                 <div className="rounded-lg grow">
-                    <DataResourceCard key={resourcesWithContent.id} data={resourcesWithContent} variant={"detailed"}
+                    <DataResourceCard key={resource.id} data={resource} variant={"detailed"}
                                       actionEvents={actionEvents}></DataResourceCard>
                 </div>
             </div>

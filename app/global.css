@@ -112,7 +112,7 @@ data-card::part(card-container) {
   margin-bottom:6px;
   border-radius: var(--radius);
   box-shadow: 2px 2px 3px 0 rgb(0 0 0 / 0.1);
-  height: 160px;
+  height: 180px;
 }
 
 data-card::part(child-data-card){
@@ -141,5 +141,4 @@ data-card::part(detailed-metadata-container){
 }
 
 data-card::part(image-wrapper){
-  min-width: 128px;
 }

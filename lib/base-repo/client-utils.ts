@@ -1,8 +1,7 @@
 'use client'
 
-import {ContentInformation, DataResource} from "@/lib/definitions";
+import {Acl, ContentInformation, DataResource, Permission} from "@/lib/definitions";
 import {toast} from "react-toastify";
-import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export function removeTagFromContent(element:ContentInformation, tag:string, redirectPath?:string){
     let index = element.tags.indexOf(tag);
@@ -107,4 +106,17 @@ export function deleteContent(element:ContentInformation, redirectPath?:string){
     return fetch(`http://localhost:3000/api/delete?resourceId=${element.parentResource.id}&filename=${element.relativePath}`).then(response => {
       return response.status;
     })
+}
+
+export function resourcePermissionForUser(resource:DataResource, user:string | undefined){
+    console.log(resource);
+    let anonymousPermission: Permission = Permission.NONE;
+    resource.acls.map((element: Acl, i:number) => {
+        if(element.sid === "anonymousUser"){
+            anonymousPermission = element.permission;
+        }else if(user && element.sid === user){
+            return element.permission;
+        }
+    });
+   return anonymousPermission;
 }

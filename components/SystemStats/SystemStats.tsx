@@ -1,11 +1,10 @@
 "use server";
 
-import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus, fetchLatestActivities} from "@/lib/base-repo/data";
+import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client_data";
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/format-utils";
 import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
-import {clsx} from "clsx";
 
 export default async function OverallStatusCardWrapper() {
     const repoInstanceName: string = process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
@@ -112,8 +111,10 @@ function statusStringToInt(status: string) {
 }
 
 export async function BaseRepoStatusCardWrapper() {
+    //@TODO Show nothing if base-repo is not available
+    const repoBaseUrl: string = process.env.REPO_BASE_URL ? process.env.REPO_BASE_URL : '';
 
-    const actuatorInfo = await fetchActuatorHealth();
+    const actuatorInfo = await fetchActuatorHealth(repoBaseUrl);
     return (
         <>
             <StatusCard cardStatus={
