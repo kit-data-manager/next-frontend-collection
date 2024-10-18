@@ -5,9 +5,7 @@ import OverallStatusCardWrapper from "@/components/SystemStats/SystemStats";
 import {getServerSession, Session} from "next-auth";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/components/search/site-search";
-import {
-    ExclamationTriangleIcon
-} from '@heroicons/react/24/outline';
+import {ExclamationTriangleIcon} from '@heroicons/react/24/outline';
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {authOptions} from "@/lib/auth-options";
 

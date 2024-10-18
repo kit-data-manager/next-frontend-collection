@@ -10,7 +10,7 @@ import Pagination from "@/components/general/Pagination";
 import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
-import {Blocks} from "react-loader-spinner";
+import Loader from "@/components/general/Loader";
 
 export default function DataResourceListing({page,size, filter}: {
     page: number;
@@ -37,16 +37,8 @@ export default function DataResourceListing({page,size, filter}: {
         }).finally(() => setLoading(false));
     }, [page, size, filter])
 
-    if (true) return (
-        <Blocks
-            height="80"
-            width="80"
-            color="accent"
-            ariaLabel="blocks-loading"
-            wrapperStyle={{}}
-            wrapperClass="blocks-wrapper"
-            visible={true}
-        />
+    if (isLoading) return (
+        <Loader/>
     )
 
     if(!resources || resources.length === 0){
@@ -55,14 +47,14 @@ export default function DataResourceListing({page,size, filter}: {
 
     return (
         <div>
-            <div className="rounded-lg p-2 lg:pt-0 lg:w-auto">
+            <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
                     {resources.map((element:DataResource, i:number) => {
                         //make edit optional depending on permissions
-
                         const actionEvents = [
                             viewEventIdentifier(element.id)
                         ];
 
+                        //add edit action only with WRITE permission
                         let permission:Permission = resourcePermissionForUser(element, data?.user.id);
                         if(permission.valueOf() > Permission.READ.valueOf()){
                             actionEvents.push(editEventIdentifier(element.id));

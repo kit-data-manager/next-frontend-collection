@@ -2,7 +2,6 @@ import {getToken, JWT} from "next-auth/jwt";
 import {NextRequest, NextResponse} from "next/server";
 
 function logoutParams(token: JWT): Record<string, string> {
-    console.log("ID ", token.user.id );
     return {
         client_id: process.env.KEYCLOAK_CLIENT_ID as string,
         post_logout_redirect_uri: process.env.NEXTAUTH_URL as string,
