@@ -1,9 +1,9 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {ActuatorInfo, DataResource, KeycloakInfo, ResourceType} from "@/lib/definitions";
+import {ActuatorInfo, ContentInformation, DataResource, KeycloakInfo, ResourceType} from "@/lib/definitions";
 
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm) {
-
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm): Promise<DataResource[]> {
     try {
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         const realPage = page-1;
         if(filter){
             let resource:DataResource = {} as DataResource;
@@ -20,33 +20,33 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
                 resource.state!= undefined||
                 resource.resourceType.typeGeneral!= undefined);
             if(hasProperty){
-                return await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`), {
+                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(resource)
                 }).then((res) => res.json());
             }else{
-                return await fetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`)).then(res => res.json());
+                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`).then(res => res.json());
             }
 
             //return result as Array<DataResource>;
         }else{
-            return await fetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`)).then(res => res.json());
+            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`).then(res => res.json());
         }
-
     } catch (error) {
         console.error('Service Error:', error);
-        return undefined;
+        return [];
     }
 }
 
-export async function loadContent(resource: DataResource):Promise<any> {
+export async function loadContent(resource: DataResource):Promise<ContentInformation[]> {
     try{
-        return myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${resource.id}/data/`),
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`,
         {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json());
    } catch (error) {
        console.error('Service Error:', error);
-       return undefined;
+       return [];
    }
 }
 
@@ -58,10 +58,11 @@ export async function updateThumbState(id: string, path: string, addRemove: bool
     }
 }
 
-
 export async function fetchDataResourcePages(size:number) {
     try {
-       return myFetch(new URL(`http://localhost:8081/api/v1/dataresources/?page=0&size=0&sort=lastUpdate,desc`)).
+       const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
+       return myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`).
        then(response => response.headers.get("Content-Range")).
        then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).
        then((totalElements) =>  Math.ceil(totalElements / size));
@@ -73,7 +74,8 @@ export async function fetchDataResourcePages(size:number) {
 
 export async function fetchDataResource(id: string) {
     try {
-        return myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${id}`),
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        return myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
             {headers: {"Accept": "application/json"}}).then(res => res.json());
     } catch (error) {
         console.error('Failed to fetch resource. Error:', error);
@@ -83,12 +85,12 @@ export async function fetchDataResource(id: string) {
 
 export async function fetchDataResourceEtag(id: string) {
     try {
-        const result = await myFetch(new URL(`http://localhost:8081/api/v1/dataresources/${id}`),
-            {headers: {"Accept": "application/json"}});
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
-        const etag = await result.headers.get("ETag");
+        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
+            {headers: {"Accept": "application/json"}}).then(result => result.headers.get("ETag"));
 
-        return etag;
+        //return await result.headers.get("ETag");
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
         return undefined;
@@ -102,7 +104,9 @@ export async function fetchActuatorInfo(baseUrl:string) : Promise<ActuatorInfo>{
     let version = "unknown";
 
     try {
-        const response = await myFetch(new URL(`${baseUrl}/actuator/info`));
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
+        const response = await myFetch(`${repoBaseUrl}/actuator/info`);
 
         const json = await response.json();
 
@@ -133,7 +137,9 @@ export async function fetchActuatorHealth(baseUrl:string) {
     let elastic = "unknown";
 
     try {
-        const response = await myFetch(new URL(`${baseUrl}/actuator/health`));
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
+        const response = await myFetch(`${repoBaseUrl}/actuator/health`);
 
         const json = await response.json();
 
@@ -177,7 +183,7 @@ export async function fetchKeyCloakStatus(realmUrl:string){
     let realm = "unknown";
 
     try {
-        const response = await myFetch(new URL(`${realmUrl}`));
+        const response = await myFetch(`${realmUrl}`);
 
         const json = await response.json();
 
@@ -199,14 +205,13 @@ class ResponseError extends Error {
     }
 }
 
-export async function myFetch(url: URL, init?:any) {
+export async function myFetch(url: string, init?:any) {
     let res;
     if(init){
         res = await fetch(url, init);
     }else{
         res = await fetch(url);
     }
-
     if (!res.ok) {
         throw new ResponseError('Bad fetch response', res);
     }

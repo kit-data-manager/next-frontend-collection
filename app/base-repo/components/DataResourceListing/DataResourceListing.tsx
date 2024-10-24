@@ -1,7 +1,11 @@
 'use client';
 
 import {DataResource, Permission} from "@/lib/definitions";
-import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
+import {
+    fetchDataResourcePages,
+    fetchDataResources,
+    loadContent
+} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
@@ -55,7 +59,7 @@ export default function DataResourceListing({page,size, filter}: {
                         ];
 
                         //add edit action only with WRITE permission
-                        let permission:Permission = resourcePermissionForUser(element, data?.user.id);
+                        let permission:Permission = resourcePermissionForUser(element, data?.user.id, data?.groups);
                         if(permission.valueOf() > Permission.READ.valueOf()){
                             actionEvents.push(editEventIdentifier(element.id));
                         }

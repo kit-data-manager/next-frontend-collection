@@ -132,11 +132,12 @@ export default NextAuth({
          *                               JSON Web Token (if not using database sessions)
          * @return {object}              Session that will be returned to the client
          */
-        async session({ session, user, token }) {
+        async session({ session, token, user }) {
             if (token) {
                 session.user = token.user;
                 session.error = token.error;
                 session.accessToken = token.accessToken;
+                session.groups = token.groups;
             }
             return session;
         },
@@ -157,6 +158,7 @@ export default NextAuth({
                 token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;
                 token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
                 token.user = user;
+                token.groups = profile.groups;
                 return token;
             }
 

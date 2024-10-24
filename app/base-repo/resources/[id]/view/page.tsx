@@ -7,24 +7,31 @@ import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataRe
 import React, {useEffect, useState} from "react";
 import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {DataResource, Permission} from "@/lib/definitions";
+import {ContentInformation, DataResource, Permission} from "@/lib/definitions";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import {useSession} from "next-auth/react";
+import Error from "next/error";
+import Forbidden from "@/app/base-repo/resources/forbidden";
 
 export default function Page({params}: { params: { id: string } }) {
     const id = params.id;
-    const [resource, setResource] = useState({} as DataResource);
+    const [resource, setResource] = useState(undefined);
     const [isLoading, setLoading] = useState(true)
     const { data, status } = useSession();
 
     useEffect(() => {
         fetchDataResource(id).
-        then((resource) => {
-            loadContent(resource).then((data) => resource.children = data);
-            return setResource(resource);
+        then(async (res) => {
+            await loadContent(res).
+            then((data) => res.children = data).
+            catch(error => {console.error(`Failed to fetch children for resource ${id}`, error)});
+
+            setResource(res);
+            return setResource(res);
         }).
+        catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).
         finally(() => setLoading(false));
-    }, [id]);
+    }, [id, resource]);
 
     if (isLoading) return <p>Loading...</p>
 
@@ -32,10 +39,9 @@ export default function Page({params}: { params: { id: string } }) {
         notFound();
     }
 
-    let permission:Permission = resourcePermissionForUser(resource, data?.user.id);
-
-    if(permission < Permission.READ.valueOf()){
-        notFound();
+    let permission:Permission = resourcePermissionForUser(resource, data?.user.id, data?.groups);
+    if(permission < Permission.READ.valueOf()) {
+        return <Forbidden/>
     }
 
     const actionEvents:string[] = [];
