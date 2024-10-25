@@ -26,7 +26,6 @@ export default function Page({params}: { params: { id: string } }) {
             then((data) => res.children = data).
             catch(error => {console.error(`Failed to fetch children for resource ${id}`, error)});
 
-            setResource(res);
             return setResource(res);
         }).
         catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).

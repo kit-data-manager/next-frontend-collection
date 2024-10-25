@@ -3,10 +3,6 @@ import {Pool} from "pg";
 import {Activity} from "@/lib/definitions";
 import {promises as fs} from 'fs';
 
-export async function loadSchema(schemaPath: string) {
-    return await fs.readFile(process.cwd() + "/" + schemaPath, 'utf8').then(result => JSON.parse(result));
-}
-
 export async function fetchContentOverview() {
     noStore()
     await new Promise((resolve) => setTimeout(resolve, 2000));

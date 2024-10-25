@@ -197,6 +197,15 @@ export async function fetchKeyCloakStatus(realmUrl:string){
     } as KeycloakInfo;
 }
 
+export async function fetchSchema(schemaPath: string) {
+    try {
+        return myFetch(schemaPath).then(res => res.json());
+    } catch (error) {
+        console.error('Failed to fetch schema. Error:', error);
+        return undefined;
+    }
+}
+
 class ResponseError extends Error {
     public response: string;
     constructor(message, res) {
