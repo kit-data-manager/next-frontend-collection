@@ -13,7 +13,6 @@ import {Layout} from "@elastic/react-search-ui-views";
 import {buildSortOptionsFromConfig, getFacetFields} from "@/lib/config-helper";
 import MyBooleanFacet from "@/components/search/MyBooleanFacet";
 import DataCardResultView from "@/components/search/DataCardResultView";
-import {SearchDriverOptions} from "@elastic/search-ui";
 
 function ElasticSearch(config){
     return (

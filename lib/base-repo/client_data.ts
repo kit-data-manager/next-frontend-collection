@@ -43,7 +43,7 @@ export async function loadContent(resource: DataResource):Promise<ContentInforma
     try{
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`,
-        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json());
+        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json()).catch(error => {throw error});
    } catch (error) {
        console.error('Service Error:', error);
        return [];

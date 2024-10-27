@@ -1,13 +1,8 @@
 'use client';
 
 import {DataResource, Permission} from "@/lib/definitions";
-import {
-    fetchDataResourcePages,
-    fetchDataResources,
-    loadContent
-} from "@/lib/base-repo/client_data";
+import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
-import {notFound} from "next/navigation";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
@@ -15,6 +10,8 @@ import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 
 export default function DataResourceListing({page,size, filter}: {
     page: number;
@@ -46,7 +43,7 @@ export default function DataResourceListing({page,size, filter}: {
     )
 
     if(!resources || resources.length === 0){
-        notFound();
+        return ErrorPage({errorCode:Errors.NotFound, backRef: "/base-repo/resources"})
     }
 
     return (

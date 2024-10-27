@@ -3,7 +3,7 @@ import {inter} from '@/components/fonts';
 import React from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
 import {ThemeProvider} from "@/components/Providers/ThemeProvider";
-import AppHeader from "@/app/base-repo/components/AppHeader/AppHeader";
+import AppHeader from "@/components/AppHeader/AppHeader";
 
 export default async function RootLayout({children}: {
     children: React.ReactNode;

@@ -58,6 +58,7 @@ export default function DataResourceEditor({...props}) {
     function closeModal(){
         setOpenModal(false);
     }
+
     function assignTag() {
         //empty check
         console.log("NEW TAG ", tag + "-" + currentData.id + "/data/" + actionContent);

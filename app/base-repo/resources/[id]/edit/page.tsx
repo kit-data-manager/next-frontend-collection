@@ -11,6 +11,9 @@ import {Permission} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import Forbidden from "@/app/base-repo/resources/forbidden";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 
 export default function Page({params}: { params: { id: string } }) {
     const id = params.id;
@@ -39,15 +42,15 @@ export default function Page({params}: { params: { id: string } }) {
         finally(() => setLoading(false));
     }, [id, resource]);
 
-    if (isLoading) return <p>Loading...</p>
+    if (!isLoading) {
+        if (!resource) {
+            return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
+        }
 
-    if (!resource) {
-        notFound();
-    }
-
-    let permission:Permission = resourcePermissionForUser(resource, data?.user.id, data?.groups);
-    if(permission < Permission.WRITE.valueOf()) {
-        return <Forbidden/>
+        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.groups);
+        if (permission < Permission.WRITE.valueOf()) {
+            return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
+        }
     }
 
     return (
@@ -68,7 +71,10 @@ export default function Page({params}: { params: { id: string } }) {
             <div className="flex">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
-                        <DataResourceEditor schema={schema} data={resource} content={resource.children} etag={etag}/>
+                        {isLoading ?
+                            <Loader/> :
+                            <DataResourceEditor schema={schema} data={resource} content={resource?.children} etag={etag}/>
+                    }
                     </div>
                 </div>
             </div>
