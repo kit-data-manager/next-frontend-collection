@@ -151,6 +151,7 @@ function DataCardResultView({result, onClickCallback}: {
         if (JSONPath("$..study.sample.sampleWeight.value", result.metadataDocument.raw, undefined, undefined).length) {
             tags.push(createTag(result.metadataDocument.raw.study.sample.sampleWeight.value + " KG", MISC_COLOR_1, 'mdi:weight-kilogram'));
         }
+        }
 
         if (JSONPath("$..study.sample.measurementConditions.value", result.metadataDocument.raw, undefined, undefined).length) {
             tags.push(createTag(result.metadataDocument.raw.study.sample.measurementConditions.value + " T", WARN_COLOR, 'openmoji:high-voltage'));

@@ -9,18 +9,21 @@ import {
     eventIdentifierToPath,
     getActionButton
 } from "@/lib/event-utils";
-import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect, useState} from "react";
 import DataResourceCardSkeleton from "@/app/base-repo/components/DataResourceCard/DataResourceCardSkeleton";
+import {DataResource} from "@/lib/definitions";
 
-export default function DataResourceCard(props:any) {
+
+
+export default function DataResourceCard(props:ResourceCardProps) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
         replace(eventIdentifierToPath(eventIdentifier));
     });
+
     const {replace} = useRouter();
-    const key = props.key;
     const data = props.data;
     const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
     const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
@@ -43,7 +46,7 @@ export default function DataResourceCard(props:any) {
     return (
         <>
             <DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>
-            <DataCard key={key}
+            <DataCard key={data.id}
                   variant={variant}
                   childrenVariant={childVariant}
                   actionButtons={buttons}

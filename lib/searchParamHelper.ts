@@ -1,7 +1,11 @@
+import {use} from "react";
+
 export function valueOrDefault(inputObject:any, key:string, defaultIfNotPresent:any){
-        if(!inputObject){
+        const input = use(inputObject);
+
+        if(!input){
             return defaultIfNotPresent;
         }
 
-        return inputObject.hasOwnProperty(key) ? inputObject[key] : defaultIfNotPresent;
+        return input.hasOwnProperty(key) ? input[key] : defaultIfNotPresent;
 }

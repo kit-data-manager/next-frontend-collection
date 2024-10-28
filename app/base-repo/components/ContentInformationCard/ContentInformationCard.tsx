@@ -10,8 +10,11 @@ import {
     getActionButton
 } from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {ContentInformation, DataResource} from "@/lib/definitions";
+import {ContentInformationCardProps} from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard.d";
 
-export default function ContentInformationCard(props:any) {
+
+export default function ContentInformationCard(props:ContentInformationCardProps) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
@@ -21,8 +24,7 @@ export default function ContentInformationCard(props:any) {
 
 
     const {replace} = useRouter();
-    const key = props.key;
-    const data = props.data;
+    const data:ContentInformation = props.data;
     const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
     const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
     const actionEvents = props.actionEvents ? props.actionEvents : [];
@@ -37,7 +39,7 @@ export default function ContentInformationCard(props:any) {
     let miscProperties = propertiesForContentInformation(data.parentResource.id, data, buttons, false);
 
     return (
-        <DataCard key={key}
+        <DataCard key={data.parentResource.id}
                   variant={variant}
                   childrenVariant={childVariant}
                   onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>

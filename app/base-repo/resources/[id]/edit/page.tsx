@@ -2,21 +2,20 @@
 
 import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
 import {fetchDataResource, fetchDataResourceEtag, fetchSchema, loadContent} from "@/lib/base-repo/client_data";
-import React, {useEffect, useState} from "react";
-import {notFound} from "next/navigation";
+import React, {useEffect, useState, use} from "react";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Permission} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
-import Forbidden from "@/app/base-repo/resources/forbidden";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
+import {useParams} from "next/navigation";
 
-export default function Page({params}: { params: { id: string } }) {
-    const id = params.id;
+export default function Page() {
+    const id = useParams<{ id: string; }>()?.id;
     const [resource, setResource] = useState(undefined);
     const [schema, setSchema] = useState(undefined);
     const [etag, setEtag] = useState(undefined);

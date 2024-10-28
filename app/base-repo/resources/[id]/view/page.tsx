@@ -12,9 +12,10 @@ import {useSession} from "next-auth/react";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
+import {useParams} from "next/navigation";
 
-export default function Page({params}: { params: { id: string } }) {
-    const id = params.id;
+export default function Page() {
+    const id = useParams<{ id: string; }>()?.id;
     const [resource, setResource] = useState(undefined);
     const [isLoading, setLoading] = useState(true)
     const { data, status } = useSession();
