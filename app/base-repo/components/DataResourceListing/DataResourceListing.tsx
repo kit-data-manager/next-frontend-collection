@@ -24,14 +24,15 @@ export default function DataResourceListing({page,size, filter}: {
     const { data, status } = useSession();
 
     useEffect(() => {
-        fetchDataResourcePages(size).
+        const token = data?.accessToken;
+        fetchDataResourcePages(size, token).
         then((pages) => setTotalPages(pages ? pages : 0)).
-        then(() => fetchDataResources(page, size, filter)).
+        then(() => fetchDataResources(page, size, filter, token)).
         then(async (result) => {
             const typedRes = result as Array<DataResource>
             let promises: Promise<any>[] = [];
             typedRes.map((element: DataResource) => {
-                promises.push(loadContent(element).then((data) => element.children = data));
+                promises.push(loadContent(element, token).then((data) => element.children = data));
             });
             await Promise.all(promises);
             return setResources(typedRes);

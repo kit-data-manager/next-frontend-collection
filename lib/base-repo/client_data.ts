@@ -1,37 +1,52 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {ActuatorInfo, ContentInformation, DataResource, KeycloakInfo, ResourceType} from "@/lib/definitions";
 
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm): Promise<DataResource[]> {
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm, accessToken?: string): Promise<DataResource[]> {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        const realPage = page-1;
-        if(filter){
-            let resource:DataResource = {} as DataResource;
+        const realPage = page - 1;
+        const headers = {"Content-Type": "application/json"};
+
+        if(accessToken){
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
+
+        if (filter) {
+            let resource: DataResource = {} as DataResource;
 
             resource.id = filter.id;
             resource.publisher = filter.publisher;
             resource.publicationYear = filter.publicationYear;
             resource.state = filter.state;
-            resource.resourceType = {typeGeneral:filter.typeGeneral} as ResourceType;
+            resource.resourceType = {typeGeneral: filter.typeGeneral} as ResourceType;
 
             let hasProperty = (resource.id != undefined ||
-                resource.publisher!= undefined ||
-                resource.publicationYear!= undefined ||
-                resource.state!= undefined||
-                resource.resourceType.typeGeneral!= undefined);
-            if(hasProperty){
+                resource.publisher != undefined ||
+                resource.publicationYear != undefined ||
+                resource.state != undefined ||
+                resource.resourceType.typeGeneral != undefined);
+
+
+            if (hasProperty) {
                 return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
                     method: "POST",
-                    headers: {"Content-Type": "application/json"},
+                    headers: headers,
                     body: JSON.stringify(resource)
                 }).then((res) => res.json());
-            }else{
-                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`).then(res => res.json());
+            } else {
+                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
+                    method: "GET",
+                    headers: headers
+                }).then(res => res.json());
             }
 
             //return result as Array<DataResource>;
-        }else{
-            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`).then(res => res.json());
+        } else {
+            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
+                method: "GET",
+                headers: headers
+            }).then(res => res.json());
         }
     } catch (error) {
         console.error('Service Error:', error);
@@ -39,15 +54,25 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
     }
 }
 
-export async function loadContent(resource: DataResource):Promise<ContentInformation[]> {
-    try{
+export async function loadContent(resource: DataResource, accessToken?: string): Promise<ContentInformation[]> {
+    try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        const headers = {"Accept": "application/vnd.datamanager.content-information+json"};
+
+        if(accessToken){
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
         return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`,
-        {headers: {"Accept": "application/vnd.datamanager.content-information+json"}}).then(res => res.json()).catch(error => {throw error});
-   } catch (error) {
-       console.error('Service Error:', error);
-       return [];
-   }
+            {
+                headers: headers
+            }).then(res => res.json()).catch(error => {
+            throw error
+        });
+    } catch (error) {
+        console.error('Service Error:', error);
+        return [];
+    }
 }
 
 export async function updateThumbState(id: string, path: string, addRemove: boolean) {
@@ -58,37 +83,56 @@ export async function updateThumbState(id: string, path: string, addRemove: bool
     }
 }
 
-export async function fetchDataResourcePages(size:number) {
+export async function fetchDataResourcePages(size: number, accessToken?: string) {
     try {
-       const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        const headers = {"Accept": "application/json"};
 
-       return myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`).
-       then(response => response.headers.get("Content-Range")).
-       then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).
-       then((totalElements) =>  Math.ceil(totalElements / size));
+        if(accessToken){
+            console.log("Access Token", `Bearer ${accessToken}`);
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+        return myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`, {
+            method: "GET",
+            headers: headers
+        }).then(response => response.headers.get("Content-Range")).then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).then((totalElements) => Math.ceil(totalElements / size));
     } catch (error) {
         console.error('Failed to fetch resource page count. Error:', error);
         return undefined;
     }
 }
 
-export async function fetchDataResource(id: string) {
+export async function fetchDataResource(id: string, accessToken?: string) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        const headers = {"Accept": "application/json"};
+
+        if(accessToken){
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
         return myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {headers: {"Accept": "application/json"}}).then(res => res.json());
+            {
+                headers: headers
+            }).then(res => res.json());
     } catch (error) {
         console.error('Failed to fetch resource. Error:', error);
         return undefined;
     }
 }
 
-export async function fetchDataResourceEtag(id: string) {
+export async function fetchDataResourceEtag(id: string, accessToken?: string) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
+        const headers = {"Accept": "application/json"};
+
+        if(accessToken){
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
         return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {headers: {"Accept": "application/json"}}).then(result => result.headers.get("ETag"));
+            {
+                headers: headers
+            }).then(result => result.headers.get("ETag"));
 
         //return await result.headers.get("ETag");
     } catch (error) {
@@ -97,7 +141,7 @@ export async function fetchDataResourceEtag(id: string) {
     }
 }
 
-export async function fetchActuatorInfo(baseUrl:string) : Promise<ActuatorInfo>{
+export async function fetchActuatorInfo(baseUrl: string): Promise<ActuatorInfo> {
     let branch = "unknown";
     let hash = "unknown";
     let buildTime = "unknown";
@@ -126,7 +170,7 @@ export async function fetchActuatorInfo(baseUrl:string) : Promise<ActuatorInfo>{
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(baseUrl:string) {
+export async function fetchActuatorHealth(baseUrl: string) {
     let database = "unknown";
     let databaseStatus = "unknown";
     let harddisk = 0;
@@ -179,7 +223,7 @@ export async function fetchActuatorHealth(baseUrl:string) {
     }
 }
 
-export async function fetchKeyCloakStatus(realmUrl:string){
+export async function fetchKeyCloakStatus(realmUrl: string) {
     let realm = "unknown";
 
     try {
@@ -208,17 +252,18 @@ export async function fetchSchema(schemaPath: string) {
 
 class ResponseError extends Error {
     public response: string;
+
     constructor(message, res) {
         super(message);
         this.response = res;
     }
 }
 
-export async function myFetch(url: string, init?:any) {
+export async function myFetch(url: string, init?: any) {
     let res;
-    if(init){
+    if (init) {
         res = await fetch(url, init);
-    }else{
+    } else {
         res = await fetch(url);
     }
     if (!res.ok) {
