@@ -1,6 +1,6 @@
 'use client';
 
-import {DataResource, Permission} from "@/lib/definitions";
+import {DataResource, ExtendedSession, Permission} from "@/lib/definitions";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
@@ -21,7 +21,7 @@ export default function DataResourceListing({page,size, filter}: {
     const [resources, setResources] = useState([] as Array<DataResource>)
     const [totalPages, setTotalPages] = useState(0 as number);
     const [isLoading, setLoading] = useState(true)
-    const { data, status } = useSession();
+    const { data, status } = useSession() as {data: ExtendedSession, status: string};
 
     useEffect(() => {
         const token = data?.accessToken;
@@ -62,7 +62,7 @@ export default function DataResourceListing({page,size, filter}: {
                             actionEvents.push(editEventIdentifier(element.id));
                         }
 
-                        actionEvents.push(downloadEventIdentifier(element.id));
+                        actionEvents.push(`/api/download?resourceId=${element.id}&type=zip`);
                         return (
                             <DataResourceCard
                                 key={element.id}

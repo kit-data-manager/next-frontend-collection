@@ -68,7 +68,7 @@ export const propertiesForContentInformation = (resourceId: string,
             }
             tags.push(thumbTag);
         }
-        image = content.contentUri;
+        image = `/api/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
     }
 
     if(content.tags){
@@ -125,8 +125,7 @@ function generateSubtitleFromCreator(resource: DataResource) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
                 if (creator.familyName && creator.givenName) {
-                    if (!subTitleValue) subTitleValue = "";
-                    subTitleValue += `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="myclass" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank">${creator.familyName}, ${creator.givenName}</a>`
+                    subTitleValue = `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`
                 } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }
@@ -140,7 +139,8 @@ function generateSubtitleFromCreator(resource: DataResource) {
     if (subTitleValue.length == 0) {
         subTitleValue = "Anonymous User";
     }
-    return {value: subTitleValue} as TextPropType;
+    //return as string, not as object, to allow HTML detection in component
+    return  subTitleValue as TextPropType;
 }
 
 const titleForDataResource = (resource: DataResource) => {
@@ -236,7 +236,8 @@ export const thumbForDataResource = (resource: DataResource) => {
         resource.children.map((content, i) => {
             content.tags.map((tag, i) => {
                 if (tag.toLocaleLowerCase() === "thumb") {
-                    thumb = content.contentUri;
+                    //thumb = content.contentUri;
+                    thumb = `/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=thumb`
                 }
             });
         });
@@ -330,7 +331,7 @@ const childrenForDataResource = (resource: DataResource) => {
         resource.children.map((content, i) => {
             let actionButtons = [
                 //only add download button
-                getActionButton(`http://localhost:3000/api/download?resourceId=${resource.id}&filename=${content.relativePath}`)
+                getActionButton(`/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=data`)
             ];
 
             children.push(propertiesForContentInformation(resource.id, content, actionButtons, true) as DataCard);

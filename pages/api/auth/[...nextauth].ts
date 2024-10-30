@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
 import type { JWT } from 'next-auth/jwt';
+import {ExtendedSession} from "@/lib/definitions";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -133,13 +134,15 @@ export default NextAuth({
          * @return {object}              Session that will be returned to the client
          */
         async session({ session, token, user }) {
+
+            const mySessionInstance:ExtendedSession = session;
             if (token) {
-                session.user = token.user;
-                session.error = token.error;
-                session.accessToken = token.accessToken;
-                session.groups = token.groups;
+                mySessionInstance.user = token.user;
+                mySessionInstance.error = token.error;
+                mySessionInstance.accessToken = token.accessToken;
+                mySessionInstance.groups = token.groups as string[] | undefined;
             }
-            return session;
+            return mySessionInstance;
         },
         /**
          * @param  {object}  token     Decrypted JSON Web Token

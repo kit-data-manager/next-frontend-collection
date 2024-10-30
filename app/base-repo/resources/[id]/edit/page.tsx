@@ -6,7 +6,7 @@ import React, {useEffect, useState, use} from "react";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {Permission} from "@/lib/definitions";
+import {ExtendedSession, Permission} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import Loader from "@/components/general/Loader";
@@ -20,26 +20,26 @@ export default function Page() {
     const [schema, setSchema] = useState(undefined);
     const [etag, setEtag] = useState(undefined);
     const [isLoading, setLoading] = useState(true)
-    const {data, status } = useSession();
+    const {data, status } = useSession() as {data: ExtendedSession, status: string};
 
     useEffect(() => {
         fetchSchema("/definitions/base-repo/models/resourceModel.json").
         then(schema => setSchema(schema));
 
-        fetchDataResource(id).then(async (res) => {
-            await fetchDataResourceEtag(res.id).
+        fetchDataResource(id, data.accessToken).then(async (res) => {
+            await fetchDataResourceEtag(res.id, data.accessToken).
             then(result => setEtag(result)).
             catch(error => {console.error(`Failed to obtain etag for resource ${id}`, error)});
             return res;
         }).then(async (res) => {
-            await loadContent(res).
+            await loadContent(res, data.accessToken).
             then((data) => res.children = data).
             catch(error => {console.error(`Failed to fetch children for resource ${id}`, error)});
             return setResource(res);
         }).
         catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).
         finally(() => setLoading(false));
-    }, [id, resource]);
+    }, [id, data.accessToken, resource]);
 
     if (!isLoading) {
         if (!resource) {

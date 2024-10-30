@@ -6,7 +6,7 @@ import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataRe
 import React, {useEffect, useState} from "react";
 import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {Permission} from "@/lib/definitions";
+import {ExtendedSession, Permission} from "@/lib/definitions";
 import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import {useSession} from "next-auth/react";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
@@ -18,13 +18,13 @@ export default function Page() {
     const id = useParams<{ id: string; }>()?.id;
     const [resource, setResource] = useState(undefined);
     const [isLoading, setLoading] = useState(true)
-    const { data, status } = useSession();
+    const { data, status } = useSession() as {data: ExtendedSession, status: string};
     const actionEvents: string[] = [];
 
     useEffect(() => {
-        fetchDataResource(id).
+        fetchDataResource(id, data.accessToken).
         then(async (res) => {
-            await loadContent(res).
+            await loadContent(res, data.accessToken).
             then((data) => {
                 res.children = data;
                 setResource(res)
@@ -33,7 +33,11 @@ export default function Page() {
         }).
         catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).
         finally(() => setLoading(false));
-    }, [id, resource]);
+    }, [id, data.accessToken, resource]);
+
+    if(!id){
+        return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
+    }
 
     if (!isLoading) {
         if (!resource) {
@@ -68,7 +72,7 @@ export default function Page() {
                 <div className="rounded-lg grow">
                     {isLoading ?
                         <Loader/> :
-                        <DataResourceCard key={resource?.id} data={resource} variant={"detailed"} actionEvents={actionEvents}></DataResourceCard>
+                        resource ? <DataResourceCard key={id} data={resource} variant={"detailed"} actionEvents={actionEvents}></DataResourceCard> : <Loader/>
                     }
                 </div>
             </div>

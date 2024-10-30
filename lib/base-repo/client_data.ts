@@ -89,7 +89,6 @@ export async function fetchDataResourcePages(size: number, accessToken?: string)
         const headers = {"Accept": "application/json"};
 
         if(accessToken){
-            console.log("Access Token", `Bearer ${accessToken}`);
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
         return myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`, {
@@ -102,10 +101,15 @@ export async function fetchDataResourcePages(size: number, accessToken?: string)
     }
 }
 
-export async function fetchDataResource(id: string, accessToken?: string) {
+export async function fetchDataResource(id?: string, accessToken?: string) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         const headers = {"Accept": "application/json"};
+
+        if(!id){
+            console.error('No id provided.');
+            return undefined;
+        }
 
         if(accessToken){
             headers["Authorization"] = `Bearer ${accessToken}`;
@@ -133,8 +137,6 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string) {
             {
                 headers: headers
             }).then(result => result.headers.get("ETag"));
-
-        //return await result.headers.get("ETag");
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
         return undefined;

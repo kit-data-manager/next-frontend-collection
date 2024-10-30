@@ -48,7 +48,7 @@ export function getActionButton(eventIdentifier:string):ActionButtonInterface{
     let isUrl = false;
     let tooltip = '';
 
-    if(eventIdentifier.startsWith("http") && eventIdentifier.indexOf("download?") > 0) {
+    if(eventIdentifier.startsWith("/api/download")) {
         //TODO: Urls only for downloads so far. Change in case of other requirements.
         isUrl = true;
         tooltip = 'Download Content';
@@ -99,6 +99,7 @@ export const editEventIdentifier = (resourceId:string) :string => {
     return `${REPO_EVENTS.EDIT_RESOURCE}_${resourceId}`;
 }
 export const downloadEventIdentifier = (resourceId:string) :string => {
+    //@TODO Not needed...should be mapped to `/api/download?resourceId=${resourceId}&filename=${contentPath}&type=zip`
     return `${REPO_EVENTS.DOWNLOAD_RESOURCE}_${resourceId}`;
 }
 
@@ -107,8 +108,7 @@ export const editContentEventIdentifier = (resourceId:string, contentPath: strin
 }
 
 export const downloadContentEventIdentifier = (resourceId:string, contentPath: string) :string => {
-    return `http://localhost:3000/api/download?resourceId=${resourceId}&filename=${contentPath}`
-    //`${REPO_EVENTS.DOWNLOAD_CONTENT}_${resourceId}_${contentPath}`;
+    return `/api/download?resourceId=${resourceId}&filename=${contentPath}&type=data`
 }
 
 export const deleteContentEventIdentifier = (path: string) :string => {

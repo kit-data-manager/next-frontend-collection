@@ -142,3 +142,13 @@ data-card::part(detailed-metadata-container){
 
 data-card::part(image-wrapper){
 }
+
+data-card::part(orcid-logo){
+  width: 16px;
+  height:16px;
+  margin-right: 4px;
+  text-decoration: underline!important;
+}
+data-card::part(orcid-link){
+  text-decoration: underline!important;
+}
