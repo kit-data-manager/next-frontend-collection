@@ -19,29 +19,38 @@ export default function Page() {
     const [resource, setResource] = useState(undefined);
     const [schema, setSchema] = useState(undefined);
     const [etag, setEtag] = useState(undefined);
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
     const {data, status } = useSession() as {data: ExtendedSession, status: string};
+    const accessToken = data?.accessToken;
 
     useEffect(() => {
-        fetchSchema("/definitions/base-repo/models/resourceModel.json").
-        then(schema => setSchema(schema));
+        //@TODO Move loading logic to editor?
+        if(status != "loading") {
+            setIsLoading(true);
+            fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema));
 
-        fetchDataResource(id, data.accessToken).then(async (res) => {
-            await fetchDataResourceEtag(res.id, data.accessToken).
-            then(result => setEtag(result)).
-            catch(error => {console.error(`Failed to obtain etag for resource ${id}`, error)});
-            return res;
-        }).then(async (res) => {
-            await loadContent(res, data.accessToken).
-            then((data) => res.children = data).
-            catch(error => {console.error(`Failed to fetch children for resource ${id}`, error)});
-            return setResource(res);
-        }).
-        catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).
-        finally(() => setLoading(false));
-    }, [id, data.accessToken, resource]);
+            fetchDataResource(id, accessToken).then(async (res) => {
+                await fetchDataResourceEtag(res.id, accessToken).then(result => setEtag(result)).catch(error => {
+                    console.error(`Failed to obtain etag for resource ${id}`, error)
+                });
+                return res;
+            }).then(async (res) => {
+                await loadContent(res, accessToken).then((data) => res.children = data).catch(error => {
+                    console.error(`Failed to fetch children for resource ${id}`, error)
+                });
+                return setResource(res);
+            }).catch(error => {
+                console.log(`Failed to fetch resource ${id}`, error)
+            }).finally(() => setIsLoading(false));
+        }
+    }, [id, accessToken, status]);
 
-    if (!isLoading) {
+
+
+    if (status === "loading" || isLoading){
+        return ( <Loader/> )
+    }
+
         if (!resource) {
             return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
         }
@@ -50,7 +59,6 @@ export default function Page() {
         if (permission < Permission.WRITE.valueOf()) {
             return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
         }
-    }
 
     return (
         <main>

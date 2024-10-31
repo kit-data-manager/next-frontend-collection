@@ -99,8 +99,7 @@ export const editEventIdentifier = (resourceId:string) :string => {
     return `${REPO_EVENTS.EDIT_RESOURCE}_${resourceId}`;
 }
 export const downloadEventIdentifier = (resourceId:string) :string => {
-    //@TODO Not needed...should be mapped to `/api/download?resourceId=${resourceId}&filename=${contentPath}&type=zip`
-    return `${REPO_EVENTS.DOWNLOAD_RESOURCE}_${resourceId}`;
+    return `/api/download?resourceId=${resourceId}&type=zip`;
 }
 
 export const editContentEventIdentifier = (resourceId:string, contentPath: string) :string => {

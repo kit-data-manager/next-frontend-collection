@@ -18,39 +18,43 @@ export default function DataResourceListing({page,size, filter}: {
     size: number;
     filter: FilterForm;
 }) {
-    const [resources, setResources] = useState([] as Array<DataResource>)
+    const [resources, setResources] = useState(undefined as unknown as DataResource[]);
     const [totalPages, setTotalPages] = useState(0 as number);
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
     const { data, status } = useSession() as {data: ExtendedSession, status: string};
+    const accessToken = data?.accessToken;
 
     useEffect(() => {
-        const token = data?.accessToken;
-        fetchDataResourcePages(size, token).
-        then((pages) => setTotalPages(pages ? pages : 0)).
-        then(() => fetchDataResources(page, size, filter, token)).
-        then(async (result) => {
-            const typedRes = result as Array<DataResource>
-            let promises: Promise<any>[] = [];
-            typedRes.map((element: DataResource) => {
-                promises.push(loadContent(element, token).then((data) => element.children = data));
+        if(status != "loading"){
+            setIsLoading(true);
+            fetchDataResourcePages(size, accessToken).
+            then((pages) => setTotalPages(pages ? pages : 0)).
+            then(() => fetchDataResources(page, size, filter, accessToken)).
+            then(async (result) => {
+                const typedRes = result as Array<DataResource>
+                let promises: Promise<any>[] = [];
+                typedRes.map((element: DataResource) => {
+                    promises.push(loadContent(element, accessToken).then((data) => element.children = data));
+                });
+                await Promise.all(promises);
+                setResources(typedRes);
+                setIsLoading(false);
             });
-            await Promise.all(promises);
-            return setResources(typedRes);
-        }).finally(() => setLoading(false));
-    }, [page, size, filter])
+        }
+    }, [page, size, filter, status, accessToken])
 
-    if (isLoading) return (
-        <Loader/>
-    )
+    if (status === "loading" || isLoading || !resources){
+        return ( <Loader/> )
+    }
 
-    if(!resources || resources.length === 0){
-        return ErrorPage({errorCode:Errors.NotFound, backRef: "/base-repo/resources"})
+    if(resources.length === 0){
+        return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
     }
 
     return (
         <div>
             <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
-                    {resources.map((element:DataResource, i:number) => {
+                    {resources?.map((element:DataResource, i:number) => {
                         //make edit optional depending on permissions
                         const actionEvents = [
                             viewEventIdentifier(element.id)
@@ -62,7 +66,7 @@ export default function DataResourceListing({page,size, filter}: {
                             actionEvents.push(editEventIdentifier(element.id));
                         }
 
-                        actionEvents.push(`/api/download?resourceId=${element.id}&type=zip`);
+                        actionEvents.push(downloadEventIdentifier(element.id));
                         return (
                             <DataResourceCard
                                 key={element.id}

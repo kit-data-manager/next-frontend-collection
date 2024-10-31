@@ -11,8 +11,9 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
-
         if (filter) {
+            console.log("LOAD W/ filter");
+
             let resource: DataResource = {} as DataResource;
 
             resource.id = filter.id;
@@ -29,20 +30,24 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 
 
             if (hasProperty) {
+                console.log("WITH VALUE");
                 return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
                     method: "POST",
                     headers: headers,
                     body: JSON.stringify(resource)
                 }).then((res) => res.json());
             } else {
-                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
+                console.log("NOT VALUE! ", headers);
+                const res = await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
                     method: "GET",
                     headers: headers
                 }).then(res => res.json());
+                return res as Array<DataResource>;
             }
 
-            //return result as Array<DataResource>;
+
         } else {
+            console.log("LOAD W/O filter");
             return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
                 method: "GET",
                 headers: headers
