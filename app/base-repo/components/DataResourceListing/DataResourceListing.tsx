@@ -1,14 +1,19 @@
 'use client';
 
-import {DataResource, ExtendedSession, Permission} from "@/lib/definitions";
+import {DataResource, Permission, State} from "@/lib/definitions";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
-import {downloadEventIdentifier, editEventIdentifier, viewEventIdentifier} from "@/lib/event-utils";
+import {
+    deleteEventIdentifier,
+    downloadEventIdentifier,
+    editEventIdentifier,
+    revokeEventIdentifier, userCanDelete, userCanDownload, userCanEdit, userCanView,
+    viewEventIdentifier
+} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
 import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
-import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
@@ -21,13 +26,13 @@ export default function DataResourceListing({page,size, filter}: {
     const [resources, setResources] = useState(undefined as unknown as DataResource[]);
     const [totalPages, setTotalPages] = useState(0 as number);
     const [isLoading, setIsLoading] = useState(true)
-    const { data, status } = useSession() as {data: ExtendedSession, status: string};
+    const { data, status } = useSession();
     const accessToken = data?.accessToken;
 
     useEffect(() => {
         if(status != "loading"){
             setIsLoading(true);
-            fetchDataResourcePages(size, accessToken).
+            fetchDataResourcePages(size, filter, accessToken).
             then((pages) => setTotalPages(pages ? pages : 0)).
             then(() => fetchDataResources(page, size, filter, accessToken)).
             then(async (result) => {
@@ -56,23 +61,43 @@ export default function DataResourceListing({page,size, filter}: {
             <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
                     {resources?.map((element:DataResource, i:number) => {
                         //make edit optional depending on permissions
-                        const actionEvents = [
-                            viewEventIdentifier(element.id)
+                        const actionEvents:string[] = [
                         ];
 
-                        //add edit action only with WRITE permission
-                        let permission:Permission = resourcePermissionForUser(element, data?.user.id, data?.groups);
-                        if(permission.valueOf() > Permission.READ.valueOf()){
+                        if(userCanView(element, data?.user.id, data?.user.groups)){
+                            actionEvents.push(viewEventIdentifier(element.id));
+                        }
+
+                        if(userCanEdit(element, data?.user.id, data?.user.groups)){
                             actionEvents.push(editEventIdentifier(element.id));
                         }
 
-                        actionEvents.push(downloadEventIdentifier(element.id));
+                        if(userCanDelete(element, data?.user.id, data?.user.groups)){
+                            if(element.state == State.REVOKED){
+                                actionEvents.push(deleteEventIdentifier(element.id));
+                            }else{
+                                actionEvents.push(revokeEventIdentifier(element.id));
+                            }
+                        }
+
+                        if(userCanDownload(element, data?.user.id, data?.user.groups)){
+                            actionEvents.push(downloadEventIdentifier(element.id));
+                        }
+
+                        let classname = "volatile_or_fixed";
+                        switch(element.state){
+                            case State.REVOKED: classname = "revoked";break;
+                            case State.GONE: classname="gone";break;
+                        }
+
                         return (
+                            <div key={element.id} className={classname}>
                             <DataResourceCard
                                 key={element.id}
                                 data={element}
                                 actionEvents={actionEvents}
                             ></DataResourceCard>
+                            </div>
                         );
                     })}
             </div>

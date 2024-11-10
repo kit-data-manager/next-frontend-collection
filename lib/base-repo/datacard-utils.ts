@@ -205,13 +205,17 @@ const tagsForDataResource = (resource: DataResource) => {
     if(resource.acls) {
         resource.acls.map((acl, i) => {
             if (acl.sid === "anonymousUser") {
-                tags.push({color: "#90EE90", text: "Open", iconName: "zondicons:lock-open", tooltip:"The resource is publicly accessible."}  as Tag);
                 open = true;
             }
         });
+    }else{
+        //no acls, should be hidden due to public access
+        open = true;
     }
 
-    if (!open) {
+    if (open) {
+        tags.push({color: "#90EE90", text: "Open", iconName: "zondicons:lock-open", tooltip:"The resource is publicly accessible."}  as Tag);
+    }else{
         tags.push({color: "#FFCCCB", text: "Protected", iconName: "zondicons:lock-closed", tooltip: "The resource has access restrictions."} as Tag);
     }
 

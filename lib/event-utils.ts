@@ -1,8 +1,12 @@
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {DataResource, Permission, State} from "@/lib/definitions";
+import {resourcePermissionForUser} from "@/lib/permission-utils";
 
 const REPO_BASE_PATH = "/base-repo/resources/";
 const VIEW_PATH = "view";
 const EDIT_PATH = "edit";
+const REVOKE_PATH = "revoke";
+const DELETE_PATH = "delete";
 const DOWNLOAD_RESOURCE_PATH = "download";
 const EDIT_CONTENT_PATH = "edit_content?path=";
 const DOWNLOAD_CONTENT_PATH = "download_content?path=";
@@ -10,6 +14,8 @@ const DELETE_CONTENT_PATH = "delete_content?path=";
 export const enum REPO_EVENTS {
     "VIEW_RESOURCE" = "viewResource",
     "EDIT_RESOURCE" = "editResource",
+    "REVOKE_RESOURCE" = "revokeResource",
+    "DELETE_RESOURCE" = "deleteResource",
     "DOWNLOAD_RESOURCE" = "downloadResource",
     "EDIT_CONTENT" = "editContent",
     "DOWNLOAD_CONTENT" = "downloadContent",
@@ -28,6 +34,10 @@ export const eventIdentifierToPath = (eventIdentifier: string) => {
             return `${REPO_BASE_PATH}${parts[1]}/${VIEW_PATH}`;
         case REPO_EVENTS.EDIT_RESOURCE:
             return `${REPO_BASE_PATH}${parts[1]}/${EDIT_PATH}`;
+        case REPO_EVENTS.REVOKE_RESOURCE:
+            return `${REPO_BASE_PATH}${parts[1]}/${REVOKE_PATH}`;
+        case REPO_EVENTS.DELETE_RESOURCE:
+            return `${REPO_BASE_PATH}${parts[1]}/${DELETE_PATH}`;
         case REPO_EVENTS.DOWNLOAD_RESOURCE:
             return `${REPO_BASE_PATH}${parts[1]}/${DOWNLOAD_RESOURCE_PATH}`;
         case REPO_EVENTS.EDIT_CONTENT:
@@ -56,13 +66,23 @@ export function getActionButton(eventIdentifier:string):ActionButtonInterface{
         switch (parts[0]) {
             case REPO_EVENTS.VIEW_RESOURCE:
                 label = "View";
-                iconName = "material-symbols-light:edit-square-outline";
+                iconName = "material-symbols-light:eye-tracking-outline";
                 tooltip = 'View Resource';
                 break;
             case REPO_EVENTS.EDIT_RESOURCE:
                 label = "Edit";
                 iconName = "material-symbols-light:edit-square-outline";
                 tooltip = 'Edit Resource';
+                break;
+            case REPO_EVENTS.REVOKE_RESOURCE:
+                label = "Revoke";
+                iconName = "material-symbols-light:delete-outline";
+                tooltip = 'Revoke Resource';
+                break;
+            case REPO_EVENTS.DELETE_RESOURCE:
+                label = "Delete";
+                iconName = "material-symbols-light:skull-outline";
+                tooltip = 'Delete Resource';
                 break;
             case REPO_EVENTS.DOWNLOAD_RESOURCE:
                 label = "Download";
@@ -98,6 +118,15 @@ export const viewEventIdentifier = (resourceId:string) :string => {
 export const editEventIdentifier = (resourceId:string) :string => {
     return `${REPO_EVENTS.EDIT_RESOURCE}_${resourceId}`;
 }
+
+export const revokeEventIdentifier = (resourceId:string) :string => {
+    return `${REPO_EVENTS.REVOKE_RESOURCE}_${resourceId}`;
+}
+
+export const deleteEventIdentifier = (resourceId:string) :string => {
+    return `${REPO_EVENTS.DELETE_RESOURCE}_${resourceId}`;
+}
+
 export const downloadEventIdentifier = (resourceId:string) :string => {
     return `/api/download?resourceId=${resourceId}&type=zip`;
 }
@@ -126,3 +155,58 @@ export const addTagEventIdentifier = (resourceId: string, contentPath:string) :s
     return `${REPO_EVENTS.ADD_TAG}_${contentPath}`;
 }
 
+export function userCanView(resource: DataResource, userId: string | undefined, groups:string[] | undefined):boolean{
+    let permission:Permission = resourcePermissionForUser(resource, userId, groups);
+    switch(resource.state){
+        case State.VOLATILE:
+        case State.FIXED:
+            return permission > Permission.NONE;
+        case State.REVOKED:
+        case State.GONE:
+            return permission > Permission.WRITE;
+        default:
+            //Permission.NONE
+            return false;
+    }
+}
+
+export function userCanEdit(resource: DataResource, userId: string | undefined, groups:string[] | undefined):boolean{
+    let permission:Permission = resourcePermissionForUser(resource, userId, groups);
+    switch(resource.state){
+        case State.VOLATILE:
+            return permission > Permission.READ;
+        case State.FIXED:
+        case State.REVOKED:
+            return permission > Permission.WRITE;
+        default:
+            //Permission.NONE || Permission.READ || State.GONE
+            return false;
+    }
+}
+
+export function userCanDownload(resource: DataResource, userId: string | undefined, groups:string[] | undefined):boolean{
+    let permission:Permission = resourcePermissionForUser(resource, userId, groups);
+    switch(resource.state){
+        case State.VOLATILE:
+        case State.FIXED:
+            return permission > Permission.NONE;
+        case State.REVOKED:
+            return permission > Permission.WRITE;
+        default:
+            //Permission.NONE || State.GONE
+            return false;
+    }
+}
+
+export function userCanDelete(resource: DataResource, userId: string | undefined, groups:string[] | undefined):boolean{
+    let permission:Permission = resourcePermissionForUser(resource, userId, groups);
+    switch(resource.state){
+        case State.VOLATILE:
+        case State.FIXED:
+        case State.REVOKED:
+            return permission > Permission.WRITE;
+        default:
+            //Permission.NONE || Permission.READ || Permission.WRITE || State.GONE
+            return false;
+    }
+}

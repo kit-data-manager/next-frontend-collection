@@ -13,7 +13,7 @@ import {cn} from "@/lib/utils";
 import React from "react";
 import {useSession} from "next-auth/react";
 
-export default function MainMenu(props) {
+export default function MainMenu() {
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
     const {data: session, status} = useSession();
 

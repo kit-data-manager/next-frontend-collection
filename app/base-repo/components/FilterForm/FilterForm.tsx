@@ -1,21 +1,32 @@
 'use client';
 
-import {
-    CalendarIcon,
-    UserCircleIcon,
-    FunnelIcon, PlusCircleIcon
-} from '@heroicons/react/24/outline';
-import { filterResources } from '@/lib/actions';
+import {CalendarIcon, FunnelIcon, UserCircleIcon, XCircleIcon} from '@heroicons/react/24/outline';
+import {filterResources} from '@/lib/filter-form-actions';
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {Button} from "@/components/ui/button";
+import React from "react";
+import {useSession} from "next-auth/react";
+import {getStateList, getTypeGeneralList} from "@/lib/filter-utils";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
 }) {
+    const formRef = React.useRef<HTMLFormElement>(null);
+    const { data, status } = useSession();
+
     const doFilterResources = filterResources.bind(null);
+    const doResetForm = () => {
+        formRef.current?.reset();
+        window.document.location = "/base-repo/resources";
+    };
+
+    const isAdmin = !!(data && data?.user.groups.includes("ROLE_ADMINISTRATOR"));
+    const stateList = getStateList(isAdmin);
+    const typeList = getTypeGeneralList();
 
     return (
-        <form action={doFilterResources}>
+        <div>
+        <form action={doFilterResources} ref={formRef}>
             <div className="rounded-md">
                 <div className="mb-4">
                     <label htmlFor="customer" className="mb-2 block text-sm font-medium">
@@ -31,7 +42,8 @@ export default function FilterResourceForm({filter}: {
                             defaultValue={filter.publisher}
                         >
                         </input>
-                        <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+                        <UserCircleIcon
+                            className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500"/>
                     </div>
                 </div>
 
@@ -50,7 +62,8 @@ export default function FilterResourceForm({filter}: {
                                 placeholder="2024"
                                 className="peer block w-auto rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             />
-                            <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                            <CalendarIcon
+                                className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900"/>
                         </div>
                     </div>
                 </div>
@@ -61,25 +74,25 @@ export default function FilterResourceForm({filter}: {
                     </legend>
                     <div className="rounded-md w-full border py-3">
                         <div className="ml-4">
-                            { ['VOLATILE', 'FIXED'].map(key => {
-                            return (
-                                <div key={key} className="flex w-auto items-center">
-                                  <input
-                                    id={key.toLowerCase()}
-                                    name="state"
-                                    type="checkbox"
-                                    value={key}
-                                    defaultChecked={filter.state === key}
-                                    className="h-4 w-4 cursor-pointer  focus:ring-2"
-                                />
-                                <label
-                                    htmlFor={key.toLowerCase()}
-                                    className="ml-2 flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
-                                >
-                                    {key}
-                                </label>
-                            </div>)
-                            }) }
+                            {stateList.map(key => {
+                                return (
+                                    <div key={key} className="flex w-auto items-center">
+                                        <input
+                                            id={key.toLowerCase()}
+                                            name="state"
+                                            type="radio"
+                                            value={key}
+                                            defaultChecked={filter.state === key}
+                                            className="h-4 w-4 cursor-pointer focus:ring-2"
+                                        />
+                                        <label
+                                            htmlFor={key.toLowerCase()}
+                                            className="ml-2 flex cursor-pointer items-center gap-1.5  px-3 py-1.5 text-xs font-medium"
+                                        >
+                                            {key}
+                                        </label>
+                                    </div>)
+                            })}
                         </div>
                     </div>
                 </fieldset>
@@ -90,13 +103,12 @@ export default function FilterResourceForm({filter}: {
                     </legend>
                     <div className="rounded-md border py-3">
                         <div className="ml-4">
-                            { ['AUDIOVISUAL' ,'COLLECTION' , 'DATASET' , 'EVENT' , 'IMAGE' , 'INTERACTIVE_RESOURCE' , 'MODEL' ,
-                            'PHYSICAL_OBJECT' , 'SERVICE' , 'SOFTWARE' , 'SOUND' , 'TEXT' , 'WORKFLOW' , 'OTHER'].map(key => {
+                            {typeList.map(key => {
                                 return (<div key={key} className="flex items-center">
                                     <input
                                         id={key.toLowerCase()}
                                         name="typeGeneral"
-                                        type="checkbox"
+                                        type="radio"
                                         value={key}
                                         defaultChecked={filter.typeGeneral === key}
                                         className="h-4 w-4 cursor-pointer focus:ring-2"
@@ -107,17 +119,17 @@ export default function FilterResourceForm({filter}: {
                                     >
                                         {key}
                                     </label>
-                                </div>)
-                            }) }
+                                </div>
+                                )
+                            })}
+
                         </div>
                     </div>
                 </fieldset>
-
-
             </div>
-            <div className="flex justify-end pt-4">
-                <Button type="submit" variant="outline"><FunnelIcon className="h-5 w-5 me-2"/> Filter</Button>
-            </div>
+            <Button type="submit" variant="outline" className={"flex w-full mt-4"}><FunnelIcon className="h-5 w-5 me-2"/> Filter</Button>
         </form>
-    );
+        <Button type="reset" variant="outline" className={"flex w-full mt-4"} onClick={() => doResetForm()}><XCircleIcon className="h-5 w-5 me-2"/> Clear</Button>
+    </div>
+);
 }

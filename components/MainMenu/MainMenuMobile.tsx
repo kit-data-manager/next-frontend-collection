@@ -20,34 +20,56 @@ import {
 import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {ThemeModeToggle} from "@/components/ThemeModeToggle/ThemeModeToggle";
+import {useSession} from "next-auth/react";
 
-export default function MainMenuMobile(props) {
-    const theme = useTheme()
-    const showLogin = props.authAvailable;
+export default function MainMenuMobile() {
+    const {data: session, status} = useSession();
+    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
+    const pathname = usePathname();
 
+    //init base menu entries
     const linksDataRepo = [
         {name: 'Overview', href: '/base-repo', icon: ChartPieIcon, description:"Show status information."},
-        {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon, description:"Show status information."},
-        {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Show status information."},
-        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"Show status information."},
     ];
-
     const linksMetadataRepo = [
         {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon},
-        {name: 'Create Schema', href: '/metadata-repo/schema/create', icon: PlusCircleIcon},
-        {name: 'Create Metadata', href: '/metadata-repo/metadata/create', icon: PlusCircleIcon},
-        {name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon},
-        {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon},
-        {name: 'Metadata', href: '/metadata-repo/metadata', icon: ListBulletIcon},
     ];
 
-    const pathname = usePathname();
-    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
-    type Checked = DropdownMenuCheckboxItemProps["checked"]
+    //if session available, add create entries
+    if(session){
+        linksDataRepo.push(
+            {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon, description:"Show status information."}
+        );
+        linksMetadataRepo.push(
+            {name: 'Create Schema', href: '/metadata-repo/schema/create', icon: PlusCircleIcon},
+            {name: 'Create Metadata', href: '/metadata-repo/metadata/create', icon: PlusCircleIcon}
+        );
+    }
+
+    //if search enabled, add search entries
+    if(searchEnabled){
+        linksDataRepo.push(
+            {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Show status information."},
+        );
+        linksMetadataRepo.push(
+            {name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon},
+        );
+    }
+
+    //add remaining entries
+    linksDataRepo.push(
+        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"Show status information."}
+    );
+    linksMetadataRepo.push(
+        {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon},
+        {name: 'Metadata', href: '/metadata-repo/metadata', icon: ListBulletIcon}
+    );
+
+   /* type Checked = DropdownMenuCheckboxItemProps["checked"]
 
     const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
     const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
-    const [showPanel, setShowPanel] = React.useState<Checked>(false)
+    const [showPanel, setShowPanel] = React.useState<Checked>(false)*/
 
     return (
         <DropdownMenu>

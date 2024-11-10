@@ -4,27 +4,32 @@ import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import {fetchDataResource, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React, {useEffect, useState} from "react";
-import {downloadEventIdentifier, editEventIdentifier} from "@/lib/event-utils";
+import {
+    deleteEventIdentifier,
+    downloadEventIdentifier,
+    editEventIdentifier, revokeEventIdentifier, userCanDelete, userCanDownload,
+    userCanEdit
+} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {ExtendedSession, Permission} from "@/lib/definitions";
-import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
+import {DataResource, Permission, State} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
-import {useParams} from "next/navigation";
+import {resourcePermissionForUser} from "@/lib/permission-utils";
 
-export default function Page() {
-    const id = useParams<{ id: string; }>()?.id;
-    const [resource, setResource] = useState(undefined);
+export default function Page({params}: { params: { id: string } }) {
+    const id = params.id;
+    const [resource, setResource] = useState({} as DataResource);
     const [isLoading, setLoading] = useState(true)
-    const { data, status } = useSession() as {data: ExtendedSession, status: string};
+    const { data, status } = useSession() ;
     const actionEvents: string[] = [];
 
+
     useEffect(() => {
-        fetchDataResource(id, data.accessToken).
+        fetchDataResource(id,data?.accessToken).
         then(async (res) => {
-            await loadContent(res, data.accessToken).
+            await loadContent(res,data?.accessToken).
             then((data) => {
                 res.children = data;
                 setResource(res)
@@ -40,17 +45,30 @@ export default function Page() {
     }
 
     if (!isLoading) {
-        if (!resource) {
+        if (!resource || !resource.id) {
             return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
         }
 
-        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.groups);
+        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
         if (permission < Permission.READ.valueOf()) {
             return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
         }
 
-        actionEvents.push(editEventIdentifier(id));
-        actionEvents.push(downloadEventIdentifier(id));
+        if(userCanEdit(resource, data?.user.id, data?.user.groups)){
+            actionEvents.push(editEventIdentifier(resource.id));
+        }
+
+        if(userCanDelete(resource, data?.user.id, data?.user.groups)){
+            if(resource.state == State.REVOKED){
+                actionEvents.push(deleteEventIdentifier(resource.id));
+            }else{
+                actionEvents.push(revokeEventIdentifier(resource.id));
+            }
+        }
+
+        if(userCanDownload(resource, data?.user.id, data?.user.groups)){
+            actionEvents.push(downloadEventIdentifier(resource.id));
+        }
     }
 
     return (

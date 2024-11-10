@@ -1,77 +1,43 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {ActuatorInfo, ContentInformation, DataResource, KeycloakInfo, ResourceType} from "@/lib/definitions";
+import {ActuatorInfo, ContentInformation, DataResource, KeycloakInfo} from "@/lib/definitions";
+import {filterFormToDataResource} from "@/lib/filter-utils";
 
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm, accessToken?: string): Promise<DataResource[]> {
+
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm, token?: string | undefined): Promise<DataResource[]> {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         const realPage = page - 1;
-        const headers = {"Content-Type": "application/json"};
-
-        if(accessToken){
-            headers["Authorization"] = `Bearer ${accessToken}`;
+        let filterExample = filterFormToDataResource(filter);
+        let headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
 
-        if (filter) {
-            console.log("LOAD W/ filter");
-
-            let resource: DataResource = {} as DataResource;
-
-            resource.id = filter.id;
-            resource.publisher = filter.publisher;
-            resource.publicationYear = filter.publicationYear;
-            resource.state = filter.state;
-            resource.resourceType = {typeGeneral: filter.typeGeneral} as ResourceType;
-
-            let hasProperty = (resource.id != undefined ||
-                resource.publisher != undefined ||
-                resource.publicationYear != undefined ||
-                resource.state != undefined ||
-                resource.resourceType.typeGeneral != undefined);
-
-
-            if (hasProperty) {
-                console.log("WITH VALUE");
-                return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
-                    method: "POST",
-                    headers: headers,
-                    body: JSON.stringify(resource)
-                }).then((res) => res.json());
-            } else {
-                console.log("NOT VALUE! ", headers);
-                const res = await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
-                    method: "GET",
-                    headers: headers
-                }).then(res => res.json());
-                return res as Array<DataResource>;
-            }
-
-
-        } else {
-            console.log("LOAD W/O filter");
-            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
-                method: "GET",
-                headers: headers
-            }).then(res => res.json());
+        if (filterExample) {
+            headers["Content-Type"] = "application/json";
+            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(filterExample)
+            }).then((res) => res.json());
         }
+
+        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {headers: headers}).then(res => res.json());
     } catch (error) {
         console.error('Service Error:', error);
         return [];
     }
 }
 
-export async function loadContent(resource: DataResource, accessToken?: string): Promise<ContentInformation[]> {
+export async function loadContent(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        const headers = {"Accept": "application/vnd.datamanager.content-information+json"};
-
-        if(accessToken){
-            headers["Authorization"] = `Bearer ${accessToken}`;
+        let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
-
         return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`,
-            {
-                headers: headers
-            }).then(res => res.json()).catch(error => {
+            {headers: headers}).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -80,7 +46,11 @@ export async function loadContent(resource: DataResource, accessToken?: string):
     }
 }
 
-export async function updateThumbState(id: string, path: string, addRemove: boolean) {
+export async function updateThumbState(id: string, path: string, addRemove: boolean, token?: string | undefined) {
+    let headers = {"Accept": "application/patch+json"};
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
     if (addRemove) {
         console.log("Add thumb state ", id, "/data/", path);
     } else {
@@ -88,67 +58,66 @@ export async function updateThumbState(id: string, path: string, addRemove: bool
     }
 }
 
-export async function fetchDataResourcePages(size: number, accessToken?: string) {
+
+export async function fetchDataResourcePages(size: number, filter?: FilterForm, token?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        const headers = {"Accept": "application/json"};
+        let fetchPromise: Promise<any>;
+        let filterExample = filterFormToDataResource(filter);
 
-        if(accessToken){
-            headers["Authorization"] = `Bearer ${accessToken}`;
+        let headers = {"Accept": "application/json"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
-        return myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`, {
-            method: "GET",
-            headers: headers
-        }).then(response => response.headers.get("Content-Range")).then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).then((totalElements) => Math.ceil(totalElements / size));
+        if (filterExample) {
+            fetchPromise = myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=0&size=0`, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(filterExample)
+            });
+        } else {
+            fetchPromise = myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`, {headers: headers});
+        }
+
+        return await fetchPromise.then(response => response.headers.get("Content-Range")).then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).then((totalElements) => Math.ceil(totalElements / size));
     } catch (error) {
         console.error('Failed to fetch resource page count. Error:', error);
         return undefined;
     }
 }
 
-export async function fetchDataResource(id?: string, accessToken?: string) {
+export async function fetchDataResource(id: string, token?:string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        const headers = {"Accept": "application/json"};
-
-        if(!id){
-            console.error('No id provided.');
-            return undefined;
-        }
-
-        if(accessToken){
-            headers["Authorization"] = `Bearer ${accessToken}`;
+        let headers = {"Accept": "application/json"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
         return myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {
-                headers: headers
-            }).then(res => res.json());
+            {headers: headers}).then(res => res.json());
     } catch (error) {
         console.error('Failed to fetch resource. Error:', error);
         return undefined;
     }
 }
 
-export async function fetchDataResourceEtag(id: string, accessToken?: string) {
+export async function fetchDataResourceEtag(id: string, token?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-
-        const headers = {"Accept": "application/json"};
-
-        if(accessToken){
-            headers["Authorization"] = `Bearer ${accessToken}`;
+        let headers = {"Accept": "application/json"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
         return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {
-                headers: headers
-            }).then(result => result.headers.get("ETag"));
+            {headers: headers}).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
         return undefined;
     }
 }
 
-export async function fetchActuatorInfo(baseUrl: string): Promise<ActuatorInfo> {
+
+export async function fetchActuatorInfo(token?: string | undefined): Promise<ActuatorInfo> {
     let branch = "unknown";
     let hash = "unknown";
     let buildTime = "unknown";
@@ -157,9 +126,11 @@ export async function fetchActuatorInfo(baseUrl: string): Promise<ActuatorInfo> 
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
-        const response = await myFetch(`${repoBaseUrl}/actuator/info`);
-
-        const json = await response.json();
+        let headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        const json = await myFetch(`${repoBaseUrl}/actuator/info`, {headers: headers}).then((response) => response.json());
 
         branch = json.git.branch;
         hash = json.git.commit.id;
@@ -177,7 +148,7 @@ export async function fetchActuatorInfo(baseUrl: string): Promise<ActuatorInfo> 
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(baseUrl: string) {
+export async function fetchActuatorHealth(token?:string | undefined) {
     let database = "unknown";
     let databaseStatus = "unknown";
     let harddisk = 0;
@@ -189,10 +160,12 @@ export async function fetchActuatorHealth(baseUrl: string) {
 
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        let headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
 
-        const response = await myFetch(`${repoBaseUrl}/actuator/health`);
-
-        const json = await response.json();
+        const json = await myFetch(`${repoBaseUrl}/actuator/health`, {headers: headers}).then((response) => response.json());
 
         database = json.components.db.details.database;
         databaseStatus = json.components.db.status;
@@ -267,7 +240,7 @@ class ResponseError extends Error {
 }
 
 export async function myFetch(url: string, init?: any) {
-    let res;
+    let res: Response;
     if (init) {
         res = await fetch(url, init);
     } else {

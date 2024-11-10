@@ -1,8 +1,6 @@
 'use server';
-import {Pool} from "pg";
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import {number} from "prop-types";
 
 export async function filterResources(formData: FormData) {
     const resourceId = formData.get("id");
@@ -31,7 +29,7 @@ export async function filterResources(formData: FormData) {
     }
 
     if(pubYear){
-        path += `publicationYear=${pubYear}`;
+        path += `publicationYear=${pubYear}&`;
     }
 
     if(typeGeneral){
@@ -40,26 +38,3 @@ export async function filterResources(formData: FormData) {
 
     redirect(path);
 }
-
-
-
-/*
-export async function deleteInvoice(id: string) {
-    throw new Error('Failed to Delete Invoice');
-
-    try {
-        const client = new Pool({
-            user:process.env.DB_USER,
-            host:process.env.DB_HOST,
-            database:process.env.DB_NAME,
-            password:process.env.DB_PASSWORD,
-            port: Number(process.env.DB_PORT)
-        })
-
-    await client.query('DELETE FROM invoices WHERE id = \'' + id + '\'');
-    } catch (err) {
-        console.error('Database Error:', err);
-        throw new Error('Failed to fetch customer table.');
-    }
-    revalidatePath('/dashboard/invoices');
-}*/

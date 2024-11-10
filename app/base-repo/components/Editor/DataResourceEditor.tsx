@@ -4,15 +4,16 @@ import JsonForm from "@/components/jsonform";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import React, {useState} from "react";
 
-
 import {usePathname, useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
-import {ContentInformation, DataResource} from "@/lib/definitions";
+import {ContentInformation, DataResource, State} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import 'react-toastify/dist/ReactToastify.css';
 import {
     deleteContentEventIdentifier,
-    downloadContentEventIdentifier
+    downloadContentEventIdentifier,
+    userCanDelete,
+    userCanDownload,
 } from "@/lib/event-utils";
 import {
     DataChanged,
@@ -43,6 +44,7 @@ export default function DataResourceEditor({...props}) {
     const [tag, setTag] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const [actionContent, setActionContent] = useState("");
+    const { data, status } = useSession() ;
 
     const router:AppRouterInstance = useRouter();
     const path:string|null = usePathname();
@@ -87,10 +89,18 @@ export default function DataResourceEditor({...props}) {
                                 {currentContent && currentContent.length > 0 ?
                                     <div className="rounded-lg p-2 md:pt-0">
                                         {currentContent.map((element: ContentInformation, i: number) => {
-                                            let actionEvents = [
-                                                downloadContentEventIdentifier(element.parentResource.id, element.relativePath),
-                                                deleteContentEventIdentifier(element.relativePath)
-                                            ];
+                                            let actionEvents: string[] = [];
+                                            /*if(userCanEdit(element.parentResource, data?.user.id, data?.user.groups)){
+                                              //  actionEvents.push(editEventIdentifier(resource.id));
+                                            }*/
+
+                                            if(userCanDelete(element.parentResource, data?.user.id, data?.user.groups)){
+                                                actionEvents.push(deleteContentEventIdentifier(element.relativePath));
+                                            }
+
+                                            if(userCanDownload(element.parentResource, data?.user.id, data?.user.groups)){
+                                                actionEvents.push(downloadContentEventIdentifier(element.parentResource.id, element.relativePath));
+                                            }
 
                                             return (
                                                 <ContentInformationCard

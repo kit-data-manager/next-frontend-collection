@@ -28,6 +28,7 @@ export default function Page({searchParams}: {
     filter.state = valueOrDefault(searchParams, "state", undefined);
     filter.publisher = valueOrDefault(searchParams, "publisher", undefined);
     filter.publicationYear = valueOrDefault(searchParams, "publicationYear", undefined);
+    filter.typeGeneral = valueOrDefault(searchParams, "typeGeneral", undefined);
 
     return (
         <main>
@@ -63,3 +64,6 @@ export default function Page({searchParams}: {
         </main>
     );
 }
+
+
+

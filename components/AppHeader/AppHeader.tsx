@@ -12,17 +12,10 @@ export default function AppHeader({securityEnabled, children}: {
     securityEnabled: boolean;
     children: React.ReactNode;
 }) {
-
-    let authenticated:boolean = false;
-    const { data: session, status } = useSession()
-    if (status === "authenticated") {
-        authenticated = true;
-    }
-
     return (
         <div className="flex min-h-screen flex-col p-6">
-            <div className="flex justify-between items-center py-4 sticky w-full bg-primary top-0 z-20">
-                <div className="flex items-center">
+            <div className="flex justify-between grid-cols-3 items-center py-4 sticky w-full bg-primary top-0 z-20">
+                <div className="flex items-center grid-cols-1">
                     <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
                         <AcmeLogo/>
                         <span className="self-center text-2xl font-semibold whitespace-nowrap">Next Frontend for MatWerk</span>
@@ -30,7 +23,7 @@ export default function AppHeader({securityEnabled, children}: {
                 </div>
 
                 <div className="flex lg:hidden items-center gap-2 mr-2">
-                    <MainMenuMobile authAvailable={true}/>
+                    <MainMenuMobile/>
                     {securityEnabled ?
                         <LoginLogoutButton icon={true} className="mr-4"/> : null
                     }
@@ -39,7 +32,7 @@ export default function AppHeader({securityEnabled, children}: {
 
                 <nav className="hidden lg:grid grid-cols-2 p-4 items-center mr-2">
                     <div className="flex justify-self-stretch" >
-                    <MainMenu authAvailable={true}/>
+                    <MainMenu/>
                     </div>
                     <div className="flex justify-self-end">
                         {securityEnabled ?

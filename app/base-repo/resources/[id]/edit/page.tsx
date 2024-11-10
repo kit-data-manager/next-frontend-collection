@@ -6,22 +6,20 @@ import React, {useEffect, useState, use} from "react";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {ExtendedSession, Permission} from "@/lib/definitions";
+import {DataResource, Permission} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
-import {resourcePermissionForUser} from "@/lib/base-repo/client-utils";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
-import {useParams} from "next/navigation";
+import {resourcePermissionForUser} from "@/lib/permission-utils";
 
-export default function Page() {
-    const id = useParams<{ id: string; }>()?.id;
-    const [resource, setResource] = useState(undefined);
+export default function Page({params}: { params: { id: string } }) {
+    const id = params.id;
+    const [resource, setResource] = useState({} as DataResource);
     const [schema, setSchema] = useState(undefined);
-    const [etag, setEtag] = useState(undefined);
+    const [etag, setEtag] = React.useState<string | undefined | null>();
     const [isLoading, setIsLoading] = useState(true)
-    const {data, status } = useSession() as {data: ExtendedSession, status: string};
-    const accessToken = data?.accessToken;
+    const {data, status } = useSession();
 
     useEffect(() => {
         //@TODO Move loading logic to editor?
@@ -29,13 +27,13 @@ export default function Page() {
             setIsLoading(true);
             fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema));
 
-            fetchDataResource(id, accessToken).then(async (res) => {
-                await fetchDataResourceEtag(res.id, accessToken).then(result => setEtag(result)).catch(error => {
+            fetchDataResource(id, data?.accessToken).then(async (res) => {
+                await fetchDataResourceEtag(res.id, data?.accessToken).then(result => setEtag(result)).catch(error => {
                     console.error(`Failed to obtain etag for resource ${id}`, error)
                 });
                 return res;
             }).then(async (res) => {
-                await loadContent(res, accessToken).then((data) => res.children = data).catch(error => {
+                await loadContent(res, data?.accessToken).then((data) => res.children = data).catch(error => {
                     console.error(`Failed to fetch children for resource ${id}`, error)
                 });
                 return setResource(res);
@@ -43,19 +41,18 @@ export default function Page() {
                 console.log(`Failed to fetch resource ${id}`, error)
             }).finally(() => setIsLoading(false));
         }
-    }, [id, accessToken, status]);
-
-
+    }, [id, status]);
 
     if (status === "loading" || isLoading){
         return ( <Loader/> )
     }
 
-        if (!resource) {
+    if (!isLoading) {
+        if (!resource || !resource.id) {
             return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
         }
 
-        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.groups);
+        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
         if (permission < Permission.WRITE.valueOf()) {
             return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
         }

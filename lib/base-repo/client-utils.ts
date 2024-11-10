@@ -107,18 +107,3 @@ export function deleteContent(element:ContentInformation, redirectPath?:string){
       return response.status;
     })
 }
-
-export function resourcePermissionForUser(resource:DataResource, user:string | undefined, groups: string[] | undefined){
-    if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")){
-        return Permission.ADMINISTRATE;
-    }
-    let anonymousPermission: Permission = Permission.NONE;
-    resource.acls.map((element: Acl, i:number) => {
-        if(element.sid === "anonymousUser"){
-            anonymousPermission = element.permission;
-        }else if(user && element.sid === user){
-            return element.permission;
-        }
-    });
-   return anonymousPermission;
-}
