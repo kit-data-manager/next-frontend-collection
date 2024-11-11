@@ -2,7 +2,7 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {DataResource, Permission, State} from "@/lib/definitions";
 import {resourcePermissionForUser} from "@/lib/permission-utils";
 
-const REPO_BASE_PATH = "/base-repo/resources/";
+const REPO_BASE_PATH = "/base-repo/resources";
 const VIEW_PATH = "view";
 const EDIT_PATH = "edit";
 const REVOKE_PATH = "revoke";
@@ -31,21 +31,21 @@ export const eventIdentifierToPath = (eventIdentifier: string) => {
 
     switch (parts[0]) {
         case REPO_EVENTS.VIEW_RESOURCE:
-            return `${REPO_BASE_PATH}${parts[1]}/${VIEW_PATH}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${VIEW_PATH}`;
         case REPO_EVENTS.EDIT_RESOURCE:
-            return `${REPO_BASE_PATH}${parts[1]}/${EDIT_PATH}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${EDIT_PATH}`;
         case REPO_EVENTS.REVOKE_RESOURCE:
-            return `${REPO_BASE_PATH}${parts[1]}/${REVOKE_PATH}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${REVOKE_PATH}`;
         case REPO_EVENTS.DELETE_RESOURCE:
-            return `${REPO_BASE_PATH}${parts[1]}/${DELETE_PATH}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${DELETE_PATH}`;
         case REPO_EVENTS.DOWNLOAD_RESOURCE:
-            return `${REPO_BASE_PATH}${parts[1]}/${DOWNLOAD_RESOURCE_PATH}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${DOWNLOAD_RESOURCE_PATH}`;
         case REPO_EVENTS.EDIT_CONTENT:
-            return `${REPO_BASE_PATH}${parts[1]}/${EDIT_CONTENT_PATH}${parts[2]}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${EDIT_CONTENT_PATH}${parts[2]}`;
         case REPO_EVENTS.DOWNLOAD_CONTENT:
-            return `${REPO_BASE_PATH}${parts[1]}/${DOWNLOAD_CONTENT_PATH}${parts[2]}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${DOWNLOAD_CONTENT_PATH}${parts[2]}`;
         case REPO_EVENTS.DELETE_CONTENT:
-            return `${REPO_BASE_PATH}${parts[1]}/${DELETE_CONTENT_PATH}${parts[2]}`;
+            return `${REPO_BASE_PATH}/${parts[1]}/${DELETE_CONTENT_PATH}${parts[2]}`;
         default:
             throw new Error('Invalid event identifier ' + eventIdentifier);
     }

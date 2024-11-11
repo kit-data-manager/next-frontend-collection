@@ -1,8 +1,8 @@
 "use client";
 
-import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
+import DataResourceEditor from '@/app/base-repo/components/DataResourceEditor/DataResourceEditor'
 import {fetchDataResource, fetchDataResourceEtag, fetchSchema, loadContent} from "@/lib/base-repo/client_data";
-import React, {useEffect, useState, use} from "react";
+import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
@@ -14,7 +14,8 @@ import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {resourcePermissionForUser} from "@/lib/permission-utils";
 
 export default function Page({params}: { params: { id: string } }) {
-    const id = params.id;
+    const p = React.use(params);
+    const id = p.id;
     const [resource, setResource] = useState({} as DataResource);
     const [schema, setSchema] = useState(undefined);
     const [etag, setEtag] = React.useState<string | undefined | null>();
@@ -56,6 +57,7 @@ export default function Page({params}: { params: { id: string } }) {
         if (permission < Permission.WRITE.valueOf()) {
             return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
         }
+    }
 
     return (
         <main>

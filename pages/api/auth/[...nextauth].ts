@@ -139,7 +139,7 @@ export default NextAuth({
                 session.error = token.error;
                 token.user.groups = token.groups as unknown as string[];
             }
-            return mySessionInstance;
+            return session;
         },
         /**
          * @param  {object}  token     Decrypted JSON Web Token

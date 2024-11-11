@@ -63,7 +63,9 @@ export const HandleEditorAction = (event: DataCardCustomEvent<ActionEvent>,
                                    currentContent: Array<ContentInformation>,
                                    path: string | null,
                                    setOpenModal: Function,
-                                   setActionContent: Function) => {
+                                   setActionContent: Function,
+                                   accessToken?: string) => {
+
     const eventIdentifier: string = event.detail.eventIdentifier;
     let parts = eventIdentifier.split("_");
     const contentPath = eventIdentifier.substring(eventIdentifier.indexOf("_") + 1);
@@ -75,7 +77,7 @@ export const HandleEditorAction = (event: DataCardCustomEvent<ActionEvent>,
 
         if (parts[0] === REPO_EVENTS.DELETE_CONTENT) {
             if (window.confirm("Do you really want to delete the file " + selectedContent.relativePath + "?")) {
-                deleteContent(selectedContent, redirectPath).then(status => {
+                deleteContent(selectedContent, redirectPath, accessToken).then(status => {
                     if (status == 204) {
                         toast.success("Content " + selectedContent.relativePath + " successfully removed.", {
                             "onClose": () => {
@@ -91,13 +93,13 @@ export const HandleEditorAction = (event: DataCardCustomEvent<ActionEvent>,
                 })
             }
         } else if (parts[0] === "unmakeThumb") {
-            removeTagFromContent(selectedContent, "thumb");
+            removeTagFromContent(selectedContent, "thumb", accessToken);
         } else if (parts[0] === "makeThumb") {
             //otherwise, handle add/remove thumb event
             currentContent.forEach((element: ContentInformation) => {
-                removeTagFromContent(element, "thumb");
+                removeTagFromContent(element, "thumb", accessToken);
             });
-            assignTagToContent(selectedContent, "thumb", path);
+            assignTagToContent(selectedContent, "thumb", path, accessToken);
         } else if (parts[0] === "addTag") {
             console.log("ADD TAG");
             setActionContent(parts[1]);

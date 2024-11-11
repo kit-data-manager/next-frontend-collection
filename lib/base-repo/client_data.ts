@@ -65,7 +65,7 @@ export async function fetchDataResourcePages(size: number, filter?: FilterForm, 
         let fetchPromise: Promise<any>;
         let filterExample = filterFormToDataResource(filter);
 
-        let headers = {"Accept": "application/json"};
+        let headers = {"Accept": "application/json", "Content-Type": "application/json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }

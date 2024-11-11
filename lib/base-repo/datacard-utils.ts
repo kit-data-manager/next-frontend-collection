@@ -1,4 +1,4 @@
-import {ContentInformation, DataResource} from "@/lib/definitions";
+import {ContentInformation, DataResource, ResourceType, TypeGeneral} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
 import {
     addTagEventIdentifier,
@@ -188,16 +188,24 @@ const rightTextForDataResource = (resource: DataResource) => {
 }
 
 const tagsForDataResource = (resource: DataResource) => {
-    //state tags
+    //type tag
     let tags: Array<Tag> = new Array<Tag>;
+    if(resource.resourceType){
+    const typeGeneral: TypeGeneral = resource.resourceType.typeGeneral;
+        const filterUrl = `/base-repo/resources/?typeGeneral=${typeGeneral}`;
+        tags.push({color: "#90EE90", text: typeGeneral, iconName: "fluent-mdl2:shapes", tooltip:"The resource type.", url: filterUrl} as Tag);
+    }
+
+    //state tags
+    const filterUrl = `/base-repo/resources/?state=${resource.state}`;
     if (resource.state === "VOLATILE") {
-        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash", tooltip:"The resource can be modified."} as Tag);
+        tags.push({color: "#90EE90", text: "Volatile", iconName: "f7:pin-slash", tooltip:"The resource can be modified.", url: filterUrl} as Tag);
     } else if (resource.state === "FIXED") {
-        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin", tooltip:"The resource cannot be modified."}  as Tag);
+        tags.push({color: "yellow", text: "Fixed", iconName: "f7:pin", tooltip:"The resource cannot be modified.", url: filterUrl}  as Tag);
     } else if (resource.state === "REVOKED") {
-        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash", tooltip:"The resource is no longer publicly available."}  as Tag);
+        tags.push({color: "#FFD580", text: "Revoked", iconName: "bytesize:trash", tooltip:"The resource is no longer publicly available.", url: filterUrl}  as Tag);
     } else if (resource.state === "GONE") {
-        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash", tooltip:"The resource is no longer available."}  as Tag);
+        tags.push({color: "#FFCCCB", text: "Gone", iconName: "bytesize:trash", tooltip:"The resource is no longer available.", url: filterUrl}  as Tag);
     }
 
     //access tags

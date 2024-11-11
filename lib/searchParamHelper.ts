@@ -1,7 +1,7 @@
-import {use} from "react";
+import React from "react";
 
 export function valueOrDefault(inputObject:any, key:string, defaultIfNotPresent:any){
-        const input = inputObject;
+        const input = React.use(inputObject);
 
         if(!input){
             return defaultIfNotPresent;

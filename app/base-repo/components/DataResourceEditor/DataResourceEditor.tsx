@@ -20,7 +20,7 @@ import {
     DoCreateDataResource,
     DoUpdateDataResource,
     HandleEditorAction
-} from "@/app/base-repo/components/Editor/useDataResourceEditor";
+} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
 import ContentInformationCard from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard";
@@ -35,6 +35,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {thumbForDataResource} from "@/lib/base-repo/datacard-utils";
 import {useSession} from "next-auth/react";
+import {Session} from "next-auth";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
@@ -93,20 +94,19 @@ export default function DataResourceEditor({...props}) {
                                             /*if(userCanEdit(element.parentResource, data?.user.id, data?.user.groups)){
                                               //  actionEvents.push(editEventIdentifier(resource.id));
                                             }*/
-
-                                            if(userCanDelete(element.parentResource, data?.user.id, data?.user.groups)){
+                                            if(userCanDelete(currentData, data?.user.id, data?.user.groups)){
                                                 actionEvents.push(deleteContentEventIdentifier(element.relativePath));
                                             }
 
-                                            if(userCanDownload(element.parentResource, data?.user.id, data?.user.groups)){
-                                                actionEvents.push(downloadContentEventIdentifier(element.parentResource.id, element.relativePath));
+                                            if(userCanDownload(currentData, data?.user.id, data?.user.groups)){
+                                                actionEvents.push(downloadContentEventIdentifier(currentData.id, element.relativePath));
                                             }
 
                                             return (
                                                 <ContentInformationCard
                                                     key={i}
                                                     data={element}
-                                                    onActionClick={(ev: DataCardCustomEvent<ActionEvent>) => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent)}
+                                                    onActionClick={(ev: DataCardCustomEvent<ActionEvent>) => handleAction(ev, currentData, currentContent, path, setOpenModal, setActionContent, data?.accessToken)}
                                                     actionEvents={actionEvents}></ContentInformationCard>
                                             )
                                         })}

@@ -10,10 +10,7 @@ import {
     getActionButton
 } from "@/lib/event-utils";
 import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import React, {useEffect, useState} from "react";
-import DataResourceCardSkeleton from "@/app/base-repo/components/DataResourceCard/DataResourceCardSkeleton";
-import {DataResource} from "@/lib/definitions";
-
+import React from "react";
 
 
 export default function DataResourceCard(props:ResourceCardProps) {
@@ -35,17 +32,17 @@ export default function DataResourceCard(props:ResourceCardProps) {
     actionEvents.map((eventIdentifier:string) => {
         buttons.push(getActionButton(eventIdentifier as string));
     })
-    let [mounted, setMounted] = useState(false);
+  //  let [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
+   /* useEffect(() => {
         setMounted(true);
-    }, []);
+    }, []);*/
 
     let miscProperties = propertiesForDataResource(data);
 
     return (
         <>
-            <DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>
+        {/*<DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>*/}
             <DataCard key={data.id}
                   variant={variant}
                   childrenVariant={childVariant}

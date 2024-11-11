@@ -1,5 +1,5 @@
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import DataResourceEditor from '@/app/base-repo/components/Editor/DataResourceEditor'
+import DataResourceEditor from '@/app/base-repo/components/DataResourceEditor/DataResourceEditor'
 import {loadSchema} from "@/lib/base-repo/data";
 import React from "react";
 import {ToastContainer} from "react-toastify";
