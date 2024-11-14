@@ -21,7 +21,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
             uppy.setFileState(fileID, {
                 xhrUpload: {
                   //  ...file.xhrUpload,
-                    endpoint: `http://localhost:8081/api/v1/dataresources/${resourceId}/data/${encodeURIComponent(file.meta.name)}`
+                    endpoint: `/api/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
                 }
             })
         }

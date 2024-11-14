@@ -31,21 +31,21 @@ export const eventIdentifierToPath = (eventIdentifier: string) => {
 
     switch (parts[0]) {
         case REPO_EVENTS.VIEW_RESOURCE:
-            return `${REPO_BASE_PATH}/${parts[1]}/${VIEW_PATH}`;
+            return `/base-repo/resources/${parts[1]}/${VIEW_PATH}`;
         case REPO_EVENTS.EDIT_RESOURCE:
-            return `${REPO_BASE_PATH}/${parts[1]}/${EDIT_PATH}`;
+            return `/base-repo/resources/${parts[1]}/${EDIT_PATH}`;
         case REPO_EVENTS.REVOKE_RESOURCE:
-            return `${REPO_BASE_PATH}/${parts[1]}/${REVOKE_PATH}`;
+            return `/api/delete?resourceId=${parts[1]}&type=revoke`;
         case REPO_EVENTS.DELETE_RESOURCE:
-            return `${REPO_BASE_PATH}/${parts[1]}/${DELETE_PATH}`;
+            return `/api/delete?resourceId=${parts[1]}&etag=${parts[2]}&type=delete`;
         case REPO_EVENTS.DOWNLOAD_RESOURCE:
-            return `${REPO_BASE_PATH}/${parts[1]}/${DOWNLOAD_RESOURCE_PATH}`;
+            return `/api/download?resourceId=${parts[1]}&type=zip`;
         case REPO_EVENTS.EDIT_CONTENT:
             return `${REPO_BASE_PATH}/${parts[1]}/${EDIT_CONTENT_PATH}${parts[2]}`;
         case REPO_EVENTS.DOWNLOAD_CONTENT:
-            return `${REPO_BASE_PATH}/${parts[1]}/${DOWNLOAD_CONTENT_PATH}${parts[2]}`;
+            return `/api/download?resourceId=${parts[1]}&filename=${parts[2]}&type=data`;
         case REPO_EVENTS.DELETE_CONTENT:
-            return `${REPO_BASE_PATH}/${parts[1]}/${DELETE_CONTENT_PATH}${parts[2]}`;
+            return `/api/delete?resourceId=${parts[1]}&filename=${parts[2]}`;
         default:
             throw new Error('Invalid event identifier ' + eventIdentifier);
     }
@@ -119,12 +119,12 @@ export const editEventIdentifier = (resourceId:string) :string => {
     return `${REPO_EVENTS.EDIT_RESOURCE}_${resourceId}`;
 }
 
-export const revokeEventIdentifier = (resourceId:string) :string => {
-    return `${REPO_EVENTS.REVOKE_RESOURCE}_${resourceId}`;
+export const revokeEventIdentifier = (resourceId:string, etag: string) :string => {
+    return `${REPO_EVENTS.REVOKE_RESOURCE}_${resourceId}_${etag}`;
 }
 
-export const deleteEventIdentifier = (resourceId:string) :string => {
-    return `${REPO_EVENTS.DELETE_RESOURCE}_${resourceId}`;
+export const deleteEventIdentifier = (resourceId:string, etag: string) :string => {
+    return `${REPO_EVENTS.DELETE_RESOURCE}_${resourceId}_${etag}`;
 }
 
 export const downloadEventIdentifier = (resourceId:string) :string => {

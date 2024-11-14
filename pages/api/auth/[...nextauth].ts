@@ -1,4 +1,4 @@
-import NextAuth, {Session, User} from 'next-auth';
+import NextAuth, {NextAuthOptions, Session, User} from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
 import type { JWT } from 'next-auth/jwt';
@@ -87,7 +87,8 @@ const keycloakProvider = KeycloakProvider({
    }
  })
 
-export default NextAuth({
+
+export const authOptions: NextAuthOptions = {
     providers: [keycloakProvider],
     session: {
         strategy: "jwt"
@@ -169,6 +170,8 @@ export default NextAuth({
             return refreshAccessToken(token);
         },
     },
-});
+}
+
+export default NextAuth(authOptions);
 
 

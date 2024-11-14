@@ -4,11 +4,7 @@ import {DataResource, Permission, State} from "@/lib/definitions";
 import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {
-    deleteEventIdentifier,
-    downloadEventIdentifier,
-    editEventIdentifier,
-    revokeEventIdentifier, userCanDelete, userCanDownload, userCanEdit, userCanView,
-    viewEventIdentifier
+     userCanDownload, userCanEdit, userCanView
 } from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
@@ -17,6 +13,10 @@ import {useSession} from "next-auth/react";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
+import {ViewResourceAction} from "@/lib/base-repo/actions/viewResourceAction";
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
+import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
 
 export default function DataResourceListing({page,size, filter}: {
     page: number;
@@ -61,27 +61,19 @@ export default function DataResourceListing({page,size, filter}: {
             <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
                     {resources?.map((element:DataResource, i:number) => {
                         //make edit optional depending on permissions
-                        const actionEvents:string[] = [
+                        const actionEvents:ActionButtonInterface[] = [
                         ];
 
                         if(userCanView(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(viewEventIdentifier(element.id));
+                            actionEvents.push(new ViewResourceAction(element.id).getDataCardAction());
                         }
 
-                        if(userCanEdit(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(editEventIdentifier(element.id));
-                        }
-
-                        if(userCanDelete(element, data?.user.id, data?.user.groups)){
-                            if(element.state == State.REVOKED){
-                                actionEvents.push(deleteEventIdentifier(element.id));
-                            }else{
-                                actionEvents.push(revokeEventIdentifier(element.id));
-                            }
+                       if(userCanEdit(element, data?.user.id, data?.user.groups)){
+                            actionEvents.push(new EditResourceAction(element.id).getDataCardAction());
                         }
 
                         if(userCanDownload(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(downloadEventIdentifier(element.id));
+                            actionEvents.push(new DownloadResourceAction(element.id).getDataCardAction());
                         }
 
                         let classname = "volatile_or_fixed";

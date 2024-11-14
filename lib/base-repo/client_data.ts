@@ -116,7 +116,6 @@ export async function fetchDataResourceEtag(id: string, token?: string | undefin
     }
 }
 
-
 export async function fetchActuatorInfo(token?: string | undefined): Promise<ActuatorInfo> {
     let branch = "unknown";
     let hash = "unknown";
@@ -230,7 +229,7 @@ export async function fetchSchema(schemaPath: string) {
     }
 }
 
-class ResponseError extends Error {
+export class ResponseError extends Error {
     public response: string;
 
     constructor(message, res) {

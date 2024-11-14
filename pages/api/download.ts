@@ -3,7 +3,8 @@ import fetch from 'node-fetch';
 import stream from 'stream';
 import {promisify} from 'util';
 import {ContentInformation, ExtendedSession} from "@/lib/definitions";
-import {getSession} from "next-auth/react";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 async function downloadData(resourceId:string, filename:string, accessToken:string | undefined, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
@@ -90,7 +91,7 @@ async function downloadThumb(resourceId:string, filename:string, accessToken:str
         "Content-Length",
         image.headers.get("content-length") || contentInfo.size
     );
-    res.setHeader("Content-Disposition", 'attachment; filename="tomato.jpeg"');
+    res.setHeader("Content-Disposition", `attachment; filename="${contentInfo.relativePath}"`);
 
     res.write(Uint8Array.from(chunks));
     res.status(200).end();
@@ -124,8 +125,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({message: 'Not existing endpoint'})
         return
     }
-    const session:ExtendedSession = await getSession({req}) as ExtendedSession;
-    const accessToken:string | undefined = session.accessToken;
+    const session:ExtendedSession | null = await getServerSession(req, res, authOptions);
+    const accessToken:string | undefined = session?.accessToken;
 
     try {
         const {resourceId, filename, type} = req.query as {resourceId:string, filename:string, type:string};

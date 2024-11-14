@@ -1,11 +1,12 @@
 import {DataResource} from "@/lib/definitions";
+import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
 
 export interface ResourceCardProps  {
     data: DataResource;
     variant?: "default"|"detailed"|"minimal" | undefined;
     childrenVariant?: "default" | "minimal";
-    actionEvents?: string[];
-    onActionClick?: (action: ActionButtonInterface) => void;
+    actionEvents?: ActionButtonInterface[];
+    onActionClick?: (action: DataCardCustomEvent<ActionEvent>) => void;
 }
 
 export type ActionButtonInterface =

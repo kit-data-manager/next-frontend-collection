@@ -1,14 +1,11 @@
 import {ContentInformation, DataResource, ResourceType, TypeGeneral} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
-import {
-    addTagEventIdentifier,
-    getActionButton,
-    makeThumbEventIdentifier,
-    unmakeThumbEventIdentifier
-} from "@/lib/event-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../data-view-web-component";
 import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
+import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
+import {ToggleThumbAction} from "@/lib/base-repo/actions/toggleThumbAction";
+import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
 
 export const propertiesForDataResource = (resource: DataResource) => {
     let children:Array<DataCard> = childrenForDataResource(resource);
@@ -63,7 +60,7 @@ export const propertiesForContentInformation = (resourceId: string,
             thumbTag = {
                 color: isThumb ? "var(--success)" : "var(--error)",
                 text: "Thumb",
-                eventIdentifier: isThumb ? unmakeThumbEventIdentifier(resourceId, content.relativePath) : makeThumbEventIdentifier(resourceId, content.relativePath),
+                eventIdentifier: new ToggleThumbAction(resourceId, content.relativePath).getActionId(),
                 tooltip: isThumb ? "Click to NOT use this image as resource thumbnail." : "Click to use this image as resource thumbnail."
             }
             tags.push(thumbTag);
@@ -76,15 +73,18 @@ export const propertiesForContentInformation = (resourceId: string,
             if(tag.toLowerCase() != "thumb"){
             let tagElement:Tag = {
                 color: "var(--info)",
+                eventIdentifier: new ToggleTagAction(resourceId, content.relativePath, tag).getActionIdentifier(),
                 text: tag,
-            }
-            tags.push(tagElement);
-            let removeTagElement:Tag = {
-                color: "var(--destructive)",
-                text:"x",
                 tooltip: "Click to remove tag '" + tag + "'"
             }
-            tags.push(removeTagElement);
+            tags.push(tagElement);
+            /*let removeTagElement:Tag = {
+                color: "var(--destructive)",
+                text:"x",
+                eventIdentifier: new ToggleTagAction(resourceId, content.relativePath, tag).getActionIdentifier(),
+                tooltip: "Click to remove tag '" + tag + "'"
+            }
+            tags.push(removeTagElement);*/
             }
         });
     }
@@ -93,7 +93,7 @@ export const propertiesForContentInformation = (resourceId: string,
         tags.push({
             color: "var(--info)",
             iconName: "heroicons:plus-small-20-solid",
-            eventIdentifier: addTagEventIdentifier(resourceId, content.relativePath),
+            eventIdentifier: new ToggleTagAction(resourceId, content.relativePath).getActionIdentifier(),
             tooltip: "Click to add a new tag."
 
         } as Tag);
@@ -243,13 +243,16 @@ const tagsForDataResource = (resource: DataResource) => {
 }
 
 export const thumbForDataResource = (resource: DataResource) => {
+    return thumbFromContentArray(resource.children);
+}
+
+export const thumbFromContentArray = (content: ContentInformation[]) => {
     let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
-    if (resource.children && resource.children.length > 0) {
-        resource.children.map((content, i) => {
-            content.tags.map((tag, i) => {
+    if (content && content.length > 0) {
+        content.map((contentElement, i) => {
+            contentElement.tags.map((tag, i) => {
                 if (tag.toLocaleLowerCase() === "thumb") {
-                    //thumb = content.contentUri;
-                    thumb = `/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=thumb`
+                    thumb = `/api/download?resourceId=${contentElement.parentResource.id}&filename=${contentElement.relativePath}&type=thumb`
                 }
             });
         });
@@ -343,7 +346,9 @@ const childrenForDataResource = (resource: DataResource) => {
         resource.children.map((content, i) => {
             let actionButtons = [
                 //only add download button
-                getActionButton(`/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=data`)
+                new DownloadContentAction(resource.id, content.relativePath).getDataCardAction()
+
+                //getActionButton(`/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=data`)
             ];
 
             children.push(propertiesForContentInformation(resource.id, content, actionButtons, true) as DataCard);

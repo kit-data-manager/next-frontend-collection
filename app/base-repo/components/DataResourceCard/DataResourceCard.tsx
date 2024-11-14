@@ -4,46 +4,48 @@ import {DataCard} from "data-card-react";
 import {propertiesForDataResource} from "@/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
-
-import {
-    eventIdentifierToPath,
-    getActionButton
-} from "@/lib/event-utils";
 import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React from "react";
-
+import {runAction} from "@/lib/base-repo/actions/actionExecutor";
 
 export default function DataResourceCard(props:ResourceCardProps) {
+  /*  const {data, status} = useSession();
+    const [etag, setEtag] = useState('' as string);
+*/
+    const router = useRouter();
+    const resource = props.data;
+    const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
+    const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
+    const actionEvents:ActionButtonInterface[] = props.actionEvents ? props.actionEvents : [] as ActionButtonInterface[];
+    let buttons:Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        replace(eventIdentifierToPath(eventIdentifier));
+        console.log("ID ", eventIdentifier);
+        runAction(eventIdentifier, (redirect:string) => {
+          //  setEtag("");
+            router.push(redirect);
+        });
     });
 
-    const {replace} = useRouter();
-    const data = props.data;
-    const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
-    const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
-    const actionEvents = props.actionEvents ? props.actionEvents : [];
     const actionCallback = props.onActionClick ? props.onActionClick : handleAction;
 
-    let buttons:Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
+  /*  useEffect(() => {
+        fetchDataResourceEtag(resource.id, data?.accessToken).then(result => setEtag(result as string));
+    }, [data?.accessToken, etag, resource.id]);
 
-    actionEvents.map((eventIdentifier:string) => {
-        buttons.push(getActionButton(eventIdentifier as string));
+    if(!etag){
+        return "Waiting for etag...";
+    }*/
+
+    actionEvents.map((actionEvent:ActionButtonInterface) => {
+        buttons.push(actionEvent);
     })
-  //  let [mounted, setMounted] = useState(false);
 
-   /* useEffect(() => {
-        setMounted(true);
-    }, []);*/
-
-    let miscProperties = propertiesForDataResource(data);
-
+    let miscProperties = propertiesForDataResource(resource);
     return (
         <>
-        {/*<DataResourceCardSkeleton className={mounted ? "hidden" : "block"}/>*/}
-            <DataCard key={data.id}
+            <DataCard key={resource.id}
                   variant={variant}
                   childrenVariant={childVariant}
                   actionButtons={buttons}

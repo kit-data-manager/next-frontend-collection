@@ -1,13 +1,18 @@
+"use client";
+
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import DataResourceEditor from '@/app/base-repo/components/DataResourceEditor/DataResourceEditor'
-import {loadSchema} from "@/lib/base-repo/data";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
+import {fetchSchema} from "@/lib/base-repo/client_data";
 
-export default async function Page() {
-    const [ schema] = await Promise.all([
-        loadSchema("public/definitions/base-repo/models/resourceModel.json")]);
+export default function Page() {
+    const [schema, setSchema] = useState(undefined);
+
+    useEffect(() => {
+        fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema));
+    });
 
     return (
         <main>

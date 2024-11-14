@@ -1,13 +1,12 @@
 'use client';
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import {fetchDataResource, loadContent} from "@/lib/base-repo/client_data";
+import {fetchDataResource, fetchDataResourceEtag, loadContent} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React, {useEffect, useState} from "react";
 import {
-    deleteEventIdentifier,
-    downloadEventIdentifier,
-    editEventIdentifier, revokeEventIdentifier, userCanDelete, userCanDownload,
+    userCanDelete,
+    userCanDownload,
     userCanEdit
 } from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
@@ -17,58 +16,74 @@ import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
 import {resourcePermissionForUser} from "@/lib/permission-utils";
+import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
+import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {DeleteResourceAction} from "@/lib/base-repo/actions/deleteResourceAction";
+import {RevokeResourceAction} from "@/lib/base-repo/actions/revokeResourceAction";
+import {ToastContainer} from "react-toastify";
 
-export default function Page({params}: { params: { id: string } }) {
-    const id = params.id;
+export default function Page({params}) {
+    const used = React.use(params) as { id: string };
+    const id = used.id;
+
     const [resource, setResource] = useState({} as DataResource);
+    const [etag, setEtag] = useState({} as string);
     const [isLoading, setLoading] = useState(true)
-    const { data, status } = useSession() ;
-    const actionEvents: string[] = [];
-
+    const {data, status} = useSession();
+    const actionEvents: ActionButtonInterface[] = [];
 
     useEffect(() => {
-        fetchDataResource(id,data?.accessToken).
-        then(async (res) => {
-            await loadContent(res,data?.accessToken).
-            then((data) => {
-                res.children = data;
-                setResource(res)
-            }).
-            catch(error => {console.error(`Failed to fetch children for resource ${id}`, error); throw error;})
-        }).
-        catch(error => {console.log(`Failed to fetch resource ${id}`, error)}).
-        finally(() => setLoading(false));
-    }, [id, data.accessToken, resource]);
+        setLoading(true);
+        fetchDataResource(id, data?.accessToken).then(async (res) => {
+            await fetchDataResourceEtag(res.id, data?.accessToken).then(result => setEtag(result as string)).catch(error => {
+                console.error(`Failed to obtain etag for resource ${id}`, error)
+            });
+            return res;
+        }).then(async (res) => {
+            await loadContent(res, data?.accessToken).then((data) => res.children = data).catch(error => {
+                console.error(`Failed to fetch children for resource ${id}`, error)
+            });
+            setResource(res);
+        }).then(() => {
+            setLoading(false);
+        }).catch(error => {
+            console.log(`Failed to fetch resource ${id}`, error)
+            setLoading(false);
+        })
+    }, [id, data?.accessToken]);
 
-    if(!id){
+    if (!id) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
     }
 
-    if (!isLoading) {
-        if (!resource || !resource.id) {
-            return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
-        }
+    if (status === "loading" || isLoading) {
+        return <Loader/>;
+    }
 
-        let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
-        if (permission < Permission.READ.valueOf()) {
-            return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
-        }
+    if (!resource || !resource.id) {
+        return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
+    }
 
-        if(userCanEdit(resource, data?.user.id, data?.user.groups)){
-            actionEvents.push(editEventIdentifier(resource.id));
-        }
+    let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+    if (permission < Permission.READ.valueOf()) {
+        return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
+    }
 
-        if(userCanDelete(resource, data?.user.id, data?.user.groups)){
-            if(resource.state == State.REVOKED){
-                actionEvents.push(deleteEventIdentifier(resource.id));
-            }else{
-                actionEvents.push(revokeEventIdentifier(resource.id));
-            }
-        }
+    if (userCanEdit(resource, data?.user.id, data?.user.groups)) {
+        actionEvents.push(new EditResourceAction(resource.id).getDataCardAction());
+    }
 
-        if(userCanDownload(resource, data?.user.id, data?.user.groups)){
-            actionEvents.push(downloadEventIdentifier(resource.id));
+    if (userCanDelete(resource, data?.user.id, data?.user.groups)) {
+        if (resource.state == State.REVOKED) {
+            actionEvents.push(new DeleteResourceAction(resource.id, etag).getDataCardAction());
+        } else {
+            actionEvents.push(new RevokeResourceAction(resource.id, etag).getDataCardAction());
         }
+    }
+
+    if (userCanDownload(resource, data?.user.id, data?.user.groups)) {
+        actionEvents.push(new DownloadResourceAction(resource.id).getDataCardAction());
     }
 
     return (
@@ -87,13 +102,17 @@ export default function Page({params}: { params: { id: string } }) {
             <SectionCaption caption={"View Resource"}/>
 
             <div className="flex">
-                <div className="rounded-lg grow">
-                    {isLoading ?
-                        <Loader/> :
-                        resource ? <DataResourceCard key={id} data={resource} variant={"detailed"} actionEvents={actionEvents}></DataResourceCard> : <Loader/>
-                    }
+                <div className="block min-w-full align-middle">
+                    <div className="rounded-lg p-2 md:pt-0">
+                        <DataResourceCard data={resource}
+                                          variant={"detailed"}
+                                          actionEvents={actionEvents}></DataResourceCard>
+                    </div>
                 </div>
             </div>
+            <ToastContainer/>
+            {/* react-hot-toast.com */}
+
         </main>
     );
 }

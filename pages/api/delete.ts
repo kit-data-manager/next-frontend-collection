@@ -11,82 +11,85 @@ async function deleteContent(resourceId: string, filename: string, accessToken: 
         "Accept": "application/vnd.datamanager.content-information+json"
     };
 
-    if(accessToken){
+    if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     await fetch(url, {
         method: "GET",
-        headers: headers})
+        headers: headers
+    })
         .then(response => {
             if (response.status === 404) {
                 res.status(404).json({message: 'Not found'});
                 Promise.reject("Not found");
-            }else if (response.status === 401 || response.status === 403) {
+            } else if (response.status === 401 || response.status === 403) {
                 res.status(response.status).json({message: 'Forbidden'});
                 Promise.reject("Forbidden");
             }
             return response.headers.get("ETag");
-        }).then( etag => {
+        }).then(etag => {
             headers["If-Match"] = etag ? etag : "";
             return fetch(url, {
                 method: "DELETE",
                 headers: headers
-            }).then(function(response){
+            }).then(function (response) {
                 return response.status;
             });
         }).then(status => {
-            if(status != 204) {
+            if (status != 204) {
                 res.status(status).json({message: 'Failed to delete.'});
                 Promise.reject("Failed");
-            }else{
-                res.status(204).json({message: 'Success'});
+            } else {
+                res.status(204).end();
                 Promise.resolve();
             }
         });
 }
 
-async function deleteResource(resourceId: string, accessToken: string, res: NextApiResponse) {
+async function deleteResource(resourceId: string, etag: string, type: string, accessToken: string, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
     const url = `${repoBaseUrl}/api/v1/dataresources/${resourceId}`;
 
-    const headers = {
-        "Accept": "application/json"
-    };
-
-    if(accessToken){
+    const headers = {};
+    if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    await fetch(url, {
-        method: "GET",
-        headers: headers})
-        .then(response => {
-            if (response.status === 404) {
-                res.status(404).json({message: 'Not found'});
-                Promise.reject("Not found");
-            }else if (response.status === 401 || response.status === 403) {
-                res.status(response.status).json({message: 'Forbidden'});
-                Promise.reject("Forbidden");
-            }
-            return response.headers.get("ETag");
-        }).then( etag => {
-            headers["If-Match"] = etag ? etag : "";
-            return fetch(url, {
-                method: "DELETE",
-                headers: headers
-            }).then(function(response){
-                return response.status;
-            });
-        }).then(status => {
-            if(status != 204) {
+    if (type === "revoke") {
+        const patch = [{"op": "replace", "path": `/state`, "value": "REVOKED"}]
+
+        headers["If-Match"] = etag ? etag : "";
+        headers["Content-Type"] = "application/json-patch+json";
+        await fetch(url, {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify(patch)
+        }).then(response => response.status).then(status => {
+            if (status != 204) {
                 res.status(status).json({message: 'Failed to delete.'});
                 Promise.reject("Failed");
-            }else{
-                res.status(204).json({message: 'Success'});
+            } else {
+                res.status(204).end();
                 Promise.resolve();
             }
-        });
+        })
+
+    } else if (type === "delete") {
+        headers["If-Match"] = etag ? etag : "";
+        await fetch(url, {
+            method: "DELETE",
+            headers: headers
+        }).then(response => response.status).then(status => {
+            if (status != 204) {
+                res.status(status).json({message: 'Failed to delete.'});
+                Promise.reject("Failed");
+            } else {
+                res.status(204).end();
+                Promise.resolve();
+            }
+        })
+    }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -95,27 +98,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return
     }
 
-    const session:ExtendedSession = await getSession({req}) as ExtendedSession;
-    const accessToken:string | undefined = session?.accessToken;
+    const session: ExtendedSession = await getSession({req}) as ExtendedSession;
+    const accessToken: string | undefined = session?.accessToken;
 
     try {
-        const {resourceId, filename} = req.query;
-        if(!resourceId){
+        const {resourceId, filename, etag, type} = req.query;
+        if (!resourceId) {
             res.status(500).json({message: 'resourceId not provided.'})
             return
         }
 
-        if(!resourceId || !filename){
-            res.status(500).json({message: 'Either resourceId or filename not provided.'})
-            return
-        }
-
-        if(filename){
+        if (filename) {
             //deleteContent
             await deleteContent(resourceId as string, filename as string, accessToken, res);
-        }else{
-            //delete resource
-            await deleteResource(resourceId as string, accessToken, res);
+        } else {
+            //revoke/delete resource
+            if (!etag || !type) {
+                res.status(500).json({message: 'etag and/or type not provided.'})
+                return
+            }
+            await deleteResource(resourceId as string, etag as string, type as string, accessToken, res);
         }
 
     } catch (exception) {

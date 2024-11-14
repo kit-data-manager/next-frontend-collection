@@ -1,7 +1,6 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
 import {Activity} from "@/lib/definitions";
-import {promises as fs} from 'fs';
 
 export async function fetchContentOverview() {
     noStore()

@@ -44,7 +44,8 @@ export default function JsonForm(props) {
     let jsoneditor = undefined;
     let setEditorReady = props.setEditorReady;
 
-    const elementRef = useRef();
+    const elementRef = React.useRef();
+
     const defaultOptions = {
         iconlib: "fontawesome5",
         object_layout: "table",
@@ -82,23 +83,26 @@ export default function JsonForm(props) {
         console.log(errors);
         return errors.length === 0;
     }
+
     const setUpEditor = () =>{
         jsoneditor = new window.JSONEditor(elementRef.current, defaultOptions);
+            jsoneditor.on('change' , () => {
+                if(validate()) {
+                    props.onChange(jsoneditor.getValue());
+                }else{
+                    props.onChange(undefined);
+                }
+            })
+            jsoneditor.on('ready', () => {
+                setEditorReady(true);
+                // Now the api methods will be available
+                if (props.enabled === false) {
+                    jsoneditor.disable();
+                }
+            });
 
-        jsoneditor.on('change' , () => {
-            if(validate()) {
-                props.onChange(jsoneditor.getValue());
-            }else{
-                props.onChange(undefined);
-            }
-        })
-        jsoneditor.on('ready', () => {
-            setEditorReady(true);
-            // Now the api methods will be available
-            if (props.enabled === false) {
-                jsoneditor.disable();
-            }
-        });
+
+
     }
     const initJsoneditor = function () {
         // destroy old JSONEditor instance if exists
@@ -114,7 +118,7 @@ export default function JsonForm(props) {
                     setUpEditor()
                     clearInterval(inter)
                 }
-            }, 1000);
+            }, 500);
         }
     };
     const effectRan = useRef(false);
@@ -125,7 +129,7 @@ export default function JsonForm(props) {
         }
 
         return () => effectRan.current = true;
-    }, []);
+    });
 
     return <div ref={elementRef}></div>;
 }
