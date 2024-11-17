@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import {useSession} from "next-auth/react";
 import {getStateList, getTypeGeneralList} from "@/lib/filter-utils";
+import {Label} from "@/components/ui/label";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
@@ -29,9 +30,9 @@ export default function FilterResourceForm({filter}: {
         <form action={doFilterResources} ref={formRef}>
             <div className="rounded-md">
                 <div className="mb-4">
-                    <label htmlFor="customer" className="mb-2 block text-sm font-medium">
+                    <Label htmlFor="publisher" className="mb-2 block text-sm font-medium">
                         Publisher
-                    </label>
+                    </Label>
                     <div className="relative">
                         <input
                             id="publisher"

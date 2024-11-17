@@ -1,6 +1,6 @@
 'use client'
 
-import {DataCard} from "data-card-react";
+import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {propertiesForContentInformation, propertiesForDataResource} from "@/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
 import { useRouter} from "next/compat/router";

@@ -347,8 +347,6 @@ const childrenForDataResource = (resource: DataResource) => {
             let actionButtons = [
                 //only add download button
                 new DownloadContentAction(resource.id, content.relativePath).getDataCardAction()
-
-                //getActionButton(`/api/download?resourceId=${resource.id}&filename=${content.relativePath}&type=data`)
             ];
 
             children.push(propertiesForContentInformation(resource.id, content, actionButtons, true) as DataCard);

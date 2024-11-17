@@ -1,43 +1,73 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {ActuatorInfo, ContentInformation, DataResource, KeycloakInfo} from "@/lib/definitions";
+import {ActuatorInfo, ContentInformation, DataResource, DataResourcePage, KeycloakInfo} from "@/lib/definitions";
 import {filterFormToDataResource} from "@/lib/filter-utils";
 
-
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm, token?: string | undefined): Promise<DataResource[]> {
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, token?: string | undefined): Promise<DataResourcePage> {
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        const realPage = page - 1;
+        const realPage = Math.max(page - 1, 0);
         let filterExample = filterFormToDataResource(filter);
-        let headers = {};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
+        let sorting = sort;
+        if (!sorting) {
+            sorting = "lastUpdate,desc";
         }
 
         if (filterExample) {
-            headers["Content-Type"] = "application/json";
-            return await myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {
+            return await myFetch(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "POST",
-                headers: headers,
                 body: JSON.stringify(filterExample)
-            }).then((res) => res.json());
-        }
+            }).then(async (res) => {
+                const resourcePage: DataResourcePage = {} as DataResourcePage;
+                resourcePage.resources = await res.json();
+                resourcePage.page = page;
+                resourcePage.pageSize = size;
+                const contentRange: string | null = res.headers.get('content-range');
 
-        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=lastUpdate,desc`, {headers: headers}).then(res => res.json());
+                if (contentRange) {
+                    const totalElements = Number(contentRange.substring(contentRange.lastIndexOf("/") + 1));
+                    resourcePage.totalPages = Math.ceil(totalElements / size);
+                }
+                return resourcePage;
+            });
+        } else {
+            return await myFetch(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
+                const resourcePage: DataResourcePage = {} as DataResourcePage;
+                resourcePage.resources = await res.json();
+                resourcePage.page = page;
+                resourcePage.pageSize = size;
+                const contentRange: string | null = res.headers.get('content-range');
+
+                if (contentRange) {
+                    const totalElements = Number(contentRange.substring(contentRange.lastIndexOf("/") + 1));
+                    resourcePage.totalPages = Math.ceil(totalElements / size);
+                }
+                return resourcePage;
+            });
+        }
     } catch (error) {
         console.error('Service Error:', error);
-        return [];
+        return Promise.reject("No resources found");
     }
 }
 
-export async function loadContent(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
+export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`,
-            {headers: headers}).then(res => res.json()).catch(error => {
+        return myFetch(`/api/get?resourceId=${id}`).then(res => ({
+            etag: res.headers.get('etag'),
+            json: res.json()
+        })).then(async (wrapper) => {
+            const resource: DataResource = await wrapper.json as DataResource;
+            resource.etag = wrapper.etag;
+            return resource;
+        });
+    } catch (error) {
+        console.error('Failed to fetch resource. Error:', error);
+        return Promise.reject("No resources found");
+    }
+}
+
+export async function fetchAllContentInformation(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
+    try {
+        return await myFetch(`/api/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -46,57 +76,18 @@ export async function loadContent(resource: DataResource, token?: string | undef
     }
 }
 
-export async function updateThumbState(id: string, path: string, addRemove: boolean, token?: string | undefined) {
-    let headers = {"Accept": "application/patch+json"};
-    if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-    }
-    if (addRemove) {
-        console.log("Add thumb state ", id, "/data/", path);
-    } else {
-        console.log("Remove thumb state ", id, "/data/", path);
-    }
-}
-
-
-export async function fetchDataResourcePages(size: number, filter?: FilterForm, token?: string | undefined) {
+export async function fetchContentInformation(id: string, filename:string, token?: string | undefined) {
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        let fetchPromise: Promise<any>;
-        let filterExample = filterFormToDataResource(filter);
-
-        let headers = {"Accept": "application/json", "Content-Type": "application/json"};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-        if (filterExample) {
-            fetchPromise = myFetch(`${repoBaseUrl}/api/v1/dataresources/search?page=0&size=0`, {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify(filterExample)
-            });
-        } else {
-            fetchPromise = myFetch(`${repoBaseUrl}/api/v1/dataresources/?page=0&size=0`, {headers: headers});
-        }
-
-        return await fetchPromise.then(response => response.headers.get("Content-Range")).then(rangeHeader => rangeHeader.substring(rangeHeader.lastIndexOf("/") + 1)).then((totalElements) => Math.ceil(totalElements / size));
+        return myFetch(`/api/get?resourceId=${id}&filename=${filename}`).then(res => ({
+            etag: res.headers.get('etag'),
+            json: res.json()
+        })).then(async (wrapper) => {
+            const resource: ContentInformation = await wrapper.json as ContentInformation;
+            resource.etag = wrapper.etag;
+            return resource;
+        });
     } catch (error) {
-        console.error('Failed to fetch resource page count. Error:', error);
-        return undefined;
-    }
-}
-
-export async function fetchDataResource(id: string, token?:string | undefined) {
-    try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-        let headers = {"Accept": "application/json"};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-        return myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {headers: headers}).then(res => res.json());
-    } catch (error) {
-        console.error('Failed to fetch resource. Error:', error);
+        console.error('Failed to fetch content metadata. Error:', error);
         return undefined;
     }
 }
@@ -147,7 +138,7 @@ export async function fetchActuatorInfo(token?: string | undefined): Promise<Act
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(token?:string | undefined) {
+export async function fetchActuatorHealth(token?: string | undefined) {
     let database = "unknown";
     let databaseStatus = "unknown";
     let harddisk = 0;

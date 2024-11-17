@@ -1,17 +1,27 @@
 'use client'
 
-import {DataCard} from "data-card-react";
-import {propertiesForDataResource} from "@/lib/base-repo/datacard-utils";
+import {
+    propertiesForContentInformation,
+    propertiesForDataResource,
+    thumbFromContentArray
+} from "@/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
 import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
+import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
+import {fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
+import {useSession} from "next-auth/react";
 
 export default function DataResourceCard(props:ResourceCardProps) {
-  /*  const {data, status} = useSession();
-    const [etag, setEtag] = useState('' as string);
-*/
+    const {data, status} = useSession();
+
+    const [childrenData, setChildrenData] = useState([] as DataCard[]);
+    const [childrenLabel, setChildrenLabel] = useState("Loading...");
+    const [thumb, setThumb] = useState("/data.png");
+
     const router = useRouter();
     const resource = props.data;
     const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
@@ -21,28 +31,44 @@ export default function DataResourceCard(props:ResourceCardProps) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        console.log("ID ", eventIdentifier);
+        console.log("DataResourceCard ActionId ", eventIdentifier);
+
         runAction(eventIdentifier, (redirect:string) => {
-          //  setEtag("");
             router.push(redirect);
         });
     });
 
     const actionCallback = props.onActionClick ? props.onActionClick : handleAction;
 
-  /*  useEffect(() => {
-        fetchDataResourceEtag(resource.id, data?.accessToken).then(result => setEtag(result as string));
-    }, [data?.accessToken, etag, resource.id]);
+    useEffect(() => {
+        new Promise(r => setTimeout(r, 1000)).then(() => {
+        fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
+            let children:Array<DataCard> = new Array<DataCard>;
 
-    if(!etag){
-        return "Waiting for etag...";
-    }*/
+            let thumb = thumbFromContentArray(contentInformation);
+
+            contentInformation.map(element => {
+                let actionButtons = [
+                    //only add download button
+                    new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
+                ];
+                children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);
+            })
+            setChildrenLabel("File(s)");
+            setThumb(thumb);
+            setChildrenData(children);
+        });
+        })
+    }, [data?.accessToken, resource.id]);
 
     actionEvents.map((actionEvent:ActionButtonInterface) => {
         buttons.push(actionEvent);
     })
 
     let miscProperties = propertiesForDataResource(resource);
+    miscProperties.childrenData = childrenData;
+    miscProperties.childrenLabel = childrenLabel;
+    miscProperties.imageUrl = thumb;
     return (
         <>
             <DataCard key={resource.id}

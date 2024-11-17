@@ -13,6 +13,7 @@ import {valueOrDefault} from "@/lib/searchParamHelper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
 import {useSession} from "next-auth/react";
+import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
 
 
 export default function Page({searchParams}: {
@@ -21,6 +22,7 @@ export default function Page({searchParams}: {
 
     const page: number = valueOrDefault(searchParams, "page", 0);
     const size: number = valueOrDefault(searchParams, "size", 10);
+    const sort:string = valueOrDefault(searchParams, "sort", "lastUpdate,desc");
     const filter: FilterForm = {} as FilterForm;
     const { data, status } = useSession();
 
@@ -45,8 +47,7 @@ export default function Page({searchParams}: {
             <SectionCaption caption={"Resources"}/>
 
             <div className="flex">
-                <div
-                    className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
+                <div className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
                     <Button asChild variant="outline">
                         {data ? (
                             <Link
@@ -55,10 +56,13 @@ export default function Page({searchParams}: {
                                 <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
                             </Link>) : null}
                     </Button>
+
+                    <SortResourceBox/>
+
                     <FilterResourceForm filter={filter}/>
                 </div>
                 <div className="lg:initial w-full lg:w-2/3 ">
-                   <DataResourceListing page={page} size={size} filter={filter}/>
+                   <DataResourceListing page={page} size={size} filter={filter} sort={sort}/>
                 </div>
             </div>
         </main>

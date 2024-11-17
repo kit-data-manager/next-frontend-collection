@@ -1,5 +1,5 @@
 import {DataResource} from "@/lib/definitions";
-import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
+import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 
 export interface ResourceCardProps  {
     data: DataResource;

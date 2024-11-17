@@ -1,7 +1,7 @@
 'use client';
 
-import {DataResource, Permission, State} from "@/lib/definitions";
-import {fetchDataResourcePages, fetchDataResources, loadContent} from "@/lib/base-repo/client_data";
+import {DataResource, State} from "@/lib/definitions";
+import {fetchDataResources} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {
      userCanDownload, userCanEdit, userCanView
@@ -18,10 +18,11 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
 import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
 
-export default function DataResourceListing({page,size, filter}: {
+export default function DataResourceListing({page,size, filter, sort}: {
     page: number;
     size: number;
     filter: FilterForm;
+    sort:string;
 }) {
     const [resources, setResources] = useState(undefined as unknown as DataResource[]);
     const [totalPages, setTotalPages] = useState(0 as number);
@@ -32,21 +33,14 @@ export default function DataResourceListing({page,size, filter}: {
     useEffect(() => {
         if(status != "loading"){
             setIsLoading(true);
-            fetchDataResourcePages(size, filter, accessToken).
-            then((pages) => setTotalPages(pages ? pages : 0)).
-            then(() => fetchDataResources(page, size, filter, accessToken)).
-            then(async (result) => {
-                const typedRes = result as Array<DataResource>
-                let promises: Promise<any>[] = [];
-                typedRes.map((element: DataResource) => {
-                    promises.push(loadContent(element, accessToken).then((data) => element.children = data));
-                });
-                await Promise.all(promises);
-                setResources(typedRes);
+            fetchDataResources(page, size, filter, sort, accessToken).then((page) => {
+                console.log("TOTAL ", page.totalPages);
+                setTotalPages(page.totalPages);
+                setResources(page.resources);
                 setIsLoading(false);
-            });
+            })
         }
-    }, [page, size, filter, status, accessToken])
+    }, [page, size, filter, sort, status, accessToken])
 
     if (status === "loading" || isLoading || !resources){
         return ( <Loader/> )
@@ -96,7 +90,8 @@ export default function DataResourceListing({page,size, filter}: {
 
 
             <div className="mt-5 flex w-full justify-center">
-                <Pagination totalPages={totalPages as number}/>
+                {totalPages ?
+                <Pagination totalPages={totalPages}/>:null}
             </div>
         </div>
     );

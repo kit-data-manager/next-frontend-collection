@@ -1,7 +1,7 @@
 'use client';
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import {fetchDataResource, fetchDataResourceEtag, loadContent} from "@/lib/base-repo/client_data";
+import {fetchDataResource, fetchDataResourceEtag, fetchAllContentInformation} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React, {useEffect, useState} from "react";
 import {
@@ -41,7 +41,7 @@ export default function Page({params}) {
             });
             return res;
         }).then(async (res) => {
-            await loadContent(res, data?.accessToken).then((data) => res.children = data).catch(error => {
+            await fetchAllContentInformation(res, data?.accessToken).then((data) => res.children = data).catch(error => {
                 console.error(`Failed to fetch children for resource ${id}`, error)
             });
             setResource(res);

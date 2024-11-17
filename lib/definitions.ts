@@ -5,6 +5,13 @@
 
 import {Session} from "next-auth";
 
+export type DataResourcePage = {
+    resources: DataResource[];
+    pageSize: number;
+    page: number;
+    totalPages:number;
+}
+
 export type DataResource = {
     id: string;
     titles: Title[];
@@ -23,6 +30,7 @@ export type DataResource = {
     state: State | undefined;
     lastUpdate: string;
     children: ContentInformation[];
+    etag: string | null | undefined;
 };
 
 export type RelatedIdentifier = {
@@ -43,6 +51,14 @@ export type ResourceType = {
 
 export enum State {VOLATILE = "VOLATILE", FIXED = "FIXED", REVOKED = "REVOKED", GONE = "GONE"}
 
+export enum Sort{
+    NEWEST = "lastUpdate,desc",
+    OLDEST = "lastUpdate,asc",
+    PUBLISHER="publisher,asc",
+    PUBLICATION_YEAR_NEWEST="publicationYear,desc",
+    PUBLICATION_YEAR_OLDEST="publicationYear,asc",
+    STATE ="state,asc",
+}
 export enum TypeGeneral {
     AUDIOVISUAL = "AUDIOVISUAL",
     COLLECTION = "COLLECTION",
@@ -110,6 +126,7 @@ export type ContentInformation = {
     hash: string;
     size: number;
     tags: string[];
+    etag: string | null | undefined;
 }
 
 export type Tag = {
@@ -131,6 +148,7 @@ export type DataResourcesSearchParams = {
     publicationYear?: string;
     state?: State;
     typeGeneral?: TypeGeneral;
+    sort?:string;
 }
 
 export type ActuatorInfo = {

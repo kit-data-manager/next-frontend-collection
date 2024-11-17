@@ -1,4 +1,6 @@
 import './global.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import {inter} from '@/components/fonts';
 import React from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";

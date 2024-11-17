@@ -117,7 +117,6 @@ async function createResource(accessToken:string | undefined, req: NextApiReques
     }).then(json => res.status(201).json(json));
 }
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         res.status(400).json({message: 'Not existing endpoint'})
@@ -130,8 +129,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const {resourceId, filename} = req.query as {resourceId:string, filename:string};
 
-        console.log(" RES ", resourceId);
-        console.log(" filename ", filename);
         if(!resourceId){
             //create resource
             await createResource(accessToken, req, res);
