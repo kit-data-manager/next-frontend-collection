@@ -173,8 +173,6 @@ export type Activity = {
 
 export type ExtendedSession = Session & {accessToken?: string, groups?: string[] | undefined};
 
-
-
 export type User = {
     id: string;
     name: string;

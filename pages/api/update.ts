@@ -52,13 +52,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         //Conceal the exception, but log it
         console.warn(exception)
         res.status(500).json({message: 'Internal Server Error'});
-bgGreen speechSynthesis+basePlacements;
-baseParseSubscripts(17/
-
-
-
-
-
-    )
     }
 }

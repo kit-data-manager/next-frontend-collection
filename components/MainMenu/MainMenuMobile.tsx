@@ -29,7 +29,7 @@ export default function MainMenuMobile() {
 
     //init base menu entries
     const linksDataRepo = [
-        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon, description:"Show status information."},
+        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon},
     ];
     const linksMetadataRepo = [
         {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon},
@@ -38,7 +38,7 @@ export default function MainMenuMobile() {
     //if session available, add create entries
     if(session){
         linksDataRepo.push(
-            {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon, description:"Show status information."}
+            {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon}
         );
         linksMetadataRepo.push(
             {name: 'Create Schema', href: '/metadata-repo/schema/create', icon: PlusCircleIcon},
@@ -49,7 +49,7 @@ export default function MainMenuMobile() {
     //if search enabled, add search entries
     if(searchEnabled){
         linksDataRepo.push(
-            {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon, description:"Show status information."},
+            {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon},
         );
         linksMetadataRepo.push(
             {name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon},
@@ -58,7 +58,7 @@ export default function MainMenuMobile() {
 
     //add remaining entries
     linksDataRepo.push(
-        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon, description:"Show status information."}
+        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon}
     );
     linksMetadataRepo.push(
         {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon},

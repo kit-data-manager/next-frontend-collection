@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {Check, SortDesc } from "lucide-react"
+import {Check, ListOrdered} from "lucide-react"
 
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
@@ -17,39 +17,37 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import {Sort} from "@/lib/definitions";
+import {Label} from "@/components/ui/label";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useSession} from "next-auth/react";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
 
-const sortings = [
+const sizes = [
     {
-        value: Sort.NEWEST.valueOf(),
-        label: "Newest",
+        value: "5",
+        label: "5 Entries",
     },
     {
-        value: Sort.OLDEST.valueOf(),
-        label: "Oldest",
+        value: "10",
+        label: "10 Entries",
     },
     {
-        value: Sort.PUBLICATION_YEAR_NEWEST.valueOf(),
-        label: "Newest Publication",
+        value: "15",
+        label: "15 Entries",
     },
     {
-        value: Sort.PUBLICATION_YEAR_OLDEST.valueOf(),
-        label: "Oldest Publication",
+        value: "20",
+        label: "20 Entries",
     },
     {
-        value: Sort.PUBLISHER.valueOf(),
-        label: "Publisher",
-    },
-    {
-        value: Sort.STATE.valueOf(),
-        label: "State",
-    },
+        value: "30",
+        label: "30 Entries",
+    }
 ]
 
-export function SortResourceBox() {
+export function PageSizeBox() {
     const [open, setOpen] = React.useState(false)
+
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -57,15 +55,15 @@ export function SortResourceBox() {
     const { userPrefs, updateUserPrefs } = useUserPrefs(data?.user.id);
 
     function updateSorting(selection:string) {
-        updateUserPrefs({sortType: selection });
+        updateUserPrefs({pageSize: selection });
         setOpen(false)
 
         const current = new URLSearchParams(searchParams?.entries() ? Array.from(searchParams?.entries()): undefined); // -> has to use this form
 
         if (!selection) {
-            current.delete("sort");
+            current.delete("size");
         } else {
-            current.set("sort", selection);
+            current.set("size", selection);
         }
 
         const search = current.toString();
@@ -83,31 +81,31 @@ export function SortResourceBox() {
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="flex max-w-48 w-48 mb-4 justify-self-end"
+                        className="flex max-w-32 w-32 mb-4 justify-self-end"
                     >
-                        {userPrefs.sortType
-                            ? sortings.find((sortType) => sortType.value === userPrefs.sortType)?.label
-                            : "Sort order"}
-                        <SortDesc className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                        {userPrefs.pageSize
+                            ? sizes.find((size) => size.value === userPrefs.pageSize)?.label
+                            : "Page size"}
+                        <ListOrdered className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                     <Command>
                         <CommandList>
                             <CommandGroup>
-                                {sortings.map((sort) => (
+                                {sizes.map((size) => (
                                     <CommandItem
-                                        key={sort.value}
-                                        value={sort.value}
+                                        key={size.value}
+                                        value={String(size.value)}
                                         onSelect={(currentValue) => updateSorting(currentValue)}
                                     >
                                         <Check
                                             className={cn(
                                                 "mr-2 h-4 w-4",
-                                                userPrefs.sortType === sort.value ? "opacity-100" : "opacity-0"
+                                                userPrefs.pageSize === size.value ? "opacity-100" : "opacity-0"
                                             )}
                                         />
-                                        {sort.label}
+                                        {size.label}
                                     </CommandItem>
                                 ))}
                             </CommandGroup>

@@ -1,6 +1,7 @@
 'use client';
 
-import {CalendarIcon, FunnelIcon, UserCircleIcon, XCircleIcon} from '@heroicons/react/24/outline';
+import {CircleX, Filter, CircleUser, Calendar} from "lucide-react"
+
 import {filterResources} from '@/lib/filter-form-actions';
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {Button} from "@/components/ui/button";
@@ -43,7 +44,7 @@ export default function FilterResourceForm({filter}: {
                             defaultValue={filter.publisher}
                         >
                         </input>
-                        <UserCircleIcon
+                        <CircleUser
                             className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500"/>
                     </div>
                 </div>
@@ -63,7 +64,7 @@ export default function FilterResourceForm({filter}: {
                                 placeholder="2024"
                                 className="peer block w-auto rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             />
-                            <CalendarIcon
+                            <Calendar
                                 className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900"/>
                         </div>
                     </div>
@@ -128,9 +129,9 @@ export default function FilterResourceForm({filter}: {
                     </div>
                 </fieldset>
             </div>
-            <Button type="submit" variant="outline" className={"flex w-full mt-4"}><FunnelIcon className="h-5 w-5 me-2"/> Filter</Button>
+            <Button type="submit" variant="outline" className={"flex w-full mt-4"}><Filter className="h-5 w-5 me-2"/> Filter</Button>
         </form>
-        <Button type="reset" variant="outline" className={"flex w-full mt-4"} onClick={() => doResetForm()}><XCircleIcon className="h-5 w-5 me-2"/> Clear</Button>
+        <Button type="reset" variant="outline" className={"flex w-full mt-4"} onClick={() => doResetForm()}><CircleX className="h-5 w-5 me-2"/> Clear</Button>
     </div>
 );
 }

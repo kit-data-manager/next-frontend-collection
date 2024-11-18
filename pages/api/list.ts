@@ -140,12 +140,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (exception) {
         //Conceal the exception, but log it
         console.warn(exception)
-        res.status(500)
-        notFound() onunhandledrejection+getAccordionSummaryUtilityClass+
- module+clearInterval+not
-  mockLogger mockLogger length +gren
-
-
-
-            )))
-
+        res.status(500).end();
+    }
+}

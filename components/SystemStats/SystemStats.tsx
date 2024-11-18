@@ -7,19 +7,25 @@ import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 
 export default async function OverallStatusCardWrapper() {
-    const repoInstanceName: string = process.env.REPO_INSTANCE_NAME ? process.env.REPO_INSTANCE_NAME : "Data Repository";
-    const metastoreInstanceName = process.env.METASTORE_INSTANCE_NAME ? process.env.METASTORE_INSTANCE_NAME : "Metadata Repository";
+    const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
+    const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
+    const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
 
     const repoAvailable:boolean = (process.env.REPO_AVAILABLE ? process.env.REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable:boolean = (process.env.METASTORE_AVAILABLE ? process.env.METASTORE_AVAILABLE : "false") == "true";
+    const mappingAvailable:boolean = (process.env.MAPPING_AVAILABLE ? process.env.MAPPING_AVAILABLE : "false") == "true";
 
-    const repoBaseUrl: string = process.env.REPO_BASE_URL ? process.env.REPO_BASE_URL : '';
-    const metaStoreBaseUrl: string = process.env.METASTORE_BASE_URL ? process.env.METASTORE_BASE_URL : '';
+    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+    const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
+    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
     let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
     let actuatorInfoMetaStore: ActuatorInfo | undefined = undefined;
+    let actuatorInfoMappingService: ActuatorInfo | undefined = undefined;
     let actuatorInfoTypedPIDMaker: ActuatorInfo | undefined = undefined;
+
     let keycloakInfo: KeycloakInfo | undefined = undefined;
     let validTiles = 0;
 
@@ -32,6 +38,12 @@ export default async function OverallStatusCardWrapper() {
         actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl);
         validTiles++;
     }
+
+    if (mappingAvailable) {
+        actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl);
+        validTiles++;
+    }
+
     if (keycloakUrl != '') {
         keycloakInfo = await fetchKeyCloakStatus(keycloakUrl);
         validTiles++;
@@ -60,6 +72,18 @@ export default async function OverallStatusCardWrapper() {
                         subtitle: "v1.0.0",
                         status: -1,
                         visitRef: '/metastore',
+                        detailsRef: "/"
+                    }
+                }/> : null
+            }
+
+            {actuatorInfoMappingService ?
+                <StatusCard cardStatus={
+                    {
+                        title: mappingInstanceName,
+                        subtitle: actuatorInfoMappingService.version,
+                        status: 1,
+                        visitRef: '/mapping',
                         detailsRef: "/"
                     }
                 }/> : null

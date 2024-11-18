@@ -107,20 +107,20 @@ export async function fetchDataResourceEtag(id: string, token?: string | undefin
     }
 }
 
-export async function fetchActuatorInfo(token?: string | undefined): Promise<ActuatorInfo> {
+export async function fetchActuatorInfo(baseUrl: string, token?: string | undefined): Promise<ActuatorInfo> {
     let branch = "unknown";
     let hash = "unknown";
     let buildTime = "unknown";
     let version = "unknown";
 
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-
         let headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const json = await myFetch(`${repoBaseUrl}/actuator/info`, {headers: headers}).then((response) => response.json());
+        console.log("URL ", `${baseUrl}/actuator/info`);
+
+        const json = await myFetch(`${baseUrl}/actuator/info`, {headers: headers}).then((response) => response.json());
 
         branch = json.git.branch;
         hash = json.git.commit.id;

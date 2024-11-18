@@ -1,8 +1,6 @@
 'use client';
 
-import {
-    PlusCircleIcon
-} from '@heroicons/react/24/outline';
+import {CirclePlus} from "lucide-react"
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
 import DataResourceListing from "@/app/base-repo/components/DataResourceListing/DataResourceListing";
@@ -14,6 +12,7 @@ import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
 import {useSession} from "next-auth/react";
 import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
+import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 
 
 export default function Page({searchParams}: {
@@ -46,23 +45,36 @@ export default function Page({searchParams}: {
             />
             <SectionCaption caption={"Resources"}/>
 
-            <div className="flex">
-                <div className="hidden lg:inline lg:flex-none rounded-lg border items-center justify-between p-4 lg:p-6">
-                    <Button asChild variant="outline">
-                        {data ? (
-                            <Link
-                                className="items-center disabled w-full mb-4"
-                                href='/base-repo/resources/create'>
-                                <PlusCircleIcon className="h-5 w-5 me-2"/> Create Resource
-                            </Link>) : null}
-                    </Button>
-
-                    <SortResourceBox/>
-
-                    <FilterResourceForm filter={filter}/>
+            <div className="flex columns-2">
+                <div className="column">
+                    <div className="mb-2 h-20">
+                    </div>
+                    <div className="hidden lg:flex rounded-lg border items-center justify-between p-4 lg:p-6">
+                        <FilterResourceForm filter={filter}/>
+                    </div>
                 </div>
-                <div className="lg:initial w-full lg:w-2/3 ">
-                   <DataResourceListing page={page} size={size} filter={filter} sort={sort}/>
+
+                <div className="lg:initial xl:w-full lg:w-2/3 ">
+                    <div className="p-4 grid grid-cols-2">
+                        <div className="mr-4 w-48 justify-items-start">
+                            <Button asChild variant="outline">
+                                {data ? (
+                                    <Link
+                                        className="items-center disabled w-full mb-4"
+                                        href='/base-repo/resources/create'>
+                                        <CirclePlus className="h-5 w-5 me-2"/> Create Resource
+                                    </Link>) : null}
+                            </Button>
+                        </div>
+                        <div className="justify-items-end">
+                            <div className="flex space-x-2 justify-content-right">
+                                <SortResourceBox/>
+                                <PageSizeBox/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <DataResourceListing page={page} size={size} filter={filter} sort={sort}/>
                 </div>
             </div>
         </main>

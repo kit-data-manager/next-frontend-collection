@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
+import {useEffect} from "react";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,9 +12,23 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {useSession} from "next-auth/react";
+import useUserPrefs from "@/lib/hooks/userUserPrefs";
 
 export function ThemeModeToggle(params) {
-    const { setTheme } = useTheme()
+    const { data, status } = useSession();
+    const { userPrefs, updateUserPrefs } = useUserPrefs(data?.user.id);
+
+    const { setTheme } = useTheme();
+
+    useEffect(() => {
+        setTheme(userPrefs.theme);
+    }, [userPrefs.theme]);
+
+    function setThemeInternal(selection) {
+        updateUserPrefs({theme: selection});
+        setTheme(selection);
+    }
 
     return (
         <DropdownMenu {...params}>
@@ -25,13 +40,13 @@ export function ThemeModeToggle(params) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem title="Set light mode" onClick={() => setTheme("light")}>
+                <DropdownMenuItem title="Set light mode" onClick={() => setThemeInternal("light")}>
                     Light
                 </DropdownMenuItem>
-                <DropdownMenuItem title="Set dark mode" onClick={() => setTheme("dark")}>
+                <DropdownMenuItem title="Set dark mode" onClick={() => setThemeInternal("dark")}>
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem title="Use system settings" onClick={() => setTheme("system")}>
+                <DropdownMenuItem title="Use system settings" onClick={() => setThemeInternal("system")}>
                     System
                 </DropdownMenuItem>
             </DropdownMenuContent>
