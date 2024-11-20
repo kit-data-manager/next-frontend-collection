@@ -2,7 +2,7 @@ import {CardsSkeleton} from '@/components/skeletons';
 import RepositoryStats from "@/app/base-repo/components/Dashboard/RepositoryStats";
 import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";
 import {Suspense} from 'react';
-import {BaseRepoStatusCardWrapper} from "@/components/SystemStats/SystemStats";
+import {ActuatorHealthStatusCardWrapper} from "@/components/SystemStats/SystemStats";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
 import * as React from "react";
@@ -10,6 +10,8 @@ import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/Reposi
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 
 export default async function Page() {
+    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
     return (
         <main>
             <Breadcrumbs
@@ -23,7 +25,7 @@ export default async function Page() {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <Suspense fallback={<CardsSkeleton/>}>
-                    <BaseRepoStatusCardWrapper/>
+                    <ActuatorHealthStatusCardWrapper serviceUrl={repoBaseUrl}/>
                 </Suspense>
             </div>
 

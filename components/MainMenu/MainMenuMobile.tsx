@@ -21,55 +21,21 @@ import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {ThemeModeToggle} from "@/components/ThemeModeToggle/ThemeModeToggle";
 import {useSession} from "next-auth/react";
+import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
+import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
+import {NavigationMenuContent, NavigationMenuItem, NavigationMenuTrigger} from "@/components/ui/navigation-menu";
 
 export default function MainMenuMobile() {
     const {data: session, status} = useSession();
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
     const pathname = usePathname();
 
-    //init base menu entries
-    const linksDataRepo = [
-        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon},
-    ];
-    const linksMetadataRepo = [
-        {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon},
-    ];
+    /* type Checked = DropdownMenuCheckboxItemProps["checked"]
 
-    //if session available, add create entries
-    if(session){
-        linksDataRepo.push(
-            {name: 'Create Resource', href: '/base-repo/resources/create', icon: PlusCircleIcon}
-        );
-        linksMetadataRepo.push(
-            {name: 'Create Schema', href: '/metadata-repo/schema/create', icon: PlusCircleIcon},
-            {name: 'Create Metadata', href: '/metadata-repo/metadata/create', icon: PlusCircleIcon}
-        );
-    }
-
-    //if search enabled, add search entries
-    if(searchEnabled){
-        linksDataRepo.push(
-            {name: 'Search', href: '/base-repo/resources/search', icon: PlusCircleIcon},
-        );
-        linksMetadataRepo.push(
-            {name: 'Search', href: '/metadata-repo/metadata/search', icon: PlusCircleIcon},
-        );
-    }
-
-    //add remaining entries
-    linksDataRepo.push(
-        {name: 'Resources', href: '/base-repo/resources', icon: ListBulletIcon}
-    );
-    linksMetadataRepo.push(
-        {name: 'Schemas', href: '/metadata-repo/schemas', icon: ListBulletIcon},
-        {name: 'Metadata', href: '/metadata-repo/metadata', icon: ListBulletIcon}
-    );
-
-   /* type Checked = DropdownMenuCheckboxItemProps["checked"]
-
-    const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-    const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
-    const [showPanel, setShowPanel] = React.useState<Checked>(false)*/
+  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
+  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
+  const [showPanel, setShowPanel] = React.useState<Checked>(false)*/
+    const items: SubMenu[] = getMenuEntries();
 
     return (
         <DropdownMenu>
@@ -82,68 +48,105 @@ export default function MainMenuMobile() {
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <span>Data Repository</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                            {linksDataRepo.map((link, cnt) => {
-                                const LinkIcon = link.icon;
 
-                                return (
-                                    <DropdownMenuItem key={cnt}>
-                                        <Link
-                                            key={link.name}
-                                            href={link.href}
-                                            className={cn(
-                                                'flex h-[24px] items-center justify-center gap-2 hover:underline font-medium m-2',
-                                                {
-                                                    'underline': pathname === link.href,
-                                                },
-                                            )}
-                                        >
-                                            <LinkIcon className="w-6"/>
-                                            <p className="md:block">{link.name}</p>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                );
-                            })}
-                        </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <span>Metadata Repository</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                            {linksMetadataRepo.map((link, cnt) => {
-                                const LinkIcon = link.icon;
-
-                                return (
-                                    <DropdownMenuItem key={cnt}>
-                                        <Link
-                                            key={link.name}
-                                            href={link.href}
-                                            className={cn(
-                                                'flex h-[24px] items-center justify-center gap-2 hover:underline font-medium m-2',
-                                                {
-                                                    'underline': pathname === link.href,
-                                                },
-                                            )}
-                                        >
-                                            <LinkIcon className="w-6"/>
-                                            <p className="md:block">{link.name}</p>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                );
-                            })}
-                        </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                </DropdownMenuSub>
+                {items.map((item: SubMenu, idx: number) => {
+                    return (
+                        <DropdownMenuSub key={`main_menu_${idx}`}>
+                            <DropdownMenuSubTrigger>
+                                <span>{item.serviceName}</span>
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                    {item.menuItems.map((menuItem: MenuItem, idx2: number) => {
+                                        const LinkIcon = menuItem.icon;
+                                        if (shouldRender(menuItem, session != null, searchEnabled)) {
+                                            return (
+                                                <DropdownMenuItem key={`sub_menu_${idx2}`}>
+                                                    <Link
+                                                        key={menuItem.name}
+                                                        href={menuItem.href}
+                                                        className={cn(
+                                                            'flex h-[24px] items-center justify-center gap-2 hover:underline font-medium m-2',
+                                                            {
+                                                                'underline': pathname === menuItem.href,
+                                                            },
+                                                        )}
+                                                    >
+                                                        <LinkIcon className="w-6"/>
+                                                        <p className="md:block">{menuItem.name}</p>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            )
+                                        }
+                                    })}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                    )
+                })}
             </DropdownMenuContent>
         </DropdownMenu>
     )
+    /**
+     <DropdownMenuSub>
+     <DropdownMenuSubTrigger>
+     <span>Data Repository</span>
+     </DropdownMenuSubTrigger>
+     <DropdownMenuPortal>
+     <DropdownMenuSubContent>
+     {linksDataRepo.map((link, cnt) => {
+     const LinkIcon = link.icon;
 
+     return (
+     <DropdownMenuItem key={cnt}>
+     <Link
+     key={link.name}
+     href={link.href}
+     className={cn(
+     'flex h-[24px] items-center justify-center gap-2 hover:underline font-medium m-2',
+     {
+     'underline': pathname === link.href,
+     },
+     )}
+     >
+     <LinkIcon className="w-6"/>
+     <p className="md:block">{link.name}</p>
+     </Link>
+     </DropdownMenuItem>
+     );
+     })}
+     </DropdownMenuSubContent>
+     </DropdownMenuPortal>
+     </DropdownMenuSub>
+     <DropdownMenuSub>
+     <DropdownMenuSubTrigger>
+     <span>Metadata Repository</span>
+     </DropdownMenuSubTrigger>
+     <DropdownMenuPortal>
+     <DropdownMenuSubContent>
+     {linksMetadataRepo.map((link, cnt) => {
+     const LinkIcon = link.icon;
+
+     return (
+     <DropdownMenuItem key={cnt}>
+     <Link
+     key={link.name}
+     href={link.href}
+     className={cn(
+     'flex h-[24px] items-center justify-center gap-2 hover:underline font-medium m-2',
+     {
+     'underline': pathname === link.href,
+     },
+     )}
+     >
+     <LinkIcon className="w-6"/>
+     <p className="md:block">{link.name}</p>
+     </Link>
+     </DropdownMenuItem>
+     );
+     })}
+     </DropdownMenuSubContent>
+     </DropdownMenuPortal>
+     </DropdownMenuSub>
+     * */
 }

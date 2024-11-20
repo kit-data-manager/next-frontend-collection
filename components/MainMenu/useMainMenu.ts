@@ -1,4 +1,4 @@
-import {ChartPieIcon, ListBulletIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
+import {ChartPieIcon, ListBulletIcon, PlusCircleIcon, PlayIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 
 export function getMenuEntries(): SubMenu[] {
@@ -100,10 +100,10 @@ export function getMenuEntries(): SubMenu[] {
                     description: "Show system status information."
                 },
                 {
-                    name: 'Mappings',
-                    href: '/mapping/mappings',
-                    icon: ListBulletIcon,
-                    description: "List all Mappings."
+                    name: 'Map',
+                    href: '/mapping/map',
+                    icon: PlayIcon,
+                    description: "Execute Mappings."
                 }
             ]
         });

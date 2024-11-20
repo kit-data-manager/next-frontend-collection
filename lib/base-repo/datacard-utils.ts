@@ -40,8 +40,6 @@ export const propertiesForContentInformation = (resourceId: string,
                                                 disableChangeThumb?: boolean) => {
     let tags:Array<Tag> = new Array<Tag>;
 
-   // content.tags = ["test", "bla", "data"];
-
     let image = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
 
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {

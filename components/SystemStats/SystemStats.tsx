@@ -5,6 +5,7 @@ import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/format-utils";
 import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
+import {CardStatus} from "@/components/StatusCard/StatusCard.d";
 
 export default async function OverallStatusCardWrapper() {
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
@@ -40,6 +41,7 @@ export default async function OverallStatusCardWrapper() {
     }
 
     if (mappingAvailable) {
+
         actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl);
         validTiles++;
     }
@@ -134,11 +136,10 @@ function statusStringToInt(status: string) {
     }
 }
 
-export async function BaseRepoStatusCardWrapper() {
-    //@TODO Show nothing if base-repo is not available
-    const repoBaseUrl: string = process.env.REPO_BASE_URL ? process.env.REPO_BASE_URL : '';
-
-    const actuatorInfo = await fetchActuatorHealth(repoBaseUrl);
+export async function ActuatorHealthStatusCardWrapper({serviceUrl}: {
+    serviceUrl: string
+}) {
+    const actuatorInfo = await fetchActuatorHealth(serviceUrl);
     return (
         <>
             <StatusCard cardStatus={
