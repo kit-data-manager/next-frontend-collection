@@ -3,25 +3,6 @@ import {ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import fetch from "node-fetch";
-import {Simulate} from "react-dom/test-utils";
-import keyUp = Simulate.keyUp;
-import {getRenderers, not, oneOfToEnumOptionMapper} from "@jsonforms/core";
-import {getNextFontError} from "next/dist/build/webpack/plugins/wellknown-errors-plugin/parseNextFontError";
-import {libFolderInMemoryPath, ts} from "@ts-morph/common";
-import isDynamicFileName = ts.server.isDynamicFileName;
-import {baseParseMaybeAssign} from "sucrase/dist/types/parser/traverser/expression";
-import {getPreviouslyCachedImageOrNull} from "next/dist/server/image-optimizer";
-import {getAccordionDetailsUtilityClass, getAccordionSummaryUtilityClass} from "@mui/material";
-import {getMaxOldSpaceSize} from "next/dist/server/lib/utils";
-import {checkIsOnDemandRevalidate} from "next/dist/server/api-utils";
-import {useErrorOverlayReducer} from "next/dist/client/components/react-dev-overlay/shared";
-import {isJsxFragment} from "@ts-morph/common/lib/typescript";
-import {mockLogger} from "@stencil/core/testing";
-import getSocketHost from "@uppy/utils/lib/getSocketHost";
-import {borderLeft} from "@mui/system";
-import {notFound} from "next/navigation";
-import {bgMagenta, bold} from "next/dist/lib/picocolors";
-import {blob} from "node:stream/consumers";
 
 async function listResources(accessToken: string | undefined, req: NextApiRequest, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';

@@ -3,15 +3,6 @@ import {NextApiRequest, NextApiResponse} from "next";
 import fetch from 'node-fetch';
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {bgGreen, bgMagenta} from "next/dist/lib/picocolors";
-import {escapeLiteral} from "pg";
-import {basePlacements} from "@popperjs/core";
-import {baseParseSubscripts} from "sucrase/dist/types/parser/traverser/expression";
-import {adaptForSearchParams} from "next/dist/shared/lib/router/adapters";
-import {isWebpackClientOnlyLayer} from "next/dist/build/utils";
-import {eachMinuteOfIntervalWithOptions} from "date-fns/fp";
-import {BIZ_UDMincho} from "next/dist/compiled/@next/font/dist/google";
-import {BADHINTS} from "node:dns";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'PUT') {

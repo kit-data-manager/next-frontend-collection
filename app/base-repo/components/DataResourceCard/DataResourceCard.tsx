@@ -10,9 +10,9 @@ import {useRouter} from "next/navigation";
 import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect, useState} from "react";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
-import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {fetchAllContentInformation} from "@/lib/base-repo/client_data";
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
+import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {useSession} from "next-auth/react";
 
 export default function DataResourceCard(props:ResourceCardProps) {

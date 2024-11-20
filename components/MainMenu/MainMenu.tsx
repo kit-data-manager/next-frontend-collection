@@ -12,119 +12,38 @@ import {
 import {cn} from "@/lib/utils";
 import React from "react";
 import {useSession} from "next-auth/react";
+import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
+import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 
 export default function MainMenu() {
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
     const {data: session, status} = useSession();
 
-    const linksDataRepo = [
-        {name: 'Overview', href: '/base-repo', icon: ChartPieIcon, description: "Show system status information."},
-    ];
-
-    if (session) {
-        linksDataRepo.push({
-            name: 'Create Resource',
-            href: '/base-repo/resources/create',
-            icon: PlusCircleIcon,
-            description: "Create a new Data Resource."
-        });
-    }
-
-    if (searchEnabled) {
-        linksDataRepo.push({
-            name: 'Search',
-            href: '/base-repo/resources/search',
-            icon: PlusCircleIcon,
-            description: "Search for Data Resources."
-        });
-    }
-
-    linksDataRepo.push({
-        name: 'Resources',
-        href: '/base-repo/resources',
-        icon: ListBulletIcon,
-        description: "List all Data Resources."
-    });
-
-    const linksMetadataRepo = [
-        {name: 'Overview', href: '/metadata-repo', icon: ChartPieIcon, description: "Show system status information."}
-    ];
-
-    if (session) {
-        linksMetadataRepo.push({
-                name: 'Create Schema',
-                href: '/metadata-repo/schema/create',
-                icon: PlusCircleIcon,
-                description: "Create a new Metadata Schema."
-            },
-            {
-                name: 'Create Metadata',
-                href: '/metadata-repo/metadata/create',
-                icon: PlusCircleIcon,
-                description: "Create a new Metadata Document."
-            }
-        );
-    }
-
-    if (searchEnabled) {
-        linksMetadataRepo.push({
-            name: 'Search',
-            href: '/metadata-repo/metadata/search',
-            icon: PlusCircleIcon,
-            description: "Search for Metadata Documents."
-        });
-    }
-
-    linksMetadataRepo.push(
-        {
-            name: 'Schemas',
-            href: '/metadata-repo/schemas',
-            icon: ListBulletIcon,
-            description: "List all Metadata Schema."
-        },
-        {
-            name: 'Metadata',
-            href: '/metadata-repo/metadata',
-            icon: ListBulletIcon,
-            description: "List all Metadata Documents"
-        }
-    );
+    const items:SubMenu[] = getMenuEntries();
 
     return (
         <NavigationMenu className="px-2 py-2.5 sm:px-4">
             <NavigationMenuList>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Data Repository</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                            {linksDataRepo.map((component) => (
-                                <ListItem
-                                    key={component.name}
-                                    title={component.name}
-                                    href={component.href}
-                                >
-                                    {component.description}
-                                </ListItem>
-                            ))}
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Metadata Repository</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                            {linksMetadataRepo.map((component) => (
-                                <ListItem
-                                    key={component.name}
-                                    title={component.name}
-                                    href={component.href}
-                                >
-                                    {component.description}
-                                </ListItem>
-                            ))}
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
+                {items.map((item:SubMenu, idx:number) => {
+                    return (
+                       <NavigationMenuItem key={`main_menu_${idx}`}>
+                           <NavigationMenuTrigger>{item.serviceName}</NavigationMenuTrigger>
+                           <NavigationMenuContent>
+                               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                                   {item.menuItems.map((menuItem:MenuItem, idx2:number) => {
+                                      if(shouldRender(menuItem, session != null, searchEnabled)){
+                                       return (<ListItem
+                                               key={`sub_menu_${idx2}`}
+                                               title={menuItem.name}
+                                               href={menuItem.href}
+                                           >
+                                               {menuItem.description}
+                                           </ListItem>
+                                       )}})}
+                               </ul>
+                           </NavigationMenuContent>
+                       </NavigationMenuItem>
+                )})}
             </NavigationMenuList>
         </NavigationMenu>
 
