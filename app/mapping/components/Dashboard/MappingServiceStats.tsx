@@ -1,31 +1,17 @@
 import {
     DocumentIcon,
-    DocumentTextIcon,
-    CircleStackIcon,
     LockOpenIcon,
-    LockClosedIcon,
     UserIcon
 } from '@heroicons/react/24/outline';
 
-import {lusitana} from '@/components/fonts';
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {fetchContentOverview} from "@/lib/base-repo/data";
-import {formatNumber, humanFileSize} from "@/lib/format-utils";
+import {formatNumber} from "@/lib/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
 
 export default async function MappingServiceStats() {
 
-    /*const {
-        uniqueUsers,
-        resources,
-        openResources,
-        closedResources,
-        files,
-        size
-    } = await fetchContentOverview();*/
-
     const plugins = await fetchMappingPlugins();
-    const mappings = await fetchMappings();
+    const mappings = await fetchMappings(1,1);
 
     const stats = [
         {
@@ -35,7 +21,7 @@ export default async function MappingServiceStats() {
         },
         {
             "text": "Mapping(s)",
-            "value": formatNumber(mappings.length),
+            "value": formatNumber(mappings.totalPages),
             "icon": DocumentIcon
         },
         {

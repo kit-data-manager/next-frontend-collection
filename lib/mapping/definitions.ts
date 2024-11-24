@@ -1,4 +1,6 @@
-import {Acl, DataResource} from "@/lib/definitions";
+import {Acl, Tag} from "@/lib/definitions";
+import {TextPropType} from "@kit-data-manager/data-view-web-component";
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 
 export type MappingPlugin = {
     id: string;
@@ -27,4 +29,24 @@ export type MappingPage = {
     pageSize: number;
     page: number;
     totalPages:number;
+}
+export enum Status {
+    SUBMITTED = "SUBMITTED",
+    RUNNING= "RUNNING",
+    SUCCEEDED= "SUCCEEDED",
+    FAILED= "FAILED",
+    DELETED= "DELETED"
+}
+export type JobStatus = {
+    jobId: string;
+    status: Status;
+    error?: string;
+    outputFileURI?: string;
+}
+
+export type JobChildCard = {
+    dataTitle: TextPropType;
+    tags: Tag[];
+    actionButtons: ActionButtonInterface[];
+    onActionClick: any;
 }

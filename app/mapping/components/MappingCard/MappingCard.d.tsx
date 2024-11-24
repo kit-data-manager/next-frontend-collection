@@ -1,6 +1,7 @@
 import {DataResource} from "@/lib/definitions";
 import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 import {Mapping} from "@/lib/mapping/definitions";
+import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 
 export interface MappingCardProps  {
     data: Mapping;
@@ -8,6 +9,10 @@ export interface MappingCardProps  {
     childrenVariant?: "default" | "minimal";
     actionEvents?: ActionButtonInterface[];
     onActionClick?: (action: DataCardCustomEvent<ActionEvent>) => void;
+    jobRegistrationCallback: Function;
+    jobUnregistrationCallback: Function;
+    userPrefs: UserPrefsType;
+    updateUserPrefs: Function;
 }
 
 export type ActionButtonInterface =

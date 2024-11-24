@@ -1,7 +1,7 @@
 import {ResponseError} from "@/lib/base-repo/client_data";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcePage} from "@/lib/definitions";
-import {MappingPage} from "@/lib/mapping/definitions";
+import {JobStatus, MappingPage} from "@/lib/mapping/definitions";
 
 export async function fetchMappingPlugins(token?: string | undefined) {
     try {
@@ -26,12 +26,12 @@ export async function fetchMappings(page: number, size: number, filter?: FilterF
             sorting = "title,desc";
         }
 
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
         let headers = {"Accept": "application/hal+json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${repoBaseUrl}/api/v1/mappingAdministration/?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingAdministration/?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
             const mappingPage: MappingPage = {} as MappingPage;
             mappingPage.resources = await res.json();
             mappingPage.page = page;
@@ -44,27 +44,48 @@ export async function fetchMappings(page: number, size: number, filter?: FilterF
             }
             return mappingPage;
         });
-
-
     } catch (error) {
         console.error('Failed to fetch mappings. Error:', error);
         return Promise.reject("No mappings found");
     }
 }
-export async function fetchMappingById(mappingId:string, token?: string | undefined) {
+
+
+export async function fetchMappingJobStatus(jobId:string, token?:string):Promise<JobStatus>{
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
-        let headers = {"Accept": "application/hal+json"};
+
+        const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        let headers = {"Accept": "application/json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${repoBaseUrl}/api/v1/mappingAdministration/${mappingId}`,
-            {headers: headers}).then(result => result.json());
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingExecution/status/${jobId}`).then((res) => res.json());
     } catch (error) {
-        console.error('Failed to fetch mapping by id. Error:', error);
-        return undefined;
+        console.error('Failed to fetch job status. Error:', error);
+        return Promise.reject("Failed to fetch job status.");
     }
 }
+
+export async function deleteMappingJobStatus(jobId:string, token?:string):Promise<boolean>{
+    try {
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        let headers = {"Accept": "application/json"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        return await myFetch(`${repoBaseUrl}/api/v1/mappingExecution/${jobId}`,{
+            method: "DELETE",
+            headers: headers
+        }).then(result => result.ok);
+    } catch (error) {
+        console.error('Failed to delete mapping job. Error:', error);
+    }
+    return true;
+}
+
+export async function runMapping(mappingId:string, token?:string|undefined){
+}
+
 export async function myFetch(url: string, init?: any) {
     let res: Response;
     if (init) {

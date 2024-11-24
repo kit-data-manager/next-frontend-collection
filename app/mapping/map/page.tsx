@@ -14,6 +14,9 @@ import DataResourceListing from "@/app/base-repo/components/DataResourceListing/
 import MappingListing from "@/app/mapping/components/MappingListing/MappingListing";
 import {valueOrDefault} from "@/lib/searchParamHelper";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
+import {ToastContainer} from "react-toastify";
+import React from "react";
+import MappingListing2 from "@/app/mapping/components/MappingListing/MappingListing2";
 
 export default function Page({searchParams}: {
     searchParams?: DataResourcesSearchParams;
@@ -39,8 +42,10 @@ export default function Page({searchParams}: {
             />
             <SectionCaption caption={"Execute Mappings"}/>
             <div className="flex w-full">
-                    <MappingListing page={page} size={size} filter={filter} sort={sort}/>
+                    <MappingListing2 page={page} size={size} filter={filter} sort={sort}/>
             </div>
+            <ToastContainer/>
+
         </main>
     );
 }

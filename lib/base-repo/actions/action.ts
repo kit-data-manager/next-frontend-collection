@@ -1,5 +1,4 @@
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {NextRouter} from "next/router";
 
 export const enum REPO_ACTIONS {
     "VIEW_RESOURCE" = "viewResource",

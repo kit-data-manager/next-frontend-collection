@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import {Sort} from "@/lib/definitions";
+import {JobStatus} from "@/lib/mapping/definitions";
 
 export type UserPrefsType = {
     sortType: string,
     pageSize: string,
-    theme: string
+    theme: string,
+    mappingJobs: string
 }
 
 const defaultUserPrefs: UserPrefsType = {
     sortType: Sort.NEWEST,
     pageSize: "10",
-    theme:"system"
+    theme:"system",
+    mappingJobs: ""
 }
 
 const getLocalStorage = (key: string): UserPrefsType => {
@@ -28,7 +31,6 @@ const getLocalStorage = (key: string): UserPrefsType => {
 
 const useUserPrefs = (userId: string | undefined) => {
     const key = `frontend-user-prefs-${userId}`
-
     const [value, setValue] = useState<UserPrefsType>(() => {
         if (!userId) return defaultUserPrefs;
         return getLocalStorage(key)

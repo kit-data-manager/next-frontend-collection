@@ -24,7 +24,6 @@
     "@jsonforms/examples": "^3.2.1",
     "@jsonforms/material-renderers": "^3.2.1",
     "@jsonforms/react": "^3.2.1",
-    "@kit-data-manager/data-view-web-component": "^0.0.21",
     "@kit-data-manager/data-view-web-component-react": "^0.0.21",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",

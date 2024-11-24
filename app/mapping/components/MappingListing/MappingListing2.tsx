@@ -13,8 +13,9 @@ import {fetchMappings} from "@/lib/mapping/client_data";
 import MappingCard from "@/app/mapping/components/MappingCard/MappingCard";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
 import {useRouter} from "next/navigation";
+import MappingCard2 from "@/app/mapping/components/MappingCard/MappingCard2";
 
-export default function MappingListing({page,size, filter, sort}: {
+export default function MappingListing2({page,size, filter, sort}: {
     page: number;
     size: number;
     filter: FilterForm;
@@ -82,7 +83,6 @@ export default function MappingListing({page,size, filter, sort}: {
         if(newMap){
             copy.set(mappingId, [status]);
         }
-        console.log("COPY ", copy);
         const asString = JSON.stringify(Array.from(copy.entries()));
         console.log("Updating to ", {mappingJobs: asString});
         updateUserPrefs({mappingJobs: asString});
@@ -135,7 +135,7 @@ export default function MappingListing({page,size, filter, sort}: {
 
                         return (
                             <div key={element.mappingId}>
-                            <MappingCard
+                            <MappingCard2
                                 key={element.mappingId}
                                 data={element}
                                 jobRegistrationCallback={registerJob}
@@ -143,7 +143,7 @@ export default function MappingListing({page,size, filter, sort}: {
                                 userPrefs={userPrefs}
                                 updateUserPrefs={updateUserPrefs}
                                 actionEvents={actionEvents}
-                            ></MappingCard>
+                            ></MappingCard2>
                             </div>
                         );
                     })}

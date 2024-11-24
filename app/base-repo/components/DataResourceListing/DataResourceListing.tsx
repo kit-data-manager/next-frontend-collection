@@ -34,7 +34,6 @@ export default function DataResourceListing({page,size, filter, sort}: {
         if(status != "loading"){
             setIsLoading(true);
             fetchDataResources(page, size, filter, sort, accessToken).then((page) => {
-                console.log("TOTAL ", page.totalPages);
                 setTotalPages(page.totalPages);
                 setResources(page.resources);
                 setIsLoading(false);

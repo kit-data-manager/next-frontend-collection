@@ -22,7 +22,7 @@ import MappingUpload from "@/app/mapping/components/MappingUpload/MappingUpload"
 import {JobChildCard, JobStatus, Status} from "@/lib/mapping/definitions";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
 
-export default function MappingCard(props: MappingCardProps) {
+export default function MappingCard2(props: MappingCardProps) {
     const {data, status} = useSession();
     const [tags, setTags] = useState([] as Tag[]);
     const [children, setChildren] = useState([] as JobChildCard[]);
@@ -32,17 +32,13 @@ export default function MappingCard(props: MappingCardProps) {
     const router = useRouter();
     const mapping = props.data;
 
-    const variant: "default" | "detailed" | "minimal" | undefined = props.variant ? props.variant : "default";
-    const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
+    const variant = "default";
+    const childVariant = "default";
     const actionEvents: ActionButtonInterface[] = props.actionEvents ? props.actionEvents : [] as ActionButtonInterface[];
     const regCallback = props.jobRegistrationCallback;
     const unRegCallback = props.jobUnregistrationCallback;
     let buttons: Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
-   // const extUserPrefs = props.userPrefs;
-  //  const extUpdateUserPrefs = props.updateUserPrefs;
     const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
-    const [internalUserPrefs, setInternalUserPrefs] = useState(userPrefs.mappingJobs as string);
-
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
@@ -53,13 +49,13 @@ export default function MappingCard(props: MappingCardProps) {
         } else if (eventIdentifier === "view") {
 
         } else {
-            let parts:string[] = eventIdentifier.split("_");
-                if(parts[0] === "deleteJob"){
-                    deleteMappingJobStatus(parts[1]).then((result) => {
-                        console.log("Removal result: ", result);
-                        unRegCallback(mapping.mappingId, parts[1]);
-                    });
-                }
+            let parts: string[] = eventIdentifier.split("_");
+            if (parts[0] === "deleteJob") {
+                deleteMappingJobStatus(parts[1]).then((result) => {
+                    console.log("Removal result: ", result);
+                    unRegCallback(mapping.mappingId, parts[1]);
+                });
+            }
         }
     });
 
@@ -81,57 +77,48 @@ export default function MappingCard(props: MappingCardProps) {
 
     function checkJobs() {
         console.log("Checking mapping jobs...");
-        let copy: Map<string, JobStatus[]>
-
-        if (!internalUserPrefs) {
-            return;
-        } else {
-            copy = new Map(JSON.parse(internalUserPrefs));
-        }
-        console.log("CHECK ", copy);
+        let copy: Map<string, JobStatus[]> = new Map(JSON.parse(userPrefs.mappingJobs));
 
         if (copy.size > 0) {
             copy.forEach((elems: JobStatus[], key: string) => {
-                elems.map((job: JobStatus, idx: number) => {
-                    if(job.status === Status.RUNNING || job.status === Status.SUBMITTED){
-                        console.log("FETCH JOB ", job);
-                    fetchMappingJobStatus(job.jobId).then((newStatus) => {
-                        console.log("NEW STAT ", newStatus);
-                        job.status = newStatus.status;
-                        job.error = newStatus.error;
-                        job.outputFileURI = newStatus.outputFileURI;
-                    });
-                    }
-                });
+                if (key === mapping.mappingId) {
+                    //console.log("Check my jobs");
+                    const newJobs:JobStatus[] =
+                    elems.map((job: JobStatus, idx: number) => {
+                        console.log("CHECK OH ", job);
+                        if (job.status === Status.RUNNING || job.status === Status.SUBMITTED) {
+                            //console.log("Check running/submitted job");
+                            fetchMappingJobStatus(job.jobId).then((newStatus) => {
+                                console.log("Result: ", job);
+                                job.status = newStatus.status;
+                                job.error = newStatus.error;
+                                job.outputFileURI = newStatus.outputFileURI;
+                            });
+                        }
+                        return job;
+                    })
+
+                    console.log("MapJobs ", newJobs);
+                    copy.set(mapping.mappingId, newJobs);
+                }
             });
         }
-        console.log("AFTER ", copy);
-
         const asString = JSON.stringify(Array.from(copy.entries()));
-
+        let childrenData: Array<JobChildCard> = new Array<DataCard>;
+        copy.get(mapping.mappingId)?.map((status: JobStatus) => {
+            console.log("The job ", status);
+            const props = propertiesForMappingJob(status);
+            props.onActionClick = {actionCallback};
+            props.actionButtons = actionsForJobStatus(status);
+            childrenData.push(props);
+        })
         updateUserPrefs({mappingJobs: asString});
-        setInternalUserPrefs(asString);
+        setChildren(childrenData);
     }
 
     useEffect(() => {
         setInterval(checkJobs, 3000);
     }, []);
-
-    useEffect(() => {
-        let childrenData: Array<JobChildCard> = new Array<DataCard>;
-        if (internalUserPrefs) {
-            const jobs:Map<string, JobStatus[]> = new Map(JSON.parse(internalUserPrefs));
-            jobs.get(mapping.mappingId)?.map((status: JobStatus) => {
-                console.log("Add Job " + status.jobId + " with state " + status.status);
-
-                const props = propertiesForMappingJob(status);
-                props.onActionClick = {actionCallback};
-                props.actionButtons = actionsForJobStatus(status);
-                childrenData.push(props);
-            })
-        }
-        setChildren(childrenData);
-    }, [mapping.mappingId, userPrefs]);
 
     actionEvents.map((actionEvent: ActionButtonInterface) => {
         buttons.push(actionEvent);
