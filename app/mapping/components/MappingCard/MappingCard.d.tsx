@@ -11,8 +11,6 @@ export interface MappingCardProps  {
     onActionClick?: (action: DataCardCustomEvent<ActionEvent>) => void;
     jobRegistrationCallback: Function;
     jobUnregistrationCallback: Function;
-    userPrefs: UserPrefsType;
-    updateUserPrefs: Function;
 }
 
 export type ActionButtonInterface =

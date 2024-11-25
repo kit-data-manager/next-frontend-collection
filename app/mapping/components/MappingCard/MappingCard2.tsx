@@ -3,7 +3,7 @@
 import {useDebouncedCallback} from "use-debounce";
 import {useRouter} from "next/navigation";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {useSession} from "next-auth/react";
 import {
@@ -21,6 +21,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} fro
 import MappingUpload from "@/app/mapping/components/MappingUpload/MappingUpload";
 import {JobChildCard, JobStatus, Status} from "@/lib/mapping/definitions";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import {Timeout} from "@mui/utils/useTimeout";
 
 export default function MappingCard2(props: MappingCardProps) {
     const {data, status} = useSession();
@@ -40,11 +41,11 @@ export default function MappingCard2(props: MappingCardProps) {
     let buttons: Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
     const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
 
-    const handleAction = useDebouncedCallback((event) => {
+   const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
         console.log("MappingCard ActionId ", eventIdentifier);
         console.log("In CARD ", mapping.mappingId);
-        if (eventIdentifier === "run") {
+        if (eventIdentifier.startsWith("run")) {
             setOpenModal(true);
         } else if (eventIdentifier === "view") {
 
@@ -71,54 +72,24 @@ export default function MappingCard2(props: MappingCardProps) {
                 });
                 setTags(tagsForMapping(mapping));
                 setTextRight(textRightForMapping(mapping));
+            }).then(() => {
+
+                let copy: Map<string, JobStatus[]> = new Map(JSON.parse(userPrefs.mappingJobs));
+                if(copy.get(mapping.mappingId)){
+                    let childrenData: Array<JobChildCard> = new Array<DataCard>;
+                    copy.get(mapping.mappingId)?.map((status: JobStatus) => {
+                        console.log("The job ", status);
+                        const props = propertiesForMappingJob(status);
+                        props.onActionClick = {actionCallback};
+                        props.actionButtons = actionsForJobStatus(status);
+                        childrenData.push(props);
+                    })
+                    setChildren(childrenData);
+                }
             });
         })
     }, [data?.accessToken, mapping.mappingId]);
 
-    function checkJobs() {
-        console.log("Checking mapping jobs...");
-        let copy: Map<string, JobStatus[]> = new Map(JSON.parse(userPrefs.mappingJobs));
-
-        if (copy.size > 0) {
-            copy.forEach((elems: JobStatus[], key: string) => {
-                if (key === mapping.mappingId) {
-                    //console.log("Check my jobs");
-                    const newJobs:JobStatus[] =
-                    elems.map((job: JobStatus, idx: number) => {
-                        console.log("CHECK OH ", job);
-                        if (job.status === Status.RUNNING || job.status === Status.SUBMITTED) {
-                            //console.log("Check running/submitted job");
-                            fetchMappingJobStatus(job.jobId).then((newStatus) => {
-                                console.log("Result: ", job);
-                                job.status = newStatus.status;
-                                job.error = newStatus.error;
-                                job.outputFileURI = newStatus.outputFileURI;
-                            });
-                        }
-                        return job;
-                    })
-
-                    console.log("MapJobs ", newJobs);
-                    copy.set(mapping.mappingId, newJobs);
-                }
-            });
-        }
-        const asString = JSON.stringify(Array.from(copy.entries()));
-        let childrenData: Array<JobChildCard> = new Array<DataCard>;
-        copy.get(mapping.mappingId)?.map((status: JobStatus) => {
-            console.log("The job ", status);
-            const props = propertiesForMappingJob(status);
-            props.onActionClick = {actionCallback};
-            props.actionButtons = actionsForJobStatus(status);
-            childrenData.push(props);
-        })
-        updateUserPrefs({mappingJobs: asString});
-        setChildren(childrenData);
-    }
-
-    useEffect(() => {
-        setInterval(checkJobs, 3000);
-    }, []);
 
     actionEvents.map((actionEvent: ActionButtonInterface) => {
         buttons.push(actionEvent);
