@@ -62,7 +62,7 @@ export async function fetchMappingJobStatus(jobId:string, token?:string):Promise
         return await myFetch(`${mappingBaseUrl}/api/v1/mappingExecution/status/${jobId}`).then((res) => res.json());
     } catch (error) {
         console.error('Failed to fetch job status. Error:', error);
-        return Promise.reject("Failed to fetch job status.");
+        throw error;//return Promise.reject("Failed to fetch job status.");
     }
 }
 

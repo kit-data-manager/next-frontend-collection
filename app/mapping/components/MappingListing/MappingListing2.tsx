@@ -1,5 +1,6 @@
 'use client';
 
+import {RefreshCw} from "lucide-react"
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
 import React, {useEffect, useState} from "react";
@@ -10,15 +11,10 @@ import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {JobStatus, Mapping, Status} from "@/lib/mapping/definitions";
 import {fetchMappingJobStatus, fetchMappings} from "@/lib/mapping/client_data";
-import MappingCard from "@/app/mapping/components/MappingCard/MappingCard";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
 import {useRouter} from "next/navigation";
 import MappingCard2 from "@/app/mapping/components/MappingCard/MappingCard2";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {CirclePlus} from "lucide-react";
-import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
-import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 
 export default function MappingListing2({page, size, filter, sort}: {
     page: number;
@@ -44,10 +40,6 @@ export default function MappingListing2({page, size, filter, sort}: {
             })
         }
     }, [page, size, filter, sort, status, accessToken])
-
-    useEffect(() => {
-        //setInterval(checkJobs, 3000);
-    }, []);
 
     if (status === "loading" || isLoading || !mappings) {
         return (<Loader/>)
@@ -102,32 +94,35 @@ export default function MappingListing2({page, size, filter, sort}: {
             copy = new Map(JSON.parse(userPrefs.mappingJobs));
         }
 
-        copy.forEach((elems: JobStatus[], key: string) => {
-            if (key === mappingId) {
-                let removeIndex: number = -1;
-                elems.map((job: JobStatus, idx: number) => {
-                    if (job.jobId === jobId) {
-                        removeIndex = idx;
-                    }
-                });
-                if (removeIndex > -1) {
-                    {
-                        copy.set(key, [...elems.splice(removeIndex, 1)] as JobStatus[]);
-                    }
+        let jobs:JobStatus[] | undefined = copy.get(mappingId);
+        if(jobs){
+            let removeIndex: number = -1;
+            jobs.map((job: JobStatus, idx: number) => {
+                if (job.jobId === jobId) {
+                    removeIndex = idx;
                 }
-            } else {
-                copy.set(key, [...elems] as JobStatus[]);
+            });
+            if (removeIndex > -1) {
+               jobs.splice(removeIndex, 1);
+                if(jobs.length > 0){
+                    copy.set(mappingId, jobs);
+                }else{
+                    copy.delete(mappingId);
+                }
+
+                const asString = JSON.stringify(Array.from(copy.entries()));
+                checkJobs(asString);
             }
-        });
-        const asString = JSON.stringify(Array.from(copy.entries()));
-
-        console.log("AFTER RMEOVE ", asString);
-
-        checkJobs(asString);
+        }
     }
 
-    async function getJobStatus(jobId: string) {
-        return await fetchMappingJobStatus(jobId);
+    async function getJobStatus(job: JobStatus) {
+        try{
+        return await fetchMappingJobStatus(job.jobId);
+        }catch(e){
+            job.status = Status.FAILED;
+            return job;
+        }
     }
 
     const doCheckJobs = async () => {
@@ -135,7 +130,7 @@ export default function MappingListing2({page, size, filter, sort}: {
     }
 
     async function checkJobs(jobsSerialized: string) {
-        console.log("Checking mapping jobs...");
+        console.log("Checking mapping jobs... ", jobsSerialized);
         let copy: Map<string, JobStatus[]> = new Map(JSON.parse(jobsSerialized));
 
         if (copy.size > 0) {
@@ -145,7 +140,7 @@ export default function MappingListing2({page, size, filter, sort}: {
             copy.forEach((elems: JobStatus[], key: string) => {
                 promises.push(Promise.all(elems.map((job: JobStatus, idx: number) => {
                     if (job.status === Status.RUNNING || job.status === Status.SUBMITTED) {
-                        return getJobStatus(job.jobId);
+                        return getJobStatus(job);
                     }
                     return job;
                 })).then(jobs => {
@@ -155,7 +150,11 @@ export default function MappingListing2({page, size, filter, sort}: {
             Promise.all(promises).then(() => {
                 const asString = JSON.stringify(Array.from(map2.entries()));
                 updateUserPrefs({mappingJobs: asString});
+                router.push("/mapping/map");
             });
+        }else{
+            updateUserPrefs({mappingJobs: jobsSerialized});
+            router.push("/mapping/map");
         }
     }
 
@@ -165,6 +164,7 @@ export default function MappingListing2({page, size, filter, sort}: {
                 <div className="justify-items-end">
                     <div className="flex space-x-2 justify-content-right">
                         <Button onClick={doCheckJobs} variant="outline">
+                            <RefreshCw className="mr-4"/> Reload Job Status
                         </Button>
                     </div>
                 </div>

@@ -54,6 +54,7 @@ export default function MappingCard2(props: MappingCardProps) {
             if (parts[0] === "deleteJob") {
                 deleteMappingJobStatus(parts[1]).then((result) => {
                     console.log("Removal result: ", result);
+                }).finally(() => {
                     unRegCallback(mapping.mappingId, parts[1]);
                 });
             }
