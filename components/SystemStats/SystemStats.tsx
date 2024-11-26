@@ -15,10 +15,12 @@ export default async function OverallStatusCardWrapper() {
     const repoAvailable:boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable:boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
     const mappingAvailable:boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
+    const typedPidMakerAvailable:boolean = (process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE ? process.env.NEXT_PUBLIC_TYPED_PID_MAKERG_AVAILABLE : "false") == "true";
 
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
     const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+    const typedPidMakerBaseUrl: string = process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL ? process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL : '';
 
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
@@ -41,8 +43,12 @@ export default async function OverallStatusCardWrapper() {
     }
 
     if (mappingAvailable) {
-
         actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl);
+        validTiles++;
+    }
+
+    if(typedPidMakerAvailable){
+        actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl);
         validTiles++;
     }
 
@@ -60,9 +66,9 @@ export default async function OverallStatusCardWrapper() {
                     {
                         title: repoInstanceName,
                         subtitle: actuatorInfoBaseRepo.version,
-                        status: 1,
-                        visitRef: '/base-repo/resources',
-                        detailsRef: "/base-repo"
+                        status: actuatorInfoBaseRepo.status,
+                        visitRef: actuatorInfoBaseRepo.status ? '/base-repo/resources' : '',
+                        detailsRef: actuatorInfoBaseRepo.status ? "/base-repo" : ''
                     }
                 }/> : null
             }
@@ -72,9 +78,9 @@ export default async function OverallStatusCardWrapper() {
                     {
                         title: metastoreInstanceName,
                         subtitle: "v1.0.0",
-                        status: -1,
-                        visitRef: '/metastore',
-                        detailsRef: "/"
+                        status: actuatorInfoMetaStore.status,
+                        visitRef: actuatorInfoMetaStore.status ? '/metastore' : '',
+                        detailsRef: actuatorInfoMetaStore.status ? '/metastore' : ''
                     }
                 }/> : null
             }
@@ -84,9 +90,9 @@ export default async function OverallStatusCardWrapper() {
                     {
                         title: mappingInstanceName,
                         subtitle: actuatorInfoMappingService.version,
-                        status: 1,
-                        visitRef: '/mapping',
-                        detailsRef: "/"
+                        status: actuatorInfoMappingService.status,
+                        visitRef: actuatorInfoMappingService.status ? '/mapping' : '',
+                        detailsRef: actuatorInfoMappingService.status ? '/mapping' : ''
                     }
                 }/> : null
             }
@@ -96,9 +102,9 @@ export default async function OverallStatusCardWrapper() {
                     {
                         title: "FAIR DO Repo",
                         subtitle: "v1.0.0",
-                        status: 0,
-                        visitRef: '/typed-pid-maker',
-                        detailsRef: "/"
+                        status: actuatorInfoTypedPIDMaker.status,
+                        visitRef: actuatorInfoTypedPIDMaker.status ? '/typed-pid-maker' : '',
+                        detailsRef: actuatorInfoTypedPIDMaker.status ? '/typed-pid-maker' : ''
                     }
                 }/> : null
             }
@@ -108,7 +114,7 @@ export default async function OverallStatusCardWrapper() {
                     {
                         title: "Keycloak",
                         subtitle: `Realm: ${keycloakInfo.realm}`,
-                        status: 1
+                        status: keycloakInfo.status
                     }
                 }/> : null
             }
@@ -140,6 +146,7 @@ export async function ActuatorHealthStatusCardWrapper({serviceUrl}: {
     serviceUrl: string
 }) {
     const actuatorInfo = await fetchActuatorHealth(serviceUrl);
+    console.log("ACTUATO ", actuatorInfo);
     return (
         <>
             <StatusCard cardStatus={

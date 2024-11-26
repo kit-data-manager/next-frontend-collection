@@ -152,6 +152,7 @@ export type DataResourcesSearchParams = {
 }
 
 export type ActuatorInfo = {
+    status: number;
     branch: string;
     hash: string;
     buildTime: string;
@@ -159,6 +160,7 @@ export type ActuatorInfo = {
 }
 
 export type KeycloakInfo = {
+    status: number;
     realm: string;
 }
 

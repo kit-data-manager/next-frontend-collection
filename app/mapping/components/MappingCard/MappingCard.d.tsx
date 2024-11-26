@@ -10,6 +10,7 @@ export interface MappingCardProps  {
     actionEvents?: ActionButtonInterface[];
     onActionClick?: (action: DataCardCustomEvent<ActionEvent>) => void;
     jobRegistrationCallback: Function;
+    jobRegistrationCompleteCallback: Function;
     jobUnregistrationCallback: Function;
 }
 

@@ -112,13 +112,13 @@ export async function fetchActuatorInfo(baseUrl: string, token?: string | undefi
     let hash = "unknown";
     let buildTime = "unknown";
     let version = "unknown";
+    let status = 0;
 
     try {
         let headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        console.log("URL ", `${baseUrl}/actuator/info`);
 
         const json = await myFetch(`${baseUrl}/actuator/info`, {headers: headers}).then((response) => response.json());
 
@@ -126,19 +126,22 @@ export async function fetchActuatorInfo(baseUrl: string, token?: string | undefi
         hash = json.git.commit.id;
         buildTime = json.build.time;
         version = json.build.version;
+        status = 1;
     } catch (error) {
         console.error('Failed to fetch actuator info. Error:', error);
+        status = -1;
     }
 
     return {
         branch,
         hash,
         buildTime,
-        version
+        version,
+        status
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(token?: string | undefined) {
+export async function fetchActuatorHealth(serviceUrl:string, token?: string | undefined) {
     let database = "unknown";
     let databaseStatus = "unknown";
     let harddisk = 0;
@@ -149,19 +152,18 @@ export async function fetchActuatorHealth(token?: string | undefined) {
     let elastic = "unknown";
 
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         let headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const json = await myFetch(`${repoBaseUrl}/actuator/health`, {headers: headers}).then((response) => response.json());
+        const json = await myFetch(`${serviceUrl}/actuator/health`, {headers: headers}, true).then((response) => response.json());
 
         database = json.components.db.details.database;
         databaseStatus = json.components.db.status;
         harddisk = json.components.diskSpace.details.free;
         harddiskStatus = json.components.diskSpace.status;
-        rabbitMqStatus = json.components.rabbitMQMessagingService.status;
+        rabbitMqStatus = json.components.rabbitMQMessagingService?.status;
         rabbitMq = "unknown";
         if (json.components.hasOwnProperty("rabbit") &&
             json.components.rabbit.hasOwnProperty("details") &&
@@ -174,8 +176,8 @@ export async function fetchActuatorHealth(token?: string | undefined) {
             json.components.elasticsearch.hasOwnProperty("status") &&
             json.components.elasticsearch.hasOwnProperty("details") &&
             json.components.elasticsearch.details.hasOwnProperty("status")) {
-            elasticStatus = json.components.elasticsearch.status;
-            elastic = json.components.elasticsearch.details.status;
+            elasticStatus = json.components.elasticsearch?.status;
+            elastic = json.components.elasticsearch?.details.status;
         }
     } catch (error) {
         console.error('Failed to fetch actuator health. Error:', error);
@@ -195,18 +197,19 @@ export async function fetchActuatorHealth(token?: string | undefined) {
 
 export async function fetchKeyCloakStatus(realmUrl: string) {
     let realm = "unknown";
-
+    let status = 0;
     try {
         const response = await myFetch(`${realmUrl}`);
-
         const json = await response.json();
-
         realm = json.realm;
+        status = 1;
     } catch (error) {
         console.error('Failed to fetch keycloak info. Error:', error);
+        status = -1;
     }
 
     return {
+        status,
         realm
     } as KeycloakInfo;
 }
@@ -229,15 +232,15 @@ export class ResponseError extends Error {
     }
 }
 
-export async function myFetch(url: string, init?: any) {
+export async function myFetch(url: string, init?: any, onlyExpectBody: boolean = false) {
     let res: Response;
     if (init) {
         res = await fetch(url, init);
     } else {
         res = await fetch(url);
     }
-    if (!res.ok) {
-        throw new ResponseError('Bad fetch response', res);
+    if (!res.ok && !onlyExpectBody) {
+       throw new ResponseError('Bad fetch response', res);
     }
     return res;
 }

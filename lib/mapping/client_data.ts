@@ -5,12 +5,12 @@ import {JobStatus, MappingPage} from "@/lib/mapping/definitions";
 
 export async function fetchMappingPlugins(token?: string | undefined) {
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
         let headers = {"Accept": "application/hal+json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${repoBaseUrl}/api/v1/mappingAdministration/types`,
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingAdministration/types`,
             {headers: headers}).then(result => result.json());
     } catch (error) {
         console.error('Failed to fetch mapping plugins. Error:', error);
@@ -59,7 +59,7 @@ export async function fetchMappingJobStatus(jobId:string, token?:string):Promise
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${mappingBaseUrl}/api/v1/mappingExecution/status/${jobId}`).then((res) => res.json());
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingExecution/schedule/${jobId}/status`).then((res) => res.json());
     } catch (error) {
         console.error('Failed to fetch job status. Error:', error);
         throw error;//return Promise.reject("Failed to fetch job status.");
@@ -68,12 +68,12 @@ export async function fetchMappingJobStatus(jobId:string, token?:string):Promise
 
 export async function deleteMappingJobStatus(jobId:string, token?:string):Promise<boolean>{
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
         let headers = {"Accept": "application/json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${repoBaseUrl}/api/v1/mappingExecution/${jobId}`,{
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingExecution/schedule/${jobId}`,{
             method: "DELETE",
             headers: headers
         }).then(result => result.ok);

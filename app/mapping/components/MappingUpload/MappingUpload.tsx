@@ -11,10 +11,12 @@ import {installEventHandlers} from "@/app/mapping/components/MappingUpload/useMa
 export default function MappingUpload(params:any) {
     const id = params.id;
     const callback = params.mappingCallback;
+    const callbackComplete = params.uploadCompleteCallback;
    // const path = usePathname();
+    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
 
     const [uppy] = useState(() => new Uppy()
-        .use(XHRUpload, { endpoint: `http://localhost:8095/api/v1/mappingExecution/async/${id}`,method: "post",formData: true, fieldName: "document" }));
+        .use(XHRUpload, { endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingId=${id}`,method: "post",formData: true, fieldName: "document" }));
 
     useEffect(() => {
         function successCallback(file, response){
@@ -22,8 +24,15 @@ export default function MappingUpload(params:any) {
         }
         uppy.on('upload-success', successCallback);
 
+        function completeCallback(){
+            callbackComplete();
+        }
+        uppy.on('complete', completeCallback);
+
+
         return () => {
             uppy.off('upload-success', successCallback);
+            uppy.off('complete', completeCallback);
         }
     }, [id, callback]);
 
@@ -31,7 +40,7 @@ export default function MappingUpload(params:any) {
 
     return (
         <div className="w-full flex mb-6 justify-center">
-            <Dashboard uppy={uppy} width={256} height={256} showProgressDetails={true}/>
+            <Dashboard uppy={uppy} width={384} height={256} showProgressDetails={true}/>
         </div>
 
     );

@@ -1,6 +1,5 @@
 import {
     DocumentIcon,
-    LockOpenIcon,
     UserIcon
 } from '@heroicons/react/24/outline';
 
@@ -23,13 +22,16 @@ export default async function MappingServiceStats() {
             "text": "Mapping(s)",
             "value": formatNumber(mappings.totalPages),
             "icon": DocumentIcon
-        },
-        {
-            "text": "Performed Mappings",
-            "value": formatNumber(0),
-            "icon": LockOpenIcon
         }
     ]
+    /**
+     * ,
+     *         {
+     *             "text": "Performed Mappings",
+     *             "value": formatNumber(0),
+     *             "icon": LockOpenIcon
+     *         }
+     */
 
     return (
         <>

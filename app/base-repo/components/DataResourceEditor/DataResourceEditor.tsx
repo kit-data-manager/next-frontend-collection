@@ -61,7 +61,6 @@ export default function DataResourceEditor({...props}) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        console.log("ACTION IN EDITOR ", eventIdentifier);
         if(eventIdentifier.startsWith("toggleTag")){
             //open modal
             let parts:string[] = eventIdentifier.split("_");

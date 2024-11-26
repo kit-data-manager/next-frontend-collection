@@ -38,6 +38,7 @@ export enum Status {
     DELETED= "DELETED"
 }
 export type JobStatus = {
+    mappingId:string;
     jobId: string;
     status: Status;
     error?: string;

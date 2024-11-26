@@ -10,11 +10,11 @@ import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {JobStatus, Mapping, Status} from "@/lib/mapping/definitions";
-import {fetchMappingJobStatus, fetchMappings} from "@/lib/mapping/client_data";
-import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import {deleteMappingJobStatus, fetchMappingJobStatus, fetchMappings} from "@/lib/mapping/client_data";
 import {useRouter} from "next/navigation";
 import MappingCard2 from "@/app/mapping/components/MappingCard/MappingCard2";
 import {Button} from "@/components/ui/button";
+import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 
 export default function MappingListing2({page, size, filter, sort}: {
     page: number;
@@ -27,7 +27,7 @@ export default function MappingListing2({page, size, filter, sort}: {
     const [isLoading, setIsLoading] = useState(true)
     const {data, status} = useSession();
     const accessToken = data?.accessToken;
-    const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
+    const jobStore:JobStore = useMappingStore.getState();
     const router = useRouter();
 
     useEffect(() => {
@@ -48,77 +48,28 @@ export default function MappingListing2({page, size, filter, sort}: {
     if (mappings.length === 0) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/mapping/map"})
     }
+    function registrationCompleted() {
+        //reload to show jobs in UI
+        router.push("/mapping/map");
+    }
 
     function registerJob(mappingId: string, status: JobStatus) {
         console.log("Register new MappingJob ", mappingId, status);
-
-        let copy: Map<string, JobStatus[]>
-        if (!userPrefs.mappingJobs) {
-            copy = new Map();
-        } else {
-            copy = new Map(JSON.parse(userPrefs.mappingJobs));
-        }
-
-        let newMap: boolean = true;
-        copy.forEach((elems: JobStatus[], key: string) => {
-            if (key === mappingId) {
-                newMap = false;
-                let newJob: boolean = true;
-                elems.map((job: JobStatus, idx: number) => {
-                    if (job.jobId === status.jobId) {
-                        newJob = false;
-                    }
-                });
-                if (newJob) {
-                    elems.push(status);
-                }
-            } else {
-                copy.set(key, [...elems] as JobStatus[]);
-            }
-        });
-
-        if (newMap) {
-            copy.set(mappingId, [status]);
-        }
-        const asString = JSON.stringify(Array.from(copy.entries()));
-        checkJobs(asString);
+        status.mappingId = mappingId;
+        jobStore.addJob(status);
     }
 
-    function unregisterJob(mappingId: string, jobId: string) {
+    function unregisterJob(jobId: string) {
         console.log("Unregister MappingJob ", jobId);
-
-        let copy: Map<string, JobStatus[]>
-        if (!userPrefs.mappingJobs) {
-            copy = new Map();
-        } else {
-            copy = new Map(JSON.parse(userPrefs.mappingJobs));
-        }
-
-        let jobs:JobStatus[] | undefined = copy.get(mappingId);
-        if(jobs){
-            let removeIndex: number = -1;
-            jobs.map((job: JobStatus, idx: number) => {
-                if (job.jobId === jobId) {
-                    removeIndex = idx;
-                }
-            });
-            if (removeIndex > -1) {
-               jobs.splice(removeIndex, 1);
-                if(jobs.length > 0){
-                    copy.set(mappingId, jobs);
-                }else{
-                    copy.delete(mappingId);
-                }
-
-                const asString = JSON.stringify(Array.from(copy.entries()));
-                checkJobs(asString);
-            }
-        }
+        deleteMappingJobStatus(jobId).finally(() => {
+            jobStore.removeJob(jobId);
+            router.push("/mapping/map");
+        });
     }
 
     async function getJobStatus(job: JobStatus) {
         try{
-        return await fetchMappingJobStatus(job.jobId);
+            return await fetchMappingJobStatus(job.jobId);
         }catch(e){
             job.status = Status.FAILED;
             return job;
@@ -126,41 +77,32 @@ export default function MappingListing2({page, size, filter, sort}: {
     }
 
     const doCheckJobs = async () => {
-        checkJobs(userPrefs.mappingJobs);
+        checkJobs();
     }
 
-    async function checkJobs(jobsSerialized: string) {
-        console.log("Checking mapping jobs... ", jobsSerialized);
-        let copy: Map<string, JobStatus[]> = new Map(JSON.parse(jobsSerialized));
+    async function checkJobs() {
+        console.log("Checking mapping jobs... ", jobStore.mappingStatus);
 
-        if (copy.size > 0) {
-            const map2 = new Map();
+        if(jobStore.mappingStatus.length > 0){
             const promises = [] as Promise<any>[];
-
-            copy.forEach((elems: JobStatus[], key: string) => {
-                promises.push(Promise.all(elems.map((job: JobStatus, idx: number) => {
+                promises.push(Promise.all(jobStore.mappingStatus.map((job: JobStatus, idx: number) => {
                     if (job.status === Status.RUNNING || job.status === Status.SUBMITTED) {
                         return getJobStatus(job);
                     }
                     return job;
                 })).then(jobs => {
-                    map2.set(key, jobs as JobStatus[]);
+                   jobs.forEach((job: JobStatus, idx: number) => {jobStore.updateJob(job)})
                 }));
-            });
+
             Promise.all(promises).then(() => {
-                const asString = JSON.stringify(Array.from(map2.entries()));
-                updateUserPrefs({mappingJobs: asString});
                 router.push("/mapping/map");
             });
-        }else{
-            updateUserPrefs({mappingJobs: jobsSerialized});
-            router.push("/mapping/map");
         }
     }
 
     return (
         <div className="mt-5 grid w-full">
-            <div className="p-4 grid grid-cols-2">
+            <div className="p-4 grid">
                 <div className="justify-items-end">
                     <div className="flex space-x-2 justify-content-right">
                         <Button onClick={doCheckJobs} variant="outline">
@@ -194,6 +136,7 @@ export default function MappingListing2({page, size, filter, sort}: {
                                 key={element.mappingId}
                                 data={element}
                                 jobRegistrationCallback={registerJob}
+                                jobRegistrationCompleteCallback={registrationCompleted}
                                 jobUnregistrationCallback={unregisterJob}
                                 actionEvents={actionEvents}
                             ></MappingCard2>

@@ -5,6 +5,8 @@ import {useRouter} from "next/navigation";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect, useMemo, useState} from "react";
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
+import { createJSONEditor } from 'vanilla-jsoneditor/standalone.js'
+
 import {useSession} from "next-auth/react";
 import {
     actionsForJobStatus,
@@ -22,13 +24,16 @@ import MappingUpload from "@/app/mapping/components/MappingUpload/MappingUpload"
 import {JobChildCard, JobStatus, Status} from "@/lib/mapping/definitions";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
 import {Timeout} from "@mui/utils/useTimeout";
+import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
+import {Textarea} from "@/components/ui/textarea";
 
 export default function MappingCard2(props: MappingCardProps) {
     const {data, status} = useSession();
     const [tags, setTags] = useState([] as Tag[]);
     const [children, setChildren] = useState([] as JobChildCard[]);
     const [textRight, setTextRight] = useState({'label': "Plugin", 'value': "Loading..."} as TextPropType);
-    const [openModal, setOpenModal] = useState(false);
+    const [openAddJobsModal, setOpenAddJobsModal] = useState(false);
+    const [openViewSchemaModal, setOpenViewSchemaModal] = useState(false);
 
     const router = useRouter();
     const mapping = props.data;
@@ -37,26 +42,23 @@ export default function MappingCard2(props: MappingCardProps) {
     const childVariant = "default";
     const actionEvents: ActionButtonInterface[] = props.actionEvents ? props.actionEvents : [] as ActionButtonInterface[];
     const regCallback = props.jobRegistrationCallback;
+    const regCompleteCallback = props.jobRegistrationCompleteCallback;
     const unRegCallback = props.jobUnregistrationCallback;
     let buttons: Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
-    const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
+    // const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
+    const jobStore:JobStore = useMappingStore.getState();
 
-   const handleAction = useDebouncedCallback((event) => {
+    const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        console.log("MappingCard ActionId ", eventIdentifier);
-        console.log("In CARD ", mapping.mappingId);
         if (eventIdentifier.startsWith("run")) {
-            setOpenModal(true);
+            setOpenAddJobsModal(true);
         } else if (eventIdentifier === "view") {
 
+            setOpenViewSchemaModal(true);
         } else {
             let parts: string[] = eventIdentifier.split("_");
             if (parts[0] === "deleteJob") {
-                deleteMappingJobStatus(parts[1]).then((result) => {
-                    console.log("Removal result: ", result);
-                }).finally(() => {
-                    unRegCallback(mapping.mappingId, parts[1]);
-                });
+                unRegCallback(parts[1]);
             }
         }
     });
@@ -74,20 +76,28 @@ export default function MappingCard2(props: MappingCardProps) {
                 setTags(tagsForMapping(mapping));
                 setTextRight(textRightForMapping(mapping));
             }).then(() => {
-
-                let copy: Map<string, JobStatus[]> = new Map(JSON.parse(userPrefs.mappingJobs));
-                if(copy.get(mapping.mappingId)){
-                    let childrenData: Array<JobChildCard> = new Array<DataCard>;
-                    copy.get(mapping.mappingId)?.map((status: JobStatus) => {
-                        console.log("The job ", status);
+                let childrenData: Array<JobChildCard> = new Array<DataCard>;
+                jobStore.mappingStatus.map((status: JobStatus) => {
+                    if (status.mappingId === mapping.mappingId) {
                         const props = propertiesForMappingJob(status);
                         props.onActionClick = {actionCallback};
                         props.actionButtons = actionsForJobStatus(status);
                         childrenData.push(props);
-                    })
-                    setChildren(childrenData);
-                }
+                    }
+                })
+                setChildren(childrenData);
             });
+        })
+const content = "{id: Test123}"
+        const editor = createJSONEditor({
+            target: document.getElementById('jsoneditor'),
+            props: {
+               content,
+                onChange: (updatedContent, previousContent, { contentErrors, patchResult }) => {
+                    // content is an object { json: unknown } | { text: string }
+                    console.log('onChange', { updatedContent, previousContent, contentErrors, patchResult })
+                }
+            }
         })
     }, [data?.accessToken, mapping.mappingId]);
 
@@ -97,12 +107,17 @@ export default function MappingCard2(props: MappingCardProps) {
     });
 
     function closeModal() {
-        setOpenModal(false);
+        setOpenAddJobsModal(false);
+        setOpenViewSchemaModal(false)
     }
 
     function mappingResultReceived(body: JobStatus) {
-        setOpenModal(false);
         regCallback(mapping.mappingId, body);
+    }
+
+    function mappingUploadComplete(body: JobStatus) {
+        setOpenAddJobsModal(false);
+        regCompleteCallback();
     }
 
     let miscProperties = propertiesForMapping(mapping);
@@ -116,14 +131,31 @@ export default function MappingCard2(props: MappingCardProps) {
                       childrenVariant={childVariant}
                       actionButtons={buttons}
                       onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
-            <Dialog open={openModal} modal={true} onOpenChange={closeModal}>
+
+            <Dialog open={openAddJobsModal} modal={true} onOpenChange={closeModal}>
                 <DialogContent className="bg-secondary">
                     <DialogHeader>
-                        <DialogTitle>Add New Tag</DialogTitle>
+                        <DialogTitle>Schedule Mapping Jobs(s)</DialogTitle>
                         <DialogDescription className="secondary">
-                            Provide a tag to add to this content element.
+                            Please select one or more files and upload them to schedule mapping jobs.
                         </DialogDescription>
-                        <MappingUpload id={mapping.mappingId} mappingCallback={mappingResultReceived}/>
+                        <MappingUpload id={mapping.mappingId}
+                                       mappingCallback={mappingResultReceived}
+                                       uploadCompleteCallback={mappingUploadComplete}/>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={openViewSchemaModal} modal={true} onOpenChange={closeModal}>
+                <DialogContent className="bg-secondary">
+                    <DialogHeader>
+                        <DialogTitle>Mapping Schema</DialogTitle>
+                        <DialogDescription className="secondary">
+                            Mapping Schema
+                        </DialogDescription>
+                        <Textarea>Test</Textarea>
+                        <div id={"jsoneditor"}/>
+
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
