@@ -1,37 +1,51 @@
+'use client'
+
 import {
-    DocumentIcon,
-    UserIcon
+    ArrowPathIcon, DocumentDuplicateIcon,
+    PlayIcon, PuzzlePieceIcon
 } from '@heroicons/react/24/outline';
 
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {formatNumber} from "@/lib/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
+import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
+import {useEffect, useState} from "react";
+import {Puzzle} from "lucide-react";
 
-export default async function MappingServiceStats() {
+export default function MappingServiceStats() {
 
-    const plugins = await fetchMappingPlugins();
-    const mappings = await fetchMappings(1,1);
+   // const plugins = await fetchMappingPlugins();
+   // const mappings = await fetchMappings(1,1);
+    const jobStore:JobStore = useMappingStore.getState();
+    const [mappingPlugins, setMappingPlugins] = useState(-1);
+    const [mappings, setMappings] = useState(-1);
+
+
+    useEffect(() => {
+        fetchMappingPlugins().then((res) => {
+            setMappingPlugins(res.length);
+        }).then(() => {
+            fetchMappings(1,1).then((res) => setMappings(res.totalPages))
+        })
+    }, []);
 
     const stats = [
         {
             "text": "Plugin(s)",
-            "value": formatNumber(plugins.length),
-            "icon": UserIcon
+            "value": mappingPlugins > -1 ? formatNumber(mappingPlugins) : "Loading...",
+            "icon": PuzzlePieceIcon
         },
         {
             "text": "Mapping(s)",
-            "value": formatNumber(mappings.totalPages),
-            "icon": DocumentIcon
+            "value": mappings > -1 ? formatNumber(mappings) : "Loading...",
+            "icon": DocumentDuplicateIcon
+        },
+        {
+            "text": "Mapping Jobs",
+            "value": formatNumber(jobStore.mappingStatus.length) + " / 20",
+            "icon": PlayIcon
         }
     ]
-    /**
-     * ,
-     *         {
-     *             "text": "Performed Mappings",
-     *             "value": formatNumber(0),
-     *             "icon": LockOpenIcon
-     *         }
-     */
 
     return (
         <>

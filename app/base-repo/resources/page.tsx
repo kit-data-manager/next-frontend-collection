@@ -6,7 +6,7 @@ import Link from "next/link";
 import DataResourceListing from "@/app/base-repo/components/DataResourceListing/DataResourceListing";
 import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {DataResourcesSearchParams} from "@/lib/definitions";
+import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/searchParamHelper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
@@ -15,21 +15,23 @@ import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortRe
 import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 
 
-export default function Page({searchParams}: {
-    searchParams?: DataResourcesSearchParams;
+export default async function Page({searchParams}: {
+    searchParams?: DataResourcesSearchParamsPromise;
 }) {
 
-    const page: number = valueOrDefault(searchParams, "page", 0);
-    const size: number = valueOrDefault(searchParams, "size", 10);
-    const sort:string = valueOrDefault(searchParams, "sort", "lastUpdate,desc");
+    const params:DataResourcesSearchParams | undefined = await searchParams;
+
+    const page: number = valueOrDefault(params, "page", 0);
+    const size: number = valueOrDefault(params, "size", 10);
+    const sort:string = valueOrDefault(params, "sort", "lastUpdate,desc");
     const filter: FilterForm = {} as FilterForm;
     const { data, status } = useSession();
 
-    filter.id = valueOrDefault(searchParams, "id", undefined);
-    filter.state = valueOrDefault(searchParams, "state", undefined);
-    filter.publisher = valueOrDefault(searchParams, "publisher", undefined);
-    filter.publicationYear = valueOrDefault(searchParams, "publicationYear", undefined);
-    filter.typeGeneral = valueOrDefault(searchParams, "typeGeneral", undefined);
+    filter.id = valueOrDefault(params, "id", undefined);
+    filter.state = valueOrDefault(params, "state", undefined);
+    filter.publisher = valueOrDefault(params, "publisher", undefined);
+    filter.publicationYear = valueOrDefault(params, "publicationYear", undefined);
+    filter.typeGeneral = valueOrDefault(params, "typeGeneral", undefined);
 
     return (
         <main>

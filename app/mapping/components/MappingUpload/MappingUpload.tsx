@@ -10,13 +10,19 @@ import {installEventHandlers} from "@/app/mapping/components/MappingUpload/useMa
 
 export default function MappingUpload(params:any) {
     const id = params.id;
+    const fileTypes = params.fileTypes;
     const callback = params.mappingCallback;
     const callbackComplete = params.uploadCompleteCallback;
-   // const path = usePathname();
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
 
     const [uppy] = useState(() => new Uppy()
-        .use(XHRUpload, { endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingId=${id}`,method: "post",formData: true, fieldName: "document" }));
+        .use(XHRUpload, {
+            endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${id}`,method: "post",formData: true, fieldName: "document"
+        }));
+
+    uppy.setOptions({
+        restrictions: {maxNumberOfFiles: 5, allowedFileTypes: fileTypes}
+    })
 
     useEffect(() => {
         function successCallback(file, response){

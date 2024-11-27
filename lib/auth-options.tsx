@@ -1,7 +1,8 @@
-import {AuthOptions, TokenSet} from "next-auth";
+import {AuthOptions, Profile, TokenSet} from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import {JWT} from "next-auth/jwt";
 import {User, Account} from "next-auth";
+import {AdapterUser} from "next-auth/adapters";
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -15,13 +16,17 @@ export const authOptions: AuthOptions = {
         maxAge: 60 * 30
     },
     callbacks: {
-        async jwt({token, user, account}: {
+        async jwt({token, user, account, profile, trigger, isNewUser, session}: {
             token: JWT;
-            user: User;
-            account:Account;
-        }){
+            user: User | AdapterUser;
+            account: Account | null;
+            profile?: Profile | undefined;
+            trigger?: "signIn" | "signUp" | "update" | undefined;
+            isNewUser?: boolean | undefined;
+            session?: any;
+        }) {
             //{ token:JWT, user, account }) {
-         //   return { ...token, ...user };
+            //   return { ...token, ...user };
             if (account) {
                 token.idToken = account.id_token
                 token.accessToken = account.access_token
@@ -38,9 +43,9 @@ export const authOptions: AuthOptions = {
 
                     const tokens: TokenSet = await response.json()
 
-                    if (!response.ok){
-                        console.error("Refreshing access token returned error code. ", error)
-                        return { ...token, error: "RefreshAccessTokenError" }
+                    if (!response.ok) {
+                        console.error("Refreshing access token returned error code.")
+                        return {...token, error: "RefreshAccessTokenError"}
                     }
 
                     const updatedToken: JWT = {
@@ -53,14 +58,14 @@ export const authOptions: AuthOptions = {
                     return updatedToken
                 } catch (error) {
                     console.error("Error refreshing access token", error)
-                    return { ...token, error: "RefreshAccessTokenError" }
+                    return {...token, error: "RefreshAccessTokenError"}
                 }
             }
         },
-        async session({ session, token }) {
+        async session({session, token}) {
             /* session.accessToken = token.accessToken
              return session*/
-            return { ...session, user: token };
+            return {...session, user: token};
         }
     }
     /*
@@ -77,7 +82,7 @@ export const authOptions: AuthOptions = {
 
 function requestRefreshOfAccessToken(token: JWT) {
     return fetch(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
         body: new URLSearchParams({
             client_id: process.env.KEYCLOAK_CLIENT_ID,
             client_secret: process.env.KEYCLOAK_CLIENT_SECRET,

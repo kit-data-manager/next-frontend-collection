@@ -3,7 +3,7 @@
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
 
-import {Session} from "next-auth";
+import {Profile, Session} from "next-auth";
 
 export type DataResourcePage = {
     resources: DataResource[];
@@ -151,6 +151,8 @@ export type DataResourcesSearchParams = {
     sort?:string;
 }
 
+export type DataResourcesSearchParamsPromise = Promise<DataResourcesSearchParams>;
+
 export type ActuatorInfo = {
     status: number;
     branch: string;
@@ -174,6 +176,7 @@ export type Activity = {
 }
 
 export type ExtendedSession = Session & {accessToken?: string, groups?: string[] | undefined};
+export type ExtendedProfile = Profile & {groups?:string[]}
 
 export type User = {
     id: string;

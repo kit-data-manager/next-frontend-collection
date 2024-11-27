@@ -1,32 +1,22 @@
-'use client';
-
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
-import {DataResourcesSearchParams} from "@/lib/definitions";
+import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib/definitions";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {useSession} from "next-auth/react";
-import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
-import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {CirclePlus} from "lucide-react";
-import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
-import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
-import DataResourceListing from "@/app/base-repo/components/DataResourceListing/DataResourceListing";
-import MappingListing from "@/app/mapping/components/MappingListing/MappingListing";
 import {valueOrDefault} from "@/lib/searchParamHelper";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {ToastContainer} from "react-toastify";
 import React from "react";
-import MappingListing2 from "@/app/mapping/components/MappingListing/MappingListing2";
+import MappingListing from "@/app/mapping/components/MappingListing/MappingListing";
 
-export default function Page({searchParams}: {
-    searchParams?: DataResourcesSearchParams;
+export default async function Page({searchParams}: {
+    searchParams?: DataResourcesSearchParamsPromise;
 }) {
-    const page: number = valueOrDefault(searchParams, "page", 0);
-    const size: number = valueOrDefault(searchParams, "size", 10);
-    const sort:string = valueOrDefault(searchParams, "sort", "title,desc");
-    const filter: FilterForm = {} as FilterForm;
+    const params: DataResourcesSearchParams | undefined = await searchParams;
 
-    const { data, status } = useSession();
+    const page: number = valueOrDefault(params, "page", 0);
+    const size: number = valueOrDefault(params, "size", 10);
+    const sort:string  = valueOrDefault(params, "sort", "title,desc");
+    const filter: FilterForm = {} as FilterForm;
 
     return (
         <main>
@@ -42,7 +32,7 @@ export default function Page({searchParams}: {
             />
             <SectionCaption caption={"Execute Mappings"}/>
             <div className="flex w-full">
-                    <MappingListing2 page={page} size={size} filter={filter} sort={sort}/>
+                    <MappingListing page={page} size={size} filter={filter} sort={sort}/>
             </div>
             <ToastContainer/>
 

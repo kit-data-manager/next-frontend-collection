@@ -1,7 +1,9 @@
-import NextAuth, {NextAuthOptions, Session, User} from 'next-auth';
+import NextAuth, {Account, NextAuthOptions, Profile, Session, User} from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
 import type { JWT } from 'next-auth/jwt';
+import {AdapterUser} from "next-auth/adapters";
+import {ExtendedProfile} from "@/lib/definitions";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -150,7 +152,15 @@ export const authOptions: NextAuthOptions = {
          * @param  {boolean} isNewUser True if new user (only available on sign in)
          * @return {object}            JSON Web Token that will be saved
          */
-        async jwt({ token, user, account, profile, isNewUser }) {
+        async jwt({token, user, account, profile, trigger, isNewUser, session}: {
+            token: JWT;
+            user: User | AdapterUser;
+            account: Account | null;
+            profile?: ExtendedProfile | undefined;
+            trigger?: "signIn" | "signUp" | "update" | undefined;
+            isNewUser?: boolean | undefined;
+            session?: any;
+        }) {
             // Initial sign in
             if (account && user) {
                 // Add access_token, refresh_token and expirations to the token right after sign in

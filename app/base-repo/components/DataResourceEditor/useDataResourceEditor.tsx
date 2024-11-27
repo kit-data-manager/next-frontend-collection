@@ -18,7 +18,7 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
 export const DoUpdateDataResource = (currentData: DataResource, router: AppRouterInstance) => {
     const id = toast.loading("Updating resource...")
 
-    updateDataResource(currentData, currentData.etag).then((status) => {
+    updateDataResource(currentData, currentData.etag ? currentData.etag : '').then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {

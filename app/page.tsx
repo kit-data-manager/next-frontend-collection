@@ -7,7 +7,7 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/components/search/site-search";
 import {ExclamationTriangleIcon} from '@heroicons/react/24/outline';
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {authOptions} from "@/lib/auth-options";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function Page() {
     let username;

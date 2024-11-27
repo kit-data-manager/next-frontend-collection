@@ -9,7 +9,6 @@ import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
 
 export function runAction(actionId:string, redirect?: Function){
     let parts:string[] = actionId.split("_");
-console.log("ACTION ID ", actionId);
 switch(parts[0]){
     case REPO_ACTIONS.VIEW_RESOURCE:{
         ViewResourceAction.performAction(parts[1], undefined, undefined, redirect);

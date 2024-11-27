@@ -1,9 +1,9 @@
 import {ResponseError} from "@/lib/base-repo/client_data";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcePage} from "@/lib/definitions";
-import {JobStatus, MappingPage} from "@/lib/mapping/definitions";
+import {JobStatus, MappingPage, MappingPlugin} from "@/lib/mapping/definitions";
 
-export async function fetchMappingPlugins(token?: string | undefined) {
+export async function fetchMappingPlugins(token?: string | undefined):Promise<MappingPlugin[]> {
     try {
         const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
         let headers = {"Accept": "application/hal+json"};
@@ -14,7 +14,7 @@ export async function fetchMappingPlugins(token?: string | undefined) {
             {headers: headers}).then(result => result.json());
     } catch (error) {
         console.error('Failed to fetch mapping plugins. Error:', error);
-        return undefined;
+        return Promise.reject("No plugins found");
     }
 }
 
@@ -50,6 +50,20 @@ export async function fetchMappings(page: number, size: number, filter?: FilterF
     }
 }
 
+export async function fetchMappingDocument(mappingId:string, token?: string | undefined):Promise<string> {
+    try {
+        const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+        let headers = {"Accept": "application/octet-stream", "Content-Type": "application/octet-stream"};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingAdministration/${mappingId}/document`,
+            {headers: headers}).then(result => result.text());
+    } catch (error) {
+        console.error('Failed to fetch mapping document. Error:', error);
+        return Promise.reject("No mapping document found.");
+    }
+}
 
 export async function fetchMappingJobStatus(jobId:string, token?:string):Promise<JobStatus>{
     try {
@@ -81,9 +95,6 @@ export async function deleteMappingJobStatus(jobId:string, token?:string):Promis
         console.error('Failed to delete mapping job. Error:', error);
     }
     return true;
-}
-
-export async function runMapping(mappingId:string, token?:string|undefined){
 }
 
 export async function myFetch(url: string, init?: any) {
