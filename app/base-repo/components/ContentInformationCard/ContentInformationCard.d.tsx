@@ -1,5 +1,5 @@
 import {ContentInformation} from "@/lib/definitions";
-import {ActionEvent, DataCardCustomEvent} from "../../../../../data-view-web-component";
+import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 
 export interface ContentInformationCardProps  {
     data: ContentInformation;

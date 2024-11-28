@@ -18,8 +18,6 @@ export default function AppHeader({securityEnabled, children}: {
     const [admin, setAdmin] = useState(false);
     const [anonymous, setAnonymous] = useState(false);
 
-    console.log("Statis ", status);
-
     useEffect(() => {
         if(data && data.user && data.user.groups){
             setAdmin(data.user.groups.includes("ROLE_ADMINISTRATOR"));

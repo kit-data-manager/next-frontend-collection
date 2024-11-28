@@ -1,5 +1,6 @@
 import {twMerge} from "tailwind-merge";
 import clsx, {ClassValue} from "clsx";
+import {ResponseError} from "@/lib/base-repo/client_data";
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
     // If the total number of pages is 7 or less,
@@ -36,4 +37,15 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
+}
+
+export async function fetchWithBasePath(relativePath: string, init?: any) {
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
+    let res: Response = await fetch(`${basePath}${relativePath}`, init);
+
+    if (!res.ok) {
+        throw new ResponseError('Bad fetch response', res);
+    }
+    return res;
 }

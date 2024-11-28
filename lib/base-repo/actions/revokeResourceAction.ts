@@ -1,5 +1,6 @@
 import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
 import {toast} from "react-toastify";
+import {fetchWithBasePath} from "@/lib/utils";
 
 export class RevokeResourceAction extends Action{
     constructor(resourceId:string, etag:string) {
@@ -10,7 +11,7 @@ export class RevokeResourceAction extends Action{
         const id = toast.loading("Revoking resource...");
 
         if (window.confirm(`Do you really want to revoke resource ${identifier}?`)) {
-            await fetch(`/api/delete?resourceId=${identifier}&etag=${etag}&type=revoke`).then(response => {
+            await fetchWithBasePath(`/api/delete?resourceId=${identifier}&etag=${etag}&type=revoke`).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
                         render: `Resource ${identifier} successfully revoked.`,

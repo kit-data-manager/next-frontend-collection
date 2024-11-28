@@ -12,9 +12,10 @@ import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/use
 export default function ContentUpload(params:any) {
     const id = params.id;
     const path = usePathname();
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const [uppy] = useState(() => new Uppy()
-        .use(XHRUpload, { endpoint: "http://localhost:3000/api/",method: "post",formData: true, fieldName: "file" }));
+        .use(XHRUpload, { endpoint: `${basePath}/api/create`,method: "post",formData: true, fieldName: "file" }));
 
     installEventHandlers(uppy, id, path);
 

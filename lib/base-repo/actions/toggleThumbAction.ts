@@ -1,6 +1,7 @@
 import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
 import {toast} from "react-toastify";
 import {ResponseError} from "@/lib/base-repo/client_data";
+import {fetchWithBasePath} from "@/lib/utils";
 
 export class ToggleThumbAction extends Action{
     constructor(resourceId:string, filename:string) {
@@ -15,7 +16,7 @@ export class ToggleThumbAction extends Action{
             const id = toast.loading("Toggle thumb tag...");
             const filename_decoded = filename.replace(/%5F/g, '_');
 
-            await fetch(`/api/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=thumb`, {
+            await fetchWithBasePath(`/api/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=thumb`, {
                 method: "PATCH"
             }).then(response => {
                 if(response.status === 204){

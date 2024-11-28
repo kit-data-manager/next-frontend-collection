@@ -1,5 +1,6 @@
 import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
 import {toast} from "react-toastify";
+import {fetchWithBasePath} from "@/lib/utils";
 
 export class DeleteContentAction extends Action{
     constructor(resourceId:string, filename:string) {
@@ -10,7 +11,7 @@ export class DeleteContentAction extends Action{
         const id = toast.loading("Deleting content...")
         const filename_decoded = filename.replace(/%5F/g, '_');
         if (window.confirm(`Do you really want to delete the file ${filename_decoded}?`)) {
-            await fetch(`/api/delete?resourceId=${identifier}&filename=${filename_decoded}`).then(response => {
+            await fetchWithBasePath(`/api/delete?resourceId=${identifier}&filename=${filename_decoded}`).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
                         render: `Content ${filename_decoded} successfully deleted.`,

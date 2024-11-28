@@ -100,10 +100,8 @@ export default function JsonForm(props) {
                     jsoneditor.disable();
                 }
             });
-
-
-
     }
+
     const initJsoneditor = function () {
         // destroy old JSONEditor instance if exists
         if (jsoneditor) {

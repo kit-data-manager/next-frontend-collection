@@ -10,6 +10,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
             name: file.name,
         });
     });
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     //add filename to base-url
     // @ts-ignore
@@ -21,7 +22,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
             uppy.setFileState(fileID, {
                 xhrUpload: {
                   //  ...file.xhrUpload,
-                    endpoint: `/api/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
+                    endpoint: `${basePath}/api/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
                 }
             })
         }

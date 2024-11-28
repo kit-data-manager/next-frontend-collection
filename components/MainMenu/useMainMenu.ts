@@ -1,10 +1,13 @@
 import {ChartPieIcon, ListBulletIcon, PlusCircleIcon, PlayIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
+import {useRouter} from "next/navigation";
 
 export function getMenuEntries(): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable: boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
     const mappingAvailable: boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
+
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const items: SubMenu[] = [];
 
@@ -14,27 +17,27 @@ export function getMenuEntries(): SubMenu[] {
             menuItems: [
                 {
                     name: 'Overview',
-                    href: '/base-repo',
+                    href: `${basePath}/base-repo`,
                     icon: ChartPieIcon,
                     description: "Show system status information."
                 },
                 {
                     name: 'Create Resource',
-                    href: '/base-repo/resources/create',
+                    href: `${basePath}/base-repo/resources/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Data Resource.",
                     requiresSession: true
                 },
                 {
                     name: 'Search',
-                    href: '/base-repo/resources/search',
+                    href: `${basePath}/base-repo/resources/search`,
                     icon: PlusCircleIcon,
                     description: "Search for Data Resources.",
                     requiresSearch: true
                 },
                 {
                     name: 'Resources',
-                    href: '/base-repo/resources',
+                    href: `${basePath}/base-repo/resources`,
                     icon: ListBulletIcon,
                     description: "List all Data Resources."
                 }
@@ -48,40 +51,40 @@ export function getMenuEntries(): SubMenu[] {
             menuItems: [
                 {
                     name: 'Overview',
-                    href: '/metadata-repo',
+                    href: `${basePath}/metadata-repo`,
                     icon: ChartPieIcon,
                     description: "Show system status information."
                 },
                 {
                     name: 'Create Schema',
-                    href: '/metadata-repo/schema/create',
+                    href: `${basePath}/metadata-repo/schema/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Metadata Schema.",
                     requiresSession: true
                 },
                 {
                     name: 'Create Metadata',
-                    href: '/metadata-repo/metadata/create',
+                    href: `${basePath}/metadata-repo/metadata/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Metadata Document.",
                     requiresSession: true
                 },
                 {
                     name: 'Search',
-                    href: '/metadata-repo/metadata/search',
+                    href: `${basePath}/metadata-repo/metadata/search`,
                     icon: PlusCircleIcon,
                     description: "Search for Metadata Documents.",
                     requiresSearch: true
                 },
                 {
                     name: 'Schemas',
-                    href: '/metadata-repo/schemas',
+                    href: `${basePath}/metadata-repo/schemas`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Schema."
                 },
                 {
                     name: 'Metadata',
-                    href: '/metadata-repo/metadata',
+                    href: `${basePath}/metadata-repo/metadata`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Documents"
                 }
@@ -95,13 +98,13 @@ export function getMenuEntries(): SubMenu[] {
             menuItems: [
                 {
                     name: 'Overview',
-                    href: '/mapping',
+                    href: `${basePath}/mapping`,
                     icon: ChartPieIcon,
                     description: "Show system status information."
                 },
                 {
                     name: 'Map',
-                    href: '/mapping/map',
+                    href: `${basePath}/mapping/map`,
                     icon: PlayIcon,
                     description: "Execute Mappings."
                 }

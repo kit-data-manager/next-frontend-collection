@@ -2,8 +2,9 @@
 
 import {ContentInformation} from "@/lib/definitions";
 import {ResponseError} from "@/lib/base-repo/client_data";
+import {fetchWithBasePath} from "@/lib/utils";
 
-export async function removeTagFromContent(element: ContentInformation, tag: string) {
+/*export async function removeTagFromContent(element: ContentInformation, tag: string) {
     let index = element.tags.indexOf(tag);
     if (index >= 0) {
         const patch = [{"op": "remove", "path": `/tags/${index}`}]
@@ -11,7 +12,7 @@ export async function removeTagFromContent(element: ContentInformation, tag: str
             "Content-Type": "application/json-patch+json",
             //"If-Match": etag
         };
-        const response = await fetch(`/api/patch?resourceId=${element.parentResource.id}&path=${element.relativePath}`, {
+        const response = await fetchWithBasePath(`/api/patch?resourceId=${element.parentResource.id}&path=${element.relativePath}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify(patch)
@@ -31,7 +32,7 @@ export async function assignTagToContent(element: ContentInformation, tag: strin
         "Content-Type": "application/json-patch+json",
         //"If-Match": etag
     };
-    const response = await fetch(`/api/patch?resourceId=${element.parentResource.id}&path=${element.relativePath}`, {
+    const response = await fetchWithBasePath(`/api/patch?resourceId=${element.parentResource.id}&path=${element.relativePath}`, {
         method: "PATCH",
         headers: headers,
         body: JSON.stringify(patch)
@@ -42,7 +43,7 @@ export async function assignTagToContent(element: ContentInformation, tag: strin
     } else {
         throw new ResponseError('Failed to assign tag.', response);
     }
-}
+}*/
 
 export async function updateDataResource(resource: object, etag: string) {
     const headers = {
@@ -50,7 +51,7 @@ export async function updateDataResource(resource: object, etag: string) {
         "If-Match": etag
     };
 
-    const response = await fetch(`/api/update?resourceId=${resource["id"]}&etag=${etag}`, {
+    const response = await fetchWithBasePath(`/api/update?resourceId=${resource["id"]}&etag=${etag}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(resource)
@@ -67,7 +68,7 @@ export async function createDataResource(resource: object) {
     const headers = {
         "Content-Type": "application/json"
     };
-    const response = await fetch(`/api/create`, {
+    const response = await fetchWithBasePath(`/api/create`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(resource)
@@ -80,12 +81,12 @@ export async function createDataResource(resource: object) {
     }
 }
 
-export async function deleteContent(element: ContentInformation) {
-    const response = await fetch(`/api/delete?resourceId=${element.parentResource.id}&filename=${element.relativePath}`);
+/*export async function deleteContent(element: ContentInformation) {
+    const response = await fetchWithBasePath(`/api/delete?resourceId=${element.parentResource.id}&filename=${element.relativePath}`);
 
     if (response.status === 204) {
         return response.status;
     } else {
         throw new ResponseError('Failed to delete content.', response);
     }
-}
+}*/

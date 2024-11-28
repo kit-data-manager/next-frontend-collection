@@ -1,4 +1,4 @@
-import {TextPropType, Tag, ActionButtonInterface} from "../../data-view-web-component";
+import {Tag, TextPropType, ActionButtonInterface} from "@kit-data-manager/data-view-web-component";
 
 export function createLabeledField( value:string, label=undefined, defaultValue="Unspecified Title") :TextPropType{
     if(label){

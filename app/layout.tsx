@@ -6,10 +6,6 @@ import React from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
 import {ThemeProvider} from "@/components/Providers/ThemeProvider";
 import AppHeader from "@/components/AppHeader/AppHeader";
-import {useSession} from "next-auth/react";
-import {ExtendedSession} from "@/lib/definitions";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function RootLayout({children}: {
     children: React.ReactNode;

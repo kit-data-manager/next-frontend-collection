@@ -1,5 +1,3 @@
-'use client';
-
 import {CirclePlus} from "lucide-react"
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
@@ -10,9 +8,10 @@ import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib
 import {valueOrDefault} from "@/lib/searchParamHelper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
-import {useSession} from "next-auth/react";
 import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
 import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
+import {getServerSession, Session} from "next-auth";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 
 export default async function Page({searchParams}: {
@@ -25,7 +24,7 @@ export default async function Page({searchParams}: {
     const size: number = valueOrDefault(params, "size", 10);
     const sort:string = valueOrDefault(params, "sort", "lastUpdate,desc");
     const filter: FilterForm = {} as FilterForm;
-    const { data, status } = useSession();
+    let session:Session | undefined = await getServerSession(authOptions) as Session;
 
     filter.id = valueOrDefault(params, "id", undefined);
     filter.state = valueOrDefault(params, "state", undefined);
@@ -60,7 +59,7 @@ export default async function Page({searchParams}: {
                     <div className="p-4 grid grid-cols-2">
                         <div className="mr-4 w-48 justify-items-start">
                             <Button asChild variant="outline">
-                                {data ? (
+                                {session ? (
                                     <Link
                                         className="items-center disabled w-full mb-4"
                                         href='/base-repo/resources/create'>

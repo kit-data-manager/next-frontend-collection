@@ -1,11 +1,20 @@
 import {ContentInformation, DataResource, ResourceType, TypeGeneral} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../data-view-web-component";
-import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
+//import {Tag, TextPropType, ValueLabelObj, ValueLabelObjWithUrl} from "../../../data-view-web-component";
+//import {DataCard} from "../../../data-view-web-component/dist/components/data-card";
+
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
 import {ToggleThumbAction} from "@/lib/base-repo/actions/toggleThumbAction";
 import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
+import {
+    Components,
+    Tag,
+    TextPropType,
+    ValueLabelObj,
+    ValueLabelObjWithUrl
+} from "@kit-data-manager/data-view-web-component";
+import DataCard = Components.DataCard;
 
 export const propertiesForDataResource = (resource: DataResource) => {
     let children:Array<DataCard> = childrenForDataResource(resource);

@@ -1,6 +1,7 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {ActuatorInfo, ContentInformation, DataResource, DataResourcePage, KeycloakInfo} from "@/lib/definitions";
 import {filterFormToDataResource} from "@/lib/filter-utils";
+import {fetchWithBasePath} from "@/lib/utils";
 
 export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, token?: string | undefined): Promise<DataResourcePage> {
     try {
@@ -12,7 +13,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
         }
 
         if (filterExample) {
-            return await myFetch(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`, {
+            return await fetchWithBasePath(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "POST",
                 body: JSON.stringify(filterExample)
             }).then(async (res) => {
@@ -29,7 +30,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
                 return resourcePage;
             });
         } else {
-            return await myFetch(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
+            return await fetchWithBasePath(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
                 const resourcePage: DataResourcePage = {} as DataResourcePage;
                 resourcePage.resources = await res.json();
                 resourcePage.page = page;
@@ -51,7 +52,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 
 export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
     try {
-        return myFetch(`/api/get?resourceId=${id}`).then(res => ({
+        return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => ({
             etag: res.headers.get('etag'),
             json: res.json()
         })).then(async (wrapper) => {
@@ -67,7 +68,7 @@ export async function fetchDataResource(id: string, token?: string | undefined):
 
 export async function fetchAllContentInformation(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
     try {
-        return await myFetch(`/api/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
+        return await fetchWithBasePath(`/api/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -78,7 +79,7 @@ export async function fetchAllContentInformation(resource: DataResource, token?:
 
 export async function fetchContentInformation(id: string, filename:string, token?: string | undefined) {
     try {
-        return myFetch(`/api/get?resourceId=${id}&filename=${filename}`).then(res => ({
+        return fetchWithBasePath(`/api/get?resourceId=${id}&filename=${filename}`).then(res => ({
             etag: res.headers.get('etag'),
             json: res.json()
         })).then(async (wrapper) => {
@@ -99,7 +100,7 @@ export async function fetchDataResourceEtag(id: string, token?: string | undefin
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
+        return await fetchWithBasePath(`${repoBaseUrl}/api/v1/dataresources/${id}`,
             {headers: headers}).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
@@ -216,7 +217,7 @@ export async function fetchKeyCloakStatus(realmUrl: string) {
 
 export async function fetchSchema(schemaPath: string) {
     try {
-        return myFetch(schemaPath).then(res => res.json());
+        return fetchWithBasePath(schemaPath).then(res => res.json());
     } catch (error) {
         console.error('Failed to fetch schema. Error:', error);
         return undefined;
@@ -233,12 +234,7 @@ export class ResponseError extends Error {
 }
 
 export async function myFetch(url: string, init?: any, onlyExpectBody: boolean = false) {
-    let res: Response;
-    if (init) {
-        res = await fetch(url, init);
-    } else {
-        res = await fetch(url);
-    }
+    let res: Response = await fetch(url, init);
     if (!res.ok && !onlyExpectBody) {
        throw new ResponseError('Bad fetch response', res);
     }

@@ -2,6 +2,7 @@ import {clsx} from "clsx";
 import {lusitana} from "@/components/fonts";
 import {CardStatus} from "./StatusCard.d"
 import {ReactElement} from "react";
+import Link from "next/link";
 
 export function StatusCard({cardStatus}: {
    cardStatus: CardStatus
@@ -54,8 +55,8 @@ export function StatusCard({cardStatus}: {
             })}>{cardStatus.subtitle}</span>
             {cardStatus.detailsRef ?
                 <div className="w-full flex justify-end">
-                    <a href={cardStatus.detailsRef}
-                       className="text-xs font-semibold pointer-events-auto hover:underline">details...</a>
+                    <Link href={cardStatus.detailsRef}
+                       className="text-xs font-semibold pointer-events-auto hover:underline">details...</Link>
                 </div>
                 :
                 <div className="w-full flex justify-end">

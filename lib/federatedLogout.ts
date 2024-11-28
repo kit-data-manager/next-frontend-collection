@@ -1,8 +1,9 @@
 import { signOut } from "next-auth/react";
+import {fetchWithBasePath} from "@/lib/utils";
 
 export default async function federatedLogout() {
     try {
-        const response = await fetch("/api/auth/federated-logout");
+        const response = await fetchWithBasePath("/api/auth/federated-logout");
         const data = await response.json();
         if (response.ok) {
             await signOut({ redirect: false });
