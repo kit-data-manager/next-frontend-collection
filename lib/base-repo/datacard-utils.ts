@@ -136,7 +136,7 @@ function generateSubtitleFromCreator(resource: DataResource) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
                 if (creator.familyName && creator.givenName) {
-                    subTitleValue = {value : `<img src="${basePath}/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`} as ValueLabelObj;
+                    subTitleValue = `<img src="${basePath}/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`;
                 } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }
