@@ -119,7 +119,7 @@ export const actionsForJobStatus = (job: JobStatus): ActionButtonInterface[]=> {
             actions.push({label: "Delete", iconName:"material-symbols-light:delete-outline", eventIdentifier: `deleteJob_${job.jobId}`, tooltip: "Delete Mapping Output"})
             break;
         }case Status.SUCCEEDED:{
-            actions.push({label: "Download", iconName:"material-symbols-light:download", url: `http://localhost:8095${job.outputFileURI}`, tooltip: "Download Mapping Result"})
+            actions.push({label: "Download", iconName:"material-symbols-light:download", url: `${job.outputFileURI}`, tooltip: "Download Mapping Result"})
             actions.push({label: "Delete", iconName:"material-symbols-light:delete-outline", eventIdentifier: `deleteJob_${job.jobId}`, tooltip: "Delete Mapping Output"})
             break;
         }
