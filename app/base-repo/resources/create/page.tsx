@@ -9,10 +9,9 @@ import {fetchSchema} from "@/lib/base-repo/client_data";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     useEffect(() => {
-        fetchSchema(`${basePath}/definitions/base-repo/models/resourceModel.json`).then(schema => setSchema(schema));
+        fetchSchema(`/definitions/base-repo/models/resourceModel.json`).then(schema => setSchema(schema));
     });
 
     return (

@@ -33,13 +33,12 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {DeleteContentAction} from "@/lib/base-repo/actions/deleteContentAction";
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
-import {fetchDataResource, fetchDataResourceEtag, fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {fetchDataResource, fetchAllContentInformation} from "@/lib/base-repo/client_data";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {resourcePermissionForUser} from "@/lib/permission-utils";
 import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
-import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
