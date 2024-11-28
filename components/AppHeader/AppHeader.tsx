@@ -17,6 +17,8 @@ export default function AppHeader({securityEnabled, children}: {
     const {data, status} = useSession();
     const [admin, setAdmin] = useState(false);
     const [anonymous, setAnonymous] = useState(false);
+    const headerText: string = (process.env.NEXT_PUBLIC_FRONTEND_HEADER_TEXT ? process.env.NEXT_PUBLIC_FRONTEND_HEADER_TEXT : "Next Frontend");
+    const headerLogo: string | undefined = (process.env.NEXT_PUBLIC_FRONTEND_HEADER_LOGO ? process.env.NEXT_PUBLIC_FRONTEND_HEADER_LOGO : undefined);
 
     useEffect(() => {
         if(data && data.user && data.user.groups){
@@ -35,8 +37,8 @@ export default function AppHeader({securityEnabled, children}: {
             <div className="flex justify-between grid-cols-3 items-center py-4 sticky w-full bg-primary top-0 z-20">
                 <div className="flex items-center grid-cols-1">
                     <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <AcmeLogo/>
-                        <span className="self-center text-2xl font-semibold whitespace-nowrap">Next Frontend for MatWerk</span>
+                        <AcmeLogo logoUrl={headerLogo} />
+                        <span className="self-center text-2xl font-semibold whitespace-nowrap">{headerText}</span>
                     </a>
                 </div>
 
