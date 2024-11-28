@@ -48,8 +48,9 @@ export const propertiesForContentInformation = (resourceId: string,
                                                 actionButtons?: Array<ActionButtonInterface>,
                                                 disableChangeThumb?: boolean) => {
     let tags:Array<Tag> = new Array<Tag>;
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
-    let image = "/data.png";
+    let image = `${basePath}/data.png`;
 
     if(['jpg','jpeg','gif','png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
         let isThumb = content.tags && content.tags.includes("thumb");
@@ -128,11 +129,13 @@ export const propertiesForContentInformation = (resourceId: string,
 
 function generateSubtitleFromCreator(resource: DataResource) {
     let subTitleValue: string = '';
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
     if (resource.creators) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
                 if (creator.familyName && creator.givenName) {
-                    subTitleValue = `<img src="/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`
+                    subTitleValue = `<img src="${basePath}/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`
                 } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }

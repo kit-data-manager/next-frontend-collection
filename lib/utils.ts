@@ -49,3 +49,37 @@ export async function fetchWithBasePath(relativePath: string, init?: any) {
     }
     return res;
 }
+/*
+function resolveRefs(obj) {
+    Object.keys(obj).forEach(function(prop, index, array) {
+        var def = obj[prop];
+        var ref;
+        if (depth === 0 && prop === '$ref' && def !== null && typeof def === 'string') {
+            if (def.slice(0, 14) === '#/definitions/') {
+                ref = def.replace(/^#\/definitions\//, '');
+                obj = _.extend(obj, defs[ref]);
+                delete obj.$ref;
+            } else {
+                throw new Error('Unresolved $ref: ' + def);
+            }
+            if (resolvedSchemaRefNodes.indexOf(obj) < 0) {
+                resolvedSchemaRefNodes.push(obj);
+            }
+        } else if (def !== null && typeof def === 'object') {
+            if (def.$ref) {
+                if (def.$ref.slice(0, 14) === '#/definitions/') {
+                    ref = def.$ref.replace(/^#\/definitions\//, '');
+                    obj[prop] = _.extend(obj[prop], defs[ref]);
+                    delete obj[prop].$ref;
+                } else {
+                    throw new Error('Unresolved $ref: ' + def.$ref);
+                }
+            } else if (resolvedSchemaRefNodes.indexOf(def) < 0) {
+                depth += 1;
+                resolveRefs(def, defs);
+                depth -= 1;
+                resolvedSchemaRefNodes.push(def);
+            }
+        }
+    });
+}*/

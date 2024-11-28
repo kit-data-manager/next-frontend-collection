@@ -5,10 +5,10 @@ import {ReactNode, useEffect, useState} from "react"
 import SessionGuard from "@/components/Providers/SessionGuard";
 
 export function SecurityProviders({ children }: { children: ReactNode }) {
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    const authUrl: string = (process.env.NEXT_PUBLIC_NEXTAUTH_URL ? process.env.NEXT_PUBLIC_NEXTAUTH_URL : "");
 
     return (
-       <SessionProvider refetchInterval={4 * 60} >
+       <SessionProvider refetchInterval={4 * 60} basePath={authUrl}>
            <SessionGuard>
                 {children}
            </SessionGuard>
