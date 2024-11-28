@@ -38,7 +38,9 @@ const descriptionForMapping = (mapping: Mapping) => {
 }
 
 const thumbForMapping = (mapping: Mapping) => {
-    return "/mapping.png";
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
+    return `${basePath}/mapping.png`;
 }
 
 export const tagsForMapping = (mapping: Mapping) => {

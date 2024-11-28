@@ -90,7 +90,11 @@ export default function MappingCard(props: MappingCardProps) {
                         plugin.inputTypes.map((type) => {
                             inputTypes.push(mimeTypeToExtension(type));
                         });
-                        setFileTypes(inputTypes);
+                        if(inputTypes.includes("*")){
+                            setFileTypes(inputTypes);
+                        }else{
+                            setFileTypes([]);
+                        }
                     }
                 });
                 setTags(tagsForMapping(mapping));
