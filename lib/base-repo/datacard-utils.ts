@@ -73,7 +73,7 @@ export const propertiesForContentInformation = (resourceId: string,
             }
             tags.push(thumbTag);
         }
-        image = `/api/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
+        image = `${basePath}/api/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
     }
 
     if(content.tags){
