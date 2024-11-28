@@ -128,17 +128,19 @@ export const propertiesForContentInformation = (resourceId: string,
 }
 
 function generateSubtitleFromCreator(resource: DataResource) {
-    let subTitleValue: string = '';
+    let subTitleValue: TextPropType = "";
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    let haveCreator:boolean = false;
 
     if (resource.creators) {
         resource.creators.map((creator, i) => {
             if (creator.givenName != "SELF" && (creator.givenName || creator.familyName)) {
                 if (creator.familyName && creator.givenName) {
-                    subTitleValue = `<img src="${basePath}/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`
+                    subTitleValue = {value : `<img src="${basePath}/ORCID_iD_32x32.svg.png" alt="ORCiD Logo" part="orcid-logo" /><a href="https://orcid.org/orcid-search/search?firstName=${creator.givenName}&lastName=${creator.familyName}" target="_blank" part="orcid-link">${creator.familyName}, ${creator.givenName}</a>`} as ValueLabelObj;
                 } else {
                     subTitleValue = (creator.familyName) ? creator.familyName : creator.givenName;
                 }
+                haveCreator = true;
             }
             if (i < resource.creators.length - 1) {
                 subTitleValue += ", ";
@@ -146,11 +148,11 @@ function generateSubtitleFromCreator(resource: DataResource) {
         });
     }
 
-    if (subTitleValue.length == 0) {
+    if (!haveCreator) {
         subTitleValue = "Anonymous User";
     }
     //return as string, not as object, to allow HTML detection in component
-    return  subTitleValue as TextPropType;
+    return subTitleValue as TextPropType;
 }
 
 const titleForDataResource = (resource: DataResource) => {
@@ -257,12 +259,14 @@ export const thumbForDataResource = (resource: DataResource) => {
 }
 
 export const thumbFromContentArray = (content: ContentInformation[]) => {
-    let thumb = "/data.png";//"https://via.placeholder.com/192?text=placeholder";
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
+    let thumb = `${basePath}/data.png`;//"https://via.placeholder.com/192?text=placeholder";
     if (content && content.length > 0) {
         content.map((contentElement, i) => {
             contentElement.tags.map((tag, i) => {
                 if (tag.toLocaleLowerCase() === "thumb") {
-                    thumb = `/api/download?resourceId=${contentElement.parentResource.id}&filename=${contentElement.relativePath}&type=thumb`
+                    thumb = `${basePath}/api/download?resourceId=${contentElement.parentResource.id}&filename=${contentElement.relativePath}&type=thumb`
                 }
             });
         });
