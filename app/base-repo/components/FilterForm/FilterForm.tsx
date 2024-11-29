@@ -15,11 +15,12 @@ export default function FilterResourceForm({filter}: {
 }) {
     const formRef = React.useRef<HTMLFormElement>(null);
     const { data, status } = useSession();
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const doFilterResources = filterResources.bind(null);
     const doResetForm = () => {
         formRef.current?.reset();
-        window.document.location = "/base-repo/resources";
+        window.document.location = `${basePath}/base-repo/resources`;
     };
 
     const isAdmin = !!(data && data?.user.groups.includes("ROLE_ADMINISTRATOR"));

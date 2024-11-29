@@ -58,7 +58,6 @@ export default async function OverallStatusCardWrapper() {
     }
 
     let missing = Array(4 - validTiles % 4).fill(0);
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     return (
         <>
@@ -68,7 +67,7 @@ export default async function OverallStatusCardWrapper() {
                         title: repoInstanceName,
                         subtitle: actuatorInfoBaseRepo.version,
                         status: actuatorInfoBaseRepo.status,
-                        visitRef: actuatorInfoBaseRepo.status ? `${basePath}/base-repo/resources` : '',
+                        visitRef: actuatorInfoBaseRepo.status ? `/base-repo/resources` : '',
                         detailsRef: actuatorInfoBaseRepo.status ? `/base-repo` : ''
                     }
                 }/> : null
@@ -80,7 +79,7 @@ export default async function OverallStatusCardWrapper() {
                         title: metastoreInstanceName,
                         subtitle: "v1.0.0",
                         status: actuatorInfoMetaStore.status,
-                        visitRef: actuatorInfoMetaStore.status ? `${basePath}/metastore` : '',
+                        visitRef: actuatorInfoMetaStore.status ? `/metastore` : '',
                         detailsRef: actuatorInfoMetaStore.status ? `/metastore` : ''
                     }
                 }/> : null
@@ -92,7 +91,7 @@ export default async function OverallStatusCardWrapper() {
                         title: mappingInstanceName,
                         subtitle: actuatorInfoMappingService.version,
                         status: actuatorInfoMappingService.status,
-                        visitRef: actuatorInfoMappingService.status ? `${basePath}/mapping` : '',
+                        visitRef: actuatorInfoMappingService.status ? `/mapping` : '',
                         detailsRef: actuatorInfoMappingService.status ? `/mapping` : ''
                     }
                 }/> : null
@@ -104,7 +103,7 @@ export default async function OverallStatusCardWrapper() {
                         title: "FAIR DO Repo",
                         subtitle: "v1.0.0",
                         status: actuatorInfoTypedPIDMaker.status,
-                        visitRef: actuatorInfoTypedPIDMaker.status ? `${basePath}/typed-pid-maker` : '',
+                        visitRef: actuatorInfoTypedPIDMaker.status ? `/typed-pid-maker` : '',
                         detailsRef: actuatorInfoTypedPIDMaker.status ? `/typed-pid-maker` : ''
                     }
                 }/> : null
