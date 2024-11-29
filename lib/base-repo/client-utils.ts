@@ -46,6 +46,7 @@ export async function assignTagToContent(element: ContentInformation, tag: strin
 }*/
 
 export async function updateDataResource(resource: object, etag: string) {
+    console.log("ETAG UPDATE", etag)
     const headers = {
         "Content-Type": "application/json",
         "If-Match": etag

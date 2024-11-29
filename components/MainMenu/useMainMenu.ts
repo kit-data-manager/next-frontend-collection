@@ -2,12 +2,12 @@ import {ChartPieIcon, ListBulletIcon, PlusCircleIcon, PlayIcon} from "@heroicons
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 import {useRouter} from "next/navigation";
 
-export function getMenuEntries(): SubMenu[] {
+export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable: boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
     const mappingAvailable: boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
 
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    const basePath: string = ((withBasePath && process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const items: SubMenu[] = [];
 

@@ -30,25 +30,23 @@ const getLocalStorage = (key: string): UserPrefsType => {
 }
 
 const useUserPrefs = (userId: string | undefined) => {
-    const key = `frontend-user-prefs-${userId}`
+    const id = userId?userId:"anonymous";
+    const key = `frontend-user-prefs-${id}`
     const [value, setValue] = useState<UserPrefsType>(() => {
-        if (!userId) return defaultUserPrefs;
         return getLocalStorage(key)
     });
 
     useEffect(() => {
-        if (!userId) return;
         const currentValue = getLocalStorage(key);
         setValue(currentValue);
-    }, [userId])
+    }, [id])
 
     useEffect(() => {
-        if (!userId || !value) return;
+        if (!value) return;
         localStorage.setItem(key, JSON.stringify(value))
     }, [value])
 
     const updateUserPrefs = (userPref: Partial<UserPrefsType>) => {
-        if (!userId) return;
         const currentValue = getLocalStorage(key);
         const updatedUserPrefs = { ...currentValue, ...userPref }
         setValue(updatedUserPrefs);

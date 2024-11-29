@@ -3,6 +3,7 @@ import {ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import fetch from "node-fetch";
+import {NextResponse} from "next/server";
 
 async function getResource(resourceId: string, accessToken: string | undefined, req: NextApiRequest, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
@@ -26,13 +27,15 @@ async function getResource(resourceId: string, accessToken: string | undefined, 
             Promise.reject('Failed to get resource.');
         } else {
             //transfer headers
+            const headers = {};
             response.headers.forEach((value, key) => {
-                res.appendHeader(key, value);
+                headers[key] = value;
             });
 
+            res.writeHead(200, headers);
             return response.json();
         }
-    }).then(json => res.status(200).json(json));
+    }).then(json => res.end(JSON.stringify(json)));
 }
 
 async function getContent(resourceId: string, filename: string, accessToken: string | undefined, req: NextApiRequest, res: NextApiResponse) {
@@ -55,12 +58,14 @@ async function getContent(resourceId: string, filename: string, accessToken: str
         }
 
         //transfer headers
+        const headers = {};
         response.headers.forEach((value, key) => {
-            res.appendHeader(key, value);
+            headers[key] = value;
         });
 
+        res.writeHead(200, headers);
         return response.json();
-    }).then(json => res.status(200).json(json));
+    }).then(json => res.end(JSON.stringify(json)));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

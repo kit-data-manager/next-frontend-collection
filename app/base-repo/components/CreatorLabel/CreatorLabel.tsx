@@ -5,16 +5,16 @@ export function CreatorLabel({firstname, lastname}: {
     lastname?: string;
 }) {
     let result = ""
-    let link = "";
+    //let link = "";
     if(firstname === "SELF") {
         result += "Anonymous User";
     }else{
         result += (lastname) ? capitalize(lastname) + "," : "";
         result += (firstname) ? capitalize(firstname) : "";
-        link = "https://orcid.org/orcid-search/search?firstName=" + firstname + "&lastName=" + lastname;
+        //link = "https://orcid.org/orcid-search/search?firstName=" + firstname + "&lastName=" + lastname;
     }
 
         return (
-            link ?  <a href={link} target={"_blank"}>{result}</a> : <p>{result}</p>
+             <p>{result}</p>
         );
 }

@@ -5,6 +5,16 @@ const nextConfig = {
     trailingSlash: true,
     basePath: "",
     assetPrefix: "",
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'matwerk.datamanager.kit.edu',
+                port: '',
+                pathname: '/**',
+            },
+        ],
+    },
 };
 
 

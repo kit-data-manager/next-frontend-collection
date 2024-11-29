@@ -173,3 +173,10 @@ data-card::part(orcid-logo){
 data-card::part(orcid-link){
   text-decoration: underline!important;
 }
+
+
+data-card::part(action-btn-icon){
+  color: light-dark(var(--accent-foreground), var(--accent-foreground));
+  font-weight: 500;
+  text-decoration: underline!important;
+}

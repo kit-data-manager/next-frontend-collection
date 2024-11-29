@@ -65,7 +65,6 @@ export async function fetchContentOverview() {
 
 export async function fetchLatestActivities():Promise<Activity[]> {
     noStore()
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
         const client = new Pool({
             user: process.env.DB_USER,

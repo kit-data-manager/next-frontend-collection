@@ -12,6 +12,7 @@ async function listResources(accessToken: string | undefined, req: NextApiReques
     const headers = {
         "Accept": "application/json"
     };
+
     let url: string = `${repoBaseUrl}/api/v1/dataresources/`;
 
     if (body) {
@@ -32,7 +33,7 @@ async function listResources(accessToken: string | undefined, req: NextApiReques
     const query = search ? `?${search}` : "";
 
     url += query;
-    console.log("URL ", url);
+
     if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
     }

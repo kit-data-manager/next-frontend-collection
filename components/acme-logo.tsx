@@ -7,10 +7,10 @@ export default function AcmeLogo({logoUrl}: {
 }){
   return (
     <div
-      className={`${lusitana.className} flex h-30 shrink-0 items-end place-content-between rounded-lg p-4`}
+      className={`${lusitana.className} flex h-30 shrink-0 items-end place-content-between pl-2`}
     >
       {logoUrl ?
-          <Image src={logoUrl} alt={logoUrl} className="h-8 w-8 lg:h-16 lg:w-16"/> :
+          <Image src={logoUrl} alt={logoUrl} width={64} height={64} className="h-16 w-16 rounded-r-lg"/> :
       <GlobeAltIcon className="h-8 w-8 lg:h-16 lg:w-16 rotate-[15deg]" />
       }
     </div>

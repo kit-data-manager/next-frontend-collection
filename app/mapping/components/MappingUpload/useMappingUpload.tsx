@@ -39,19 +39,6 @@ export function installEventHandlers(uppy:Uppy, mappingId:string, mappingCallbac
         }
 
         toast.success(`Successfully uploaded ${successful} file(s).`,{
-            /*"onClose": () =>{
-                if(redirectPath){
-                    window.document.location=redirectPath;
-                }
-            }*/
         });
     });
-
-   /* function successCallback(file, response){
-        console.log("SUCCESS" , file?.name);
-        mappingCallback(response.body);
-    }
-
-    uppy.off('upload-success', successCallback).once('upload-success', successCallback);*/
-
 }

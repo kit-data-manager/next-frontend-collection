@@ -80,7 +80,7 @@ export default function JsonForm(props) {
 
     const validate = function(){
         const errors = jsoneditor.validate();
-        console.log(errors);
+        console.log("Form validation errors: ", errors);
         return errors.length === 0;
     }
 

@@ -45,6 +45,7 @@ export default function DataResourceEditor({...props}) {
     const [editorReady, setEditorReady] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [resource, setResource] = useState({} as DataResource);
+    const [etag, setEtag] = useState('' as string);
     const [content, setContent] = useState([] as Array<ContentInformation>);
     const [tag, setTag] = useState("");
 
@@ -91,6 +92,9 @@ export default function DataResourceEditor({...props}) {
         } else {
             setIsLoading(true);
             fetchDataResource(id, data?.accessToken).then((res) => {
+                if(res.etag){
+                    setEtag(res.etag);
+                }
                 return res;
             }).then(async (res) => {
                 await fetchAllContentInformation(res, data?.accessToken).
@@ -98,6 +102,7 @@ export default function DataResourceEditor({...props}) {
                 catch(error => {
                     console.error(`Failed to fetch children for resource ${id}`, error)
                 });
+
                 return setResource(res);
             }).then(() => {
                 setIsLoading(false);
@@ -107,7 +112,7 @@ export default function DataResourceEditor({...props}) {
             })
         }
         setMustReload(false);
-    }, [id, data?.accessToken, createMode, status, mustReload]);
+    }, [id, data?.accessToken, etag, createMode, status, mustReload]);
 
 
     if (status === "loading" || isLoading) {
@@ -189,7 +194,7 @@ export default function DataResourceEditor({...props}) {
                             {!createMode ?
                                 <ConfirmCancelComponent confirmLabel={"Commit"}
                                                         cancelLabel={"Cancel"}
-                                                        confirmCallback={() => DoUpdateDataResource(resource, router)}
+                                                        confirmCallback={() => DoUpdateDataResource(resource, etag, router)}
                                                         cancelHref={`/base-repo/resources/${id}`}
                                                         confirm={confirm}
                                 /> :

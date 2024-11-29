@@ -22,7 +22,6 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
                 resourcePage.page = page;
                 resourcePage.pageSize = size;
                 const contentRange: string | null = res.headers.get('content-range');
-
                 if (contentRange) {
                     const totalElements = Number(contentRange.substring(contentRange.lastIndexOf("/") + 1));
                     resourcePage.totalPages = Math.ceil(totalElements / size);
@@ -52,10 +51,13 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 
 export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
     try {
-        return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => ({
+        return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => {
+            console.log("HEAD ", res.headers.get('ETag'));
+
+            return {
             etag: res.headers.get('etag'),
             json: res.json()
-        })).then(async (wrapper) => {
+        }}).then(async (wrapper) => {
             const resource: DataResource = await wrapper.json as DataResource;
             resource.etag = wrapper.etag;
             return resource;

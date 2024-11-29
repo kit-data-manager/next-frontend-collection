@@ -19,7 +19,7 @@ export default function MainMenu() {
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
     const {data: session, status} = useSession();
 
-    const items:SubMenu[] = getMenuEntries();
+    const items:SubMenu[] = getMenuEntries(true);
 
     return (
         <NavigationMenu className="px-2 py-2.5 sm:px-4">

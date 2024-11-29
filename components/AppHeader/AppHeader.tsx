@@ -17,8 +17,10 @@ export default function AppHeader({securityEnabled, children}: {
     const {data, status} = useSession();
     const [admin, setAdmin] = useState(false);
     const [anonymous, setAnonymous] = useState(false);
+
     const headerText: string = (process.env.NEXT_PUBLIC_FRONTEND_HEADER_TEXT ? process.env.NEXT_PUBLIC_FRONTEND_HEADER_TEXT : "Next Frontend");
     const headerLogo: string | undefined = (process.env.NEXT_PUBLIC_FRONTEND_HEADER_LOGO ? process.env.NEXT_PUBLIC_FRONTEND_HEADER_LOGO : undefined);
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "/");
 
     useEffect(() => {
         if(data && data.user && data.user.groups){
@@ -31,17 +33,31 @@ export default function AppHeader({securityEnabled, children}: {
     }, [status, data]);
 
     return (
-        <div className={clsx(`flex min-h-screen flex-col p-6`, {
+        <div className={clsx(`flex min-h-screen min-w-[640px] flex-col p-6`, {
             "rounded border-2 border-red-400": admin,
             "rounded border-2 border-sky-500": anonymous})}>
-            <div className="flex justify-between grid-cols-3 items-center py-4 sticky w-full bg-primary top-0 z-20">
-                <div className="flex items-center grid-cols-1">
-                    <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <AcmeLogo logoUrl={headerLogo} />
+            <div
+                className="flex justify-between grid-cols-4 items-center py-4 sticky w-full bg-primary top-0 z-20 rounded-r-lg">
+                <div className="flex items-center">
+                    <a href={basePath} className="flex items-center space-x-3 rtl:space-x-reverse">
+                        <AcmeLogo logoUrl={headerLogo}/>
                         <span className="self-center text-2xl font-semibold whitespace-nowrap">{headerText}</span>
                     </a>
                 </div>
 
+                <div className={clsx("flex items-center p-2")}>
+                <nav className="hidden w-full lg:grid grid-cols-2 p-4 items-center mr-2">
+                    <div className="flex justify-self-stretch">
+                        <MainMenu/>
+                    </div>
+                    <div className="flex justify-self-end">
+                        {securityEnabled ?
+                            <LoginLogoutButton icon={true} className="mr-4"/> : null
+                        }
+                        <ThemeModeToggle className="justify-self-end"/>
+                    </div>
+                </nav>
+                </div>
                 <div className="flex lg:hidden items-center gap-2 mr-6">
                     <MainMenuMobile/>
                     {securityEnabled ?
@@ -49,19 +65,6 @@ export default function AppHeader({securityEnabled, children}: {
                     }
                     <ThemeModeToggle className="justify-self-end"/>
                 </div>
-
-                <nav className="hidden w-full lg:grid grid-cols-2 p-4 items-center mr-2">
-                    <div className="flex justify-self-stretch" >
-                    <MainMenu/>
-                    </div>
-                    <div className="flex justify-self-end">
-                        {securityEnabled ?
-                        <LoginLogoutButton icon={true} className="mr-4"/> : null
-                        }
-                        <ThemeModeToggle className="justify-self-end"/>
-                    </div>
-                </nav>
-
             </div>
             {children}
         </div>

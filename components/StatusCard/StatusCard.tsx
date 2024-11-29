@@ -44,9 +44,9 @@ export function StatusCard({cardStatus}: {
             className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-start items-center gap-2 p-4 rounded-md`}>
             <div className="flex gap-2 items-center">
                 {cardStatus.visitRef != undefined && cardStatus.status > 0 ?
-                    <a className="font-bold text-l underline pointer-events-auto hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</a>
+                    <Link className="font-bold text-l underline pointer-events-auto hover:underline" href={cardStatus.visitRef}>{cardStatus.title}</Link>
                     :
-                    <a className="font-bold text-l pointer-events-none">{cardStatus.title}</a>
+                    <p className="font-bold text-l pointer-events-none">{cardStatus.title}</p>
                 }
                 {CardIcon}
             </div>

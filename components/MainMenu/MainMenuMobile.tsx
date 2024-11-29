@@ -30,11 +30,6 @@ export default function MainMenuMobile() {
     const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
     const pathname = usePathname();
 
-    /* type Checked = DropdownMenuCheckboxItemProps["checked"]
-
-  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
-  const [showPanel, setShowPanel] = React.useState<Checked>(false)*/
     const items: SubMenu[] = getMenuEntries();
 
     return (

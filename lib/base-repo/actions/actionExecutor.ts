@@ -23,7 +23,6 @@ switch(parts[0]){
         break;
     }
     case REPO_ACTIONS.REVOKE_RESOURCE:{
-        console.log("Perform revoke action");
         RevokeResourceAction.performAction(parts[1], undefined, parts[2], redirect);
         break;
     }

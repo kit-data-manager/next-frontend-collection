@@ -69,7 +69,7 @@ export default async function OverallStatusCardWrapper() {
                         subtitle: actuatorInfoBaseRepo.version,
                         status: actuatorInfoBaseRepo.status,
                         visitRef: actuatorInfoBaseRepo.status ? `${basePath}/base-repo/resources` : '',
-                        detailsRef: actuatorInfoBaseRepo.status ? `${basePath}/base-repo` : ''
+                        detailsRef: actuatorInfoBaseRepo.status ? `/base-repo` : ''
                     }
                 }/> : null
             }
@@ -81,7 +81,7 @@ export default async function OverallStatusCardWrapper() {
                         subtitle: "v1.0.0",
                         status: actuatorInfoMetaStore.status,
                         visitRef: actuatorInfoMetaStore.status ? `${basePath}/metastore` : '',
-                        detailsRef: actuatorInfoMetaStore.status ? `${basePath}/metastore` : ''
+                        detailsRef: actuatorInfoMetaStore.status ? `/metastore` : ''
                     }
                 }/> : null
             }
@@ -93,7 +93,7 @@ export default async function OverallStatusCardWrapper() {
                         subtitle: actuatorInfoMappingService.version,
                         status: actuatorInfoMappingService.status,
                         visitRef: actuatorInfoMappingService.status ? `${basePath}/mapping` : '',
-                        detailsRef: actuatorInfoMappingService.status ? `${basePath}/mapping` : ''
+                        detailsRef: actuatorInfoMappingService.status ? `/mapping` : ''
                     }
                 }/> : null
             }
@@ -105,7 +105,7 @@ export default async function OverallStatusCardWrapper() {
                         subtitle: "v1.0.0",
                         status: actuatorInfoTypedPIDMaker.status,
                         visitRef: actuatorInfoTypedPIDMaker.status ? `${basePath}/typed-pid-maker` : '',
-                        detailsRef: actuatorInfoTypedPIDMaker.status ? `${basePath}/typed-pid-maker` : ''
+                        detailsRef: actuatorInfoTypedPIDMaker.status ? `/typed-pid-maker` : ''
                     }
                 }/> : null
             }
@@ -147,7 +147,7 @@ export async function ActuatorHealthStatusCardWrapper({serviceUrl}: {
     serviceUrl: string
 }) {
     const actuatorInfo = await fetchActuatorHealth(serviceUrl);
-    console.log("ACTUATO ", actuatorInfo);
+
     return (
         <>
             <StatusCard cardStatus={

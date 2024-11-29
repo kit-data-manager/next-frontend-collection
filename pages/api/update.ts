@@ -22,10 +22,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         const url = `${repoBaseUrl}/api/v1/dataresources/${resourceId}`;
-
         const headers = {
             "Content-Type": "application/json",
-            "If-Match": etag ? etag as string : ""
+            "If-Match": etag as string
         };
 
         if (accessToken) {

@@ -8,16 +8,16 @@ import {lusitana} from '@/components/fonts';
 import {fetchLatestActivities} from "@/lib/base-repo/data";
 import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel";
 import * as React from "react";
-import Link from "next/link";
 import {formatDateToLocal} from "@/lib/format-utils";
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,
     TERMINAL: XCircleIcon
 };
-export default async function LatestActivities() {
 
-    const latestActivities = await fetchLatestActivities()
+export default async function LatestActivities() {
+    const latestActivities = await fetchLatestActivities();
+
     return (
                 <div className="px-6">
                     {
@@ -41,14 +41,14 @@ export default async function LatestActivities() {
                         latestActivities.map((activity, i) => {
                             // @ts-ignore
                             const Icon = iconMap[activity.type];
-                            const id = activity.id;
+                          //  const id = activity.id;
                             return (
                                 <div
                                     key={activity.id}
                                     className='flex flex-row items-center justify-between py-4 gap-2 border-t border-b p-2'
                                 >
                                     <div className="flex items-center">
-                                        {Icon ? <Icon className={clsx(`h-5 w-5 mr-5`, {
+                                        {Icon ? <Icon title={activity.type} className={clsx(`h-5 w-5 mr-5`, {
                                             'text-warn': activity.type === "TERMINAL",
                                             'text-info': activity.type === "UPDATE",
                                             'text-success': activity.type === "INITIAL"
@@ -56,11 +56,11 @@ export default async function LatestActivities() {
                                         }/> : null}
                                         <div className="min-w-0">
                                             {(activity.type === "INITIAL" || activity.type === "UPDATE") ? (
-                                                <Link className="truncate text-sm font-semibold md:text-base hover:underline" href={`/base-repo/resources/${id}/view`}>
+                                                <p className="truncate text-sm font-semibold md:text-base">
                                                     {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
                                                     {activity.type === "UPDATE" ? " updated" : ""}
                                                     {activity.type === "INITIAL" ? " created" : ""}
-                                                </Link>
+                                                </p>
                                             ) : (
                                                 <p className="truncate text-sm font-semibold md:text-base">
                                                     {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}

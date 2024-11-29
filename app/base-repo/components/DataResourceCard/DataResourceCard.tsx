@@ -31,7 +31,6 @@ export default function DataResourceCard(props:ResourceCardProps) {
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        console.log("DataResourceCard ActionId ", eventIdentifier);
 
         runAction(eventIdentifier, (redirect:string) => {
             router.push(redirect);
