@@ -3,12 +3,9 @@ import {ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import fetch from "node-fetch";
-import {NextResponse} from "next/server";
 
 async function getResource(resourceId: string, accessToken: string | undefined, req: NextApiRequest, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-    const {page, size, sort} = req.query;
-    const body = req.body;
     const headers = {
         "Accept": "application/json"
     };

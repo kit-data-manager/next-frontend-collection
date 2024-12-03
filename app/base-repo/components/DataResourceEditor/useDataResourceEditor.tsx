@@ -1,10 +1,7 @@
-import {
-    createDataResource,
-    updateDataResource
-} from "@/lib/base-repo/client-utils";
 import {toast} from "react-toastify";
 import {DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {createDataResource, updateDataResource} from "@/lib/base-repo/client_data";
 
 export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
     if (!data) {

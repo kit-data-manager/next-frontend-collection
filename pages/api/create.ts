@@ -60,6 +60,7 @@ async function uploadFile(resourceId: string, filename: string, accessToken:stri
     if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
     }
+
     const chunks: never[] = [];
 
     //load file

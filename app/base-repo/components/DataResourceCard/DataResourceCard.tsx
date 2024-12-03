@@ -10,59 +10,147 @@ import {useRouter} from "next/navigation";
 import {ActionButtonInterface, ResourceCardProps} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect, useState} from "react";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
-import {fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {
+    fetchAllContentInformation,
+    fetchDataResourceEtag,
+    fetchUsers,
+    getAclDiff,
+    patchDataResourceAcl
+} from "@/lib/base-repo/client_data";
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
-import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {useSession} from "next-auth/react";
+import {REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
+import {Acl, KeycloakUser} from "@/lib/definitions";
+import {AutoCompleteList} from "@/components/AutoComplete/AutoCompleteList";
 
-export default function DataResourceCard(props:ResourceCardProps) {
+export default function DataResourceCard(props: ResourceCardProps) {
     const {data, status} = useSession();
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const [childrenData, setChildrenData] = useState([] as DataCard[]);
     const [childrenLabel, setChildrenLabel] = useState("Loading...");
-    const [thumb, setThumb] = useState("/data.png");
+    const [thumb, setThumb] = useState(`${basePath}/data.png`);
+    const [openModal, setOpenModal] = useState(false);
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [selectedValues, setSelectedValues] = useState<string[]>([]);
+    const [users, setUsers] = useState<Element<string>[]>([] as Element<string>[]);
+    const [usersLoading, setUsersLoading] = useState(false);
 
     const router = useRouter();
     const resource = props.data;
-    const variant:"default"|"detailed"|"minimal" | undefined = props.variant ? props.variant : "default";
+    const variant: "default" | "detailed" | "minimal" | undefined = props.variant ? props.variant : "default";
     const childVariant: "default" | "minimal" = props.childrenVariant ? props.childrenVariant : "default";
-    const actionEvents:ActionButtonInterface[] = props.actionEvents ? props.actionEvents : [] as ActionButtonInterface[];
-    let buttons:Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
+    const actionEvents: ActionButtonInterface[] = props.actionEvents ? props.actionEvents : [] as ActionButtonInterface[];
+    let buttons: Array<ActionButtonInterface> = new Array<ActionButtonInterface>;
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
 
-        runAction(eventIdentifier, (redirect:string) => {
-            router.push(redirect);
-        });
+        if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
+            runAction(eventIdentifier, doQuickShare);
+        } else {
+            runAction(eventIdentifier, (redirect: string) => {
+                router.push(redirect);
+            });
+        }
+
     });
 
     const actionCallback = props.onActionClick ? props.onActionClick : handleAction;
 
     useEffect(() => {
         new Promise(r => setTimeout(r, 1000)).then(() => {
-        fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
-            let children:Array<DataCard> = new Array<DataCard>;
+            fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
+                let children: Array<DataCard> = new Array<DataCard>;
 
-            let thumb = thumbFromContentArray(contentInformation);
+                let thumb = thumbFromContentArray(contentInformation);
 
-            contentInformation.map(element => {
-                let actionButtons = [
-                    //only add download button
-                    new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
-                ];
-                children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);
-            })
-            setChildrenLabel("File(s)");
-            setThumb(thumb);
-            setChildrenData(children);
-        });
+                contentInformation.map(element => {
+                    let actionButtons = [
+                        //only add download button
+                        new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
+                    ];
+                    children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);
+                })
+                setChildrenLabel("File(s)");
+                setThumb(thumb);
+                setChildrenData(children);
+            });
         })
     }, [data?.accessToken, resource.id]);
 
-    actionEvents.map((actionEvent:ActionButtonInterface) => {
+    useEffect(() => {
+        setUsersLoading(true);
+        fetchUsers(searchValue).then(users => {
+            const newUsers: Element<string>[] = new Array<Element<string>>();
+            newUsers.push({value: "anonymousUser", label: "Publicly Accessible", email: ""});
+            users.map((user: KeycloakUser) => {
+                newUsers.push({value: user.id, label: `${user.lastName}, ${user.firstName}`, email: user.email});
+            })
+
+            setUsers(newUsers);
+            const selection: string[] = [];
+            resource.acls.map((entry: Acl) => {
+                selection.push(entry.sid);
+            })
+            setSelectedValues(selection);
+        }).finally(() => {
+            setUsersLoading(false);
+            //  doQuickShare("");
+        });
+    }, [searchValue]);
+
+    actionEvents.map((actionEvent: ActionButtonInterface) => {
         buttons.push(actionEvent);
     })
+
+    function doQuickShare(redirect: string) {
+        setOpenModal(true);
+
+    }
+
+    function closeModal() {
+        setOpenModal(false);
+    }
+
+    const shareIt = () => {
+        setOpenModal(false);
+        console.log("SELECT ", selectedValues);
+        console.log("RES ", resource);
+        const aclEntries: string[] = getAclDiff(selectedValues, resource.acls);
+        console.log("DIFF ", aclEntries);
+        fetchDataResourceEtag(resource.id, data?.accessToken).then((etag) => {
+            patchDataResourceAcl(resource.id, etag as string, aclEntries).then((res) =>{
+                console.log("RES ", res);
+            }).finally(() => {
+                setSearchValue("");
+                setSelectedValues([]);
+                router.push('/base-repo/resources');
+            })
+        });
+
+
+
+        //open share receiver dialog
+        //allow typing email
+        //allow multiselect?
+        //patch resource
+        //reload
+    }
+
+    function doSelect(values: string[]) {
+        setSelectedValues(values);
+    }
 
     let miscProperties = propertiesForDataResource(resource);
     miscProperties.childrenData = childrenData;
@@ -71,10 +159,36 @@ export default function DataResourceCard(props:ResourceCardProps) {
     return (
         <>
             <DataCard key={resource.id}
-                  variant={variant}
-                  childrenVariant={childVariant}
-                  actionButtons={buttons}
-                  onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
+                      variant={variant}
+                      childrenVariant={childVariant}
+                      actionButtons={buttons}
+                      onActionClick={ev => actionCallback(ev)} {...miscProperties}></DataCard>
+            <Dialog open={openModal} modal={true} onOpenChange={closeModal}>
+                <DialogContent className="bg-secondary" onPointerDownOutside={(e) => {
+                    e.preventDefault()
+                }} onInteractOutside={(e) => {
+                    e.preventDefault()
+                }}>
+                    <DialogHeader>
+                        <DialogTitle>Add New Tag</DialogTitle>
+                        <DialogDescription className="secondary">
+                            Provide a tag to add to this content element.
+                        </DialogDescription>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <AutoCompleteList selectedValues={selectedValues}
+                                              onSelectedValuesChange={doSelect}
+                                              searchValue={searchValue}
+                                              onSearchValueChange={setSearchValue}
+                                              items={users ?? []}
+                                              isLoading={usersLoading}
+                                              emptyMessage="No user found."/>
+                        </div>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => shareIt()} className={"bg-accent text-accent-foreground"}>Add</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

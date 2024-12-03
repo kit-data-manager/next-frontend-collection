@@ -6,6 +6,7 @@ import {RevokeResourceAction} from "@/lib/base-repo/actions/revokeResourceAction
 import {DeleteResourceAction} from "@/lib/base-repo/actions/deleteResourceAction";
 import {ToggleThumbAction} from "@/lib/base-repo/actions/toggleThumbAction";
 import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
+import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
 
 export function runAction(actionId:string, redirect?: Function){
     let parts:string[] = actionId.split("_");
@@ -36,6 +37,10 @@ switch(parts[0]){
     }
     case REPO_ACTIONS.TOGGLE_TAG:{
         ToggleTagAction.performAction(parts[1], parts[2], parts[3], redirect);
+        break;
+    }
+    case REPO_ACTIONS.QUICK_SHARE:{
+        QuickShareResourceAction.performAction(parts[1],undefined, undefined, redirect);
         break;
     }
 

@@ -214,7 +214,7 @@ export default function DataResourceEditor({...props}) {
                      className={"w-48 min-w-6 ml-6"}/>
             </div>
             <Dialog open={openModal} modal={true} onOpenChange={closeModal}>
-                <DialogContent className="bg-secondary">
+                <DialogContent className="bg-secondary" onPointerDownOutside={() => {}} onInteractOutside={() => {}}>
                     <DialogHeader>
                         <DialogTitle>Add New Tag</DialogTitle>
                         <DialogDescription className="secondary">

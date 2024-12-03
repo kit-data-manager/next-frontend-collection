@@ -1,7 +1,7 @@
 'use client';
 
 import {DataResource, State} from "@/lib/definitions";
-import {fetchDataResources} from "@/lib/base-repo/client_data";
+import {fetchDataResources, fetchUsers} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {
      userCanDownload, userCanEdit, userCanView
@@ -17,6 +17,7 @@ import {ViewResourceAction} from "@/lib/base-repo/actions/viewResourceAction";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
 import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
+import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
 
 export default function DataResourceListing({page,size, filter, sort}: {
     page: number;
@@ -28,18 +29,18 @@ export default function DataResourceListing({page,size, filter, sort}: {
     const [totalPages, setTotalPages] = useState(0 as number);
     const [isLoading, setIsLoading] = useState(true)
     const { data, status } = useSession();
-    const accessToken = data?.accessToken;
 
     useEffect(() => {
         if(status != "loading"){
             setIsLoading(true);
-            fetchDataResources(page, size, filter, sort, accessToken).then((page) => {
+           // fetchUsers("thomas").then((json) => console.log("Done! ", json));
+            fetchDataResources(page, size, filter, sort).then((page) => {
                 setTotalPages(page.totalPages);
                 setResources(page.resources);
                 setIsLoading(false);
             })
         }
-    }, [page, size, filter, sort, status, accessToken])
+    }, [page, size, filter, sort, status])
 
     if (status === "loading" || isLoading || !resources){
         return ( <Loader/> )
@@ -56,6 +57,10 @@ export default function DataResourceListing({page,size, filter, sort}: {
                         //make edit optional depending on permissions
                         const actionEvents:ActionButtonInterface[] = [
                         ];
+
+                        if(userCanEdit(element, data?.user.id, data?.user.groups)){
+                            actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
+                        }
 
                         if(userCanView(element, data?.user.id, data?.user.groups)){
                             actionEvents.push(new ViewResourceAction(element.id).getDataCardAction());

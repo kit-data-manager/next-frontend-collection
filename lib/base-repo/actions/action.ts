@@ -5,12 +5,10 @@ export const enum REPO_ACTIONS {
     "EDIT_RESOURCE" = "editResource",
     "REVOKE_RESOURCE" = "revokeResource",
     "DELETE_RESOURCE" = "deleteResource",
-    "DOWNLOAD_RESOURCE" = "downloadResource",
-    "EDIT_CONTENT" = "editContent",
-    "DOWNLOAD_CONTENT" = "downloadContent",
     "DELETE_CONTENT" = "deleteContent",
     "TOGGLE_THUMB" = "toggleThumb",
-    "TOGGLE_TAG" = "toggleTag"
+    "TOGGLE_TAG" = "toggleTag",
+    "QUICK_SHARE" = "quickShare"
 }
 
 export class Action {

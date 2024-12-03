@@ -166,6 +166,14 @@ export type KeycloakInfo = {
     realm: string;
 }
 
+export type KeycloakUser = {
+    id: string;
+    username: string;
+    firstName:string;
+    lastName:string;
+    email:string;
+}
+
 export type Activity = {
     id: number;
     type: "INITIAL" | "UPDATE" | "TERMINAL";

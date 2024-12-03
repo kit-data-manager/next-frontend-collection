@@ -1,9 +1,17 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {ActuatorInfo, ContentInformation, DataResource, DataResourcePage, KeycloakInfo} from "@/lib/definitions";
+import {
+    Acl,
+    ActuatorInfo,
+    ContentInformation,
+    DataResource,
+    DataResourcePage,
+    KeycloakInfo,
+    KeycloakUser, Permission
+} from "@/lib/definitions";
 import {filterFormToDataResource} from "@/lib/filter-utils";
 import {fetchWithBasePath} from "@/lib/utils";
 
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, token?: string | undefined): Promise<DataResourcePage> {
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string): Promise<DataResourcePage> {
     try {
         const realPage = Math.max(page - 1, 0);
         let filterExample = filterFormToDataResource(filter);
@@ -52,8 +60,6 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
     try {
         return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => {
-            console.log("HEAD ", res.headers.get('ETag'));
-
             return {
             etag: res.headers.get('etag'),
             json: res.json()
@@ -68,6 +74,35 @@ export async function fetchDataResource(id: string, token?: string | undefined):
     }
 }
 
+export function getAclDiff(sids:string[], acl:Acl[]){
+    const sidDiff:string[] = [];
+
+    sids.map((sid:string)=> {
+        if(!acl.find((element) => element.sid === sid)){
+            sidDiff.push(sid);
+        }
+    })
+    return sidDiff;
+}
+
+export async function patchDataResourceAcl(id:string, etag:string, sids: string[]){
+
+   const patch:any[] = [];
+   sids.map((sid:string) => {
+       patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission':"READ"}});
+   })
+
+    try {
+        return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
+            method: "PATCH",
+            body: JSON.stringify(patch)
+        }).then(res => res.status);
+    } catch (error) {
+        console.error('Failed to patch resource. Error:', error);
+        return Promise.reject("Failed to patch resource.");
+    }
+}
+
 export async function fetchAllContentInformation(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
     try {
         return await fetchWithBasePath(`/api/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
@@ -76,22 +111,6 @@ export async function fetchAllContentInformation(resource: DataResource, token?:
     } catch (error) {
         console.error('Service Error:', error);
         return [];
-    }
-}
-
-export async function fetchContentInformation(id: string, filename:string, token?: string | undefined) {
-    try {
-        return fetchWithBasePath(`/api/get?resourceId=${id}&filename=${filename}`).then(res => ({
-            etag: res.headers.get('etag'),
-            json: res.json()
-        })).then(async (wrapper) => {
-            const resource: ContentInformation = await wrapper.json as ContentInformation;
-            resource.etag = wrapper.etag;
-            return resource;
-        });
-    } catch (error) {
-        console.error('Failed to fetch content metadata. Error:', error);
-        return undefined;
     }
 }
 
@@ -226,6 +245,17 @@ export async function fetchSchema(schemaPath: string) {
     }
 }
 
+export async function fetchUsers(email:string): Promise<KeycloakUser[]> {
+    try {
+        return await fetchWithBasePath(`/api/auth/users?email=${email}`).then(res => res.json()).catch(error => {
+            throw error
+        });
+    } catch (error) {
+        console.error('Service Error:', error);
+        return [];
+    }
+}
+
 export class ResponseError extends Error {
     public response: string;
 
@@ -241,4 +271,40 @@ export async function myFetch(url: string, init?: any, onlyExpectBody: boolean =
        throw new ResponseError('Bad fetch response', res);
     }
     return res;
+}
+
+export async function updateDataResource(resource: object, etag: string) {
+    const headers = {
+        "Content-Type": "application/json",
+        "If-Match": etag
+    };
+
+    const response = await fetchWithBasePath(`/api/update?resourceId=${resource["id"]}&etag=${etag}`, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(resource)
+    });
+
+    if (response.status === 200) {
+        return response.status;
+    } else {
+        throw new ResponseError('Failed to update resource.', response);
+    }
+}
+
+export async function createDataResource(resource: object) {
+    const headers = {
+        "Content-Type": "application/json"
+    };
+    const response = await fetchWithBasePath(`/api/create`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(resource)
+    });
+
+    if (response.status === 201) {
+        return response.json();
+    } else {
+        throw new ResponseError('Failed to create resource.', response);
+    }
 }
