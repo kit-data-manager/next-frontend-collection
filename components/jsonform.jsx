@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useRef, useEffect } from "react";
+import React, {useRef, useEffect} from "react";
 import './JsonForm.css'
+import {fetchUsers} from "@/lib/base-repo/client_data";
 
-const useScript = (id , url) => {
+const useScript = (id, url) => {
     useEffect(() => {
         let script = document.getElementById(id);
-        if(!script){
+        if (!script) {
             script = document.createElement('script');
             script.src = url;
             script.id = id
@@ -21,10 +22,10 @@ const useScript = (id , url) => {
     }, [id, url]);
 };
 
-const useCss = (id , url) => {
+const useCss = (id, url) => {
     useEffect(() => {
         let link = document.getElementById(id);
-        if(!link){
+        if (!link) {
             link = document.createElement('link');
             link.href = url;
             link.id = id;
@@ -51,7 +52,7 @@ export default function JsonForm(props) {
         object_layout: "table",
         schema: props.schema,
         display_required_only: false,
-        compact:true,
+        compact: true,
         titleHidden: true,
         disable_edit_json: true,
         remove_empty_properties: true,
@@ -60,7 +61,7 @@ export default function JsonForm(props) {
         no_additional_properties: true,
         show_errors: "interaction",
         theme: "tailwind",
-        use_name_attributes	: true,
+        use_name_attributes: true,
         template: 'handlebars',
         ajax: true,
         startval: props.data || {}
@@ -68,38 +69,65 @@ export default function JsonForm(props) {
 
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useScript('tailwind','https://cdn.tailwindcss.com/')
+    useScript('tailwind', 'https://cdn.tailwindcss.com/')
     useScript('handlebars', 'https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js')
-    useScript('autocomplete','https://unpkg.com/@trevoreyre/autocomplete-js')
-    useScript('cleave','https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js')
-    useScript('jsoneditor' ,'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')
+    useScript('autocomplete', 'https://unpkg.com/@trevoreyre/autocomplete-js')
+    useScript('cleave', 'https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js')
+    useScript('jsoneditor', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')
     //useScript('dompurify' ,'https://cdn.jsdelivr.net/npm/dompurify@latest/dist/purify.min.js')
 
-    useCss('fontawesome5','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
+    useCss('fontawesome5', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
     useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css')
+  //  useCss('autocomplete-css', 'https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css')
 
-    const validate = function(){
+    const validate = function () {
         const errors = jsoneditor.validate();
         console.log("Form validation errors: ", errors);
         return errors.length === 0;
     }
 
-    const setUpEditor = () =>{
+    const setUpEditor = () => {
         jsoneditor = new window.JSONEditor(elementRef.current, defaultOptions);
-            jsoneditor.on('change' , () => {
-                if(validate()) {
-                    props.onChange(jsoneditor.getValue());
-                }else{
-                    props.onChange(undefined);
+        jsoneditor.on('change', () => {
+            if (validate()) {
+                props.onChange(jsoneditor.getValue());
+            } else {
+                props.onChange(undefined);
+            }
+        })
+        jsoneditor.on('ready', () => {
+            setEditorReady(true);
+            // Now the api methods will be available
+            if (props.enabled === false) {
+                jsoneditor.disable();
+            }
+        });
+
+        window.JSONEditor.defaults.callbacks.template = {
+            "callbackFunction": (jseditor, e) => {
+                console.log("CALL");
+                return e.uname;
+            }
+        }
+
+        window.JSONEditor.defaults.callbacks = {
+            "autocomplete": {
+                "search_keycloak": function search(jseditor_editor, input) {
+                    return fetchUsers(input);
+                },
+                "getResultValue_keycloak": function getResultValue(jseditor_editor, result) {
+                    return result.id;
+                },
+                "renderResult_keycloak": function renderResult(jseditor_editor, result, props) {
+                    return ['<li ' + props + '>',
+                        '<div">' + `${result.lastName}, ${result.firstName} (${result.email})` + '</div>',
+                        '</li>'].join('');
+
                 }
-            })
-            jsoneditor.on('ready', () => {
-                setEditorReady(true);
-                // Now the api methods will be available
-                if (props.enabled === false) {
-                    jsoneditor.disable();
-                }
-            });
+            }
+
+        }
+
     }
 
     const initJsoneditor = function () {
@@ -108,11 +136,11 @@ export default function JsonForm(props) {
             jsoneditor.destroy();
         }
 
-        if(window.JSONEditor){
+        if (window.JSONEditor) {
             setUpEditor();
-        }else{
-            const inter =  setInterval(() => {
-                if(window.JSONEditor){
+        } else {
+            const inter = setInterval(() => {
+                if (window.JSONEditor) {
                     setUpEditor()
                     clearInterval(inter)
                 }

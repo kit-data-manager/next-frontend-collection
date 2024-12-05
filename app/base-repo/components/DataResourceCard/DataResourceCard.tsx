@@ -31,7 +31,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {Acl, KeycloakUser} from "@/lib/definitions";
-import {AutoCompleteList} from "@/components/AutoComplete/AutoCompleteList";
+import {AutoCompleteList, ListItem} from "@/components/AutoComplete/AutoCompleteList";
 
 export default function DataResourceCard(props: ResourceCardProps) {
     const {data, status} = useSession();
@@ -43,7 +43,7 @@ export default function DataResourceCard(props: ResourceCardProps) {
     const [openModal, setOpenModal] = useState(false);
     const [searchValue, setSearchValue] = useState<string>("");
     const [selectedValues, setSelectedValues] = useState<string[]>([]);
-    const [users, setUsers] = useState<Element<string>[]>([] as Element<string>[]);
+    const [users, setUsers] = useState<ListItem[]>([] as ListItem[]);
     const [usersLoading, setUsersLoading] = useState(false);
 
     const router = useRouter();
@@ -69,44 +69,56 @@ export default function DataResourceCard(props: ResourceCardProps) {
     const actionCallback = props.onActionClick ? props.onActionClick : handleAction;
 
     useEffect(() => {
-        new Promise(r => setTimeout(r, 1000)).then(() => {
-            fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
-                let children: Array<DataCard> = new Array<DataCard>;
+        fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
+            let children: Array<DataCard> = new Array<DataCard>;
 
-                let thumb = thumbFromContentArray(contentInformation);
+            let thumb = thumbFromContentArray(contentInformation);
 
-                contentInformation.map(element => {
-                    let actionButtons = [
-                        //only add download button
-                        new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
-                    ];
-                    children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);
-                })
-                setChildrenLabel("File(s)");
-                setThumb(thumb);
-                setChildrenData(children);
-            });
-        })
+            contentInformation.map(element => {
+                let actionButtons = [
+                    //only add download button
+                    new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
+                ];
+                children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);
+            })
+            setChildrenLabel("File(s)");
+            setThumb(thumb);
+            setChildrenData(children);
+        });
     }, [data?.accessToken, resource.id]);
 
     useEffect(() => {
         setUsersLoading(true);
         fetchUsers(searchValue).then(users => {
-            const newUsers: Element<string>[] = new Array<Element<string>>();
-            newUsers.push({value: "anonymousUser", label: "Publicly Accessible", email: ""});
+            const newUsers: Array<ListItem> = new Array<ListItem>();
+            const selection: string[] = [];
+
+            //check/add anonymousUser aka. Open Access
+            let exist: boolean = resource.acls.find((element) => element.sid === "anonymousUser") != undefined;
+            newUsers.push({
+                value: "anonymousUser",
+                label: "Publicly Accessible",
+                email: "",
+                preExist: exist
+            } as ListItem);
+            if (exist) selection.push("anonymousUser");
+            //add all other users and check for preselection
             users.map((user: KeycloakUser) => {
-                newUsers.push({value: user.id, label: `${user.lastName}, ${user.firstName}`, email: user.email});
+                exist = resource.acls.find((element) => element.sid === user.id) != undefined;
+                newUsers.push({
+                    value: user.id,
+                    label: `${user.lastName}, ${user.firstName}`,
+                    email: user.email,
+                    preExist: exist
+                } as ListItem);
+                if (exist) selection.push(user.id);
             })
 
             setUsers(newUsers);
-            const selection: string[] = [];
-            resource.acls.map((entry: Acl) => {
-                selection.push(entry.sid);
-            })
             setSelectedValues(selection);
+
         }).finally(() => {
             setUsersLoading(false);
-            //  doQuickShare("");
         });
     }, [searchValue]);
 
@@ -125,12 +137,9 @@ export default function DataResourceCard(props: ResourceCardProps) {
 
     const shareIt = () => {
         setOpenModal(false);
-        console.log("SELECT ", selectedValues);
-        console.log("RES ", resource);
         const aclEntries: string[] = getAclDiff(selectedValues, resource.acls);
-        console.log("DIFF ", aclEntries);
         fetchDataResourceEtag(resource.id, data?.accessToken).then((etag) => {
-            patchDataResourceAcl(resource.id, etag as string, aclEntries).then((res) =>{
+            patchDataResourceAcl(resource.id, etag as string, aclEntries).then((res) => {
                 console.log("RES ", res);
             }).finally(() => {
                 setSearchValue("");
@@ -138,14 +147,6 @@ export default function DataResourceCard(props: ResourceCardProps) {
                 router.push('/base-repo/resources');
             })
         });
-
-
-
-        //open share receiver dialog
-        //allow typing email
-        //allow multiselect?
-        //patch resource
-        //reload
     }
 
     function doSelect(values: string[]) {

@@ -113,13 +113,15 @@ export const tagsForJobStatus = (job: JobStatus) => {
 
 export const actionsForJobStatus = (job: JobStatus): ActionButtonInterface[]=> {
     const actions:ActionButtonInterface[] = [];
+    const basePath: string = (process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : "");
+
     switch(job.status){
         case Status.FAILED:{
             //delete
             actions.push({label: "Delete", iconName:"material-symbols-light:delete-outline", eventIdentifier: `deleteJob_${job.jobId}`, tooltip: "Delete Mapping Output"})
             break;
         }case Status.SUCCEEDED:{
-            actions.push({label: "Download", iconName:"material-symbols-light:download", url: `${job.outputFileURI}`, tooltip: "Download Mapping Result"})
+            actions.push({label: "Download", iconName:"material-symbols-light:download", url: `${basePath}${job.outputFileURI}`, tooltip: "Download Mapping Result"})
             actions.push({label: "Delete", iconName:"material-symbols-light:delete-outline", eventIdentifier: `deleteJob_${job.jobId}`, tooltip: "Delete Mapping Output"})
             break;
         }

@@ -43,17 +43,15 @@ function listUsers(url:string, accessToken:string){
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const {email} = req.query;
+    const {filter} = req.query;
 
     const realm:string = process.env.KEYCLOAK_ISSUER.substring(process.env.KEYCLOAK_ISSUER.lastIndexOf("/")+ 1);
-    var pathArray = process.env.KEYCLOAK_ISSUER.split( '/' );
-    var protocol = pathArray[0];
-    var host = pathArray[2];
-    var keycloakBaseUrl:string = protocol + '//' + host;
+    const pathArray = process.env.KEYCLOAK_ISSUER.split( '/' );
+    const keycloakBaseUrl:string = pathArray[0] + '//' + pathArray[2];
 
-    const loginUrl = keycloakBaseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
-    const accessToken:string = await login(loginUrl, "service-account-nextjs" ,process.env.KEYCLOAK_CLIENT_SECRET);
+    const loginUrl = `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/token`;
+    const accessToken:string = await login(loginUrl, process.env.KEYCLOAK_SERVICE_ACCOUNT, process.env.KEYCLOAK_CLIENT_SECRET);
 
-    const userUrl:string = keycloakBaseUrl + "/admin/realms/" + realm + "/users?email=" + email;
+    const userUrl:string = `${keycloakBaseUrl}/admin/realms/${realm}/users?search=${filter}`;
     listUsers(userUrl, accessToken).then(json => res.status(200).json(json));
 }

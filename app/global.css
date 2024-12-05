@@ -180,3 +180,20 @@ data-card::part(action-btn-icon){
   font-weight: 500;
   text-decoration: underline!important;
 }
+
+.uppy-Container{
+  background-color: var(--card);
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0.1em;
+  border-radius: var(--radius);
+  box-shadow: 2px 2px 3px 0 rgb(0 0 0 / 0.1);
+  height: 180px;
+  width: 100%;
+  margin: 4px;
+}
+
+.uppy-DragDrop-inner{
+  color: var(--primary-foreground);
+  margin-left: 30px;
+}

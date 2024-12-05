@@ -1,4 +1,5 @@
 import './global.css';
+import './autocomplete.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {inter} from '@/components/fonts';

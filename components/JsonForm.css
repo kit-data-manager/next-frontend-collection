@@ -44,3 +44,15 @@ p[style='color: red;']:before{
     content: '! ';
     font-size: 14px;
 }
+
+.autocomplete-result-list {
+    background: light-dark(#EEEEEE, #18181B);
+    border: 1px solid rgba(0,0,0,.12);
+    box-shadow: 0 2px 2px rgba(0,0,0,.16);
+    box-sizing: border-box;
+    list-style: none;
+    margin: 0;
+    max-height: 296px;
+    overflow-y: auto;
+    padding: 0
+}

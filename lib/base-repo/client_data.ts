@@ -245,9 +245,9 @@ export async function fetchSchema(schemaPath: string) {
     }
 }
 
-export async function fetchUsers(email:string): Promise<KeycloakUser[]> {
+export async function fetchUsers(filter:string): Promise<KeycloakUser[]> {
     try {
-        return await fetchWithBasePath(`/api/auth/users?email=${email}`).then(res => res.json()).catch(error => {
+        return await fetchWithBasePath(`/api/auth/users?filter=${filter}`).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {

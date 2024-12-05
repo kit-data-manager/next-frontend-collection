@@ -1,8 +1,8 @@
 import {toast} from "react-toastify";
 import Uppy from "@uppy/core";
-import {ContentInformation, DataResource} from "@/lib/definitions";
+import {Router} from "next/router";
 
-export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:string|null){
+export function installEventHandlers(uppy:Uppy, resourceId:string, onCloseCallback:Function){
     //add filename to metadata
     // @ts-ignore
     uppy.off("file-added", undefined).on('file-added', (file) => {
@@ -41,9 +41,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, redirectPath:
 
         toast.success(`Successfully uploaded ${successful} file(s).`,{
             "onClose": () =>{
-                if(redirectPath){
-                    window.document.location=redirectPath;
-                }
+                onCloseCallback();
             }
         });
     });

@@ -33,7 +33,6 @@ export default function DataResourceListing({page,size, filter, sort}: {
     useEffect(() => {
         if(status != "loading"){
             setIsLoading(true);
-           // fetchUsers("thomas").then((json) => console.log("Done! ", json));
             fetchDataResources(page, size, filter, sort).then((page) => {
                 setTotalPages(page.totalPages);
                 setResources(page.resources);

@@ -153,6 +153,7 @@ export default function DataResourceEditor({...props}) {
                         <AccordionItem value={"content"}>
                             <AccordionTrigger>Current Content</AccordionTrigger>
                             <AccordionContent>
+                                <ContentUpload id={id}></ContentUpload>
                                 {content && content.length > 0 ?
                                     <div className="rounded-lg p-2 md:pt-0">
                                         {content.map((element: ContentInformation, i: number) => {

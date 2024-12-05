@@ -16,11 +16,15 @@ export default function Page({params}) {
     const target = useSearchParams()?.get("target");
 
     const [schema, setSchema] = useState(undefined);
+    const [uiSchema, setUiSchema] = useState(undefined);
     const {status } = useSession();
 
     useEffect(() => {
         if(status != "loading") {
-            fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema));
+            fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema)).then(() => {
+                fetchSchema("/definitions/base-repo/schemas/resourceSchema.json").then(schema => setUiSchema(schema))
+            });
+
         }
     }, [id, status]);
 
@@ -42,7 +46,7 @@ export default function Page({params}) {
             <div className="flex">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
-                            <DataResourceEditor schema={schema} id={id} target={target} createMode={false}/>
+                            <DataResourceEditor schema={schema} uiSchema={uiSchema} id={id} target={target} createMode={false}/>
                     </div>
                 </div>
             </div>

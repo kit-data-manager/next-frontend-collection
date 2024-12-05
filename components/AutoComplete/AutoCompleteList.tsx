@@ -8,16 +8,17 @@ type Props = {
     onSelectedValuesChange: (values: string[]) => void;
     searchValue: string;
     onSearchValueChange: (value: string) => void;
-    items: Element[];
+    items: ListItem[];
     isLoading?: boolean;
     emptyMessage?: string;
     placeholder?: string;
 };
 
-export type Element = {
+export type ListItem = {
     value: string;
     label: string;
     email:string;
+    preExist:boolean;
 }
 
 export function AutoCompleteList({
@@ -67,13 +68,14 @@ export function AutoCompleteList({
                         <div key={option.value} className="flex items-center space-x-2 m-2">
                             <Checkbox
                                 id={option.value}
-                                title={option.email}
+
                                 checked={selectedValues.includes(option.value)}
-                                disabled={selectedValues.includes(option.value)}
+                                disabled={option.preExist}
                                 onCheckedChange={(checked) => onSelectItem(option.value, checked)} />
                             <label
                                 htmlFor={option.value}
                                 className="text-sm font-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                title={option.email}
                             >
                                 {option.label}
                             </label>
