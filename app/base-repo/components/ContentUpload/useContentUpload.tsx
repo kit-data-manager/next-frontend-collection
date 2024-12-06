@@ -32,7 +32,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, onCloseCallba
     //add completed handler
     // @ts-ignore
     uppy.off("complete", null).on('complete', (result) => {
-        uppy.close();
+        uppy.resetProgress();
         const successful = result.successful.length;
         const failed = result.failed.length;
         if(failed > 0) {

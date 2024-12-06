@@ -188,12 +188,21 @@ data-card::part(action-btn-icon){
   border-width: 0.1em;
   border-radius: var(--radius);
   box-shadow: 2px 2px 3px 0 rgb(0 0 0 / 0.1);
-  height: 180px;
+  height: 340px;
   width: 100%;
   margin: 4px;
 }
 
-.uppy-DragDrop-inner{
+.uppy-Dashboard-inner {
+  position: relative;
   color: var(--primary-foreground);
-  margin-left: 30px;
+  max-height: 100%; /* no !important */
+  min-width: 100%!important;
+  /*min-height: 180px;*/
+  outline: none;
+  border: 1px solid var(--primary);
+  border-radius: 5px;
+  height: 340px !important; /* Ensure it takes 100% of its parent container's height */
+  min-height: unset !important; /* Remove the default min-height */
+  max-width: unset !important;
 }

@@ -49,7 +49,7 @@ export const propertiesForContentInformation = (resourceId: string,
 
     let image = `${basePath}/data.png`;
 
-    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
+    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext)) && content.size < 100*1024) {
         let isThumb = content.tags && content.tags.includes("thumb");
         let thumbTag: Tag;
         if (disableChangeThumb) {
@@ -304,6 +304,8 @@ export const thumbFromContentArray = (content: ContentInformation[]) => {
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     let thumb = `${basePath}/data.png`;//"https://via.placeholder.com/192?text=placeholder";
+
+
     if (content && content.length > 0) {
         content.map((contentElement, i) => {
             contentElement.tags.map((tag, i) => {
