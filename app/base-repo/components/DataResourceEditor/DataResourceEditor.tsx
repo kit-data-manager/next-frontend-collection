@@ -43,6 +43,7 @@ import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Upload, CircleSlash2, ShieldCheck} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Icon} from "@iconify/react";
+import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
@@ -277,7 +278,7 @@ export default function DataResourceEditor({...props}) {
                                 <span>Here you can control who has access to this resource. </span>
                             </AlertDescription>
                         </Alert>
-                            <span>Nothing here, yet...</span>
+                            <KanbanBoard/>
 
                     </TabsContent>
                 </Tabs>
