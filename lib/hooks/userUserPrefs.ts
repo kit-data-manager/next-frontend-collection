@@ -6,6 +6,7 @@ export type UserPrefsType = {
     sortType: string,
     pageSize: string,
     theme: string,
+    helpVisible:boolean,
     mappingJobs: string
 }
 
@@ -13,6 +14,7 @@ const defaultUserPrefs: UserPrefsType = {
     sortType: Sort.NEWEST,
     pageSize: "10",
     theme:"system",
+    helpVisible:true,
     mappingJobs: ""
 }
 

@@ -25,7 +25,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Button, buttonVariants} from "@/components/ui/button";
 import {thumbFromContentArray} from "@/lib/base-repo/datacard-utils";
 import {useSession} from "next-auth/react";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
@@ -45,6 +45,10 @@ import {Badge} from "@/components/ui/badge";
 import {Icon} from "@iconify/react";
 import {KanbanBoard, NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
+import Link from "next/link";
+import {cva} from "class-variance-authority";
+import {cn} from "@/lib/utils";
+import useUserPrefs from "@/lib/hooks/userUserPrefs";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
@@ -61,7 +65,10 @@ export default function DataResourceEditor({...props}) {
     const [actionContent, setActionContent] = useState("");
     const [elements, setElements] = useState<Element[]>([]);
 
+    const [userFilter, setUserFilter] = useState(undefined);
+
     const {data, status} = useSession();
+    const { userPrefs, updateUserPrefs } = useUserPrefs(data?.user.id);
 
     const id = props.id;
     const router = useRouter();
@@ -94,6 +101,7 @@ export default function DataResourceEditor({...props}) {
         handleAction({detail: {eventIdentifier: ident}});
     };
 
+    //fetch data resource and content information
     useEffect(() => {
         if (createMode) {
             setIsLoading(false);
@@ -108,62 +116,6 @@ export default function DataResourceEditor({...props}) {
                 await fetchAllContentInformation(res, data?.accessToken).then((data) => setContent(data)).catch(error => {
                     console.error(`Failed to fetch children for resource ${id}`, error)
                 });
-
-                const initialElements: Element[] = await fetchUsers(undefined).then((res) => {
-                    let userElements: Element[] = [];
-                    res.map((user: KeycloakUser) => {
-console.log("User ", user);
-                        userElements.push({
-                            id: user.id,
-                            columnId: "users",
-                            content: user.username,
-                            icon: "gridicons:user-circle"
-                        });
-                    });
-                    return userElements;
-                }).then(res => {res.push({
-                    id: "world",
-                    columnId: "users",
-                    content: "Public Access",
-                    icon: "fluent-mdl2:world"
-                });return res;});
-
-
-                /* const initialElements: Element[] = [
-                     {
-                         id: "tj",
-                         columnId: "users",
-                         content: "Thomas",
-                         icon: "gridicons:user-circle"
-                     },
-                     {
-                         id: "vh",
-                         columnId: "read",
-                         content: "Volker",
-                         icon: "gridicons:user-circle"
-                     },
-                     {
-                         id: "ap",
-                         columnId: "write",
-                         content: "Andreas",
-                         icon: "gridicons:user-circle"
-                     },
-                     {
-                         id: "mi",
-                         columnId: "administrate",
-                         content: "Max",
-                         icon: "gridicons:user-circle"
-                     },
-                     {
-                         id: "world",
-                         columnId: "users",
-                         content: "Public Access",
-                         icon: "fluent-mdl2:world"
-                     },
-                 ];*/
-
-                setElements(initialElements);
-
                 return setResource(res);
             }).then(() => {
                 setIsLoading(false);
@@ -174,6 +126,36 @@ console.log("User ", user);
         }
         setMustReload(false);
     }, [id, data?.accessToken, etag, createMode, status, mustReload]);
+
+    //Fetch user list for access control
+    useEffect(() => {
+        fetchUsers(userFilter).then((res) => {
+            let userElements: Element[] = [];
+            //if elements is empty, take all and fix against acl
+            //if elements is not empty, take elements and
+                //check elements which are in columnId "users"
+                //if element is not in result, remove
+                //if element is not in list, add to columnId "users"
+
+            res.map((user: KeycloakUser) => {
+                userElements.push({
+                    id: user.id,
+                    columnId: "users",
+                    content: user.username,
+                    icon: "gridicons:user-circle"
+                });
+            });
+            return userElements;
+        }).then(res => {
+            res.push({
+                id: "world",
+                columnId: "users",
+                content: "Public Access",
+                icon: "fluent-mdl2:world"
+            });
+            setElements(res);
+        });
+    }, [userFilter]);
 
 
     if (status === "loading" || isLoading) {
@@ -196,7 +178,7 @@ console.log("User ", user);
     }
 
     function closeModal() {
-        setOpenModal(false);
+       setOpenModal(false);
     }
 
     const defaultCols: NestedColumn[] = [
@@ -222,9 +204,24 @@ console.log("User ", user);
         }
     ];
 
+    function toggleHelp() {
+        //setHelpVisible(!helpVisible);
+        updateUserPrefs({helpVisible: !userPrefs.helpVisible });
+    }
+
+    function updateUserFilter(val:string){
+        setUserFilter(val);
+    }
+
     return (
         <div className="flex col-2">
-            <div className="flex">
+            <div className="grid flex-grow justify-items-stretch">
+                <button onClick={() => toggleHelp()} title={"Show/Hide Help"} className={"justify-self-end"}><Icon fontSize={24}
+                                                                                                  icon={"material-symbols-light:help-outline"}
+                                                                                                  className={"h-8 w-8 mr-2"}
+                                                                                                  style={userPrefs.helpVisible ? {color:"#0F0"} : {color:"#F00"}}
+                />
+                </button>
                 <Tabs defaultValue={target} className="w-full">
                     <TabsList>
                         <TabsTrigger value="upload"><Upload className="h-4 w-4 mr-2"/> Upload Content</TabsTrigger>
@@ -237,6 +234,7 @@ console.log("User ", user);
                             Permissions</TabsTrigger>
                     </TabsList>
                     <TabsContent value="upload">
+                        {userPrefs.helpVisible ?
                         <Alert>
                             <Upload className="h-4 w-4"/>
                             <AlertTitle>Upload Content</AlertTitle>
@@ -254,11 +252,13 @@ console.log("User ", user);
                                 the same name can be uploaded to a resource.</span>
                             </AlertDescription>
                         </Alert>
+                            :undefined}
                         <ContentUpload id={id}></ContentUpload>
                     </TabsContent>
                     <TabsContent value="content">
                         {content && content.length > 0 ?
                             <>
+                            {userPrefs.helpVisible ?
                                 <Alert>
                                     <Icon fontSize={16} icon={"mdi:file-edit-outline"} className="h-4 w-4 mr-2"/>
                                     <AlertTitle>Edit Content</AlertTitle>
@@ -277,6 +277,7 @@ console.log("User ", user);
                                         <span className={"text-warn "}>Be aware that removed content cannot be restored. Once a file was removed it has to be re-uploaded.</span>
                                     </AlertDescription>
                                 </Alert>
+                                :undefined}
                                 <div className="rounded-lg p-2 mt-2 md:pt-0">
                                     {content.map((element: ContentInformation, i: number) => {
                                         let actionEvents: ActionButtonInterface[] = [];
@@ -313,6 +314,7 @@ console.log("User ", user);
                         }
                     </TabsContent>
                     <TabsContent value="metadata">
+                        {userPrefs.helpVisible ?
                         <Alert>
                             <Icon fontSize={16} icon={"material-symbols-light:edit-square-outline"}
                                   className="h-4 w-4 mr-2"/>
@@ -330,6 +332,7 @@ console.log("User ", user);
                                 </span>
                             </AlertDescription>
                         </Alert>
+                        :undefined}
                         {editorReady ? null :
                             <span>Loading editor...</span>
                         }
@@ -351,8 +354,8 @@ console.log("User ", user);
                             />
                         }
                     </TabsContent>
-
                     <TabsContent value="access">
+                        {userPrefs.helpVisible ?
                         <Alert>
                             <ShieldCheck className="h-4 w-4"/>
                             <AlertTitle>Access Permissions</AlertTitle>
@@ -397,12 +400,14 @@ console.log("User ", user);
                             </span>
                             </AlertDescription>
                         </Alert>
+                            :undefined}
+                        <Input type={"text"} placeholder={"Add User List Filter"}  onChange={(event: any) => updateUserFilter(event.target.value)} className={"mt-2"}></Input>
                         <KanbanBoard elements={elements} setElements={setElements} columns={defaultCols}/>
                         <ConfirmCancelComponent confirmLabel={"Commit"}
                                                 cancelLabel={"Reset"}
                                                 confirmCallback={() => DoUpdatePermissions(resource, etag, elements, router)}
                                                 cancelHref={`/base-repo/resources/${id}/edit`}
-                                                confirm={confirm}
+                                                confirm={true}
                         />
                     </TabsContent>
                 </Tabs>

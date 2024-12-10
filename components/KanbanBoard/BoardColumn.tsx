@@ -50,7 +50,7 @@ export const BoardColumn = ({ column, elements, isOverlay }: BoardColumnProps) =
   };
 
   const variants = cva(
-    "h-full w-full bg-primary flex-shrink-0 snap-center mt-4 overflow-y-auto",
+    "max-h-[500px] w-full bg-primary flex-shrink-0 snap-center mt-4 overflow-y-auto",
     {
       variants: {
         dragging: {
@@ -103,7 +103,7 @@ export const BoardContainer = ({ children }: { children: React.ReactNode }) => {
       },
     },
   });
-/*Scrollbars behaved messy, so let's remove them for now
+//Scrollbars behaved messy, so let's remove them for now
   return (
     <ScrollArea className={variations({ dragging: dndContext.active ? "active" : "default" })}>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start justify-center">
@@ -111,11 +111,11 @@ export const BoardContainer = ({ children }: { children: React.ReactNode }) => {
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
-  );*/
-
+  );
+/*
   return (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start justify-center">
           {children}
         </div>
-  );
+  );*/
 }

@@ -1,15 +1,10 @@
 'use client';
 
-import {useTheme} from "next-themes";
-import {ChartPieIcon, ListBulletIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {usePathname} from "next/navigation";
 import React from "react";
-import {DropdownMenuCheckboxItemProps} from "@radix-ui/react-dropdown-menu";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
     DropdownMenuItem,
     DropdownMenuSub,
@@ -19,11 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
-import {ThemeModeToggle} from "@/components/ThemeModeToggle/ThemeModeToggle";
 import {useSession} from "next-auth/react";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
-import {NavigationMenuContent, NavigationMenuItem, NavigationMenuTrigger} from "@/components/ui/navigation-menu";
 
 export default function MainMenuMobile() {
     const {data: session, status} = useSession();

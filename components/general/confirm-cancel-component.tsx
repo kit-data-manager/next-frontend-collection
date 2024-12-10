@@ -20,8 +20,7 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
             <div className="container py-10 px-10 sl-7 mx-0 min-w-full flex flex-col items-center">
                 <div className="space-x-4">
                     <button id="cancelButton"
-                            onClick={() => {console.log("PUISH");
-                                router.push(cancelHref);}}
+                            onClick={() => router.push(cancelHref)}
                           className="bg-destructive hover:underline font-bold py-2 px-4 rounded">
                         {cancelLabel}
                     </button>
