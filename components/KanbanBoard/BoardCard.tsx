@@ -4,36 +4,38 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
-import { GripVertical } from "lucide-react";
 import { ColumnId } from "./KanbanBoard";
+import {Icon} from "@iconify/react";
+import React from "react";
 
-export type Task = {
+export type Element = {
   id: UniqueIdentifier;
   columnId: ColumnId;
   content: string;
+  icon:string;
 }
 
-type TaskCardProps = {
-  task: Task;
+type BoardCardProps = {
+  element: Element;
   isOverlay?: boolean;
 }
 
-export type TaskType = "Task";
+export type ElementType = "Element";
 
-export type TaskDragData = {
-  type: TaskType;
-  task: Task;
+export type ElementDragData = {
+  type: ElementType;
+  element: Element;
 }
 
-export function TaskCard({ task, isOverlay }: TaskCardProps) {
+export function BoardCard({ element, isOverlay }: BoardCardProps) {
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
-    id: task.id,
+    id: element.id,
     data: {
-      type: "Task",
-      task,
-    } satisfies TaskDragData,
+      type: "Element",
+      element,
+    } satisfies ElementDragData,
     attributes: {
-      roleDescription: "Task",
+      roleDescription: "Element",
     },
   });
 
@@ -64,10 +66,11 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
           {...attributes}
           {...listeners}
           className="p-1 text-secondary-foreground/50 -ml-2 h-auto cursor-grab">
-          <span className="sr-only">Move task</span>
-          <GripVertical />
+          <span className="sr-only">Move Element</span>
+          <Icon fontSize={24} icon={element.icon}
+                className="h-6 w-6 mr-2"/>
         </Button>
-        {task.content}
+        {element.content}
       </CardContent>
     </Card>
   );

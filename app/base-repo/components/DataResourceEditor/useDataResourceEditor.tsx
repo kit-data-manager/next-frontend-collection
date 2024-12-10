@@ -2,6 +2,7 @@ import {toast} from "react-toastify";
 import {DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {createDataResource, updateDataResource} from "@/lib/base-repo/client_data";
+import type {Element} from "@/components/KanbanBoard/BoardCard";
 
 export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
     if (!data) {
@@ -10,6 +11,18 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
         setCurrentData(data);
         setConfirm(true);
     }
+}
+
+export const DoUpdatePermissions = (currentData: DataResource, etag:string, permissions:Element[], router: AppRouterInstance) => {
+    console.log("Doing update ", permissions);
+    //go through all elements
+    //get element.id permission in currentData.acls
+    //if undefined -> remember for add
+    //if different -> patch update
+
+    //add patches for add
+
+    //submit patches
 }
 
 export const DoUpdateDataResource = (currentData: DataResource, etag:string, router: AppRouterInstance) => {

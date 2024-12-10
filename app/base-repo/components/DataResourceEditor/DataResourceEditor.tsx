@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 
 import {useRouter} from "next/navigation";
 import ContentUpload from "@/app/base-repo/components/ContentUpload/ContentUpload";
-import {ContentInformation, DataResource, Permission} from "@/lib/definitions";
+import {ContentInformation, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import {
     userCanDelete,
@@ -15,7 +15,7 @@ import {
 import {
     DataChanged,
     DoCreateDataResource,
-    DoUpdateDataResource
+    DoUpdateDataResource, DoUpdatePermissions
 } from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ContentInformationCard from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard";
 import {
@@ -32,7 +32,7 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {DeleteContentAction} from "@/lib/base-repo/actions/deleteContentAction";
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
-import {fetchDataResource, fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {fetchDataResource, fetchAllContentInformation, fetchUsers} from "@/lib/base-repo/client_data";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
@@ -43,7 +43,8 @@ import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Upload, CircleSlash2, ShieldCheck} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Icon} from "@iconify/react";
-import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
+import {KanbanBoard, NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
+import type {Element} from "@/components/KanbanBoard/BoardCard";
 
 export default function DataResourceEditor({...props}) {
     const [confirm, setConfirm] = useState(false);
@@ -58,6 +59,8 @@ export default function DataResourceEditor({...props}) {
     const [mustReload, setMustReload] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [actionContent, setActionContent] = useState("");
+    const [elements, setElements] = useState<Element[]>([]);
+
     const {data, status} = useSession();
 
     const id = props.id;
@@ -106,6 +109,61 @@ export default function DataResourceEditor({...props}) {
                     console.error(`Failed to fetch children for resource ${id}`, error)
                 });
 
+                const initialElements: Element[] = await fetchUsers(undefined).then((res) => {
+                    let userElements: Element[] = [];
+                    res.map((user: KeycloakUser) => {
+console.log("User ", user);
+                        userElements.push({
+                            id: user.id,
+                            columnId: "users",
+                            content: user.username,
+                            icon: "gridicons:user-circle"
+                        });
+                    });
+                    return userElements;
+                }).then(res => {res.push({
+                    id: "world",
+                    columnId: "users",
+                    content: "Public Access",
+                    icon: "fluent-mdl2:world"
+                });return res;});
+
+
+                /* const initialElements: Element[] = [
+                     {
+                         id: "tj",
+                         columnId: "users",
+                         content: "Thomas",
+                         icon: "gridicons:user-circle"
+                     },
+                     {
+                         id: "vh",
+                         columnId: "read",
+                         content: "Volker",
+                         icon: "gridicons:user-circle"
+                     },
+                     {
+                         id: "ap",
+                         columnId: "write",
+                         content: "Andreas",
+                         icon: "gridicons:user-circle"
+                     },
+                     {
+                         id: "mi",
+                         columnId: "administrate",
+                         content: "Max",
+                         icon: "gridicons:user-circle"
+                     },
+                     {
+                         id: "world",
+                         columnId: "users",
+                         content: "Public Access",
+                         icon: "fluent-mdl2:world"
+                     },
+                 ];*/
+
+                setElements(initialElements);
+
                 return setResource(res);
             }).then(() => {
                 setIsLoading(false);
@@ -141,9 +199,32 @@ export default function DataResourceEditor({...props}) {
         setOpenModal(false);
     }
 
+    const defaultCols: NestedColumn[] = [
+        {
+            id: "users",
+            title: "Users",
+            icon: "gridicons:multiple-users"
+        },
+        {
+            id: "read",
+            title: "Read",
+            icon: "material-symbols-light:eye-tracking-outline"
+        },
+        {
+            id: "write",
+            title: "Write",
+            icon: "material-symbols-light:edit-square-outline"
+        },
+        {
+            id: "administrate",
+            title: "Administrate",
+            icon: "arcticons:vivo-i-manager"
+        }
+    ];
+
     return (
-        <div className="flex flex-grow col-2">
-            <div className="flex-grow ">
+        <div className="flex col-2">
+            <div className="flex">
                 <Tabs defaultValue={target} className="w-full">
                     <TabsList>
                         <TabsTrigger value="upload"><Upload className="h-4 w-4 mr-2"/> Upload Content</TabsTrigger>
@@ -152,7 +233,8 @@ export default function DataResourceEditor({...props}) {
                         <TabsTrigger value="metadata"><Icon fontSize={16}
                                                             icon={"material-symbols-light:edit-square-outline"}
                                                             className="h-4 w-4 mr-2"/>Edit Metadata</TabsTrigger>
-                        <TabsTrigger value="access"><ShieldCheck className="h-4 w-4 mr-2"/>Access Permissions</TabsTrigger>
+                        <TabsTrigger value="access"><ShieldCheck className="h-4 w-4 mr-2"/>Access
+                            Permissions</TabsTrigger>
                     </TabsList>
                     <TabsContent value="upload">
                         <Alert>
@@ -275,11 +357,53 @@ export default function DataResourceEditor({...props}) {
                             <ShieldCheck className="h-4 w-4"/>
                             <AlertTitle>Access Permissions</AlertTitle>
                             <AlertDescription>
-                                <span>Here you can control who has access to this resource. </span>
+                                <span>Here you can control who has which permissions while accessing this resource. There are three different permission levels, which are:
+                                    <table className={"mt-4 mb-4 ml-6"}>
+                                        <tbody>
+                                        <tr>
+                                            <td><Badge variant="nodeco">
+                                                <Icon fontSize={16}
+                                                      icon={"material-symbols-light:eye-tracking-outline"}
+                                                      className="h-4 w-4 mr-2"/> Read:</Badge>
+                                            </td>
+                                            <td> You can see and download metadata and data.</td>
+                                        </tr>
+                                         <tr>
+                                            <td><Badge variant="nodeco">
+                                                <Icon fontSize={16}
+                                                      icon={"material-symbols-light:edit-square-outline"}
+                                                      className="h-4 w-4 mr-2"/> Write:</Badge>
+                                            </td>
+                                            <td> You can READ and update metadata and data.</td>
+                                        </tr>
+                                         <tr>
+                                            <td><Badge variant="nodeco">
+                                                <Icon fontSize={16}
+                                                      icon={"arcticons:vivo-i-manager"}
+                                                      className="h-4 w-4 mr-2"/> Administrate:</Badge>
+                                            </td>
+                                            <td> You can WRITE, manage access permissions and delete the resource.</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    To change permissions of a user, grab an item at its icon and drag it to the according column. The outer left column lists all available users which currently have to specific permission assigned.
+                                    You&apos;ll also find one special item  <Badge variant="outline">
+                                                <Icon fontSize={16}
+                                                      icon={"fluent-mdl2:world"}
+                                                      className="h-4 w-4 mr-2"/> Public Access</Badge> which includes all users as well as anonymous access. Assigning permissions to this element will open the resource to the public.
+                                     <br/><br/>
+                                        <span className={"text-warn "}>Be careful to only assign write/administrate permissions to people you trust. Pay special attention and re-check if you see a warning while updating permissions.</span>
+                            </span>
                             </AlertDescription>
                         </Alert>
-                            <KanbanBoard/>
-
+                        <KanbanBoard elements={elements} setElements={setElements} columns={defaultCols}/>
+                        <ConfirmCancelComponent confirmLabel={"Commit"}
+                                                cancelLabel={"Reset"}
+                                                confirmCallback={() => DoUpdatePermissions(resource, etag, elements, router)}
+                                                cancelHref={`/base-repo/resources/${id}/edit`}
+                                                confirm={confirm}
+                        />
                     </TabsContent>
                 </Tabs>
 

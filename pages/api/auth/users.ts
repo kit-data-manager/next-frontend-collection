@@ -52,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const loginUrl = `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/token`;
     const accessToken:string = await login(loginUrl, process.env.KEYCLOAK_SERVICE_ACCOUNT, process.env.KEYCLOAK_CLIENT_SECRET);
 
-    const userUrl:string = `${keycloakBaseUrl}/admin/realms/${realm}/users?search=${filter}`;
+    const userUrl:string = filter ? `${keycloakBaseUrl}/admin/realms/${realm}/users?search=${filter}` : `${keycloakBaseUrl}/admin/realms/${realm}/users`;
+
     listUsers(userUrl, accessToken).then(json => res.status(200).json(json));
 }

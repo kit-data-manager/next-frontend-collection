@@ -61,9 +61,10 @@ export async function fetchDataResource(id: string, token?: string | undefined):
     try {
         return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => {
             return {
-            etag: res.headers.get('etag'),
-            json: res.json()
-        }}).then(async (wrapper) => {
+                etag: res.headers.get('etag'),
+                json: res.json()
+            }
+        }).then(async (wrapper) => {
             const resource: DataResource = await wrapper.json as DataResource;
             resource.etag = wrapper.etag;
             return resource;
@@ -74,23 +75,23 @@ export async function fetchDataResource(id: string, token?: string | undefined):
     }
 }
 
-export function getAclDiff(sids:string[], acl:Acl[]){
-    const sidDiff:string[] = [];
+export function getAclDiff(sids: string[], acl: Acl[]) {
+    const sidDiff: string[] = [];
 
-    sids.map((sid:string)=> {
-        if(!acl.find((element) => element.sid === sid)){
+    sids.map((sid: string) => {
+        if (!acl.find((element) => element.sid === sid)) {
             sidDiff.push(sid);
         }
     })
     return sidDiff;
 }
 
-export async function patchDataResourceAcl(id:string, etag:string, sids: string[]){
+export async function patchDataResourceAcl(id: string, etag: string, sids: string[]) {
 
-   const patch:any[] = [];
-   sids.map((sid:string) => {
-       patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission':"READ"}});
-   })
+    const patch: any[] = [];
+    sids.map((sid: string) => {
+        patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission': "READ"}});
+    })
 
     try {
         return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
@@ -163,7 +164,7 @@ export async function fetchActuatorInfo(baseUrl: string, token?: string | undefi
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(serviceUrl:string, token?: string | undefined) {
+export async function fetchActuatorHealth(serviceUrl: string, token?: string | undefined) {
     let database = "unknown";
     let databaseStatus = "unknown";
     let harddisk = 0;
@@ -245,9 +246,15 @@ export async function fetchSchema(schemaPath: string) {
     }
 }
 
-export async function fetchUsers(filter:string): Promise<KeycloakUser[]> {
+export async function fetchUsers(filter: string | undefined): Promise<KeycloakUser[]> {
     try {
-        return await fetchWithBasePath(`/api/auth/users?filter=${filter}`).then(res => res.json()).catch(error => {
+        if (filter) {
+            return await fetchWithBasePath(`/api/auth/users?filter=${filter}`).then(res => res.json()).catch(error => {
+                throw error
+            });
+        }
+
+        return await fetchWithBasePath(`/api/auth/users`).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -268,7 +275,7 @@ export class ResponseError extends Error {
 export async function myFetch(url: string, init?: any, onlyExpectBody: boolean = false) {
     let res: Response = await fetch(url, init);
     if (!res.ok && !onlyExpectBody) {
-       throw new ResponseError('Bad fetch response', res);
+        throw new ResponseError('Bad fetch response', res);
     }
     return res;
 }

@@ -1,337 +1,251 @@
-import { useCallback, useId, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import {startTransition, useCallback, useId, useMemo, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 
 import {
-  DndContext,
-  type DragEndEvent,
-  type DragOverEvent,
-  DragOverlay,
-  type DragStartEvent,
-  useSensor,
-  useSensors,
-  KeyboardSensor,
-  TouchSensor,
-  MouseSensor,
-  Active,
-  Over,
-  DataRef,
+    DndContext,
+    type DragEndEvent,
+    type DragOverEvent,
+    DragOverlay,
+    type DragStartEvent,
+    useSensor,
+    useSensors,
+    KeyboardSensor,
+    TouchSensor,
+    MouseSensor,
+    Active,
+    Over,
+    DataRef,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { type Task, TaskCard, TaskDragData } from "./TaskCard";
-import { type Column, BoardColumn, BoardContainer, ColumnDragData } from "./BoardColumn";
-import { coordinateGetter } from "./multipleContainersKeyboardPreset";
+import {SortableContext, arrayMove} from "@dnd-kit/sortable";
+import {type Element, BoardCard, ElementDragData} from "./BoardCard";
+import {type Column, BoardColumn, BoardContainer, ColumnDragData} from "./BoardColumn";
+import {coordinateGetter} from "./multipleContainersKeyboardPreset";
 
-type NestedColumn = Column & {
-  children?: NestedColumn[];
+export type NestedColumn = Column & {
+    children?: NestedColumn[];
 };
 
 const defaultCols: NestedColumn[] = [
-  {
-    id: "list-of-cars",
-    title: "List of Cars"
-  },
-  {
-    id: "american-cars",
-    title: "American Cars"
-  },
-  {
-    id: "european-cars",
-    title: "European Cars",
-    children: [
-      { id: "german-cars", title: "German Cars" },
-      { id: "italian-cars", title: "Italian Cars" },
-      { id: "swedish-cars", title: "Swedish Cars" }
-    ]
-  },
-  {
-    id: "asian-cars",
-    title: "Asian Cars",
-    children: [
-      { id: "japanese-cars", title: "Japanese Cars" },
-      { id: "korean-cars", title: "Korean Cars" }
-    ]
-  }
+
 ];
 
 export type ColumnId = (typeof defaultCols)[number]["id"];
 
-const initialTasks: Task[] = [
-  {
-    id: "mb",
-    columnId: "german-cars",
-    content: "Mercedes Benz",
-  },
-  {
-    id: "vw",
-    columnId: "list-of-cars",
-    content: "VW",
-  },
-  {
-    id: "toyota",
-    columnId: "japanese-cars",
-    content: "Toyota",
-  },
-  {
-    id: "honda",
-    columnId: "korean-cars",
-    content: "Honda",
-  },
-  {
-    id: "ford",
-    columnId: "list-of-cars",
-    content: "Ford",
-  },
-  {
-    id: "ferrari",
-    columnId: "list-of-cars",
-    content: "Ferrari",
-  },
-  {
-    id: "bmw",
-    columnId: "german-cars",
-    content: "BMW",
-  },
-  {
-    id: "porsche",
-    columnId: "list-of-cars",
-    content: "Porsche",
-  },
-  {
-    id: "audi",
-    columnId: "list-of-cars",
-    content: "Audi",
-  },
-  {
-    id: "nissan",
-    columnId: "list-of-cars",
-    content: "Nissan",
-  },
-  {
-    id: "tesla",
-    columnId: "american-cars",
-    content: "Tesla",
-  },
-  {
-    id: "chevrolet",
-    columnId: "american-cars",
-    content: "Chevrolet",
-  },
-  {
-    id: "lamborghini",
-    columnId: "italian-cars",
-    content: "Lamborghini",
-  },
-  {
-    id: "volvo",
-    columnId: "swedish-cars",
-    content: "Volvo",
-  }
-];
 
-export function KanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
-  const pickedUpTaskColumn = useRef<ColumnId | null>(null);
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const dndContextId = useId();
 
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: coordinateGetter,
-    })
-  );
+interface KonbanBoardProps {
+    columns: NestedColumn[];
+    elements: Element[];
+    setElements: Function;
+}
 
-  const hasDraggableData = <T extends Active | Over>(
-    entry: T | null | undefined
-  ): entry is T & {
-    data: DataRef<TaskDragData | ColumnDragData>;
-  } => {
-    if (!entry) {
-      return false;
-    }
+export function KanbanBoard({ columns, elements, setElements }: KonbanBoardProps) {
+    //const [columns, setColumns] = useState<Column[]>(columns);
+    defaultCols.push(...columns);
+    const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+    const [activeElement, setActiveElement] = useState<Element | null>(null);
+    const dndContextId = useId();
 
-    const data = entry.data.current;
-
-    if (data?.type === "Column" || data?.type === "Task") {
-      return true;
-    }
-
-    return false;
-  };
-
-  // Helper function to flatten nested columns
-  const flattenColumns = useCallback((cols: NestedColumn[]): Column[] => {
-    return cols.flatMap((col) =>
-      col.children ? [{ id: col.id, title: col.title }, ...flattenColumns(col.children)] : [col]
+    const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(TouchSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: coordinateGetter,
+        })
     );
-  }, []);
 
-  const flatColumns = useMemo(() => flattenColumns(columns), [columns, flattenColumns]);
-  const columnsId = useMemo(() => flatColumns.map((col) => col.id), [flatColumns]);
+    const hasDraggableData = <T extends Active | Over>(
+        entry: T | null | undefined
+    ): entry is T & {
+        data: DataRef<ElementDragData | ColumnDragData>;
+    } => {
+        if (!entry) {
+            return false;
+        }
 
-  // recursively render nested columns
-  const renderNestedColumns = (cols: NestedColumn[]) => {
-    return cols.map((col) => {
-      const tasksInColumn = tasks.filter((task) => task.columnId === col.id);
+        const data = entry.data.current;
 
-      if (col.children && col.children.length > 0) {
-        // If the column has children, only render it if it has tasks directly assigned
-        return (
-          <div key={col.id} className="flex flex-col">
-            {tasksInColumn.length > 0 && <BoardColumn column={col} tasks={tasksInColumn} />}
-            <div className={tasksInColumn.length > 0 ? "ml-4 mt-2" : ""}>
-              {renderNestedColumns(col.children)}
-            </div>
-          </div>
+        return data?.type === "Column" || data?.type === "Element";
+    };
+
+    // Helper function to flatten nested columns
+    const flattenColumns = useCallback((cols: NestedColumn[]): Column[] => {
+        return cols.flatMap((col) =>
+            col.children ? [{id: col.id, title: col.title}, ...flattenColumns(col.children)] : [col]
         );
-      } else {
-        // If it's a leaf node, always render it
-        return <BoardColumn key={col.id} column={col} tasks={tasksInColumn} />;
-      }
-    });
-  };
+    }, []);
 
-  const onDragStart = (event: DragStartEvent) => {
-    if (!hasDraggableData(event.active)) return;
-    const data = event.active.data.current;
-    if (data?.type === "Column") {
-      setActiveColumn(data.column);
-      return;
-    }
+    const flatColumns = useMemo(() => flattenColumns(columns), [columns, flattenColumns]);
+    const columnsId = useMemo(() => flatColumns.map((col) => col.id), [flatColumns]);
 
-    if (data?.type === "Task") {
-      setActiveTask(data.task);
-      return;
-    }
-  };
+    // recursively render nested columns
+    const renderNestedColumns = (cols: NestedColumn[]) => {
+        return cols.map((col) => {
+            const elementsInColumn = elements.filter((element) => element.columnId === col.id);
 
-  const onDragEnd = async (event: DragEndEvent) => {
-    setActiveColumn(null);
-    setActiveTask(null);
-
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (!hasDraggableData(active)) return;
-
-    const activeData = active.data.current;
-
-    if (activeId === overId) return;
-
-    const isActiveAColumn = activeData?.type === "Column";
-    if (isActiveAColumn) {
-      setColumns((columns) => {
-        const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
-        const overColumnIndex = columns.findIndex((col) => col.id === overId);
-        return arrayMove(columns, activeColumnIndex, overColumnIndex);
-      });
-    } else if (activeData?.type === "Task") {
-      // Handle task movement
-      const newColumnId = hasDraggableData(over)
-        ? over.data.current?.type === "Column"
-          ? (over.id as ColumnId)
-          : (over.data.current as TaskDragData).task.columnId
-        : (over.id as ColumnId);
-
-      const oldColumnId = activeData.task.columnId;
-
-      if (oldColumnId !== newColumnId) {
-        // Update the task's columnId in the local state
-        setTasks((tasks) => {
-          return tasks.map((task) =>
-            task.id === activeId ? { ...task, columnId: newColumnId } : task
-          );
+            if (col.children && col.children.length > 0) {
+                // If the column has children, only render it if it has elements directly assigned
+                return (
+                    <div key={col.id} className="flex flex-col">
+                        {elementsInColumn.length > 0 && <BoardColumn column={col} elements={elementsInColumn}/>}
+                        <div className={elementsInColumn.length > 0 ? "ml-4 mt-2" : ""}>
+                            {renderNestedColumns(col.children)}
+                        </div>
+                    </div>
+                );
+            } else {
+                // If it's a leaf node, always render it
+                return <BoardColumn key={col.id} column={col} elements={elementsInColumn}/>;
+            }
         });
-      }
-    }
-  };
+    };
 
-  const onDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (activeId === overId) return;
-
-    if (!hasDraggableData(active) || !hasDraggableData(over)) return;
-
-    const activeData = active.data.current;
-    const overData = over.data.current;
-
-    const isActiveATask = activeData?.type === "Task";
-    const isOverATask = overData?.type === "Task";
-
-    if (!isActiveATask) return;
-
-    // Im dropping a Task over another Task
-    if (isActiveATask && isOverATask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const overIndex = tasks.findIndex((t) => t.id === overId);
-        const activeTask = tasks[activeIndex];
-        const overTask = tasks[overIndex];
-        if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
-          activeTask.columnId = overTask.columnId;
-          return arrayMove(tasks, activeIndex, overIndex - 1);
+    const onDragStart = (event: DragStartEvent) => {
+        if (!hasDraggableData(event.active)) return;
+        const data = event.active.data.current;
+        if (data?.type === "Column") {
+            setActiveColumn(data.column);
+            return;
         }
 
-        return arrayMove(tasks, activeIndex, overIndex);
-      });
-    }
-
-    const isOverAColumn = overData?.type === "Column";
-
-    // Im dropping a Task over a column
-    if (isActiveATask && isOverAColumn) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const activeTask = tasks[activeIndex];
-        if (activeTask) {
-          activeTask.columnId = overId as ColumnId;
-          return arrayMove(tasks, activeIndex, activeIndex);
+        if (data?.type === "Element") {
+            setActiveElement(data.element);
+            return;
         }
-        return tasks;
-      });
-    }
-  };
+    };
 
-  return (
-    <DndContext
-      id={dndContextId}
-      sensors={sensors}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}>
-      <BoardContainer>
-        <SortableContext items={columnsId}>
-          {renderNestedColumns(columns)}
-        </SortableContext>
-      </BoardContainer>
+    const onDragEnd = async (event: DragEndEvent) => {
+        setActiveColumn(null);
+        setActiveElement(null);
 
-      {typeof window !== "undefined" &&
-        createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <BoardColumn
-                isOverlay
-                column={activeColumn}
-                tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
+        const {active, over} = event;
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        if (!hasDraggableData(active)) return;
+
+        const activeData = active.data.current;
+
+        if (activeId === overId) return;
+
+        //column drag currently not supported/needed
+        /*if (activeData?.type === "Column") {
+            setColumns((columns) => {
+                const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+                const overColumnIndex = columns.findIndex((col) => col.id === overId);
+                return arrayMove(columns, activeColumnIndex, overColumnIndex);
+            });
+        } else */
+        if (activeData?.type === "Element") {
+            // Handle element movement
+            const newColumnId = hasDraggableData(over)
+                ? over.data.current?.type === "Column"
+                    ? (over.id as ColumnId)
+                    : (over.data.current as ElementDragData).element.columnId
+                : (over.id as ColumnId);
+
+            const oldColumnId = activeData.element.columnId;
+
+            if (oldColumnId !== newColumnId) {
+                // Update the element's columnId in the local state
+                setElements((elements) => {
+                    return elements.map((element) =>
+                        element.id === activeId ? {...element, columnId: newColumnId} : element
+                    );
+                });
+            }
+        }
+    };
+
+    const onDragOver = (event: DragOverEvent) => {
+        const {active, over} = event;
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        if (activeId === overId) return;
+
+        if (!hasDraggableData(active) || !hasDraggableData(over)) return;
+
+        const activeData = active.data.current;
+        const overData = over.data.current;
+
+        const isActiveAElement = activeData?.type === "Element";
+        const isOverAElement = overData?.type === "Element";
+
+        if (!isActiveAElement) return;
+
+        // I'm dropping an Element over another Element
+        if (isActiveAElement && isOverAElement) {
+            startTransition(() => {
+                setElements((elements) => {
+                    const activeIndex = elements.findIndex((t) => t.id === activeId);
+                    const overIndex = elements.findIndex((t) => t.id === overId);
+                    const activeElement = elements[activeIndex];
+                    const overElement = elements[overIndex];
+                    if (activeElement && overElement && activeElement.columnId !== overElement.columnId) {
+                        activeElement.columnId = overElement.columnId;
+                        return arrayMove(elements, activeIndex, overIndex - 1);
+                    }
+
+                    return arrayMove(elements, activeIndex, overIndex);
+                });
+            });
+
+        }
+
+        const isOverAColumn = overData?.type === "Column";
+
+        // I'm dropping an Element over a column
+        if (isActiveAElement && isOverAColumn) {
+
+            startTransition(() => {
+                setElements((elements) => {
+                    const activeIndex = elements.findIndex((t) => t.id === activeId);
+                    const activeElement = elements[activeIndex];
+                    if (activeElement) {
+                        activeElement.columnId = overId as ColumnId;
+                        return arrayMove(elements, activeIndex, activeIndex);
+                    }
+                    return elements;
+                });
+            });
+
+        }
+    };
+
+    return (
+        <DndContext
+            id={dndContextId}
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}>
+            <BoardContainer>
+                <SortableContext items={columnsId}>
+                    {renderNestedColumns(columns)}
+                </SortableContext>
+            </BoardContainer>
+
+            {typeof window !== "undefined" &&
+                createPortal(
+                    <DragOverlay>
+                        {activeColumn && (
+                            <BoardColumn
+                                isOverlay
+                                column={activeColumn}
+                                elements={elements.filter(
+                                    (element) => element.columnId === activeColumn.id
+                                )}
+                            />
+                        )}
+                        {activeElement && <BoardCard element={activeElement} isOverlay/>}
+                    </DragOverlay>,
+                    document.body
                 )}
-              />
-            )}
-            {activeTask && <TaskCard task={activeTask} isOverlay />}
-          </DragOverlay>,
-          document.body
-        )}
-    </DndContext>
-  );
+        </DndContext>
+    );
 }

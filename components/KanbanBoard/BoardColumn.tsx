@@ -1,16 +1,18 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { useMemo } from "react";
-import { Task, TaskCard } from "./TaskCard";
+import React, { useMemo } from "react";
+import { Element, BoardCard } from "./BoardCard";
 import { cva } from "class-variance-authority";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "../ui/badge";
+import {Icon} from "@iconify/react";
 
 export interface Column {
   id: UniqueIdentifier;
   title: string;
+  icon: string;
 }
 
 export type ColumnType = "Column";
@@ -22,14 +24,14 @@ export type ColumnDragData = {
 
 interface BoardColumnProps {
   column: Column;
-  tasks: Task[];
+  elements: Element[];
   isOverlay?: boolean;
 }
 
-export const BoardColumn = ({ column, tasks, isOverlay }: BoardColumnProps) => {
+export const BoardColumn = ({ column, elements, isOverlay }: BoardColumnProps) => {
   const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
+    return elements.map((task) => task.id);
+  }, [elements]);
 
   const { setNodeRef, transform, transition, isDragging } = useSortable({
     id: column.id,
@@ -48,7 +50,7 @@ export const BoardColumn = ({ column, tasks, isOverlay }: BoardColumnProps) => {
   };
 
   const variants = cva(
-    "h-full w-[300px] bg-primary flex flex-col flex-shrink-0 snap-center mt-4 overflow-y-auto",
+    "h-full w-full bg-primary flex-shrink-0 snap-center mt-4 overflow-y-auto",
     {
       variants: {
         dragging: {
@@ -67,19 +69,21 @@ export const BoardColumn = ({ column, tasks, isOverlay }: BoardColumnProps) => {
       className={variants({
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}>
-      <CardHeader className="p-4 font-semibold border-b-2 bg-gray-100 dark:bg-secondary flex flex-row items-center justify-between">
+      <CardHeader className="p-4 font-semibold text-sm border-b-2 bg-gray-100 dark:bg-secondary flex flex-row items-center justify-between">
+        <Icon fontSize={24} icon={column.icon}
+              className="h-6 w-6 mr-2"/>
         <h1>{column.title}</h1>
-        <Badge variant="outline">{tasks.length}</Badge>
+        <Badge variant="outline">{elements.length}</Badge>
       </CardHeader>
       <ScrollArea>
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
-            {tasks.length === 0 ? (
+            {elements.length === 0 ? (
               <div className="flex flex-grow items-center justify-center">
-                <p className="text-gray-400">No cars here.</p>
+                <p className="text-gray-400">No elements here.</p>
               </div>
             ) : (
-              tasks.map((task) => <TaskCard key={task.id} task={task} />)
+                elements.map((task) => <BoardCard key={task.id} element={task} />)
             )}
           </SortableContext>
         </CardContent>
@@ -91,7 +95,7 @@ export const BoardColumn = ({ column, tasks, isOverlay }: BoardColumnProps) => {
 export const BoardContainer = ({ children }: { children: React.ReactNode }) => {
   const dndContext = useDndContext();
 
-  const variations = cva("px-2 md:px-0 flex lg:justify-center pb-4", {
+  const variations = cva("px-2 min-h-[400px] lg:justify-center pb-4", {
     variants: {
       dragging: {
         default: "snap-x snap-mandatory",
@@ -99,13 +103,19 @@ export const BoardContainer = ({ children }: { children: React.ReactNode }) => {
       },
     },
   });
-
+/*Scrollbars behaved messy, so let's remove them for now
   return (
     <ScrollArea className={variations({ dragging: dndContext.active ? "active" : "default" })}>
-      <div className="flex gap-4 items-start flex-row justify-center">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start justify-center">
         {children}
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
+  );*/
+
+  return (
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start justify-center">
+          {children}
+        </div>
   );
 }
