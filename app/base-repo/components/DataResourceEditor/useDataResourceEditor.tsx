@@ -1,8 +1,32 @@
 import {toast} from "react-toastify";
-import {DataResource} from "@/lib/definitions";
+import {Acl, DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {createDataResource, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
+import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
+
+export const accessControlColumns: NestedColumn[] = [
+    {
+        id: "users",
+        title: "Users",
+        icon: "gridicons:multiple-users"
+    },
+    {
+        id: "read",
+        title: "Read",
+        icon: "material-symbols-light:eye-tracking-outline"
+    },
+    {
+        id: "write",
+        title: "Write",
+        icon: "material-symbols-light:edit-square-outline"
+    },
+    {
+        id: "administrate",
+        title: "Administrate",
+        icon: "arcticons:vivo-i-manager"
+    }
+];
 
 export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
     if (!data) {
@@ -15,6 +39,22 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
 
 export const DoUpdatePermissions = (currentData: DataResource, etag:string, permissions:Element[], router: AppRouterInstance) => {
     console.log("Doing update ", permissions);
+
+    permissions.map((permission) => {
+        if(permission.columnId != "users"){
+            //permission assigned
+            const existingIndex:number | undefined = currentData.acls.findIndex((entry, index) => entry.sid === permission.id);
+            if(existingIndex && currentData.acls[existingIndex].permission != permission.columnId){
+                console.log("UPDATE ", permission);
+            }else if(existingIndex){
+                console.log("NO Update ", permission);
+            }else{
+                console.log("New Entry ", permission);
+            }
+
+        }
+    })
+
     //go through all elements
     //get element.id permission in currentData.acls
     //if undefined -> remember for add
