@@ -83,7 +83,7 @@ export const BoardColumn = ({ column, elements, isOverlay }: BoardColumnProps) =
                 <p className="text-gray-400">No elements here.</p>
               </div>
             ) : (
-                elements.map((task) => <BoardCard key={task.id} element={task} />)
+                elements.map((task) => (!task.hidden ? <BoardCard key={task.id} element={task} /> : undefined))
             )}
           </SortableContext>
         </CardContent>

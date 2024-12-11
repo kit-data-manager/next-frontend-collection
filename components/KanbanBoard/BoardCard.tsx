@@ -13,6 +13,7 @@ export type Element = {
   columnId: ColumnId;
   content: string;
   icon:string;
+  hidden:boolean;
 }
 
 type BoardCardProps = {
