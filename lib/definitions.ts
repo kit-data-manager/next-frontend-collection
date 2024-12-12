@@ -9,7 +9,7 @@ export type DataResourcePage = {
     resources: DataResource[];
     pageSize: number;
     page: number;
-    totalPages:number;
+    totalPages: number;
 }
 
 export type DataResource = {
@@ -51,14 +51,15 @@ export type ResourceType = {
 
 export enum State {VOLATILE = "VOLATILE", FIXED = "FIXED", REVOKED = "REVOKED", GONE = "GONE"}
 
-export enum Sort{
+export enum Sort {
     NEWEST = "lastUpdate,desc",
     OLDEST = "lastUpdate,asc",
-    PUBLISHER="publisher,asc",
-    PUBLICATION_YEAR_NEWEST="publicationYear,desc",
-    PUBLICATION_YEAR_OLDEST="publicationYear,asc",
-    STATE ="state,asc",
+    PUBLISHER = "publisher,asc",
+    PUBLICATION_YEAR_NEWEST = "publicationYear,desc",
+    PUBLICATION_YEAR_OLDEST = "publicationYear,asc",
+    STATE = "state,asc",
 }
+
 export enum TypeGeneral {
     AUDIOVISUAL = "AUDIOVISUAL",
     COLLECTION = "COLLECTION",
@@ -104,11 +105,12 @@ export type Acl = {
     permission: Permission;
 };
 
+
 export enum Permission {
-    NONE,
-    READ,
-    WRITE,
-    ADMINISTRATE
+    NONE = "NONE",
+    READ = "READ",
+    WRITE = "WRITE",
+    ADMINISTRATE = "ADMINISTRATE"
 }
 
 export type Right = {
@@ -148,7 +150,7 @@ export type DataResourcesSearchParams = {
     publicationYear?: string;
     state?: State;
     typeGeneral?: TypeGeneral;
-    sort?:string;
+    sort?: string;
 }
 
 export type DataResourcesSearchParamsPromise = Promise<DataResourcesSearchParams>;
@@ -169,9 +171,9 @@ export type KeycloakInfo = {
 export type KeycloakUser = {
     id: string;
     username: string;
-    firstName:string;
-    lastName:string;
-    email:string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
 export type Activity = {
@@ -183,8 +185,8 @@ export type Activity = {
 
 }
 
-export type ExtendedSession = Session & {accessToken?: string, groups?: string[] | undefined};
-export type ExtendedProfile = Profile & {groups?:string[]}
+export type ExtendedSession = Session & { accessToken?: string, groups?: string[] | undefined };
+export type ExtendedProfile = Profile & { groups?: string[] }
 
 export type User = {
     id: string;

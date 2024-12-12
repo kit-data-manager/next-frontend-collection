@@ -15,7 +15,7 @@ import {useSession} from "next-auth/react";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
-import {resourcePermissionForUser} from "@/lib/permission-utils";
+import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
 import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
 import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
@@ -65,8 +65,8 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
     }
 
-    let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
-    if (permission < Permission.READ.valueOf()) {
+    let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+    if (permission < permissionToNumber(Permission.READ)) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
     }
 

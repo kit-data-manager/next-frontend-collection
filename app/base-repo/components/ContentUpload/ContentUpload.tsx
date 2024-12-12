@@ -9,10 +9,15 @@ import '@uppy/dashboard/dist/style.min.css';
 import {usePathname, useRouter} from 'next/navigation'
 import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
 import {useTheme} from "next-themes";
+import {DataResource} from "@/lib/definitions";
+import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 
-export default function ContentUpload(params: any) {
-    const id = params.id;
-    const path = usePathname();
+interface ContentUploadProps {
+    id: string;
+    reloadCallback: Function;
+}
+
+export default function ContentUpload({id, reloadCallback}: ContentUploadProps) {
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
     const router = useRouter();
     const [uppy, setUppy] = useState(() => new Uppy()
@@ -34,22 +39,14 @@ export default function ContentUpload(params: any) {
         //autoProceed: true,
         restrictions: {maxNumberOfFiles: 10}
     })
+
     installEventHandlers(uppy, id, () => {
-        if (path) {
-            router.push(path)
-        }
+        reloadCallback(`/base-repo/resources/${id}/edit?target=content`);
     });
-    /*
-    <DragDrop uppy={uppy} height={128} note={"Drop new files here..."}/>
-    <button id="pick-files"
-            className="mt-4 mx-5 rounded-md px-4 py-2 text-sm hover:underline float-end text-center
-                    inline-flex items-center bg-accent text-accent-foreground"
-    >Open Upload Dialog
-    </button>*/
 
     return (
         <div className="w-full flex mb-6 justify-left">
-            <Dashboard uppy={uppy} theme={uppyTheme} width={256} height={180} showSelectedFiles={false}
+            <Dashboard uppy={uppy} theme={uppyTheme} width={256} height={180} showSelectedFiles={true}
                        showProgressDetails={true}/>
         </div>
 

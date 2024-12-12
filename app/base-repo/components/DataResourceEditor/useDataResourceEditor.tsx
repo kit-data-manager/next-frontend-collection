@@ -1,7 +1,7 @@
 import {toast} from "react-toastify";
 import {Acl, DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
-import {createDataResource, updateDataResource} from "@/lib/base-repo/client_data";
+import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
 
@@ -37,42 +37,81 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
     }
 }
 
-export const DoUpdatePermissions = (currentData: DataResource, etag:string, permissions:Element[], router: AppRouterInstance) => {
-    console.log("Doing update ", permissions);
+export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback:Function) => {
+    const id = toast.loading("Processing permission update...")
 
+    const additions: any[] = [];
+    const updates: any[] = [];
+    const removals: any[] = [];
     permissions.map((permission) => {
-        if(permission.columnId != "users"){
-            //permission assigned
-            const existingIndex:number | undefined = currentData.acls.findIndex((entry, index) => entry.sid === permission.id);
-            if(existingIndex && currentData.acls[existingIndex].permission != permission.columnId){
-                console.log("UPDATE ", permission);
-            }else if(existingIndex){
-                console.log("NO Update ", permission);
-            }else{
-                console.log("New Entry ", permission);
-            }
+        //permission assigned
+        const existingIndex: number | undefined = currentData.acls.findIndex((entry, index) => entry.sid === permission.id);
 
+        if (existingIndex >= 0 && permission.columnId === "users") {
+            //fully revoke
+            removals.push({
+                "op": "remove",
+                "path": `/acls/${existingIndex}`
+            });
+        } else if (existingIndex >= 0 && permission.columnId != "users" && currentData.acls[existingIndex].permission.toLowerCase() != permission.columnId) {
+            //update
+            updates.push({
+                "op": "replace",
+                "path": `/acls/${existingIndex}/permission`,
+                value: permission.columnId.toString().toUpperCase()
+            });
+        } else if (existingIndex < 0 && permission.columnId != "users") {
+            //new entry
+            additions.push({
+                "op": "add",
+                "path": `/acls/-`,
+                value: {'sid': permission.id, 'permission': permission.columnId.toString().toUpperCase()}
+            });
         }
     })
+    const orderedPatches: any[] = [];
+    orderedPatches.push(...updates);
+    orderedPatches.push(...removals);
+    orderedPatches.push(...additions);
 
-    //go through all elements
-    //get element.id permission in currentData.acls
-    //if undefined -> remember for add
-    //if different -> patch update
-
-    //add patches for add
-
-    //submit patches
+    patchDataResourceAcls(currentData.id, etag, orderedPatches).then((status) => {
+        if (status === 204) {
+            toast.update(id, {
+                render: `${orderedPatches.length} updates successfully applied.`,
+                type: "success",
+                isLoading: false,
+                autoClose: 1000,
+                "onClose": () => {
+                    reloadCallback(`/base-repo/resources/${currentData.id}/edit?target=access`);
+                }
+            });
+        }else{
+            console.error(`Unexpected response ${status} while patching resource.`);
+            toast.update(id, {
+                render: `Failed to update access permissions. Status: ${status}`,
+                type: "error",
+                isLoading: false
+            });
+        }
+    }).catch(error => {
+        console.error("Failed to update access permissions.", error);
+        toast.update(id, {
+            render: `Failed to update access permissions. Status: ${error.response.status}`,
+            type: "error",
+            isLoading: false
+        });
+    });
 }
 
-export const DoUpdateDataResource = (currentData: DataResource, etag:string, router: AppRouterInstance) => {
+
+export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback:Function) => {
     const id = toast.loading("Updating resource...")
 
     updateDataResource(currentData, etag ? etag : '').then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
-                router.push(`/base-repo/resources/${currentData.id}/edit?target=metadata`);
+                reloadCallback(`/base-repo/resources/${currentData.id}/edit?target=metadata`);
             }
         });
     }).catch(error => {

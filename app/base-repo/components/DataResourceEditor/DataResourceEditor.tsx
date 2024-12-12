@@ -7,11 +7,11 @@ import {ContentInformation, DataResource, Permission} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import {useSession} from "next-auth/react";
 import {runAction} from "@/lib/base-repo/actions/actionExecutor";
-import {fetchDataResource, fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {fetchAllContentInformation, fetchDataResource} from "@/lib/base-repo/client_data";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
-import {resourcePermissionForUser} from "@/lib/permission-utils";
+import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
 import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
 import {Tabs} from "@/components/ui/tabs";
 import {Icon} from "@iconify/react";
@@ -105,15 +105,12 @@ export default function DataResourceEditor({...props}) {
                 return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
             }
 
-            let permission: Permission = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
-            if (permission < Permission.WRITE.valueOf()) {
+            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+
+            if (permission < permissionToNumber(Permission.WRITE)) {
                 return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
             }
         }
-    }
-
-    function toggleHelp() {
-        updateUserPrefs({helpVisible: !userPrefs.helpVisible});
     }
 
     function addTagCallback(filename: string | undefined, tag: string | undefined) {
@@ -124,112 +121,53 @@ export default function DataResourceEditor({...props}) {
         setOpenTagAddDialog(false);
     }
 
+    function reload(target:string){
+        router.push(target);
+        setMustReload(true);
+    }
+
     return (
         <div className="flex col-2">
             <div className="grid flex-grow justify-items-stretch">
-                <button onClick={() => toggleHelp()} title={"Show/Hide Help"} className={"justify-self-end"}><Icon
-                    fontSize={24}
-                    icon={"material-symbols-light:help-outline"}
-                    className={"h-8 w-8 mr-2"}
-                    style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
-                />
+                <button onClick={() => updateUserPrefs({helpVisible: !userPrefs.helpVisible})}
+                        title={"Show/Hide Help"}
+                        className={"justify-self-end"}>
+                    <Icon
+                        fontSize={24}
+                        icon={"material-symbols-light:help-outline"}
+                        className={"h-8 w-8 mr-2"}
+                        style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
+                    />
                 </button>
                 <Tabs defaultValue={createMode ? "metadata" : target} className="w-full">
                     <TabsHeader createMode={createMode}/>
-                    <UploadTab resourceId={id} userPrefs={userPrefs}/>
-                    <ContentTab resource={resource} content={content} userPrefs={userPrefs} session={data}
+                    <UploadTab resourceId={id}
+                               userPrefs={userPrefs}
+                               reloadCallback={reload}/>
+                    <ContentTab resource={resource}
+                                content={content}
+                                userPrefs={userPrefs}
+                                session={data}
                                 actionCallback={handleAction}/>
-                    <MetadataTab createMode={createMode} resource={resource} etag={etag} schema={props.schema}
-                                 userPrefs={userPrefs} updateResourceCallback={setResource}/>
-                    <AccessTab resource={resource} etag={etag} userPrefs={userPrefs}/>
+                    <MetadataTab createMode={createMode}
+                                 resource={resource}
+                                 etag={etag}
+                                 schema={props.schema}
+                                 userPrefs={userPrefs}
+                                 updateResourceCallback={setResource}
+                                 reloadCallback={reload}/>
+                    <AccessTab resource={resource}
+                               etag={etag}
+                               userPrefs={userPrefs}
+                               reloadCallback={reload}/>
                 </Tabs>
 
             </div>
-            <AddTagDialog openModal={openTagAddDialog} resourceId={id} filename={contentToTag}
+            <AddTagDialog openModal={openTagAddDialog}
+                          resourceId={id}
+                          filename={contentToTag}
                           actionCallback={addTagCallback}/>
 
         </div>
     )
-
-    /*
-    return (
-    <div className="flex flex-grow col-2">
-        <div className="flex-grow ">
-            <Accordion type="multiple" defaultValue={[target]}>
-                {!createMode ?
-                    <AccordionItem value={"upload"}>
-                        <AccordionTrigger>File Upload</AccordionTrigger>
-                        <AccordionContent>
-                            <ContentUpload id={id}></ContentUpload>
-                        </AccordionContent>
-                    </AccordionItem> : <></>}
-                {!createMode ?
-                    <AccordionItem value={"content"}>
-                        <AccordionTrigger>Current Content</AccordionTrigger>
-                        <AccordionContent>
-                            {content && content.length > 0 ?
-                                <div className="rounded-lg p-2 md:pt-0">
-                                    {content.map((element: ContentInformation, i: number) => {
-                                        let actionEvents: ActionButtonInterface[] = [];
-                                        if (userCanDelete(resource, data?.user.id, data?.user.groups)) {
-                                            actionEvents.push(new DeleteContentAction(id, element.relativePath).getDataCardAction());
-                                        }
-
-                                        if (userCanDownload(resource, data?.user.id, data?.user.groups)) {
-                                            actionEvents.push(new DownloadContentAction(id, element.relativePath).getDataCardAction());
-                                        }
-
-                                        return (
-                                            <ContentInformationCard
-                                                key={i}
-                                                data={element}
-                                                onActionClick={(ev) => handleAction(ev)}
-                                                actionEvents={actionEvents}></ContentInformationCard>
-                                        )
-                                    })}
-                                </div>
-                                : <div className="rounded-lg p-2 md:pt-0"><p
-                                    className={"text-info text-xl"}>No
-                                    content
-                                    available</p></div>}
-                        </AccordionContent>
-                    </AccordionItem> : <></>}
-                <AccordionItem value={"metadata"}>
-                    {!createMode ?
-                        <AccordionTrigger onClick={() => {
-                        }}>Resource Metadata</AccordionTrigger> :
-                        <AccordionTrigger>Resource Metadata</AccordionTrigger>
-                    }
-                    <AccordionContent>
-                        {editorReady ? null :
-                            <span>Loading editor...</span>
-                        }
-                        <JsonForm id="DataResource" schema={props.schema} data={resource}
-                                  setEditorReady={setEditorReady}
-                                  onChange={(d: object) => DataChanged(d, setConfirm, setResource)}/>
-                        {!createMode ?
-                            <ConfirmCancelComponent confirmLabel={"Commit"}
-                                                    cancelLabel={"Cancel"}
-                                                    confirmCallback={() => DoUpdateDataResource(resource, etag, router)}
-                                                    cancelHref={`/base-repo/resources/${id}`}
-                                                    confirm={confirm}
-                            /> :
-                            <ConfirmCancelComponent confirmLabel={"Create"}
-                                                    cancelLabel={"Cancel"}
-                                                    confirmCallback={() => DoCreateDataResource(resource, router)}
-                                                    cancelHref={`/base-repo/resources`}
-                                                    confirm={confirm}
-                            />
-                        }
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-        </div>
-        <div className="grow-0 justify-end ml-6 border border-t-0 border-b-0 border-l-accent border-r-0 ">
-            <img src={thumb}
-                 className={"w-48 min-w-6 ml-6"}/>
-        </div>
-
-    </div>
-    )*/
 }

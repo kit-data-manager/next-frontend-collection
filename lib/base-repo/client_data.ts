@@ -86,13 +86,24 @@ export function getAclDiff(sids: string[], acl: Acl[]) {
     return sidDiff;
 }
 
-export async function patchDataResourceAcl(id: string, etag: string, sids: string[]) {
-
+export async function patchDataResourceForQuickShare(id: string, etag: string, sids: string[]) {
     const patch: any[] = [];
     sids.map((sid: string) => {
         patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission': "READ"}});
     })
 
+    try {
+        return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
+            method: "PATCH",
+            body: JSON.stringify(patch)
+        }).then(res => res.status);
+    } catch (error) {
+        console.error('Failed to patch resource. Error:', error);
+        return Promise.reject("Failed to patch resource.");
+    }
+}
+
+export async function patchDataResourceAcls(id: string, etag: string, patch: any[]) {
     try {
         return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
             method: "PATCH",

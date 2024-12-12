@@ -8,9 +8,6 @@ async function patchResource(resourceId: string, etag:string, accessToken: strin
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         const url = `${repoBaseUrl}/api/v1/dataresources/${resourceId}`;
         const body = req.body
-console.log("PATCH ", body);
-        console.log("RES ", resourceId);
-        console.log("ETAG ", etag);
 
         const headers = {
             "If-Match": etag,

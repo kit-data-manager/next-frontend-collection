@@ -1,8 +1,7 @@
 import {toast} from "react-toastify";
 import Uppy from "@uppy/core";
-import {Router} from "next/router";
 
-export function installEventHandlers(uppy:Uppy, resourceId:string, onCloseCallback:Function){
+export function installEventHandlers(uppy: Uppy, resourceId: string, onCloseCallback: Function) {
     //add filename to metadata
     // @ts-ignore
     uppy.off("file-added", undefined).on('file-added', (file) => {
@@ -21,7 +20,7 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, onCloseCallba
             const file = uppy.getFile(fileID);
             uppy.setFileState(fileID, {
                 xhrUpload: {
-                  //  ...file.xhrUpload,
+                    //  ...file.xhrUpload,
                     endpoint: `${basePath}/api/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
                 }
             })
@@ -35,12 +34,19 @@ export function installEventHandlers(uppy:Uppy, resourceId:string, onCloseCallba
         uppy.resetProgress();
         const successful = result.successful.length;
         const failed = result.failed.length;
-        if(failed > 0) {
-            toast.error(`Failed to upload ${failed} file(s).`);
+        if (failed > 0) {
+            toast.error(`Failed to upload ${failed} file(s).`, {
+                    autoClose: 1000,
+                    isLoading: false
+                }
+            );
         }
 
-        toast.success(`Successfully uploaded ${successful} file(s).`,{
-            "onClose": () =>{
+        toast.success(`Successfully uploaded ${successful} file(s).`, {
+            type: "success",
+            isLoading: false,
+            autoClose: 1000,
+            "onClose": () => {
                 onCloseCallback();
             }
         });

@@ -15,7 +15,7 @@ import {
     fetchDataResourceEtag,
     fetchUsers,
     getAclDiff,
-    patchDataResourceAcl
+    patchDataResourceForQuickShare
 } from "@/lib/base-repo/client_data";
 import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
 import {useSession} from "next-auth/react";
@@ -139,9 +139,7 @@ export default function DataResourceCard(props: ResourceCardProps) {
         setOpenModal(false);
         const aclEntries: string[] = getAclDiff(selectedValues, resource.acls);
         fetchDataResourceEtag(resource.id, data?.accessToken).then((etag) => {
-            patchDataResourceAcl(resource.id, etag as string, aclEntries).then((res) => {
-                console.log("RES ", res);
-            }).finally(() => {
+            patchDataResourceForQuickShare(resource.id, etag as string, aclEntries).finally(() => {
                 setSearchValue("");
                 setSelectedValues([]);
                 router.push('/base-repo/resources');

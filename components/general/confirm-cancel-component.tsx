@@ -1,6 +1,5 @@
 'use client';
 
-import Link from "next/link";
 import clsx from "clsx";
 import {useRouter} from "next/navigation";
 
@@ -9,7 +8,7 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
                                                        confirmLabel: string,
                                                        cancelLabel: string,
                                                        confirmCallback: () => void,
-                                                       cancelHref: string,
+                                                       cancelHref: String | Function,
                                                        confirm: boolean
                                                    }) {
 
@@ -20,7 +19,7 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
             <div className="container py-10 px-10 sl-7 mx-0 min-w-full flex flex-col items-center">
                 <div className="space-x-4">
                     <button id="cancelButton"
-                            onClick={() => router.push(cancelHref)}
+                            onClick={cancelHref instanceof String ? () => router.push(cancelHref as string) : () => cancelHref()}
                           className="bg-destructive hover:underline font-bold py-2 px-4 rounded">
                         {cancelLabel}
                     </button>

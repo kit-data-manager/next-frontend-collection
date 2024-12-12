@@ -1,7 +1,3 @@
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {ShieldCheck} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
-import {Icon} from "@iconify/react";
 import {Input} from "@/components/ui/input";
 import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
 import {
@@ -11,28 +7,67 @@ import {
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useEffect, useState} from "react";
-import {DataResource, KeycloakUser} from "@/lib/definitions";
+import {Acl, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import capitalize from "@mui/utils/capitalize";
 import {fetchUsers} from "@/lib/base-repo/client_data";
 import {useRouter} from "next/navigation";
+import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
 
 interface AccessTabProps {
     resource: DataResource;
     etag: string;
     userPrefs: UserPrefsType;
+    reloadCallback:Function;
 }
 
-export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
+export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTabProps) {
     const [elements, setElements] = useState<Element[]>([]);
     const [userFilter, setUserFilter] = useState<string>();
+    const [forceReload, setForceReload] = useState<boolean>(false);
     const router = useRouter();
 
     //Fetch user list for access control
     useEffect(() => {
         fetchUsers(userFilter).then((res) => {
-            let userElements: Element[] = [...elements];
+            //init users array with acl entries
+            let userElements: Element[] = [];
+            resource.acls.forEach((acl: Acl) => {
+                let targetColumn = "users";
+                switch (acl.permission) {
+                    case Permission.READ:
+                        targetColumn = "read";
+                        break;
+                    case Permission.WRITE:
+                        targetColumn = "write";
+                        break;
+                    case Permission.ADMINISTRATE:
+                        targetColumn = "administrate";
+                        break;
+                }
+
+                const user: KeycloakUser | undefined = res.find((user: KeycloakUser) => user.username === acl.sid);
+                if (user) {
+                    //acl sid matches also KeyCloak user
+                    userElements.push({
+                        id: acl.sid,
+                        columnId: targetColumn,
+                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)}`,
+                        icon: "gridicons:user-circle",
+                        hidden: false
+                    });
+                } else if (acl.sid === "anonymousUser") {
+                    //acl sid matches also KeyCloak user
+                    userElements.push({
+                        id: acl.sid,
+                        columnId: targetColumn,
+                        content: "Public Access",
+                        icon: "fluent-mdl2:world",
+                        hidden: false
+                    });
+                }
+            });
 
             //start with hiding all elements that exist in users column
             userElements.forEach((elem) => {
@@ -45,7 +80,7 @@ export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
             res.map((user: KeycloakUser) => {
                 //check if user is already known (should be false only on first page load)
                 if (!userElements.find((element) => {
-                    if (element.id === user.id) {
+                    if (element.id === user.username) {
                         //user known and not filtered out, so show if in "users" column
                         if (element.columnId === "users") {
                             //user returned by query and in "users" column, so unhide
@@ -70,7 +105,7 @@ export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
             return userElements;
         }).then(res => {
             //check if world is already in list
-            const anonymousUser: Element | undefined = res.find((element) => element.id === "world");
+            const anonymousUser: Element | undefined = res.find((element) => element.id === "anonymousUser");
             if (!anonymousUser) {
                 //world not in list, so add it
                 res.push({
@@ -86,7 +121,8 @@ export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
             }
             setElements(res);
         });
-    }, [userFilter]);
+        setForceReload(false);
+    }, [userFilter, forceReload]);
 
     function updateUserFilter(val: string) {
         if (val && val.length > 2) {
@@ -94,53 +130,15 @@ export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
         }
     }
 
+    function doReset() {
+        setElements([]);
+        setForceReload(true);
+    }
+
     return (
         <TabsContent value="access">
             {userPrefs.helpVisible ?
-                <Alert>
-                    <ShieldCheck className="h-4 w-4"/>
-                    <AlertTitle>Access Permissions</AlertTitle>
-                    <AlertDescription>
-                                <span>Here you can control who has which permissions while accessing this resource. There are three different permission levels, which are:
-                                    <table className={"mt-4 mb-4 ml-6"}>
-                                        <tbody>
-                                        <tr>
-                                            <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
-                                                      icon={"material-symbols-light:eye-tracking-outline"}
-                                                      className="h-4 w-4 mr-2"/> Read:</Badge>
-                                            </td>
-                                            <td> You can see and download metadata and data.</td>
-                                        </tr>
-                                         <tr>
-                                            <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
-                                                      icon={"material-symbols-light:edit-square-outline"}
-                                                      className="h-4 w-4 mr-2"/> Write:</Badge>
-                                            </td>
-                                            <td> You can READ and update metadata and data.</td>
-                                        </tr>
-                                         <tr>
-                                            <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
-                                                      icon={"arcticons:vivo-i-manager"}
-                                                      className="h-4 w-4 mr-2"/> Administrate:</Badge>
-                                            </td>
-                                            <td> You can WRITE, manage access permissions and delete the resource.</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-
-                                    To change permissions of a user, grab an item at its icon and drag it to the according column. The outer left column lists all available users which currently have to specific permission assigned.
-                                    You&apos;ll also find one special item  <Badge variant="outline">
-                                                <Icon fontSize={16}
-                                                      icon={"fluent-mdl2:world"}
-                                                      className="h-4 w-4 mr-2"/> Public Access</Badge> which includes all users as well as anonymous access. Assigning permissions to this element will open the resource to the public.
-                                     <br/><br/>
-                                        <span className={"text-warn "}>Be careful to only assign write/administrate permissions to people you trust. Pay special attention and re-check if you see a warning while updating permissions.</span>
-                            </span>
-                    </AlertDescription>
-                </Alert>
+                <AccessTabHelp/>
                 : undefined}
             <Input type={"text"} placeholder={"Add User List Filter"}
                    onChange={(event: any) => updateUserFilter(event.target.value)}
@@ -148,8 +146,12 @@ export function AccessTab({resource, etag, userPrefs}: AccessTabProps) {
             <KanbanBoard elements={elements} setElements={setElements} columns={accessControlColumns}/>
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Reset"}
-                                    confirmCallback={() => DoUpdatePermissions(resource, etag, elements, router)}
-                                    cancelHref={`/base-repo/resources/${resource.id}/edit`}
+                                    confirmCallback={() => {
+                                        DoUpdatePermissions(resource, etag, elements, reloadCallback);
+                                    }}
+                                    cancelHref={() => {
+                                        doReset();
+                                    }}
                                     confirm={true}
             />
         </TabsContent>
