@@ -19,7 +19,7 @@ export function AccessTabHelp(){
                                                       icon={"material-symbols-light:eye-tracking-outline"}
                                                       className="h-4 w-4 mr-2"/> Read:</Badge>
                                             </td>
-                                            <td> You can see and download metadata and data.</td>
+                                            <td> Allows to see and download metadata and data of a resource.</td>
                                         </tr>
                                          <tr>
                                             <td><Badge variant="nodeco">
@@ -27,15 +27,15 @@ export function AccessTabHelp(){
                                                       icon={"material-symbols-light:edit-square-outline"}
                                                       className="h-4 w-4 mr-2"/> Write:</Badge>
                                             </td>
-                                            <td> You can READ and update metadata and data.</td>
+                                            <td> Allows all of &#39;Read&#39; plus updating metadata and data.</td>
                                         </tr>
                                          <tr>
                                             <td><Badge variant="nodeco">
                                                 <Icon fontSize={16}
                                                       icon={"arcticons:vivo-i-manager"}
-                                                      className="h-4 w-4 mr-2"/> Administrate:</Badge>
+                                                      className="h-4 w-4 mr-2"/> Owner:</Badge>
                                             </td>
-                                            <td> You can WRITE, manage access permissions and delete the resource.</td>
+                                            <td> Ownership allows all of &#39;Write&#39; plus changing access permissions and deleting a resource.</td>
                                         </tr>
                                         </tbody>
                                     </table>

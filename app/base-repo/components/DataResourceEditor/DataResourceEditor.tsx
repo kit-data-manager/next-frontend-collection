@@ -91,7 +91,7 @@ export default function DataResourceEditor({...props}) {
             })
         }
         setMustReload(false);
-    }, [id, data?.accessToken, etag, createMode, status, mustReload]);
+    }, [id, data?.accessToken, status, etag, createMode,  mustReload]);
 
     if (status === "loading" || isLoading) {
         return (<Loader/>)

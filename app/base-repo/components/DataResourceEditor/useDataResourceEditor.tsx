@@ -1,5 +1,5 @@
 import {toast} from "react-toastify";
-import {Acl, DataResource} from "@/lib/definitions";
+import {DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
@@ -23,7 +23,7 @@ export const accessControlColumns: NestedColumn[] = [
     },
     {
         id: "administrate",
-        title: "Administrate",
+        title: "Owner",
         icon: "arcticons:vivo-i-manager"
     }
 ];
@@ -43,25 +43,27 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     const additions: any[] = [];
     const updates: any[] = [];
     const removals: any[] = [];
+
+    //go through all permissions and identify additions, updates, and removals
     permissions.map((permission) => {
         //permission assigned
         const existingIndex: number | undefined = currentData.acls.findIndex((entry, index) => entry.sid === permission.id);
 
         if (existingIndex >= 0 && permission.columnId === "users") {
-            //fully revoke
+            //entry is in current ACL but now in 'users' column -> fully revoke
             removals.push({
                 "op": "remove",
                 "path": `/acls/${existingIndex}`
             });
         } else if (existingIndex >= 0 && permission.columnId != "users" && currentData.acls[existingIndex].permission.toLowerCase() != permission.columnId) {
-            //update
+            //entry is in current ACL but now in another column than the permission indicates -> update
             updates.push({
                 "op": "replace",
                 "path": `/acls/${existingIndex}/permission`,
                 value: permission.columnId.toString().toUpperCase()
             });
         } else if (existingIndex < 0 && permission.columnId != "users") {
-            //new entry
+            //entry is not yet in ACL and not in 'users' column -> add new
             additions.push({
                 "op": "add",
                 "path": `/acls/-`,
@@ -69,6 +71,8 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
             });
         }
     })
+
+    //order single patches to avoid conflicts during patch (update > removal > add)
     const orderedPatches: any[] = [];
     orderedPatches.push(...updates);
     orderedPatches.push(...removals);

@@ -4,9 +4,11 @@ import {signIn, useSession} from "next-auth/react";
 import {Icon} from "@iconify/react";
 import React, {useState} from "react";
 import federatedLogout from "@/lib/federatedLogout";
+import {useRouter} from "next/navigation";
 
 export default function LoginLogoutButton({icon, ...props}) {
     const {data: session, status} = useSession();
+    const { push } = useRouter();
     if (status === "authenticated" && session) {
         //authenticated || session, show logout
         if (icon) {

@@ -7,6 +7,7 @@ import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {ToastContainer} from "react-toastify";
 import React from "react";
 import MappingListing from "@/app/mapping/components/MappingListing/MappingListing";
+import {MappingListing2} from "@/app/mapping/components/MappingListing/MappingListing2";
 
 export default async function Page({searchParams}: {
     searchParams?: DataResourcesSearchParamsPromise;
@@ -32,7 +33,7 @@ export default async function Page({searchParams}: {
             />
             <SectionCaption caption={"Execute Mappings"}/>
             <div className="flex w-full">
-                    <MappingListing page={page} size={size} filter={filter} sort={sort}/>
+                    <MappingListing2/>
             </div>
             <ToastContainer/>
 

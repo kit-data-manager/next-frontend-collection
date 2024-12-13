@@ -26,7 +26,6 @@ function sendEndSessionEndpointToURL(token: JWT) {
 
 export async function GET(req: NextRequest) {
     try {
-        console.log("FED LOGOUT");
         const token = await getToken({ req })
         if (token) {
             return sendEndSessionEndpointToURL(token);

@@ -12,21 +12,26 @@ import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import capitalize from "@mui/utils/capitalize";
 import {fetchUsers} from "@/lib/base-repo/client_data";
-import {useRouter} from "next/navigation";
 import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
+import {useSession} from "next-auth/react";
+import {
+    PermissionUpdateCheckDialog
+} from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
 
 interface AccessTabProps {
     resource: DataResource;
     etag: string;
     userPrefs: UserPrefsType;
-    reloadCallback:Function;
+    reloadCallback: Function;
 }
 
 export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTabProps) {
     const [elements, setElements] = useState<Element[]>([]);
     const [userFilter, setUserFilter] = useState<string>();
     const [forceReload, setForceReload] = useState<boolean>(false);
-    const router = useRouter();
+    const {data, status} = useSession();
+    const [openPermissionCheck, setOpenPermissionCheck] = useState<boolean>(false);
+    const [issues, setIssues] = useState<string[]>([]);
 
     //Fetch user list for access control
     useEffect(() => {
@@ -53,9 +58,11 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: acl.sid,
                         columnId: targetColumn,
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)}`,
+                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
-                        hidden: false
+                        hidden: false,
+                        anonymous: false,
+                        self: data?.user.preferred_username === user.username
                     });
                 } else if (acl.sid === "anonymousUser") {
                     //acl sid matches also KeyCloak user
@@ -64,7 +71,9 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                         columnId: targetColumn,
                         content: "Public Access",
                         icon: "fluent-mdl2:world",
-                        hidden: false
+                        hidden: false,
+                        anonymous: true,
+                        self: false
                     });
                 }
             });
@@ -95,9 +104,11 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: user.username,
                         columnId: "users",
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)}`,
+                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
-                        hidden: false
+                        hidden: false,
+                        anonymous: false,
+                        self: data?.user.preferred_username === user.username
                     });
 
                 }
@@ -113,7 +124,9 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     columnId: "users",
                     content: "Public Access",
                     icon: "fluent-mdl2:world",
-                    hidden: false
+                    hidden: false,
+                    anonymous: true,
+                    self: false
                 });
             } else {
                 //unhide anonymousUser element always
@@ -122,7 +135,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
             setElements(res);
         });
         setForceReload(false);
-    }, [userFilter, forceReload]);
+    }, [userFilter, data?.accessToken, status, forceReload]);
 
     function updateUserFilter(val: string) {
         if (val && val.length > 2) {
@@ -133,6 +146,41 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
     function doReset() {
         setElements([]);
         setForceReload(true);
+    }
+
+    if (status === "loading") {
+        return (<p>Loading...</p>);
+    }
+
+    function checkPermissions() {
+        const issues: string[] = [];
+        const anonymousElement = elements.find((element) => element.anonymous);
+        const selfElement = elements.find((element) => element.self);
+        const adminCount = elements.filter((element) => element.columnId === "administrate").length;
+
+        if (anonymousElement?.columnId === "write" || anonymousElement?.columnId === "administrate") {
+            issues.push("Public Access should only include read access in order to avoid anonymous updates.");
+        }
+
+        if (selfElement?.columnId != "administrate") {
+            issues.push("Revoking your ownership is not recommended as this won't allow you to update permissions anymore. ");
+        }
+
+        if (adminCount < 1) {
+            issues.push("At least one owner should be assigned. Otherwise, changing permissions and revocation is only possible by instance administrators.");
+        }
+
+        if (issues.length > 0) {
+            setIssues(issues);
+            setOpenPermissionCheck(true);
+        }
+    }
+
+    function doPermissionUpdate(result: boolean) {
+        setOpenPermissionCheck(false);
+        if (result) {
+            DoUpdatePermissions(resource, etag, elements, reloadCallback);
+        }
     }
 
     return (
@@ -147,13 +195,15 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Reset"}
                                     confirmCallback={() => {
-                                        DoUpdatePermissions(resource, etag, elements, reloadCallback);
+                                        checkPermissions();
                                     }}
                                     cancelHref={() => {
                                         doReset();
                                     }}
                                     confirm={true}
             />
+            <PermissionUpdateCheckDialog openModal={openPermissionCheck} issueList={issues}
+                                         actionCallback={doPermissionUpdate}/>
         </TabsContent>
     );
 }

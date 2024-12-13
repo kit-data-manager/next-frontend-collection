@@ -1,10 +1,9 @@
-import NextAuth, {Account, NextAuthOptions, Profile, Session, User} from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
-import type { JWT } from 'next-auth/jwt';
+import type {JWT} from 'next-auth/jwt';
 import {AdapterUser} from "next-auth/adapters";
 import {ExtendedProfile} from "@/lib/definitions";
-
+import NextAuth, {Account, NextAuthOptions, Session, User} from 'next-auth'
 /**
  * Takes a token, and returns a new token with updated
  * `accessToken` and `accessTokenExpires`. If an error occurs,
@@ -48,21 +47,21 @@ const refreshAccessToken = async (token: JWT) => {
         });
         const refreshedTokens = await response.json();
 
-        if (!response.ok){
+        if (!response.ok) {
             console.error("Token refresh returned error status. Returning RefreshAccessTokenError.");
             return {
                 ...token,
                 error: 'RefreshAccessTokenError',
             };
-        }else{
-        return {
-            ...token,
-            accessToken: refreshedTokens.access_token,
-            accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 15) * 1000,
-            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-            refreshTokenExpired:
-                Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
-        };
+        } else {
+            return {
+                ...token,
+                accessToken: refreshedTokens.access_token,
+                accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 15) * 1000,
+                refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+                refreshTokenExpired:
+                    Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
+            };
         }
     } catch (error) {
         console.error("Some unhandled error occurred while token refresh. Returning RefreshAccessTokenError.");
@@ -74,20 +73,20 @@ const refreshAccessToken = async (token: JWT) => {
 };
 
 const keycloakProvider = KeycloakProvider({
-   clientId: process.env.KEYCLOAK_CLIENT_ID,
-   clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-   issuer: process.env.KEYCLOAK_ISSUER,
-   authorization: {
-     params: {
-         grant_type: 'authorization_code',
-         scope:'openid email profile',
-         response_type: 'code'
-     }
-   },
-   httpOptions: {
-     timeout: 30000
-   }
- })
+    clientId: process.env.KEYCLOAK_CLIENT_ID,
+    clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+    issuer: process.env.KEYCLOAK_ISSUER,
+    authorization: {
+        params: {
+            grant_type: 'authorization_code',
+            scope: 'openid email profile',
+            response_type: 'code'
+        }
+    },
+    httpOptions: {
+        timeout: 30000
+    }
+})
 
 
 export const authOptions: NextAuthOptions = {
@@ -95,9 +94,6 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt"
     },
-    /*jwt: {
-        signingKey: process.env.SIGNING_KEY,
-    },*/
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         /**
@@ -109,7 +105,7 @@ export const authOptions: NextAuthOptions = {
          *                           Return `false` to deny access
          *                           Return `string` to redirect to (eg.: "/unauthorized")
          */
-        async signIn({ user, account, profile, email}) {
+        async signIn({user, account, profile, email}) {
             if (account && user) {
                 return true;
             } else {
@@ -123,7 +119,7 @@ export const authOptions: NextAuthOptions = {
          * @param  {string} baseUrl  Default base URL of site (can be used as fallback)
          * @return {string}          URL the client will be redirected to
          */
-        async redirect({ url, baseUrl }) {
+        async redirect({url, baseUrl}) {
             if (url.startsWith("/")) return `${baseUrl}${url}`
             else if (new URL(url).origin === baseUrl) return url
             return baseUrl
@@ -135,12 +131,11 @@ export const authOptions: NextAuthOptions = {
          *                               JSON Web Token (if not using database sessions)
          * @return {object}              Session that will be returned to the client
          */
-        async session({ session, token, user } : {session:Session, token:JWT, user: User}) {
+        async session({session, token, user}: { session: Session, token: JWT, user: User }) {
             if (token) {
                 session.user = token.user;
                 session.accessToken = token.accessToken;
                 session.error = token.error;
-                token.user.groups = token.groups as unknown as string[];
             }
             return session;
         },
@@ -169,7 +164,8 @@ export const authOptions: NextAuthOptions = {
                 token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;
                 token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
                 token.user = user;
-                token.groups = profile?.groups;
+                token.user.preferred_username = profile?.preferred_username;
+                token.user.groups = profile?.groups;
                 return token;
             }
 
