@@ -1,18 +1,16 @@
-import {JobStatus, Mapping, Status} from "@/lib/mapping/definitions";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Icon} from "@iconify/react";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {cva} from "class-variance-authority";
-import {fetchMappingJobStatus} from "@/lib/mapping/client_data";
 
 interface MappingCardProps {
-    reloadCallback: Function;
+    addJobCallback: Function;
 }
 
-export function NewJobCard({}: MappingCardProps) {
+export function NewJobCard({addJobCallback}: MappingCardProps) {
 
-    const variants = cva("w-full h-full", {
+    const variants = cva("w-full h-full pt-6", {
         variants: {
             dragging: {
                 over: "ring-2 opacity-30",
@@ -33,9 +31,11 @@ export function NewJobCard({}: MappingCardProps) {
                 dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
                 //: element.anonymous ? "anonymous" : element.self ? "self" : undefined,
             })}>
-            <CardContent className="flex justify-content-center align-middle whitespace-pre-wrap">
+            <CardContent className="flex place-content-center h-full whitespace-pre-wrap">
                 <Button
                     variant="ghost"
+                    onClick={() => addJobCallback()}
+                    title="Schedule new Mapping Job"
                     className="w-full h-full self-center">
                     <Icon icon={"line-md:plus-circle-filled"}
                           className="h-24 w-24 align-middle justify-center"/>

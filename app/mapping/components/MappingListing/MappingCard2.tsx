@@ -5,10 +5,12 @@ import {Icon} from "@iconify/react";
 import React, {useEffect, useState} from "react";
 import {cva} from "class-variance-authority";
 import {fetchMappingJobStatus} from "@/lib/mapping/client_data";
+import {Badge} from "@/components/ui/badge";
+import Link from "next/link";
 
 interface MappingCardProps {
     job: JobStatus;
-    mapping: Mapping;
+    mapping?: Mapping;
     reloadCallback: Function;
 }
 
@@ -23,7 +25,20 @@ export function MappingCard2({job, mapping}: MappingCardProps) {
             const interval = setInterval(() => updateState(), 1000);
             return () => clearInterval(interval);
         }
-    }, [updateState, jobStatus, jobOutput, jobError]);
+
+        async function updateState() {
+            try {
+                return await fetchMappingJobStatus(job.jobId).then((result) => {
+                    setJobStatus(result.status);
+                    setJobOutput(result.outputFileURI);
+                    setJobError(result.error);
+                });
+            } catch (e) {
+                setJobStatus(Status.FAILED);
+                setJobError(`Failed to query job status.`);
+            }
+        }
+    }, [jobStatus, jobOutput, jobError]);
 
     const variants = cva("", {
         variants: {
@@ -39,19 +54,18 @@ export function MappingCard2({job, mapping}: MappingCardProps) {
     });
     const isOverlay = false;
     const isDragging = false;
-
-    async function updateState() {
-        try {
-            return await fetchMappingJobStatus(job.jobId).then((result) => {
-                setJobStatus(result.status);
-                setJobOutput(result.outputFileURI);
-                setJobError(result.error);
-            });
-        } catch (e) {
-            setJobStatus(Status.FAILED);
-            setJobError(`Failed to query job status.`);
-        }
+    let icon:string = "line-md:cog-filled-loop";
+    switch(jobStatus){
+        case Status.RUNNING: icon = "line-md:cog-filled-loop";
+        break;
+        case Status.DELETED: icon = "material-symbols:delete-forever-outline";
+        break;
+        case Status.FAILED: icon = "material-symbols:error-outline";
+        break;
+        case Status.SUCCEEDED: icon = "material-symbols:check-box-outline";
     }
+
+    const basePath: string = (process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : "");
 
     return (
         <Card
@@ -60,18 +74,23 @@ export function MappingCard2({job, mapping}: MappingCardProps) {
                 //: element.anonymous ? "anonymous" : element.self ? "self" : undefined,
             })}>
             <CardHeader>
-                <CardTitle>{mapping.title} {jobStatus}</CardTitle>
-                <CardDescription>{mapping.description}</CardDescription>
+                <CardTitle>
+                    <Badge variant="nodeco">
+                        <Icon icon={icon}
+                              className="h-12 w-12 mr-2"/> {jobStatus}</Badge>
+
+                </CardTitle>
+                <CardDescription>{mapping?.description}</CardDescription>
             </CardHeader>
-            <CardContent className="p-4 flex items-center align-middle text-left whitespace-pre-wrap">
+            <CardContent className="flex text-left">
                 <Button
                     variant="ghost"
                     className="p-1 -ml-2 h-auto cursor-grab">
                     <span className="sr-only">{jobStatus}</span>
-                    <Icon fontSize={24} icon={"ic:baseline-announcement"}
-                          className="h-6 w-6 mr-2"/>
                 </Button>
-                {jobOutput}
+                {jobOutput ?
+                    <Link className={"underline"} href={basePath + jobOutput}>Download Result</Link>
+                : "Not download available, yet."}
             </CardContent>
         </Card>
     );

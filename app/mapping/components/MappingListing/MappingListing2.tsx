@@ -18,21 +18,20 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import MappingCard from "@/app/mapping/components/MappingCard/MappingCard";
 import {MappingCard2} from "@/app/mapping/components/MappingListing/MappingCard2";
 import {NewJobCard} from "@/app/mapping/components/MappingListing/NewJobCard";
+import {AddMappingJobDialog} from "@/app/mapping/components/MappingListing/dialogs/AddMappingJobDialog";
 
 interface MappingListing2Props {
-    resource: DataResource;
-    etag: string;
     userPrefs: UserPrefsType;
     reloadCallback: Function;
 }
 
-export function MappingListing2({resource, etag, userPrefs, reloadCallback}: MappingListing2Props) {
+export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Props) {
     const maxJobs: number = process.env.NEXT_PUBLIC_MAPPING_MAX_JOBS ? Number.parseInt(process.env.NEXT_PUBLIC_MAPPING_MAX_JOBS) : 20;
 
     const [mappings, setMappings] = useState(undefined as unknown as Mapping[]);
-    const [totalPages, setTotalPages] = useState(0 as number);
     const [isLoading, setIsLoading] = useState(true)
     const [showAlert, setShowAlert] = useState(false)
+    const [openModal,setOpenModal] = useState(false)
     const {data, status} = useSession();
     const accessToken = data?.accessToken;
     const jobStore: JobStore = useMappingStore.getState();
@@ -42,7 +41,6 @@ export function MappingListing2({resource, etag, userPrefs, reloadCallback}: Map
         if (status != "loading") {
             setIsLoading(true);
             fetchMappings(0, 20, undefined, undefined, accessToken).then((page) => {
-                setTotalPages(page.totalPages);
                 setMappings(page.resources);
                 setIsLoading(false);
             })
@@ -114,11 +112,19 @@ export function MappingListing2({resource, etag, userPrefs, reloadCallback}: Map
         }
     }
 
+    function addMappingCallback(success:boolean){
+        setOpenModal(false);
+    }
+
+    function doOpenModal(){
+        setOpenModal(true);
+    }
+
     return (
         <div className="mt-5 grid w-full">
             <div className="grid grid-cols-4 p-4 gap-2 lg:pt-0 flex-fill">
                 <div className={""}>
-                    <NewJobCard reloadCallback={checkJobs}></NewJobCard>
+                    <NewJobCard addJobCallback={doOpenModal}></NewJobCard>
                 </div>
                 {jobStore.mappingStatus.map((job: JobStatus, i: number) => {
                     const mapping = mappings.find((mapping) => mapping.mappingId === job.mappingId);
@@ -129,6 +135,7 @@ export function MappingListing2({resource, etag, userPrefs, reloadCallback}: Map
                     );
                 })}
             </div>
+            <AddMappingJobDialog openModal={openModal} mappings={mappings} actionCallback={addMappingCallback}/>
         </div>
     );
 
