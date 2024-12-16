@@ -104,9 +104,9 @@ export default function DataResourceCard(props: ResourceCardProps) {
             if (exist) selection.push("anonymousUser");
             //add all other users and check for preselection
             users.map((user: KeycloakUser) => {
-                exist = resource.acls.find((element) => element.sid === user.id) != undefined;
+                exist = resource.acls.find((element) => element.sid === user.username) != undefined;
                 newUsers.push({
-                    value: user.id,
+                    value: user.username,
                     label: `${user.lastName}, ${user.firstName}`,
                     email: user.email,
                     preExist: exist
@@ -128,7 +128,6 @@ export default function DataResourceCard(props: ResourceCardProps) {
 
     function doQuickShare(redirect: string) {
         setOpenModal(true);
-
     }
 
     function closeModal() {
@@ -169,9 +168,9 @@ export default function DataResourceCard(props: ResourceCardProps) {
                     e.preventDefault()
                 }}>
                     <DialogHeader>
-                        <DialogTitle>Add New Tag</DialogTitle>
+                        <DialogTitle>Quickshare</DialogTitle>
                         <DialogDescription className="secondary">
-                            Provide a tag to add to this content element.
+                            Select users from the list which whom you want to share the resource. Selected users will receive read permissions.
                         </DialogDescription>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <AutoCompleteList selectedValues={selectedValues}

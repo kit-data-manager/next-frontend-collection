@@ -7,7 +7,12 @@ import {JobStatus, Mapping, Status} from "@/lib/mapping/definitions";
 import {useSession} from "next-auth/react";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 import {useRouter} from "next/navigation";
-import {deleteMappingJobStatus, fetchMappingJobStatus, fetchMappings} from "@/lib/mapping/client_data";
+import {
+    deleteMappingJobStatus,
+    fetchMappingJobStatus,
+    fetchMappingPlugins,
+    fetchMappings
+} from "@/lib/mapping/client_data";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
@@ -19,6 +24,7 @@ import MappingCard from "@/app/mapping/components/MappingCard/MappingCard";
 import {MappingCard2} from "@/app/mapping/components/MappingListing/MappingCard2";
 import {NewJobCard} from "@/app/mapping/components/MappingListing/NewJobCard";
 import {AddMappingJobDialog} from "@/app/mapping/components/MappingListing/dialogs/AddMappingJobDialog";
+import {mimeTypeToExtension} from "@/lib/fileUtils";
 
 interface MappingListing2Props {
     userPrefs: UserPrefsType;
@@ -41,8 +47,17 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
         if (status != "loading") {
             setIsLoading(true);
             fetchMappings(0, 20, undefined, undefined, accessToken).then((page) => {
-                setMappings(page.resources);
-                setIsLoading(false);
+                return page.resources;
+            }).then((mappings) => {
+                fetchMappingPlugins(data?.accessToken).then(plugins => {
+                    mappings.map((mapping) => {
+                       mapping.plugin = plugins.find((plugin) => mapping.mappingType === plugin.id);
+
+                    });
+
+                    setIsLoading(false);
+                    setMappings(mappings);
+                });
             })
         }
 
@@ -53,9 +68,9 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
         return (<Loader/>)
     }
 
-    if (jobStore.mappingStatus.length === 0) {
+    /*if (jobStore.mappingStatus.length === 0) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/mapping/map"})
-    }
+    }*/
 
     function registrationCompleted() {
         //reload to show jobs in UI
