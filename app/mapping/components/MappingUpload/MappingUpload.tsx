@@ -6,18 +6,20 @@ import XHRUpload from "@uppy/xhr-upload";
 import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
-import {installEventHandlers} from "@/app/mapping/components/MappingUpload/useMappingUpload";
 
-export default function MappingUpload(params: any) {
-    const id = params.id;
-    const fileTypes: string[] = params.fileTypes;
-    const callback = params.mappingCallback;
-    const callbackComplete = params.uploadCompleteCallback;
+interface MappingUploadProps {
+    mappingId: string;
+    fileTypes: string[] | undefined;
+    singleUploadCallback: Function;
+    uploadCompleteCallback: Function;
+}
+
+export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUploadCallback, uploadCompleteCallback}: MappingUploadProps) {
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
 
     const [uppy] = useState(() => new Uppy()
         .use(XHRUpload, {
-            endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${id}`,
+            endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${mappingId}`,
             method: "post",
             formData: true,
             fieldName: "document"
@@ -35,30 +37,39 @@ export default function MappingUpload(params: any) {
 
     useEffect(() => {
         function successCallback(file, response) {
-            callback(response.body);
+            singleUploadCallback(file, response.body);
         }
 
         uppy.on('upload-success', successCallback);
 
         function completeCallback() {
-            callbackComplete();
+            uploadCompleteCallback();
         }
 
         uppy.on('complete', completeCallback);
-
 
         return () => {
             uppy.off('upload-success', successCallback);
             uppy.off('complete', completeCallback);
         }
-    }, [id, callback]);
+    }, [mappingId, fileTypes, singleUploadCallback]);
 
-    installEventHandlers(uppy, id, callback);
+  /*  uppy.off("complete", null).on('complete', (result) => {
+        uppy.close();
+        const successful = result.successful.length;
+        const failed = result.failed.length;
+        if(failed > 0) {
+            toast.error(`Failed to upload ${failed} file(s).`);
+        }
 
+        toast.success(`Successfully uploaded ${successful} file(s).`,{
+        });
+    });*/
     return (
         <div className="w-full flex mb-6 justify-center">
             <Dashboard uppy={uppy} width={384} height={256} showProgressDetails={true}/>
-        </div>
+
+     </div>
 
     );
 }

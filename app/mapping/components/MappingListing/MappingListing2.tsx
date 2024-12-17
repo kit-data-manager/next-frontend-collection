@@ -41,7 +41,6 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
     const {data, status} = useSession();
     const accessToken = data?.accessToken;
     const jobStore: JobStore = useMappingStore.getState();
-    const router = useRouter();
 
     useEffect(() => {
         if (status != "loading") {
@@ -68,21 +67,6 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
         return (<Loader/>)
     }
 
-    /*if (jobStore.mappingStatus.length === 0) {
-        return ErrorPage({errorCode: Errors.NotFound, backRef: "/mapping/map"})
-    }*/
-
-    function registrationCompleted() {
-        //reload to show jobs in UI
-        router.push("/mapping/map");
-    }
-
-    function registerJob(mappingId: string, status: JobStatus) {
-        console.log("Register new MappingJob ", mappingId, status);
-        status.mappingId = mappingId;
-        jobStore.addJob(status);
-    }
-
     function unregisterJobs(jobIds: string[]) {
         console.log("Unregister MappingJobs ", jobIds);
         jobIds.map((jobId) => {
@@ -92,47 +76,25 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
         })
     }
 
-    async function getJobStatus(job: JobStatus) {
-        try {
-            return await fetchMappingJobStatus(job.jobId);
-        } catch (e) {
-            job.status = Status.FAILED;
-            return job;
-        }
-    }
-
-    const doCheckJobs = async () => {
-        checkJobs();
-    }
-
-    async function checkJobs() {
-        console.log("Checking mapping jobs... ", jobStore.mappingStatus);
-
-        if (jobStore.mappingStatus.length > 0) {
-            const promises = [] as Promise<any>[];
-            promises.push(Promise.all(jobStore.mappingStatus.map((job: JobStatus, idx: number) => {
-                if (job.status === Status.RUNNING || job.status === Status.SUBMITTED) {
-                    return getJobStatus(job);
-                }
-                return job;
-            })).then(jobs => {
-                jobs.forEach((job: JobStatus, idx: number) => {
-                    jobStore.updateJob(job)
-                })
-            }));
-
-            Promise.all(promises).then(() => {
-                router.push("/mapping/map");
-            });
-        }
-    }
-
-    function addMappingCallback(success:boolean){
+    function addJobDialogClosed(){
         setOpenModal(false);
     }
 
     function doOpenModal(){
         setOpenModal(true);
+    }
+
+    function mappingJobAdded(mappingId:string, file:string, status: JobStatus){
+        console.log("Register new MappingJob ", mappingId, status);
+        status.mappingId = mappingId;
+        status.file = file;
+        jobStore.addJob(status);
+
+    }
+
+    function allUploadsCompleted(){
+        console.log("All Uploads Completed");
+        setOpenModal(false);
     }
 
     return (
@@ -145,12 +107,12 @@ export function MappingListing2({userPrefs, reloadCallback}: MappingListing2Prop
                     const mapping = mappings.find((mapping) => mapping.mappingId === job.mappingId);
                     return (
                         <div key={job.jobId} className={""}>
-                            <MappingCard2 job={job} mapping={mapping} reloadCallback={checkJobs}></MappingCard2>
+                            <MappingCard2 job={job} mapping={mapping}></MappingCard2>
                         </div>
                     );
                 })}
             </div>
-            <AddMappingJobDialog openModal={openModal} mappings={mappings} actionCallback={addMappingCallback}/>
+            <AddMappingJobDialog openModal={openModal} mappings={mappings}  allUploadsFinishedCallback={allUploadsCompleted} singleUploadFinishedCallback={mappingJobAdded} dialogCloseCallback={addJobDialogClosed}/>
         </div>
     );
 

@@ -11,7 +11,6 @@ import Link from "next/link";
 interface MappingCardProps {
     job: JobStatus;
     mapping?: Mapping;
-    reloadCallback: Function;
 }
 
 export function MappingCard2({job, mapping}: MappingCardProps) {
@@ -54,7 +53,7 @@ export function MappingCard2({job, mapping}: MappingCardProps) {
     });
     const isOverlay = false;
     const isDragging = false;
-    let icon:string = "line-md:cog-filled-loop";
+    let icon:string = "line-md:loading-alt-loop";
     switch(jobStatus){
         case Status.RUNNING: icon = "line-md:cog-filled-loop";
         break;

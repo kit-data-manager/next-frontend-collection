@@ -40,6 +40,7 @@ export enum Status {
 export type JobStatus = {
     mappingId:string;
     jobId: string;
+    file:string;
     status: Status;
     error?: string;
     outputFileURI?: string;
