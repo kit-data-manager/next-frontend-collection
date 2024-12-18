@@ -37,7 +37,7 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
 
     useEffect(() => {
         function successCallback(file, response) {
-            singleUploadCallback(file, response.body);
+            singleUploadCallback(file.name, response.body);
         }
 
         uppy.on('upload-success', successCallback);
@@ -67,7 +67,7 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
     });*/
     return (
         <div className="w-full flex mb-6 justify-center">
-            <Dashboard uppy={uppy} width={384} height={256} showProgressDetails={true}/>
+            <Dashboard uppy={uppy} note={`You can upload 5 files at once. InputType limitations of the selected mapping (${fileTypes}) may apply. `} width={384} height={256} showProgressDetails={true}/>
 
      </div>
 

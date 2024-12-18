@@ -62,7 +62,6 @@ export function AddMappingJobDialog({openModal, mappings, dialogCloseCallback, s
             <DialogContent className="bg-secondary">
                 <DialogHeader>
                     <DialogTitle>Schedule Mapping Jobs(s)</DialogTitle>
-
                     <div>
                         <Select onValueChange={updateValue}>
                             <SelectTrigger className="w-full mt-2 mb-2">
@@ -131,9 +130,7 @@ export function AddMappingJobDialog({openModal, mappings, dialogCloseCallback, s
                             </Collapsible>
 
                         )
-
                         : undefined}
-
                     {uploadEnabled ?
                         <MappingUpload mappingId={selectedMapping ? selectedMapping.mappingId : ""}
                             fileTypes={mappingPlugin?.inputTypes} singleUploadCallback={mappingResultReceived}

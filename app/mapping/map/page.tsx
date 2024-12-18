@@ -3,7 +3,7 @@ import {DataResourcesSearchParamsPromise} from "@/lib/definitions";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {ToastContainer} from "react-toastify";
 import React from "react";
-import {MappingListing2} from "@/app/mapping/components/MappingListing/MappingListing2";
+import {MappingListing} from "@/app/mapping/components/MappingListing/MappingListing";
 
 export default async function Page({searchParams}: {
     searchParams?: DataResourcesSearchParamsPromise;
@@ -29,7 +29,7 @@ export default async function Page({searchParams}: {
             />
             <SectionCaption caption={"Execute Mappings"}/>
             <div className="flex w-full">
-                    <MappingListing2/>
+                    <MappingListing/>
             </div>
             <ToastContainer/>
 

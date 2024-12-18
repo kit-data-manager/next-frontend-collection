@@ -15,7 +15,7 @@ const useMappingStore = create<JobStore>()(
             mappingStatus: [],
             addJob: (job: JobStatus) =>
                 set((state) => ({
-                    mappingStatus: [...state.mappingStatus as JobStatus[], job as JobStatus],
+                    mappingStatus: [job as JobStatus, ...state.mappingStatus as JobStatus[]],
                 })),
             removeJob: (jobId: string) =>
                 set((state) => ({
