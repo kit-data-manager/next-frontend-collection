@@ -51,40 +51,40 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
             menuItems: [
                 {
                     name: 'Overview',
-                    href: `${basePath}/metadata-repo`,
+                    href: `${basePath}/metastore`,
                     icon: ChartPieIcon,
                     description: "Show system status information."
                 },
                 {
                     name: 'Create Schema',
-                    href: `${basePath}/metadata-repo/schema/create`,
+                    href: `${basePath}/metastore/schema/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Metadata Schema.",
                     requiresSession: true
                 },
                 {
                     name: 'Create Metadata',
-                    href: `${basePath}/metadata-repo/metadata/create`,
+                    href: `${basePath}/metastore/metadata/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Metadata Document.",
                     requiresSession: true
                 },
                 {
                     name: 'Search',
-                    href: `${basePath}/metadata-repo/metadata/search`,
+                    href: `${basePath}/metastore/metadata/search`,
                     icon: PlusCircleIcon,
                     description: "Search for Metadata Documents.",
                     requiresSearch: true
                 },
                 {
                     name: 'Schemas',
-                    href: `${basePath}/metadata-repo/schemas`,
+                    href: `${basePath}/metastore/schemas`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Schema."
                 },
                 {
                     name: 'Metadata',
-                    href: `${basePath}/metadata-repo/metadata`,
+                    href: `${basePath}/metastore/metadata`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Documents"
                 }

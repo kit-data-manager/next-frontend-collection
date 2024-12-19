@@ -11,7 +11,7 @@ export class DeleteContentAction extends Action{
         const id = toast.loading("Deleting content...")
         const filename_decoded = filename.replace(/%5F/g, '_');
         if (window.confirm(`Do you really want to delete the file ${filename_decoded}?`)) {
-            await fetchWithBasePath(`/api/delete?resourceId=${identifier}&filename=${filename_decoded}`).then(response => {
+            await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&filename=${filename_decoded}`).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
                         render: `Content ${filename_decoded} successfully deleted.`,

@@ -4,7 +4,6 @@ import {Activity} from "@/lib/definitions";
 
 export async function fetchContentOverview() {
     noStore()
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     //initial values (defaults if database query fails)
     let uniqueUsers = 0;
@@ -18,7 +17,7 @@ export async function fetchContentOverview() {
         const client = new Pool({
             user: process.env.DB_USER,
             host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
+            database: process.env.REPO_DB_NAME,
             password: process.env.DB_PASSWORD,
             port: Number(process.env.DB_PORT)
         })
@@ -69,7 +68,7 @@ export async function fetchLatestActivities():Promise<Activity[]> {
         const client = new Pool({
             user: process.env.DB_USER,
             host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
+            database: process.env.REPO_DB_NAME,
             password: process.env.DB_PASSWORD,
             port: Number(process.env.DB_PORT)
         })

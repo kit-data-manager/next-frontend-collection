@@ -20,7 +20,7 @@ export class ToggleTagAction extends Action {
         const filename_decoded = filename.replace(/%5F/g, '_');
         const etag_decoded = etag.replace(/%5F/g, '_');
 
-        await fetchWithBasePath(`/api/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=${etag_decoded}`, {
+        await fetchWithBasePath(`/api/base-repo/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=${etag_decoded}`, {
             method: "PATCH"
         }).then(response => {
             if (response.status === 204) {

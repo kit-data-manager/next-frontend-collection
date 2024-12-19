@@ -100,7 +100,7 @@ export type Description = {
 };
 
 export type Acl = {
-    id: string;
+    id?: string;
     sid: string;
     permission: Permission;
 };

@@ -5,7 +5,6 @@ import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/format-utils";
 import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
-import {CardStatus} from "@/components/StatusCard/StatusCard.d";
 
 export default async function OverallStatusCardWrapper() {
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";

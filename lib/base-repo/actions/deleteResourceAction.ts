@@ -10,7 +10,7 @@ export class DeleteResourceAction extends Action{
     public static async performAction(identifier: string, filename?: string, etag?:string, redirect?: Function){
         const id = toast.loading("Revoking resource...")
         if (window.confirm(`Do you really want to delete resource ${identifier}?`)) {
-            await fetchWithBasePath(`/api/delete?resourceId=${identifier}&etag=${etag}&type=delete`).then(response => {
+            await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&etag=${etag}&type=delete`).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
                         render: `Resource ${identifier} successfully deleted.`,

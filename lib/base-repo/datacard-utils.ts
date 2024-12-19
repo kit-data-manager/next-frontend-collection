@@ -70,7 +70,7 @@ export const propertiesForContentInformation = (resourceId: string,
             }
             tags.push(thumbTag);
         }
-        image = `${basePath}/api/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
+        image = `${basePath}/api/base-repo/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
     }
 
     if (content.tags) {
@@ -310,7 +310,7 @@ export const thumbFromContentArray = (content: ContentInformation[]) => {
         content.map((contentElement, i) => {
             contentElement.tags.map((tag, i) => {
                 if (tag.toLocaleLowerCase() === "thumb") {
-                    thumb = `${basePath}/api/download?resourceId=${contentElement.parentResource.id}&filename=${contentElement.relativePath}&type=thumb`
+                    thumb = `${basePath}/api/base-repo/download?resourceId=${contentElement.parentResource.id}&filename=${contentElement.relativePath}&type=thumb`
                 }
             });
         });

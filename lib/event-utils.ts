@@ -15,7 +15,7 @@ export const editEventIdentifier = (resourceId: string): string => {
 }
 
 export const downloadEventIdentifier = (resourceId: string): string => {
-    return `/api/download?resourceId=${resourceId}&type=zip`;
+    return `/api/base-repo/download?resourceId=${resourceId}&type=zip`;
 }
 
 export function userCanView(resource: DataResource, userId: string | undefined, groups: string[] | undefined): boolean {

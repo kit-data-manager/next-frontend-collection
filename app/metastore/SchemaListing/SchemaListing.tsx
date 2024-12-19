@@ -1,0 +1,146 @@
+'use client';
+
+import {DataResource, Permission, State} from "@/lib/definitions";
+import {userCanDownload, userCanEdit, userCanView} from "@/lib/event-utils";
+import Pagination from "@/components/general/Pagination";
+import React, {useEffect, useState} from "react";
+import {useSession} from "next-auth/react";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
+import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
+import {fetchMetadataSchemas, updateMetadataSchema} from "@/lib/metastore/client_data";
+import {ViewSchemaAction} from "@/lib/metastore/actions/viewSchemaAction";
+import {EditSchemaAction} from "@/lib/metastore/actions/editSchemaAction";
+import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
+import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
+import {useDebouncedCallback} from "use-debounce";
+import {REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {runAction} from "@/lib/metastore/actions/actionExecutor";
+import {useRouter} from "next/navigation";
+import {getAclDiff} from "@/lib/base-repo/client_data";
+import {DownloadAction} from "@/lib/metastore/actions/downloadAction";
+
+export default function SchemaListing({page, size, sort}: {
+    page: number;
+    size: number;
+    sort: string;
+}) {
+    const [resources, setResources] = useState(undefined as unknown as DataResource[]);
+    const [totalPages, setTotalPages] = useState(0 as number);
+    const [isLoading, setIsLoading] = useState(true)
+    const {data, status} = useSession();
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedResource, setSelectedResource] = useState({} as DataResource);
+    const router = useRouter();
+
+    const handleAction = useDebouncedCallback((event, resource) => {
+        const eventIdentifier: string = event.detail.eventIdentifier;
+        setSelectedResource(resource);
+
+        if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
+            runAction(eventIdentifier, doQuickShare);
+        } else {
+            runAction(eventIdentifier, (redirect: string) => {
+                router.push(redirect);
+            });
+        }
+
+    });
+
+    useEffect(() => {
+        if (status != "loading") {
+            setIsLoading(true);
+            fetchMetadataSchemas(page, size, sort).then((page) => {
+                console.log("page.resources ", page.resources);
+                setTotalPages(page.totalPages);
+                setResources(page.resources);
+                setIsLoading(false);
+            })
+        }
+    }, [page, size, sort, status])
+
+    if (status === "loading" || isLoading || !resources) {
+        return (<Loader/>)
+    }
+
+    if (resources.length === 0) {
+        return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
+    }
+
+    function doQuickShare(redirect: string) {
+        setOpenModal(true);
+    }
+
+    function shareIt(result: boolean, selectedValues?: string[]) {
+        setSelectedResource({} as DataResource);
+        setOpenModal(false);
+        if (!result || !selectedValues) return;
+
+        const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
+
+        aclEntries.map((sid: string) => {
+            selectedResource.acls.push({"sid": sid, permission: Permission.READ});
+        })
+
+        updateMetadataSchema(selectedResource).finally(() => {
+            router.push('/metastore/schemas');
+        })
+    }
+
+    return (
+        <div>
+            <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
+                {resources?.map((element: DataResource, i: number) => {
+                    //make edit optional depending on permissions
+                    const actionEvents: ActionButtonInterface[] = [];
+
+                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
+                    }
+
+                    if (userCanView(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new ViewSchemaAction(element.id).getDataCardAction());
+                    }
+
+                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new EditSchemaAction(element.id).getDataCardAction());
+                    }
+
+                    if (userCanDownload(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new DownloadAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
+                    }
+
+                    let classname = "volatile_or_fixed";
+                    switch (element.state) {
+                        case State.REVOKED:
+                            classname = "revoked";
+                            break;
+                        case State.GONE:
+                            classname = "gone";
+                            break;
+                    }
+
+                    return (
+                        <div key={element.id} className={classname}>
+                            <SchemaCard
+                                key={element.id}
+                                resource={element}
+                                actionEvents={actionEvents}
+                                cardCallbackAction={handleAction}
+                            ></SchemaCard>
+                        </div>
+                    );
+                })}
+            </div>
+            <QuickShareDialog openModal={openModal} resource={selectedResource} closeCallback={shareIt}/>
+
+
+            <div className="mt-5 flex w-full justify-center">
+                {totalPages ?
+                    <Pagination totalPages={totalPages}/> : null}
+            </div>
+        </div>
+    );
+}

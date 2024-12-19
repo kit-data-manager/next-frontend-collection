@@ -21,7 +21,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
         }
 
         if (filterExample) {
-            return await fetchWithBasePath(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`, {
+            return await fetchWithBasePath(`/api/base-repo/list?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "POST",
                 body: JSON.stringify(filterExample)
             }).then(async (res) => {
@@ -37,7 +37,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
                 return resourcePage;
             });
         } else {
-            return await fetchWithBasePath(`/api/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
+            return await fetchWithBasePath(`/api/base-repo/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
                 const resourcePage: DataResourcePage = {} as DataResourcePage;
                 resourcePage.resources = await res.json();
                 resourcePage.page = page;
@@ -59,7 +59,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 
 export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
     try {
-        return fetchWithBasePath(`/api/get?resourceId=${id}`).then(res => {
+        return fetchWithBasePath(`/api/base-repo/get?resourceId=${id}`).then(res => {
             return {
                 etag: res.headers.get('etag'),
                 json: res.json()
@@ -93,7 +93,7 @@ export async function patchDataResourceForQuickShare(id: string, etag: string, s
     })
 
     try {
-        return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
+        return fetchWithBasePath(`/api/base-repo/patch?resourceId=${id}&etag=${etag}`, {
             method: "PATCH",
             body: JSON.stringify(patch)
         }).then(res => res.status);
@@ -105,7 +105,7 @@ export async function patchDataResourceForQuickShare(id: string, etag: string, s
 
 export async function patchDataResourceAcls(id: string, etag: string, patch: any[]) {
     try {
-        return fetchWithBasePath(`/api/patch?resourceId=${id}&etag=${etag}`, {
+        return fetchWithBasePath(`/api/base-repo/patch?resourceId=${id}&etag=${etag}`, {
             method: "PATCH",
             body: JSON.stringify(patch)
         }).then(res => res.status);
@@ -117,7 +117,7 @@ export async function patchDataResourceAcls(id: string, etag: string, patch: any
 
 export async function fetchAllContentInformation(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
     try {
-        return await fetchWithBasePath(`/api/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
+        return await fetchWithBasePath(`/api/base-repo/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -297,7 +297,7 @@ export async function updateDataResource(resource: object, etag: string) {
         "If-Match": etag
     };
 
-    const response = await fetchWithBasePath(`/api/update?resourceId=${resource["id"]}&etag=${etag}`, {
+    const response = await fetchWithBasePath(`/api/base-repo/update?resourceId=${resource["id"]}&etag=${etag}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(resource)
@@ -314,7 +314,7 @@ export async function createDataResource(resource: object) {
     const headers = {
         "Content-Type": "application/json"
     };
-    const response = await fetchWithBasePath(`/api/create`, {
+    const response = await fetchWithBasePath(`/api/base-repo/create`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(resource)

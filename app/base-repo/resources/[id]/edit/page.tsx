@@ -21,10 +21,7 @@ export default function Page({params}) {
 
     useEffect(() => {
         if(status != "loading") {
-            fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema)).then(() => {
-                fetchSchema("/definitions/base-repo/schemas/resourceSchema.json").then(schema => setUiSchema(schema))
-            });
-
+            fetchSchema("/definitions/base-repo/models/resourceModel.json").then(schema => setSchema(schema));
         }
     }, [id, status]);
 

@@ -21,7 +21,7 @@ export function installEventHandlers(uppy: Uppy, resourceId: string, onCloseCall
             uppy.setFileState(fileID, {
                 xhrUpload: {
                     //  ...file.xhrUpload,
-                    endpoint: `${basePath}/api/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
+                    endpoint: `${basePath}/api/base-repo/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
                 }
             })
         }

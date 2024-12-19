@@ -1,10 +1,16 @@
 'use client';
 
 import {DataResource, State} from "@/lib/definitions";
-import {fetchDataResources, fetchUsers} from "@/lib/base-repo/client_data";
+import {
+    fetchDataResourceEtag,
+    fetchDataResources,
+    fetchUsers,
+    getAclDiff,
+    patchDataResourceForQuickShare
+} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {
-     userCanDownload, userCanEdit, userCanView
+    userCanDownload, userCanEdit, userCanView
 } from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
@@ -18,20 +24,42 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
 import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
 import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
+import {useDebouncedCallback} from "use-debounce";
+import {REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {runAction} from "@/lib/base-repo/actions/actionExecutor";
+import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
+import {useRouter} from "next/navigation";
 
-export default function DataResourceListing({page,size, filter, sort}: {
+export default function DataResourceListing({page, size, filter, sort}: {
     page: number;
     size: number;
     filter: FilterForm;
-    sort:string;
+    sort: string;
 }) {
     const [resources, setResources] = useState(undefined as unknown as DataResource[]);
     const [totalPages, setTotalPages] = useState(0 as number);
     const [isLoading, setIsLoading] = useState(true)
-    const { data, status } = useSession();
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedResource, setSelectedResource] = useState({} as DataResource);
+
+    const {data, status} = useSession();
+    const router = useRouter();
+
+
+    const handleAction = useDebouncedCallback((event, resource: DataResource) => {
+        const eventIdentifier: string = event.detail.eventIdentifier;
+        setSelectedResource(resource);
+        if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
+            runAction(eventIdentifier, doQuickShare);
+        } else {
+            runAction(eventIdentifier, (redirect: string) => {
+                router.push(redirect);
+            });
+        }
+    });
 
     useEffect(() => {
-        if(status != "loading"){
+        if (status != "loading") {
             setIsLoading(true);
             fetchDataResources(page, size, filter, sort).then((page) => {
                 setTotalPages(page.totalPages);
@@ -41,60 +69,81 @@ export default function DataResourceListing({page,size, filter, sort}: {
         }
     }, [page, size, filter, sort, status])
 
-    if (status === "loading" || isLoading || !resources){
-        return ( <Loader/> )
+    if (status === "loading" || isLoading || !resources) {
+        return (<Loader/>)
     }
 
-    if(resources.length === 0){
+    if (resources.length === 0) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
+    }
+
+    function doQuickShare(redirect: string) {
+        setOpenModal(true);
+    }
+
+    function shareIt(result: boolean, selectedValues?: string[]) {
+        setSelectedResource({} as DataResource);
+        setOpenModal(false);
+        if (!result || !selectedValues) return;
+
+        const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
+        //@TODO error notification if etag is not available
+        patchDataResourceForQuickShare(selectedResource.id, selectedResource.etag ? selectedResource.etag : "", aclEntries).finally(() => {
+            router.push('/base-repo/resources');
+        })
     }
 
     return (
         <div>
             <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
-                    {resources?.map((element:DataResource, i:number) => {
-                        //make edit optional depending on permissions
-                        const actionEvents:ActionButtonInterface[] = [
-                        ];
+                {resources?.map((element: DataResource, i: number) => {
+                    //make edit optional depending on permissions
+                    const actionEvents: ActionButtonInterface[] = [];
 
-                        if(userCanEdit(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
-                        }
+                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
+                    }
 
-                        if(userCanView(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(new ViewResourceAction(element.id).getDataCardAction());
-                        }
+                    if (userCanView(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new ViewResourceAction(element.id).getDataCardAction());
+                    }
 
-                       if(userCanEdit(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(new EditResourceAction(element.id).getDataCardAction());
-                        }
+                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new EditResourceAction(element.id).getDataCardAction());
+                    }
 
-                        if(userCanDownload(element, data?.user.id, data?.user.groups)){
-                            actionEvents.push(new DownloadResourceAction(element.id).getDataCardAction());
-                        }
+                    if (userCanDownload(element, data?.user.id, data?.user.groups)) {
+                        actionEvents.push(new DownloadResourceAction(element.id).getDataCardAction());
+                    }
 
-                        let classname = "volatile_or_fixed";
-                        switch(element.state){
-                            case State.REVOKED: classname = "revoked";break;
-                            case State.GONE: classname="gone";break;
-                        }
+                    let classname = "volatile_or_fixed";
+                    switch (element.state) {
+                        case State.REVOKED:
+                            classname = "revoked";
+                            break;
+                        case State.GONE:
+                            classname = "gone";
+                            break;
+                    }
 
-                        return (
-                            <div key={element.id} className={classname}>
+                    return (
+                        <div key={element.id} className={classname}>
                             <DataResourceCard
                                 key={element.id}
-                                data={element}
+                                resource={element}
                                 actionEvents={actionEvents}
+                                cardCallbackAction={handleAction}
                             ></DataResourceCard>
-                            </div>
-                        );
-                    })}
+                        </div>
+                    );
+                })}
             </div>
+            <QuickShareDialog openModal={openModal} resource={selectedResource} closeCallback={shareIt}/>
 
 
             <div className="mt-5 flex w-full justify-center">
                 {totalPages ?
-                <Pagination totalPages={totalPages}/>:null}
+                    <Pagination totalPages={totalPages}/> : null}
             </div>
         </div>
     );

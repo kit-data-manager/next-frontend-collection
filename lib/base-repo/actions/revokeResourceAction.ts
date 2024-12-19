@@ -11,7 +11,7 @@ export class RevokeResourceAction extends Action{
         const id = toast.loading("Revoking resource...");
 
         if (window.confirm(`Do you really want to revoke resource ${identifier}?`)) {
-            await fetchWithBasePath(`/api/delete?resourceId=${identifier}&etag=${etag}&type=revoke`).then(response => {
+            await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&etag=${etag}&type=revoke`).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
                         render: `Resource ${identifier} successfully revoked.`,

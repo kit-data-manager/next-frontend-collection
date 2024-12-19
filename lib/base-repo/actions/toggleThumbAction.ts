@@ -16,7 +16,7 @@ export class ToggleThumbAction extends Action{
             const id = toast.loading("Toggle thumb tag...");
             const filename_decoded = filename.replace(/%5F/g, '_');
 
-            await fetchWithBasePath(`/api/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=thumb`, {
+            await fetchWithBasePath(`/api/base-repo/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=thumb`, {
                 method: "PATCH"
             }).then(response => {
                 if(response.status === 204){
