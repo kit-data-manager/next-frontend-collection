@@ -3,7 +3,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import fetch from 'node-fetch';
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import { Formidable } from "formidable";
+import {Formidable} from "formidable";
 import {Writable} from "node:stream";
 
 //promise api route config

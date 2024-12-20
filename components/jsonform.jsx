@@ -105,7 +105,6 @@ export default function JsonForm(props) {
 
         window.JSONEditor.defaults.callbacks.template = {
             "callbackFunction": (jseditor, e) => {
-                console.log("CALL");
                 return e.uname;
             }
         }

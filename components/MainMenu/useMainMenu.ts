@@ -1,6 +1,5 @@
-import {ChartPieIcon, ListBulletIcon, PlusCircleIcon, PlayIcon} from "@heroicons/react/24/outline";
+import {ChartPieIcon, ListBulletIcon, PlayIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
-import {useRouter} from "next/navigation";
 
 export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
@@ -57,7 +56,7 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                 },
                 {
                     name: 'Create Schema',
-                    href: `${basePath}/metastore/schema/create`,
+                    href: `${basePath}/metastore/schemas/create`,
                     icon: PlusCircleIcon,
                     description: "Create a new Metadata Schema.",
                     requiresSession: true

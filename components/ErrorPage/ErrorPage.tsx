@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import {ErrorDescription, Errors} from "@/components/ErrorPage/ErrorPage.d";
-import {ExclamationTriangleIcon, FaceFrownIcon, NoSymbolIcon, QuestionMarkCircleIcon} from "@heroicons/react/24/outline";
+import {
+    ExclamationTriangleIcon,
+    FaceFrownIcon,
+    NoSymbolIcon,
+    QuestionMarkCircleIcon
+} from "@heroicons/react/24/outline";
 import React, {JSX} from "react";
 
 export default function ErrorPage(errorDescription: ErrorDescription) {

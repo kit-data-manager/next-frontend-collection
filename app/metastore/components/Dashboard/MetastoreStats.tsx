@@ -1,15 +1,12 @@
 import {
+    CircleStackIcon,
     DocumentIcon,
     DocumentTextIcon,
-    CircleStackIcon,
-    LockOpenIcon,
     LockClosedIcon,
+    LockOpenIcon,
     UserIcon
 } from '@heroicons/react/24/outline';
-
-import {lusitana} from '@/components/fonts';
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {fetchContentOverview} from "@/lib/base-repo/data";
 import {formatNumber, humanFileSize} from "@/lib/format-utils";
 import {fetchMetastoreOverview} from "@/lib/metastore/data";
 

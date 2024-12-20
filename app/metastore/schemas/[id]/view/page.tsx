@@ -2,11 +2,7 @@
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import React, {useEffect, useState} from "react";
-import {
-    userCanDelete,
-    userCanDownload,
-    userCanEdit
-} from "@/lib/event-utils";
+import {userCanDelete, userCanDownload, userCanEdit} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {DataResource, Permission, State} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
@@ -14,20 +10,20 @@ import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
-import {DeleteResourceAction} from "@/lib/base-repo/actions/deleteResourceAction";
-import {RevokeResourceAction} from "@/lib/base-repo/actions/revokeResourceAction";
+import {DeleteResourceAction} from "@/lib/actions/base-repo/deleteResourceAction";
+import {RevokeResourceAction} from "@/lib/actions/base-repo/revokeResourceAction";
 import {ToastContainer} from "react-toastify";
 import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {useRouter} from "next/navigation";
 import {fetchMetadataSchema, fetchMetadataSchemaDocument, fetchMetadataSchemaEtag} from "@/lib/metastore/client_data";
-import {EditSchemaAction} from "@/lib/metastore/actions/editSchemaAction";
-import {DownloadAction} from "@/lib/metastore/actions/downloadAction";
+import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
+import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
 import {Editor, useMonaco} from "@monaco-editor/react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import { Upload} from "lucide-react";
+import {Upload} from "lucide-react";
 import {Icon} from "@iconify/react";
 import {useTheme} from "next-themes";
-import {runAction} from "@/lib/metastore/actions/actionExecutor";
+import {runAction} from "@/lib/actions/actionExecutor";
 import {useDebouncedCallback} from "use-debounce";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 
@@ -48,7 +44,7 @@ export default function Page({params}) {
 
     const handleAction = useDebouncedCallback((event, resource: DataResource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        console.log("RUN ", eventIdentifier);
+
         runAction(eventIdentifier, (redirect: string) => {
             router.push(redirect);
         });
@@ -76,7 +72,7 @@ export default function Page({params}) {
             return res;
         }).then((res) => {
             fetchMetadataSchemaDocument(res.id, data?.accessToken).then(res => {
-               setEditorValue(res);
+                setEditorValue(res);
             })
             setResource(res);
         }).then(() => {
@@ -120,15 +116,6 @@ export default function Page({params}) {
         actionEvents.push(new DownloadAction(resource.id, "schema", resource.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
     }
 
-    function handleEditorValidation(markers) {
-        // model markers
-        markers.forEach((marker) => console.log('onValidate:', marker.message));
-    }
-
-    function handleChange(p1) {
-        setEditorValue(p1);
-    }
-
     return (
         <main>
             <Breadcrumbs
@@ -160,10 +147,8 @@ export default function Page({params}) {
                     <TabsContent value="schema">
                         <div className="mt-4 max-w-[75%]">
                             <Editor height="90vh"
-                                    defaultLanguage="json"
+                                    defaultLanguage={resource.resourceType.value === "JSON_Schema" ? "json" : "xml"}
                                     value={editorValue}
-                                    onValidate={handleEditorValidation}
-                                    onChange={handleChange}
                                     theme={theme.theme === "light" ? "vs" : theme.theme === "dark" ? "vs-dark" : "hc-black"}
                                     options={{
                                         readOnly: false,

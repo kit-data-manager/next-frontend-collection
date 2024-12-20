@@ -1,16 +1,12 @@
 'use client'
 
-import {
-    ArrowPathIcon, DocumentDuplicateIcon,
-    PlayIcon, PuzzlePieceIcon
-} from '@heroicons/react/24/outline';
+import {DocumentDuplicateIcon, PlayIcon, PuzzlePieceIcon} from '@heroicons/react/24/outline';
 
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {formatNumber} from "@/lib/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 import {useEffect, useState} from "react";
-import {Puzzle} from "lucide-react";
 
 export default function MappingServiceStats() {
 

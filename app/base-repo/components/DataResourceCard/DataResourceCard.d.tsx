@@ -1,6 +1,3 @@
-import {DataResource} from "@/lib/definitions";
-import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
-
 export type ActionButtonInterface =
     | {
     label: string;

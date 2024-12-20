@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import {ExclamationTriangleIcon} from '@heroicons/react/24/outline';
 
 export default function Forbidden() {
     return (

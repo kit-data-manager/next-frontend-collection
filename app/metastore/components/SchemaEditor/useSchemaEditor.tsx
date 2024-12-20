@@ -4,6 +4,7 @@ import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-
 import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
+import {updateMetadataSchema} from "@/lib/metastore/client_data";
 
 export const accessControlColumns: NestedColumn[] = [
     {
@@ -107,20 +108,20 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     });
 }
 
-export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback:Function) => {
-    const id = toast.loading("Updating resource...")
+export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function) => {
+    const id = toast.loading("Updating schema...")
 
-    updateDataResource(currentData, etag ? etag : '').then((status) => {
+    updateMetadataSchema(currentData).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
-                reloadCallback(`/base-repo/resources/${currentData.id}/edit?target=metadata`);
+                reloadCallback(`/metastore/schemas/${currentData.id}/edit?target=metadata`);
             }
         });
     }).catch(error => {
-        console.error("Failed to update resource.", error);
+        console.error("Failed to update schema.", error);
         toast.update(id, {
-            render: `Failed to update resource. Status: ${error.response.status}`,
+            render: `Failed to update schema. Status: ${error.response.status}`,
             type: "error",
             isLoading: false
         });

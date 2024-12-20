@@ -11,9 +11,7 @@ import {
 import {AutoCompleteList, ListItem} from "@/components/AutoComplete/AutoCompleteList";
 import {Button} from "@/components/ui/button";
 import React, {useEffect, useState} from "react";
-import {
-    fetchUsers
-} from "@/lib/base-repo/client_data";
+import {fetchUsers} from "@/lib/base-repo/client_data";
 import {DataResource, KeycloakUser} from "@/lib/definitions";
 
 interface QuickShareDialogProps {

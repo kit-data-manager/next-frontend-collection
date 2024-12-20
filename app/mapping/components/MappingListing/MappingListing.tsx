@@ -5,14 +5,10 @@ import React, {useEffect, useState} from "react";
 import {JobStatus, Mapping} from "@/lib/mapping/definitions";
 import {useSession} from "next-auth/react";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
-import {
-    deleteMappingJobStatus,
-    fetchMappingPlugins,
-    fetchMappings
-} from "@/lib/mapping/client_data";
+import {deleteMappingJobStatus, fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
 import Loader from "@/components/general/Loader";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import { TriangleAlert} from "lucide-react";
+import {TriangleAlert} from "lucide-react";
 import {MappingCard} from "@/app/mapping/components/MappingCard/MappingCard";
 import {NewJobCard} from "@/app/mapping/components/MappingCard/NewJobCard";
 import {AddMappingJobDialog} from "@/app/mapping/components/MappingListing/dialogs/AddMappingJobDialog";

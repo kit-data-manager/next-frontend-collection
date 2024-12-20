@@ -1,7 +1,7 @@
 import {toast} from "react-toastify";
 import Uppy from "@uppy/core";
 
-export function installEventHandlers(uppy: Uppy, resourceId: string, onCloseCallback: Function) {
+export function installEventHandlers(uppy: Uppy, resourceId?: string, onCloseCallback?: Function) {
     //add filename to metadata
     // @ts-ignore
     uppy.off("file-added", undefined).on('file-added', (file) => {
@@ -18,12 +18,21 @@ export function installEventHandlers(uppy: Uppy, resourceId: string, onCloseCall
         for (let i = 0; i < result.fileIDs.length; i++) {
             let fileID = result.fileIDs[i];
             const file = uppy.getFile(fileID);
-            uppy.setFileState(fileID, {
-                xhrUpload: {
-                    //  ...file.xhrUpload,
-                    endpoint: `${basePath}/api/base-repo/create?resourceId=${resourceId}&filename=${encodeURIComponent(file.meta.name)}`
-                }
-            })
+            if (resourceId) {
+                uppy.setFileState(fileID, {
+                    xhrUpload: {
+                        //  ...file.xhrUpload,
+                        endpoint: `${basePath}/api/base-repo/create?resourceId=${resourceId}`
+                    }
+                })
+            } else {
+                uppy.setFileState(fileID, {
+                    xhrUpload: {
+                        //  ...file.xhrUpload,
+                        endpoint: `${basePath}/api/base-repo/create`
+                    }
+                })
+            }
         }
     });
 
@@ -47,7 +56,9 @@ export function installEventHandlers(uppy: Uppy, resourceId: string, onCloseCall
             isLoading: false,
             autoClose: 1000,
             "onClose": () => {
-                onCloseCallback();
+                if (onCloseCallback) {
+                    onCloseCallback();
+                }
             }
         });
     });

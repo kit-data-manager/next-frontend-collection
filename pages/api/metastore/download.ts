@@ -11,7 +11,7 @@ async function downloadMetadata(resourceId: string, type: string, format: string
 
     const url = `${metastoreBaseUrl}/api/v2/${type === "schema" ? "schemas" : "metadata"}/${resourceId}`;
 
-    const headers = {"Accept": format === "json" ? "application/json" : "application.xml"};
+    const headers = {"Accept": format === "json" ? "application/json" : "application/xml"};
 
     if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
@@ -19,25 +19,15 @@ async function downloadMetadata(resourceId: string, type: string, format: string
 
     const pipeline = promisify(stream.pipeline);
 
-    await fetch(url, {headers: headers})
-        .then(response => {
-            if (!response.ok) {
-                res.status(404).json({message: 'Not found'});
-                Promise.reject("Not found");
-            }
+    const filename = `metadata.${format === "json" ? "json" : "xml"}`;
+    res.setHeader('Content-Type', headers['Accept']);
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
 
-            return response.json();
-        }).then(json => {
-            const filename = `metadata.${format === "json" ? "json" : "xml"}`;
-            res.setHeader('Content-Type', headers['Accept']);
-            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-        }).then(() => {
-            return fetch(url, {headers: headers}).then(response => {
-                //Pipe the file data
-                //@ts-ignore
-                return pipeline(response.body, res);
-            });
-        }).then(() => res.status(200));
+    await fetch(url, {headers: headers}).then(response => {
+        //Pipe the file data
+        //@ts-ignore
+        return pipeline(response.body, res);
+    }).then(() => res.status(200));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

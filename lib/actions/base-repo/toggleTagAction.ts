@@ -1,4 +1,4 @@
-import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
 import {fetchWithBasePath} from "@/lib/utils";
 
@@ -15,12 +15,14 @@ export class ToggleTagAction extends Action {
         return this.getActionId();
     }
 
-    public static async performAction(identifier: string, filename: string, etag: string, redirect?: Function) {
+    public static async performAction(actionId: string, redirect?: Function) {
         const id = toast.loading("Updating tags...");
-        const filename_decoded = filename.replace(/%5F/g, '_');
-        const etag_decoded = etag.replace(/%5F/g, '_');
+        let parts: string[] = actionId.split("_");
+        const identifier = parts[1];
+        const filename = parts[2].replace(/%5F/g, '_');
+        const tag = parts[3].replace(/%5F/g, '_');
 
-        await fetchWithBasePath(`/api/base-repo/toggleTag?resourceId=${identifier}&path=${filename_decoded}&tag=${etag_decoded}`, {
+        await fetchWithBasePath(`/api/base-repo/toggleTag?resourceId=${identifier}&path=${filename}&tag=${tag}`, {
             method: "PATCH"
         }).then(response => {
             if (response.status === 204) {

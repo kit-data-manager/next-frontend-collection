@@ -1,14 +1,19 @@
-import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
 import {fetchWithBasePath} from "@/lib/utils";
+import fetch from "node-fetch";
 
 export class RevokeResourceAction extends Action{
     constructor(resourceId:string, etag:string) {
         super(`${REPO_ACTIONS.REVOKE_RESOURCE}_${resourceId}_${etag}`, "Revoke", "material-symbols-light:delete-outline", 'Revoke Resource');
     }
 
-    public static async performAction(identifier: string, filename?: string, etag?:string, redirect?: Function){
+    public static async performAction(actionId:string, redirect?: Function){
         const id = toast.loading("Revoking resource...");
+
+        let parts: string[] = actionId.split("_");
+        const identifier = parts[1];
+        const etag = parts[2];
 
         if (window.confirm(`Do you really want to revoke resource ${identifier}?`)) {
             await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&etag=${etag}&type=revoke`).then(response => {

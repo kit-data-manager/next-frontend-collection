@@ -1,9 +1,9 @@
 import {ContentInformation, DataResource, ResourceType, TypeGeneral} from "@/lib/definitions";
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
-import {ToggleThumbAction} from "@/lib/base-repo/actions/toggleThumbAction";
-import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
+import {DownloadContentAction} from "@/lib/actions/base-repo/downloadContentAction";
+import {ToggleThumbAction} from "@/lib/actions/base-repo/toggleThumbAction";
+import {ToggleTagAction} from "@/lib/actions/base-repo/toggleTagAction";
 import {
     Components,
     Tag,

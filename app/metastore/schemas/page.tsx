@@ -1,7 +1,6 @@
 import {CirclePlus} from "lucide-react"
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
-import DataResourceListing from "@/app/base-repo/components/DataResourceListing/DataResourceListing";
 import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib/definitions";

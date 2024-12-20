@@ -1,6 +1,7 @@
 import React from "react"
 import 'react-loading-skeleton/dist/skeleton.css'
 import {lusitana} from "@/components/fonts";
+
 export function LatestActivitiesSkeleton(props:any) {
     return (
 

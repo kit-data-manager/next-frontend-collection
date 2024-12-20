@@ -1,4 +1,4 @@
-import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
 import {fetchWithBasePath} from "@/lib/utils";
 
@@ -7,8 +7,13 @@ export class DeleteResourceAction extends Action{
         super(`${REPO_ACTIONS.DELETE_RESOURCE}_${resourceId}_${etag}`, "Delete", "material-symbols-light:skull-outline", 'Delete Resource');
     }
 
-    public static async performAction(identifier: string, filename?: string, etag?:string, redirect?: Function){
+    public static async performAction(actionId:string, redirect?: Function){
         const id = toast.loading("Revoking resource...")
+
+        let parts: string[] = actionId.split("_");
+        const identifier = parts[1];
+        const etag = parts[2];
+
         if (window.confirm(`Do you really want to delete resource ${identifier}?`)) {
             await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&etag=${etag}&type=delete`).then(response => {
                 if(response.status === 204){

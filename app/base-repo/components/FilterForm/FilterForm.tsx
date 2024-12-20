@@ -1,6 +1,6 @@
 'use client';
 
-import {CircleX, Filter, CircleUser, Calendar} from "lucide-react"
+import {Calendar, CircleUser, CircleX, Filter} from "lucide-react"
 
 import {filterResources} from '@/lib/filter-form-actions';
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";

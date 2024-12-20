@@ -1,6 +1,5 @@
 import {ResponseError} from "@/lib/base-repo/client_data";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {DataResourcePage} from "@/lib/definitions";
 import {JobStatus, MappingPage, MappingPlugin} from "@/lib/mapping/definitions";
 
 export async function fetchMappingPlugins(token?: string | undefined):Promise<MappingPlugin[]> {

@@ -1,34 +1,9 @@
 "use client";
 
 import React from "react";
-import {
-    buildFacetConfigFromConfig,
-    buildSearchOptionsFromConfig,
-    buildSortOptionsFromConfig,
-    getFacetFields
-} from "../../lib/config-helper"
+import {buildFacetConfigFromConfig, buildSearchOptionsFromConfig} from "../../lib/config-helper"
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
-import {
-    Layout
-} from "@elastic/react-search-ui-views";
-import {
-    ErrorBoundary,
-    Facet,
-    SearchProvider,
-    SearchBox,
-    Results,
-    PagingInfo,
-    ResultsPerPage,
-    Paging,
-    Sorting,
-    WithSearch
-} from "@elastic/react-search-ui";
-import { memo } from 'react'
-
-import MyBooleanFacet from "@/components/search/MyBooleanFacet";
-import DataCardResultView from "@/components/search/DataCardResultView";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import MyLayout from "@/components/search/MyLayout";
 import ElasticSearch from "@/app/base-repo/components/Search/Search";
 
 export default function SiteSearch() {

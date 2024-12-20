@@ -1,9 +1,11 @@
 import React, {memo} from "react";
 import {
     ErrorBoundary,
-    Facet, Paging,
+    Facet,
+    Paging,
     PagingInfo,
-    Results, ResultsPerPage,
+    Results,
+    ResultsPerPage,
     SearchBox,
     SearchProvider,
     Sorting,

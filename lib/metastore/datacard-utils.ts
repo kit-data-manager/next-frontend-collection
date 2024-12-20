@@ -7,7 +7,6 @@ import {
     ValueLabelObj,
     ValueLabelObjWithUrl
 } from "@kit-data-manager/data-view-web-component";
-import DataCard = Components.DataCard;
 
 export const propertiesForSchema = (resource: DataResource) => {
     return {

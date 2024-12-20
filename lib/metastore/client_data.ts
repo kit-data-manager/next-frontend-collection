@@ -1,12 +1,4 @@
-import {
-    Acl,
-    ActuatorInfo,
-    ContentInformation,
-    DataResource,
-    DataResourcePage,
-    KeycloakInfo,
-    KeycloakUser
-} from "@/lib/definitions";
+import {Acl, DataResource, DataResourcePage} from "@/lib/definitions";
 import {fetchWithBasePath} from "@/lib/utils";
 
 export async function fetchMetadataSchemas(page: number, size: number, sort?: string): Promise<DataResourcePage> {

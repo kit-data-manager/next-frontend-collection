@@ -25,6 +25,7 @@ interface MetadataTabProps {
 export function MetadataTab({createMode, resource, etag, schema, userPrefs, updateResourceCallback, reloadCallback}: MetadataTabProps) {
     const [editorReady, setEditorReady] = useState(false);
     const [confirm, setConfirm] = useState(false);
+
     const router = useRouter();
 
     return (

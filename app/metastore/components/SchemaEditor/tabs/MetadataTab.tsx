@@ -42,13 +42,13 @@ export function MetadataTab({createMode, resource, etag, schema, userPrefs, upda
                 <ConfirmCancelComponent confirmLabel={"Commit"}
                                         cancelLabel={"Cancel"}
                                         confirmCallback={() => DoUpdateDataResource(resource, etag, reloadCallback)}
-                                        cancelHref={`/base-repo/resources/${resource.id}`}
+                                        cancelHref={`/metastore/schemas/${resource.id}`}
                                         confirm={confirm}
                 /> :
                 <ConfirmCancelComponent confirmLabel={"Create"}
                                         cancelLabel={"Cancel"}
                                         confirmCallback={() => DoCreateDataResource(resource, router)}
-                                        cancelHref={`/base-repo/resources`}
+                                        cancelHref={`/metastore/schemas`}
                                         confirm={confirm}
                 />
             }

@@ -1,9 +1,8 @@
-import {JobStatus, Mapping, Status} from "@/lib/mapping/definitions";
+import {JobStatus, Status} from "@/lib/mapping/definitions";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Icon} from "@iconify/react";
 import React, {useEffect, useState} from "react";
-import {cva} from "class-variance-authority";
 import {fetchMappingJobStatus} from "@/lib/mapping/client_data";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";

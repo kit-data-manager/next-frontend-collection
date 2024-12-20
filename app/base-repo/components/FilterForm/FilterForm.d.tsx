@@ -1,4 +1,4 @@
-import {TypeGeneral, State, Sort} from "@/lib/definitions";
+import {Sort, State, TypeGeneral} from "@/lib/definitions";
 
 export type FilterForm = {
     id?: string | undefined;

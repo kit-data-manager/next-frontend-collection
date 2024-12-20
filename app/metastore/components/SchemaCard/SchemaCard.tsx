@@ -6,7 +6,6 @@ import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/com
 import {DataResource} from "@/lib/definitions";
 import {propertiesForSchema} from "@/lib/metastore/datacard-utils";
 import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
-import {fetchDataResourceEtag} from "@/lib/base-repo/client_data";
 import {useSession} from "next-auth/react";
 import {fetchMetadataSchemaEtag} from "@/lib/metastore/client_data";
 

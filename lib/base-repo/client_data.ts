@@ -6,7 +6,7 @@ import {
     DataResource,
     DataResourcePage,
     KeycloakInfo,
-    KeycloakUser, Permission
+    KeycloakUser
 } from "@/lib/definitions";
 import {filterFormToDataResource} from "@/lib/filter-utils";
 import {fetchWithBasePath} from "@/lib/utils";

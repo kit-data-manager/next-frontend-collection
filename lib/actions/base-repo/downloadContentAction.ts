@@ -1,4 +1,4 @@
-import {UrlAction} from "@/lib/base-repo/actions/urlAction";
+import {UrlAction} from "@/lib/actions/urlAction";
 
 export class DownloadContentAction extends UrlAction{
     constructor(resourceId:string, filename:string) {

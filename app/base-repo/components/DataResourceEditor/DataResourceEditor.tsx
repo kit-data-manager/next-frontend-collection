@@ -6,13 +6,13 @@ import {useRouter} from "next/navigation";
 import {ContentInformation, DataResource, Permission} from "@/lib/definitions";
 import {useDebouncedCallback} from "use-debounce";
 import {useSession} from "next-auth/react";
-import {runAction} from "@/lib/base-repo/actions/actionExecutor";
+import {runAction} from "@/lib/actions/actionExecutor";
 import {fetchAllContentInformation, fetchDataResource} from "@/lib/base-repo/client_data";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
-import {ToggleTagAction} from "@/lib/base-repo/actions/toggleTagAction";
+import {ToggleTagAction} from "@/lib/actions/base-repo/toggleTagAction";
 import {Tabs} from "@/components/ui/tabs";
 import {Icon} from "@iconify/react";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
@@ -66,7 +66,6 @@ export default function DataResourceEditor({...props}) {
         });
     });
 
-
     //fetch data resource and content information
     useEffect(() => {
         if (createMode) {
@@ -93,7 +92,7 @@ export default function DataResourceEditor({...props}) {
         setMustReload(false);
     }, [id, data?.accessToken, status, etag, createMode,  mustReload]);
 
-    if (status === "loading" || isLoading) {
+    if (status === "loading" || isLoading || !props.schema) {
         return (<Loader/>)
     }
 

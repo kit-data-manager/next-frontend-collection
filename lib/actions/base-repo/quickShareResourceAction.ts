@@ -1,11 +1,14 @@
-import {Action, REPO_ACTIONS} from "@/lib/base-repo/actions/action";
+import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 
 export class QuickShareResourceAction extends Action{
     constructor(resourceId:string) {
         super(`${REPO_ACTIONS.QUICK_SHARE}_${resourceId}`, "QuickShare", "solar:share-outline", 'QuickShare Resource');
     }
 
-    public static async performAction(identifier: string, filename?:string, etag?:string, redirect?: Function){
+    public static async performAction(actionId:string, redirect?: Function){
+        let parts: string[] = actionId.split("_");
+        const identifier = parts[1];
+
         if(redirect) {
             redirect(`/base-repo/resources/`);
         }else{

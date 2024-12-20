@@ -1,4 +1,4 @@
-import {Acl, DataResource, Permission, State} from "@/lib/definitions";
+import {Acl, DataResource, Permission} from "@/lib/definitions";
 
 export function resourcePermissionForUser(resource:DataResource, userId:string | undefined, groups: string[] | undefined){
     if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")){

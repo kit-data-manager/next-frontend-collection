@@ -7,10 +7,8 @@ import {
 } from "@/lib/base-repo/datacard-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect, useState} from "react";
-import {
-    fetchAllContentInformation, fetchDataResourceEtag
-} from "@/lib/base-repo/client_data";
-import {DownloadContentAction} from "@/lib/base-repo/actions/downloadContentAction";
+import {fetchAllContentInformation, fetchDataResourceEtag} from "@/lib/base-repo/client_data";
+import {DownloadContentAction} from "@/lib/actions/base-repo/downloadContentAction";
 import {useSession} from "next-auth/react";
 
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";

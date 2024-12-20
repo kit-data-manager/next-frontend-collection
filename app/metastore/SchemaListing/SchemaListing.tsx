@@ -9,18 +9,18 @@ import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
+import {QuickShareResourceAction} from "@/lib/actions/base-repo/quickShareResourceAction";
 import {fetchMetadataSchemas, updateMetadataSchema} from "@/lib/metastore/client_data";
-import {ViewSchemaAction} from "@/lib/metastore/actions/viewSchemaAction";
-import {EditSchemaAction} from "@/lib/metastore/actions/editSchemaAction";
+import {ViewSchemaAction} from "@/lib/actions/metastore/viewSchemaAction";
+import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
 import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useDebouncedCallback} from "use-debounce";
-import {REPO_ACTIONS} from "@/lib/base-repo/actions/action";
-import {runAction} from "@/lib/metastore/actions/actionExecutor";
+import {REPO_ACTIONS} from "@/lib/actions/action";
+import {runAction} from "@/lib/actions/actionExecutor";
 import {useRouter} from "next/navigation";
 import {getAclDiff} from "@/lib/base-repo/client_data";
-import {DownloadAction} from "@/lib/metastore/actions/downloadAction";
+import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
 
 export default function SchemaListing({page, size, sort}: {
     page: number;

@@ -1,14 +1,10 @@
 'use client';
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import {fetchDataResource, fetchDataResourceEtag, fetchAllContentInformation} from "@/lib/base-repo/client_data";
+import {fetchAllContentInformation, fetchDataResource, fetchDataResourceEtag} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React, {useEffect, useState} from "react";
-import {
-    userCanDelete,
-    userCanDownload,
-    userCanEdit
-} from "@/lib/event-utils";
+import {userCanDelete, userCanDownload, userCanEdit} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {DataResource, Permission, State} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
@@ -16,12 +12,15 @@ import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
-import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
-import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
+import {EditResourceAction} from "@/lib/actions/base-repo/editResourceAction";
+import {DownloadResourceAction} from "@/lib/actions/base-repo/downloadResourceAction";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {DeleteResourceAction} from "@/lib/base-repo/actions/deleteResourceAction";
-import {RevokeResourceAction} from "@/lib/base-repo/actions/revokeResourceAction";
+import {DeleteResourceAction} from "@/lib/actions/base-repo/deleteResourceAction";
+import {RevokeResourceAction} from "@/lib/actions/base-repo/revokeResourceAction";
 import {ToastContainer} from "react-toastify";
+import {useDebouncedCallback} from "use-debounce";
+import {runAction} from "@/lib/actions/actionExecutor";
+import {useRouter} from "next/navigation";
 
 export default function Page({params}) {
     const used = React.use(params) as { id: string };
@@ -32,7 +31,15 @@ export default function Page({params}) {
     const [isLoading, setLoading] = useState(true)
     const {data, status} = useSession();
     const actionEvents: ActionButtonInterface[] = [];
+    const router = useRouter();
 
+    const handleAction = useDebouncedCallback((event, resource: DataResource) => {
+        const eventIdentifier: string = event.detail.eventIdentifier;
+
+        runAction(eventIdentifier, (redirect: string) => {
+            router.push(redirect);
+        });
+    });
     useEffect(() => {
         setLoading(true);
         fetchDataResource(id, data?.accessToken).then(async (res) => {
@@ -65,13 +72,14 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
     }
 
-    let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
     if (permission < permissionToNumber(Permission.READ)) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
     }
 
     if (userCanEdit(resource, data?.user.id, data?.user.groups)) {
         actionEvents.push(new EditResourceAction(resource.id).getDataCardAction());
+        console.log("ED ", new EditResourceAction(resource.id).getActionId());
     }
 
     if (userCanDelete(resource, data?.user.id, data?.user.groups)) {
@@ -104,9 +112,10 @@ export default function Page({params}) {
             <div className="flex">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
-                        <DataResourceCard data={resource}
+                        <DataResourceCard resource={resource}
                                           variant={"detailed"}
-                                          actionEvents={actionEvents}></DataResourceCard>
+                                          actionEvents={actionEvents}
+                                          cardCallbackAction={(ev, resource) => handleAction(ev, resource)}/>
                     </div>
                 </div>
             </div>

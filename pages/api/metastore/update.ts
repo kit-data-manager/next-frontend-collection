@@ -15,6 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const {resourceId, etag, type} = req.query;
         const body = req.body
+
+        let form = new FormData(req.body);
+
         if (!resourceId || !type) {
             res.status(500).json({message: 'resourceId not provided.'})
             return

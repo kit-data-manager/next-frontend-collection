@@ -1,7 +1,6 @@
-import {AuthOptions, Profile, TokenSet} from "next-auth";
+import {Account, AuthOptions, Profile, TokenSet, User} from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import {JWT} from "next-auth/jwt";
-import {User, Account} from "next-auth";
 import {AdapterUser} from "next-auth/adapters";
 
 export const authOptions: AuthOptions = {

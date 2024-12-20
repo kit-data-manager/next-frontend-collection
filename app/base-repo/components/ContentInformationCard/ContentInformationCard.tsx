@@ -3,11 +3,11 @@
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
 import {propertiesForContentInformation} from "@/lib/base-repo/datacard-utils";
 import {useDebouncedCallback} from "use-debounce";
-import { useRouter} from "next/compat/router";
+import {useRouter} from "next/compat/router";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {ContentInformation} from "@/lib/definitions";
 import {ContentInformationCardProps} from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard.d";
-import {runAction} from "@/lib/base-repo/actions/actionExecutor";
+import {runAction} from "@/lib/actions/actionExecutor";
 
 
 export default function ContentInformationCard(props:ContentInformationCardProps) {

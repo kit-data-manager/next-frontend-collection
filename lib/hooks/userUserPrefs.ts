@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {Sort} from "@/lib/definitions";
-import {JobStatus} from "@/lib/mapping/definitions";
 
 export type UserPrefsType = {
     sortType: string,

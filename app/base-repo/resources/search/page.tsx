@@ -2,14 +2,10 @@
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import React from "react";
-import {
-    buildFacetConfigFromConfig,
-    buildSearchOptionsFromConfig
-} from "@/lib/config-helper"
+import {buildFacetConfigFromConfig, buildSearchOptionsFromConfig} from "@/lib/config-helper"
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import Search from "@/components/search";
 import ElasticSearch from "@/app/base-repo/components/Search/Search";
 
 export default function Page() {

@@ -33,7 +33,7 @@ div[data-schematype='array'] > p, div[data-schematype='object'] > p{
 
 .je-object__container:not(.w-full) > .je-object__title > span{
     font-size: 14px;
-    color: var(--muted);
+    color: var(--secondary-foreground);
 }
 
 p[style='color: red;']{

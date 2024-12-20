@@ -1,11 +1,10 @@
 import {CardsSkeleton} from '@/components/skeletons';
-import RepositoryStats from "@/app/base-repo/components/Dashboard/RepositoryStats";
 import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";
+import * as React from 'react';
 import {Suspense} from 'react';
 import {ActuatorHealthStatusCardWrapper} from "@/components/SystemStats/SystemStats";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
-import * as React from "react";
 import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import MetastoreStats from "@/app/metastore/components/Dashboard/MetastoreStats";

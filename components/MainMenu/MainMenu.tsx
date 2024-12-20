@@ -1,13 +1,12 @@
 'use client';
 
 import {
-    ChartPieIcon, ListBulletIcon, PlusCircleIcon
-} from '@heroicons/react/24/outline';
-import {
-    NavigationMenu, NavigationMenuContent,
+    NavigationMenu,
+    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
-    NavigationMenuList, NavigationMenuTrigger
+    NavigationMenuList,
+    NavigationMenuTrigger
 } from "@/components/ui/navigation-menu";
 import {cn} from "@/lib/utils";
 import React from "react";

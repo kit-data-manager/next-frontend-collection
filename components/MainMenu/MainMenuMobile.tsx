@@ -5,12 +5,12 @@ import React from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuTrigger,
     DropdownMenuItem,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
     DropdownMenuPortal,
-    DropdownMenuSubContent
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {cn} from "@/lib/utils";
 import Link from "next/link";

@@ -1,4 +1,4 @@
-import {Action} from "@/lib/base-repo/actions/action";
+import {Action} from "@/lib/actions/action";
 
 export class UrlAction extends Action{
     constructor(private url: string, label:string, iconName:string, tooltip:string) {

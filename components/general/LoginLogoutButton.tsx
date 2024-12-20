@@ -2,7 +2,7 @@
 
 import {signIn, useSession} from "next-auth/react";
 import {Icon} from "@iconify/react";
-import React, {useState} from "react";
+import React from "react";
 import federatedLogout from "@/lib/federatedLogout";
 import {useRouter} from "next/navigation";
 

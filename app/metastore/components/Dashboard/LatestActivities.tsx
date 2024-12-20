@@ -1,14 +1,11 @@
-import {
-    ArrowPathIcon,
-    XCircleIcon,
-    PlusCircleIcon
-} from '@heroicons/react/24/outline';
+import {ArrowPathIcon, PlusCircleIcon, XCircleIcon} from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import {lusitana} from '@/components/fonts';
 import {fetchLatestActivities} from "@/lib/metastore/data";
 import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel";
 import * as React from "react";
 import {formatDateToLocal} from "@/lib/format-utils";
+
 const iconMap = {
     INITIAL: PlusCircleIcon,
     UPDATE: ArrowPathIcon,

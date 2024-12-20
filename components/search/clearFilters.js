@@ -1,6 +1,6 @@
 "use client";
 
-import { withSearch } from "@elastic/react-search-ui";
+import {withSearch} from "@elastic/react-search-ui";
 
 function ClearFilters({ filters, clearFilters }) {
     return (

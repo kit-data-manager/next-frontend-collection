@@ -38,7 +38,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
         fetchUsers(userFilter).then((res) => {
             //init users array with acl entries
             let userElements: Element[] = [];
-            resource.acls.forEach((acl: Acl) => {
+            resource?.acls?.forEach((acl: Acl) => {
                 let targetColumn = "users";
                 switch (acl.permission) {
                     case Permission.READ:

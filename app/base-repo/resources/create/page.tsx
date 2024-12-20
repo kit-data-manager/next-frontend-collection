@@ -6,6 +6,7 @@ import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client_data";
+import Loader from "@/components/general/Loader";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);

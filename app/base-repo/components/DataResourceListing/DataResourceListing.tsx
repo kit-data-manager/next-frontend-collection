@@ -1,17 +1,9 @@
 'use client';
 
 import {DataResource, State} from "@/lib/definitions";
-import {
-    fetchDataResourceEtag,
-    fetchDataResources,
-    fetchUsers,
-    getAclDiff,
-    patchDataResourceForQuickShare
-} from "@/lib/base-repo/client_data";
+import {fetchDataResources, getAclDiff, patchDataResourceForQuickShare} from "@/lib/base-repo/client_data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
-import {
-    userCanDownload, userCanEdit, userCanView
-} from "@/lib/event-utils";
+import {userCanDownload, userCanEdit, userCanView} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import Pagination from "@/components/general/Pagination";
 import React, {useEffect, useState} from "react";
@@ -19,14 +11,14 @@ import {useSession} from "next-auth/react";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
-import {ViewResourceAction} from "@/lib/base-repo/actions/viewResourceAction";
+import {ViewResourceAction} from "@/lib/actions/base-repo/viewResourceAction";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {EditResourceAction} from "@/lib/base-repo/actions/editResourceAction";
-import {DownloadResourceAction} from "@/lib/base-repo/actions/downloadResourceAction";
-import {QuickShareResourceAction} from "@/lib/base-repo/actions/quickShareResourceAction";
+import {EditResourceAction} from "@/lib/actions/base-repo/editResourceAction";
+import {DownloadResourceAction} from "@/lib/actions/base-repo/downloadResourceAction";
+import {QuickShareResourceAction} from "@/lib/actions/base-repo/quickShareResourceAction";
 import {useDebouncedCallback} from "use-debounce";
-import {REPO_ACTIONS} from "@/lib/base-repo/actions/action";
-import {runAction} from "@/lib/base-repo/actions/actionExecutor";
+import {REPO_ACTIONS} from "@/lib/actions/action";
+import {runAction} from "@/lib/actions/actionExecutor";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useRouter} from "next/navigation";
 

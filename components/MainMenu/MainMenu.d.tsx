@@ -1,5 +1,3 @@
-import {IconProps} from "@mui/material";
-
 export interface SubMenu  {
     serviceName:string;
     menuItems: MenuItem[];
