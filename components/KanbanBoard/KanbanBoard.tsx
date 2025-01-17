@@ -71,7 +71,7 @@ export function KanbanBoard({ columns, elements, setElements }: KonbanBoardProps
     // Helper function to flatten nested columns
     const flattenColumns = useCallback((cols: NestedColumn[]): Column[] => {
         return cols.flatMap((col) =>
-            col.children ? [{id: col.id, title: col.title}, ...flattenColumns(col.children)] : [col]
+            col.children ? [{id: col.id, title: col.title, icon: col.icon}, ...flattenColumns(col.children)] : [col]
         );
     }, []);
 

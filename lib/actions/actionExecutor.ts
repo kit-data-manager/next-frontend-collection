@@ -15,7 +15,7 @@ import {ViewResourceAction} from "@/lib/actions/base-repo/viewResourceAction";
 export function runAction(actionId: string, redirect?: Function) {
     let parts: string[] = actionId.split("_");
 
-    let actionMapping: Map<string, (actionId: string, accessToken?: string, callback?: Function) => void> = new Map();
+    let actionMapping: Map<string, (actionId: string, callback?: Function) => void> = new Map();
     //base-repo actions
     actionMapping.set(REPO_ACTIONS.VIEW_RESOURCE, ViewResourceAction.performAction);
     actionMapping.set(REPO_ACTIONS.DELETE_CONTENT, DeleteContentAction.performAction);

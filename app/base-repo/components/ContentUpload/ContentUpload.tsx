@@ -22,10 +22,10 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create`, method: "post", formData: true, fieldName: "file"}));
 
     const {theme} = useTheme();
-    const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme);
+    const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme?theme : "auto");
 
     useEffect(() => {
-        setUppyTheme(theme === "system" ? "auto" : theme);
+        setUppyTheme(theme === "system" ? "auto" : theme?theme : "auto");
         uppy.close();
         setUppy(new Uppy()
             .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create`, method: "post", formData: true, fieldName: "file"}));
@@ -44,7 +44,8 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
 
     return (
         <div className="w-full flex mb-6 justify-left">
-            <Dashboard uppy={uppy} theme={uppyTheme} width={256} height={180} showSelectedFiles={true}
+            <Dashboard uppy={uppy}  theme={uppyTheme as "auto"|"dark"|"light"|undefined}
+                       width={256} height={180} showSelectedFiles={true}
                        showProgressDetails={true}/>
         </div>
 

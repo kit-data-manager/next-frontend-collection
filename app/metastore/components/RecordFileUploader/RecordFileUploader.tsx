@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from "react";
-import Uppy from "@uppy/core";
+import Uppy, {UploadCallback} from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';
@@ -73,7 +73,7 @@ export default function RecordFileUploader({
         restrictions: {maxNumberOfFiles: 2, minNumberOfFiles: 2}
     })
 
-    uppy.off("upload", null).on('upload', (result) => {
+    uppy.off("upload", ()=>{}).on('upload', (result) => {
         for (let i = 0; i < result.fileIDs.length; i++) {
             let fileID = result.fileIDs[i];
 
@@ -88,7 +88,7 @@ export default function RecordFileUploader({
         }
     });
 
-    uppy.off("complete", null).on('complete', (result) => {
+    uppy.off("complete", ()=>{}).on('complete', (result) => {
         uppy.resetProgress();
         const successful = result.successful.length;
         const failed = result.failed.length;
@@ -146,7 +146,7 @@ export default function RecordFileUploader({
                 <div className={"flex-none"}>
                     <Dashboard uppy={uppy}
                                note={`You must upload exactly 2 files: a metadata record and a schema file. For creating a metadata record, use the form to the right and select add schema file afterwards.`}
-                               theme={uppyTheme}
+                               theme={uppyTheme as "auto"|"dark"|"light"|undefined}
                                showSelectedFiles={true}
                                showProgressDetails={true}/>
                 </div>

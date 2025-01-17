@@ -1,12 +1,15 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import fetch from "node-fetch";
 
-function login(url:string, username: string, password:string){
-    var headers = new Headers();
+function login(url:string, username: string|undefined, password:string){
+    if(!username) {
+        return Promise.reject("No service user configured.");
+    }
+    let headers = new Headers();
     headers.append("Content-Type", "application/x-www-form-urlencoded");
     headers.append("Authorization", "Basic " + btoa(`${username}:${password}`));
 
-    var urlencoded = new URLSearchParams();
+    let urlencoded = new URLSearchParams();
     urlencoded.append("client_id", "nextjs");
     urlencoded.append("grant_type", "client_credentials");
 
@@ -19,14 +22,14 @@ function login(url:string, username: string, password:string){
         if (!response.ok) {
             Promise.reject('Failed to login service account.');
         }
-        return response.json();
+        return response.json() as any;
     }).then(json =>{
-        return json["access_token"];
+        return json.access_token;
     });
 }
 
 function listUsers(url:string, accessToken:string){
-    var headers = new Headers();
+    let headers = new Headers();
     headers.append("Accept", "application/json");
     headers.append("Authorization", `Bearer ${accessToken}`);
 
