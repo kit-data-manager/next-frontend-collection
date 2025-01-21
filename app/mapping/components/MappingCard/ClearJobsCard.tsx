@@ -4,7 +4,7 @@ import {Icon} from "@iconify/react";
 import React from "react";
 import {cva} from "class-variance-authority";
 
-interface  ClearJobsCardProps {
+interface ClearJobsCardProps {
     removeJobsCallback: Function;
 }
 
@@ -24,7 +24,9 @@ export function ClearJobsCard({removeJobsCallback}: ClearJobsCardProps) {
     });
 
     return (
-        <Card>
+        <Card className={variants({
+            dragging: undefined,
+        })}>
             <CardContent className="flex place-content-center h-full whitespace-pre-wrap">
                 <Button
                     variant="ghost"

@@ -29,8 +29,7 @@ export function NewJobCard({addJobCallback}: MappingCardProps) {
     return (
         <Card
             className={variants({
-                dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
-                //: element.anonymous ? "anonymous" : element.self ? "self" : undefined,
+                dragging: undefined,
             })}>
             <CardContent className="flex place-content-center h-full whitespace-pre-wrap">
                 <Button
