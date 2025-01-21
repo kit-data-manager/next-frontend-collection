@@ -91,33 +91,6 @@ async function uploadFile(resourceId: string, filename: string, accessToken:stri
     }).then(json => res.status(201).json(json));
 }
 
-async function createResource(accessToken:string | undefined, req: NextApiRequest, res: NextApiResponse) {
-    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-    const url = `${repoBaseUrl}/api/v1/dataresources/`;
-
-    const headers = {
-        "Content-Type": "application/json",
-    };
-
-    if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    const body = req.body;
-
-    await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(body)
-    }).then(response => {
-        if (!response.ok) {
-            res.status(response.status).json({message: 'Failed to create resource.'});
-            Promise.reject( 'Failed to create resource.');
-        }
-        return response.json();
-    }).then(json => res.status(201).json(json));
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         res.status(400).json({message: 'Not existing endpoint'})
@@ -130,15 +103,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const {resourceId, filename} = req.query as {resourceId:string, filename:string};
 
-        if(!resourceId){
-            //create resource
-            await createResource(accessToken, req, res);
-        }else if(resourceId && filename){
+        if(resourceId && filename){
             //upload file
             await uploadFile(resourceId, filename, accessToken, req, res);
         }else{
             //invalid request
-            res.status(400).json({message: 'Endpoint must be either called with resourceId and body, or with resourceId, filename and body.'})
+            res.status(400).json({message: 'Endpoint must be either called with or with resourceId, filename and body.'})
             return
         }
 

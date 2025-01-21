@@ -88,7 +88,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const accessToken: string | undefined = session?.accessToken;
 
     try {
-
         const chunks1: never[] = [];
         const chunks2: never[] = [];
 
@@ -111,7 +110,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         formData.append(keys[0], new Blob([fileData1]));
         formData.append(keys[1], new Blob([fileData2]));
-
 
         //create resource
         await createResource(formData, accessToken, req, res);

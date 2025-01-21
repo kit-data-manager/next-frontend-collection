@@ -6,14 +6,15 @@ import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client_data";
-import Loader from "@/components/general/Loader";
+import {useSession} from "next-auth/react";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);
+    const {status } = useSession();
 
     useEffect(() => {
         fetchSchema(`/definitions/base-repo/models/resourceModel.json`).then(schema => setSchema(schema));
-    });
+    }, [status]);
 
     return (
         <main>

@@ -310,11 +310,11 @@ export async function updateDataResource(resource: object, etag: string) {
     }
 }
 
-export async function createDataResource(resource: object) {
+export async function createDataResource(resource: DataResource) {
     const headers = {
         "Content-Type": "application/json"
     };
-    const response = await fetchWithBasePath(`/api/base-repo/create`, {
+    const response = await fetchWithBasePath(`/api/base-repo/create_resource`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(resource)

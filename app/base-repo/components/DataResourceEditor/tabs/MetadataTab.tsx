@@ -36,6 +36,7 @@ export function MetadataTab({createMode, resource, etag, schema, userPrefs, upda
             {editorReady ? null :
                 <span>Loading editor...</span>
             }
+
             <JsonForm id="DataResource" schema={schema} data={resource}
                       setEditorReady={setEditorReady}
                       onChange={(d: object) => DataChanged(d, setConfirm, updateResourceCallback)}/>

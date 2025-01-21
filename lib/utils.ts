@@ -41,7 +41,6 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function fetchWithBasePath(relativePath: string, init?: any) {
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
-
     let res: Response = await fetch(`${basePath}${relativePath}`, init);
 
     if (!res.ok) {

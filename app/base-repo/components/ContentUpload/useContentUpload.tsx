@@ -18,18 +18,19 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, onCloseCal
         for (let i = 0; i < result.fileIDs.length; i++) {
             let fileID = result.fileIDs[i];
             const file = uppy.getFile(fileID);
+
             if (resourceId) {
                 uppy.setFileState(fileID, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
-                        endpoint: `${basePath}/api/base-repo/create?resourceId=${resourceId}`
+                        endpoint: `${basePath}/api/base-repo/create_content?resourceId=${resourceId}&filename=${file.name}`
                     }
                 })
             } else {
                 uppy.setFileState(fileID, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
-                        endpoint: `${basePath}/api/base-repo/create`
+                        endpoint: `${basePath}/api/base-repo/create_content`
                     }
                 })
             }

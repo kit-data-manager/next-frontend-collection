@@ -129,7 +129,6 @@ export const DoUpdateDataResource = (currentData: DataResource, etag: string, re
 
 export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance) => {
     const id = toast.loading("Creating resource...")
-
     createDataResource(currentData).then((json) => {
         toast.update(id, {
             render: "Resource created.", type: "success", isLoading: false, autoClose: 1000,

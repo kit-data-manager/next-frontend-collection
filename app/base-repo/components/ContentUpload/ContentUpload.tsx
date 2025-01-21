@@ -19,7 +19,7 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
     const router = useRouter();
     const [uppy, setUppy] = useState(() => new Uppy()
-        .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create`, method: "post", formData: true, fieldName: "file"}));
+        .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create_content`, method: "post", formData: true, fieldName: "file"}));
 
     const {theme} = useTheme();
     const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme?theme : "auto");
@@ -28,7 +28,7 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         setUppyTheme(theme === "system" ? "auto" : theme?theme : "auto");
         uppy.close();
         setUppy(new Uppy()
-            .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create`, method: "post", formData: true, fieldName: "file"}));
+            .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create_content`, method: "post", formData: true, fieldName: "file"}));
     }, [theme]);
 
     uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 10, thumbnailHeight: 10});
