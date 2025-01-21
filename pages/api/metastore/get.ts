@@ -28,6 +28,8 @@ async function getSchema(resourceId: string, accessToken: string | undefined, ty
             //transfer headers
             const headers = {};
             response.headers.forEach((value, key) => {
+                //when using apache proxy, mod_deflate may disturb here
+                //should be either disabled or "content-encoding" header should be removed before sending plain content
                 headers[key] = value;
             });
 
@@ -36,13 +38,13 @@ async function getSchema(resourceId: string, accessToken: string | undefined, ty
             if (type === "record") {
                 return response.json();
             } else {
-              return response.text();
+                return response.text();
             }
         }
     }).then(json => {
         if (type === "record") {
             return res.end(JSON.stringify(json));
-        }else{
+        } else {
             return res.end(json);
         }
     });
@@ -70,6 +72,8 @@ async function getMetadata(resourceId: string, accessToken: string | undefined, 
             //transfer headers
             const headers = {};
             response.headers.forEach((value, key) => {
+                //when using apache proxy, mod_deflate may disturb here
+                //should be either disabled or "content-encoding" header should be removed before sending plain content
                 headers[key] = value;
             });
 

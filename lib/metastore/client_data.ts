@@ -48,7 +48,6 @@ export async function fetchMetadataSchema(id: string, token?: string | undefined
 export async function fetchMetadataSchemaDocument(id: string, token?: string | undefined): Promise<string> {
     try {
         return fetchWithBasePath(`/api/metastore/get?resourceId=${id}&type=schemaDocument`).then(res => {
-            console.log("res.sta ", res.status);
             return res.text();
         })
     } catch (error) {
