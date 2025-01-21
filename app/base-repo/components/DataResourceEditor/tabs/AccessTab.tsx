@@ -173,6 +173,8 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
         if (issues.length > 0) {
             setIssues(issues);
             setOpenPermissionCheck(true);
+        }else{
+            doPermissionUpdate(true);
         }
     }
 
