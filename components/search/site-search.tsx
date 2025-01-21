@@ -11,7 +11,6 @@ export default function SiteSearch() {
     const searchOptions = buildSearchOptionsFromConfig()
     const facetsOptions = buildFacetConfigFromConfig()
     const searchUrl: string = (process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : "");
-
     const connector = new ElasticsearchAPIConnector({
         host: searchUrl,
         index: searchOptions.index_names.join(",")
@@ -27,8 +26,6 @@ export default function SiteSearch() {
         },
         apiConnector: connector
     }
-
-  //  const combinedConfig = useNextRouting(config, "http://localhost:3000");
     //TODO Use alternate ElasticSearch with MyLayout
     return (
             <div className="mt-6 flow-root">

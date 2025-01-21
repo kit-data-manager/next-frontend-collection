@@ -17,6 +17,7 @@ import MyBooleanFacet from "@/components/search/MyBooleanFacet";
 import DataCardResultView from "@/components/search/DataCardResultView";
 
 function ElasticSearch(config){
+
     return (
         <SearchProvider config={config}>
             <WithSearch mapContextToProps={({ wasSearched }) => ({ wasSearched })}>
@@ -27,6 +28,7 @@ function ElasticSearch(config){
                                 <Layout
                                     header={<SearchBox autocompleteSuggestions={true}/>}
                                     sideContent={
+                                    <>
                                         <div>
                                             {wasSearched && (
                                                 <Sorting
@@ -39,6 +41,7 @@ function ElasticSearch(config){
                                             ))
                                             }
                                         </div>
+                                    </>
                                     }
                                     bodyContent={
                                         <Results
