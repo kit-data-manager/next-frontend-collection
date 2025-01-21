@@ -20,7 +20,7 @@ import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
 
 export default function MainMenuMobile() {
     const {data: session, status} = useSession();
-    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
+    const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
     const pathname = usePathname();
 
     const items: SubMenu[] = getMenuEntries();

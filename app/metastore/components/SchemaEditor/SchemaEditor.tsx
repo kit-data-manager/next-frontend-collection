@@ -19,7 +19,7 @@ import {fetchMetadataSchema} from "@/lib/metastore/client_data";
 
 export default function SchemaEditor({...props}) {
     //general props
-    const target = props.target ? props.target : "upload";
+    const target = props.target ? props.target : "metadata";
     const id = props.id;
     const createMode = props.createMode;
     const router = useRouter();
@@ -48,7 +48,6 @@ export default function SchemaEditor({...props}) {
                 }
                 return res;
             }).then((res) => {
-                console.log("SET RES ", res);
                 setResource(res);
                 setIsLoading(false);
             }).catch(error => {

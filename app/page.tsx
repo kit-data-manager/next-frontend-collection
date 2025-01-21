@@ -20,7 +20,7 @@ export default async function Page() {
     }
 
     username = (!authError && session && session.user) ? session.user.name : "Anonymous User";
-    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
+    const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
 
     return (
         <main>

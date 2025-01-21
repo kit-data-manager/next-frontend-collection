@@ -15,7 +15,7 @@ import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 
 export default function MainMenu() {
-    const searchEnabled = process.env.SEARCH_BASE_URL != undefined;
+    const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
     const {data: session, status} = useSession();
 
     const items:SubMenu[] = getMenuEntries(true);
