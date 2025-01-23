@@ -1,17 +1,21 @@
 import {Acl, DataResource, Permission} from "@/lib/definitions";
 
 export function resourcePermissionForUser(resource:DataResource, userId:string | undefined, groups: string[] | undefined){
-    if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")){
+    if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")) {
         return permissionToNumber(Permission.ADMINISTRATE);
     }
-    let userPermission: Permission = Permission.READ;
-    resource.acls?.map((element: Acl, i:number) => {
-        if(element.sid === "anonymousUser"){
-            userPermission = element.permission;
-        }else if(userId && element.sid === userId){
-            return permissionToNumber(element.permission);
+
+    let userPermission: Permission = Permission.NONE;
+
+    const userAcl = resource.acls?.find(element => element.sid === userId);
+    if(userAcl){
+        userPermission = userAcl.permission;
+    }else{
+        const anonymousAcl = resource.acls?.find(element => element.sid === "anonymousUser");
+        if(anonymousAcl){
+            userPermission = anonymousAcl.permission;
         }
-    });
+    }
 
     return permissionToNumber(userPermission);
 }
