@@ -1,12 +1,10 @@
-"use server";
-
 import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client_data";
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/format-utils";
 import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 
-export default async function OverallStatusCardWrapper() {
+export default async function SystemStats() {
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
     const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
@@ -56,8 +54,11 @@ export default async function OverallStatusCardWrapper() {
         validTiles++;
     }
 
-    let missing = Array(4 - validTiles % 4).fill(0);
-
+    let missingCols = validTiles % 4;
+    let missing:number[] = [];
+    if(missingCols != 0){
+        missing = Array(missingCols).fill(0);
+    }
     return (
         <>
             {actuatorInfoBaseRepo ?

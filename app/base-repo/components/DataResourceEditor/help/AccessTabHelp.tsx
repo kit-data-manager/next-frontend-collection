@@ -48,7 +48,7 @@ export function AccessTabHelp(){
                                     which includes all users as well as anonymous access. Assigning permissions to this element will open the resource to the public. Once you finished changing permissions
                                     you may <Badge variant="thumb_set" className={"text-ring"}>Commit</Badge> changes.
                                      <br/><br/>
-                                        <span className={"text-warn "}>Be careful to only assign write/administrate permissions to people you trust. Pay special attention and re-check if you see a warning while updating permissions.</span>
+                                        <span className={"text-warn"}>Be careful to only assign write/administrate permissions to people you trust. Pay special attention and re-check if you see a warning while updating permissions.</span>
                             </span>
             </AlertDescription>
         </Alert>

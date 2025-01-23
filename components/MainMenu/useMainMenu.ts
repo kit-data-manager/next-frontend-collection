@@ -61,7 +61,7 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                     description: "Create a new Metadata Schema.",
                     requiresSession: true
                 },
-                {
+                /*{
                     name: 'Create Metadata',
                     href: `${basePath}/metastore/metadata/create`,
                     icon: PlusCircleIcon,
@@ -74,19 +74,19 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                     icon: PlusCircleIcon,
                     description: "Search for Metadata Documents.",
                     requiresSearch: true
-                },
+                },*/
                 {
                     name: 'Schemas',
                     href: `${basePath}/metastore/schemas`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Schema."
-                },
+                }/*,
                 {
                     name: 'Metadata',
                     href: `${basePath}/metastore/metadata`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Documents"
-                }
+                }*/
             ]
         });
     }
