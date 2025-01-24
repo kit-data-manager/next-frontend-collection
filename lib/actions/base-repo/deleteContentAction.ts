@@ -7,12 +7,14 @@ export class DeleteContentAction extends Action {
         super(`${REPO_ACTIONS.DELETE_CONTENT}_${resourceId}_${filename.replace(/_/g, '%5F')}`, "Delete", "material-symbols-light:skull-outline", 'Delete File');
     }
 
-    public static async performAction(actionId: string, redirect?: Function) {
+    public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
         const id = toast.loading("Deleting content...")
 
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const filename = parts[2].replace(/%5F/g, '_');
+        //require etag
+
 
         if (window.confirm(`Do you really want to delete the file ${filename}?`)) {
             await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&filename=${filename}`).then(response => {

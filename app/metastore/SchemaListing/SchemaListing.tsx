@@ -96,19 +96,19 @@ export default function SchemaListing({page, size, sort}: {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];
 
-                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                    if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanView(element, data?.user.id, data?.user.groups)) {
+                    if (userCanView(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new ViewSchemaAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                    if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new EditSchemaAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanDownload(element, data?.user.id, data?.user.groups)) {
+                    if (userCanDownload(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new DownloadAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
                     }
 

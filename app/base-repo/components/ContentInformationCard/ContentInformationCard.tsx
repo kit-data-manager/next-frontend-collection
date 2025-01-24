@@ -8,13 +8,15 @@ import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard
 import {ContentInformation} from "@/lib/definitions";
 import {ContentInformationCardProps} from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard.d";
 import {runAction} from "@/lib/actions/actionExecutor";
+import {useSession} from "next-auth/react";
 
 
 export default function ContentInformationCard(props:ContentInformationCardProps) {
+    const {data:session, status} = useSession();
 
     const handleAction = useDebouncedCallback((event) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        runAction(eventIdentifier, (redirect:string) => router?.push(redirect));
+        runAction(eventIdentifier,session?.accessToken, (redirect:string) => router?.push(redirect));
     });
 
     const router = useRouter();

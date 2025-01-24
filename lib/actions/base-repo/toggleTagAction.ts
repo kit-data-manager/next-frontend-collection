@@ -15,7 +15,7 @@ export class ToggleTagAction extends Action {
         return this.getActionId();
     }
 
-    public static async performAction(actionId: string, redirect?: Function) {
+    public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
         const id = toast.loading("Updating tags...");
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];

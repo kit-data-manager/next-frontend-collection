@@ -11,7 +11,7 @@ export class ToggleThumbAction extends Action {
         return this.getActionId();
     }
 
-    public static async performAction(actionId: string, redirect?: Function) {
+    public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
         const id = toast.loading("Toggle thumb tag...");
 
         let parts: string[] = actionId.split("_");

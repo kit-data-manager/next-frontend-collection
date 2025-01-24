@@ -42,9 +42,9 @@ export default function DataResourceListing({page, size, filter, sort}: {
         const eventIdentifier: string = event.detail.eventIdentifier;
         setSelectedResource(resource);
         if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
-            runAction(eventIdentifier, doQuickShare);
+            runAction(eventIdentifier, data?.accessToken, doQuickShare);
         } else {
-            runAction(eventIdentifier, (redirect: string) => {
+            runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
                 router.push(redirect);
             });
         }
@@ -92,19 +92,19 @@ export default function DataResourceListing({page, size, filter, sort}: {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];
 
-                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                    if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanView(element, data?.user.id, data?.user.groups)) {
+                    if (userCanView(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new ViewResourceAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanEdit(element, data?.user.id, data?.user.groups)) {
+                    if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new EditResourceAction(element.id).getDataCardAction());
                     }
 
-                    if (userCanDownload(element, data?.user.id, data?.user.groups)) {
+                    if (userCanDownload(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new DownloadResourceAction(element.id).getDataCardAction());
                     }
 

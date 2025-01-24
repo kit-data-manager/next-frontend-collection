@@ -1,5 +1,4 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import fetch from "node-fetch";
 
 function login(url:string, username: string|undefined, password:string){
     if(!username) {

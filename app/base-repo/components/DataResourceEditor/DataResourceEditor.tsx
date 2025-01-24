@@ -104,7 +104,7 @@ export default function DataResourceEditor({...props}) {
                 return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
             }
 
-            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
 
             if (permission < permissionToNumber(Permission.WRITE)) {
                 return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})

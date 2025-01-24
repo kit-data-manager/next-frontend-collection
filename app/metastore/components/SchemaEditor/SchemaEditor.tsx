@@ -68,7 +68,7 @@ export default function SchemaEditor({...props}) {
                 return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
             }
 
-            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
 
             if (permission < permissionToNumber(Permission.WRITE)) {
                 return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})

@@ -45,7 +45,7 @@ export default function Page({params}) {
     const handleAction = useDebouncedCallback((event, resource: DataResource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
 
-        runAction(eventIdentifier, (redirect: string) => {
+        runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
             router.push(redirect);
         });
     });
@@ -95,16 +95,16 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
     }
 
-    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.id, data?.user.groups);
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
     if (permission < permissionToNumber(Permission.READ)) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
     }
 
-    if (userCanEdit(resource, data?.user.id, data?.user.groups)) {
+    if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
         actionEvents.push(new EditSchemaAction(resource.id).getDataCardAction());
     }
 
-    if (userCanDelete(resource, data?.user.id, data?.user.groups)) {
+    if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {
         if (resource.state == State.REVOKED) {
             actionEvents.push(new DeleteResourceAction(resource.id, etag).getDataCardAction());
         } else {
@@ -112,7 +112,7 @@ export default function Page({params}) {
         }
     }
 
-    if (userCanDownload(resource, data?.user.id, data?.user.groups)) {
+    if (userCanDownload(resource, data?.user.preferred_username, data?.user.groups)) {
         actionEvents.push(new DownloadAction(resource.id, "schema", resource.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
     }
 

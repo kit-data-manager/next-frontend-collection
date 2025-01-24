@@ -11,7 +11,7 @@ import {
 import {filterFormToDataResource} from "@/lib/filter-utils";
 import {fetchWithBasePath} from "@/lib/utils";
 
-export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string): Promise<DataResourcePage> {
+export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {
         const realPage = Math.max(page - 1, 0);
         let filterExample = filterFormToDataResource(filter);
@@ -20,9 +20,20 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
             sorting = "lastUpdate,desc";
         }
 
+        const headers = {
+            "Accept": "application/json",
+        };
+
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
         if (filterExample) {
-            return await fetchWithBasePath(`/api/base-repo/list?page=${realPage}&size=${size}&sort=${sorting}`, {
+            return await fetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "POST",
+                headers: headers,
                 body: JSON.stringify(filterExample)
             }).then(async (res) => {
                 const resourcePage: DataResourcePage = {} as DataResourcePage;
@@ -37,7 +48,10 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
                 return resourcePage;
             });
         } else {
-            return await fetchWithBasePath(`/api/base-repo/list?page=${realPage}&size=${size}&sort=${sorting}`).then(async (res) => {
+            return await fetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=${sorting}`, {
+                method: "GET",
+                headers: headers,
+            }).then(async (res) => {
                 const resourcePage: DataResourcePage = {} as DataResourcePage;
                 resourcePage.resources = await res.json();
                 resourcePage.page = page;
@@ -57,9 +71,19 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
     }
 }
 
-export async function fetchDataResource(id: string, token?: string | undefined): Promise<DataResource> {
+export async function fetchDataResource(resourceId: string, accessToken?: string | undefined): Promise<DataResource> {
     try {
-        return fetchWithBasePath(`/api/base-repo/get?resourceId=${id}`).then(res => {
+        const headers = {
+            "Accept": "application/json",
+        };
+
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
+        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`).then(res => {
             return {
                 etag: res.headers.get('etag'),
                 json: res.json()
@@ -86,14 +110,25 @@ export function getAclDiff(sids: string[], acl: Acl[]) {
     return sidDiff;
 }
 
-export async function patchDataResourceForQuickShare(id: string, etag: string, sids: string[]) {
+export async function patchDataResourceForQuickShare(resourceId: string, etag: string, sids: string[], accessToken?: string | undefined) {
     const patch: any[] = [];
     sids.map((sid: string) => {
         patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission': "READ"}});
     })
 
+    const headers = {
+        "If-Match": etag,
+        "Content-Type": "application/json-patch+json",
+    };
+
+    if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
+    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
     try {
-        return fetchWithBasePath(`/api/base-repo/patch?resourceId=${id}&etag=${etag}`, {
+        return fetch(`${repoBaseUrl}/api/v1/dataresourcxes/${resourceId}`, {
             method: "PATCH",
             body: JSON.stringify(patch)
         }).then(res => res.status);
@@ -103,10 +138,21 @@ export async function patchDataResourceForQuickShare(id: string, etag: string, s
     }
 }
 
-export async function patchDataResourceAcls(id: string, etag: string, patch: any[]) {
+export async function patchDataResourceAcls(resourceId: string, etag: string, patch: any[], accessToken?: string | undefined) {
     try {
-        return fetchWithBasePath(`/api/base-repo/patch?resourceId=${id}&etag=${etag}`, {
+        const headers = {
+            "If-Match": etag,
+            "Content-Type": "application/json-patch+json",
+        };
+
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
+        return fetch(`${repoBaseUrl}/api/v1/dataresourcxes/${resourceId}`, {
             method: "PATCH",
+            headers: headers,
             body: JSON.stringify(patch)
         }).then(res => res.status);
     } catch (error) {
@@ -115,9 +161,18 @@ export async function patchDataResourceAcls(id: string, etag: string, patch: any
     }
 }
 
-export async function fetchAllContentInformation(resource: DataResource, token?: string | undefined): Promise<ContentInformation[]> {
+export async function fetchAllContentInformation(resource: DataResource, accessToken?: string | undefined): Promise<ContentInformation[]> {
     try {
-        return await fetchWithBasePath(`/api/base-repo/list?resourceId=${resource.id}`).then(res => res.json()).catch(error => {
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
+        return await fetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`, {
+            method:"GET",
+            headers: headers
+        }).then(res => res.json()).catch(error => {
             throw error
         });
     } catch (error) {
@@ -126,14 +181,14 @@ export async function fetchAllContentInformation(resource: DataResource, token?:
     }
 }
 
-export async function fetchDataResourceEtag(id: string, token?: string | undefined) {
+export async function fetchDataResourceEtag(id: string, accessToken?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         let headers = {"Accept": "application/json"};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
         }
-        return await fetchWithBasePath(`${repoBaseUrl}/api/v1/dataresources/${id}`,
+        return await fetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
             {headers: headers}).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
@@ -291,13 +346,18 @@ export async function myFetch(url: string, init?: any, onlyExpectBody: boolean =
     return res;
 }
 
-export async function updateDataResource(resource: object, etag: string) {
+export async function updateDataResource(resource: object, etag: string, accessToken?: string) {
     const headers = {
         "Content-Type": "application/json",
         "If-Match": etag
     };
 
-    const response = await fetchWithBasePath(`/api/base-repo/update?resourceId=${resource["id"]}&etag=${etag}`, {
+    if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
+
+    const response = await fetch(`${baseUrl}/api/v1/dataresources/${resource['id']}}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(resource)
@@ -310,11 +370,16 @@ export async function updateDataResource(resource: object, etag: string) {
     }
 }
 
-export async function createDataResource(resource: DataResource) {
+export async function createDataResource(resource: DataResource, accessToken?: string) {
     const headers = {
         "Content-Type": "application/json"
     };
-    const response = await fetchWithBasePath(`/api/base-repo/create_resource`, {
+    if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
+
+    const response = await fetch(`${baseUrl}/api/v1/dataresources/`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(resource)

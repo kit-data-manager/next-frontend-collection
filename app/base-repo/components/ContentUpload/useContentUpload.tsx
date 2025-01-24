@@ -1,19 +1,21 @@
 import {toast} from "react-toastify";
 import Uppy from "@uppy/core";
 
-export function installEventHandlers(uppy: Uppy, resourceId?: string, onCloseCallback?: Function) {
+export function installEventHandlers(uppy: Uppy, resourceId?: string, accessToken?: string, onCloseCallback?: Function) {
     //add filename to metadata
     // @ts-ignore
-    uppy.off("file-added", undefined).on('file-added', (file) => {
+    uppy.off("file-added", () => {
+    }).on('file-added', (file) => {
         uppy.setFileMeta(file.id, {
             name: file.name,
         });
     });
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
 
     //add filename to base-url
     // @ts-ignore
-    uppy.off("upload", null).on('upload', (result) => {
+    uppy.off("upload", () => {
+    }).on('upload', (result) => {
 
         for (let i = 0; i < result.fileIDs.length; i++) {
             let fileID = result.fileIDs[i];
@@ -23,14 +25,18 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, onCloseCal
                 uppy.setFileState(fileID, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
-                        endpoint: `${basePath}/api/base-repo/create_content?resourceId=${resourceId}&filename=${file.name}`
+                        //endpoint: `${basePath}/api/base-repo/createContent?resourceId=${resourceId}&filename=${file.name}`
+                        endpoint: `${baseUrl}/api/v1/dataresources/${resourceId}/data/${file.name}`,
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`
+                        }
                     }
                 })
             } else {
                 uppy.setFileState(fileID, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
-                        endpoint: `${basePath}/api/base-repo/create_content`
+                        endpoint: `${baseUrl}/api/v1/dataresources/`
                     }
                 })
             }

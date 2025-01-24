@@ -9,6 +9,7 @@ import '@uppy/dashboard/dist/style.min.css';
 import {useRouter} from 'next/navigation'
 import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
 import {useTheme} from "next-themes";
+import {useSession} from "next-auth/react";
 
 interface ContentUploadProps {
     id: string;
@@ -16,10 +17,12 @@ interface ContentUploadProps {
 }
 
 export default function ContentUpload({id, reloadCallback}: ContentUploadProps) {
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "");
     const router = useRouter();
+
     const [uppy, setUppy] = useState(() => new Uppy()
-        .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create_content`, method: "post", formData: true, fieldName: "file"}));
+        .use(XHRUpload, {endpoint: `${baseUrl}/api/v1/dataresources`, method: "post", formData: true, fieldName: "file"}));
+    const {data, status} = useSession();
 
     const {theme} = useTheme();
     const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme?theme : "auto");
@@ -28,8 +31,11 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         setUppyTheme(theme === "system" ? "auto" : theme?theme : "auto");
         uppy.close();
         setUppy(new Uppy()
-            .use(XHRUpload, {endpoint: `${basePath}/api/base-repo/create_content`, method: "post", formData: true, fieldName: "file"}));
-    }, [theme]);
+            .use(XHRUpload, {endpoint: `${baseUrl}/api/v1/dataresources`, method: "post", formData: true, fieldName: "file"}));
+        installEventHandlers(uppy, id, data?.accessToken, () => {
+            reloadCallback(`/base-repo/resources/${id}/edit?target=content`);
+        });
+    }, [theme, status]);
 
     uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 10, thumbnailHeight: 10});
 
@@ -38,9 +44,10 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         restrictions: {maxNumberOfFiles: 10}
     })
 
-    installEventHandlers(uppy, id, () => {
+    installEventHandlers(uppy, id, data?.accessToken, () => {
         reloadCallback(`/base-repo/resources/${id}/edit?target=content`);
     });
+
 
     return (
         <div className="w-full flex mb-6 justify-left">

@@ -37,7 +37,7 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
     }
 }
 
-export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback:Function) => {
+export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback:Function, accessToken?:string|undefined) => {
     const id = toast.loading("Processing permission update...")
 
     const additions: any[] = [];
@@ -78,7 +78,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     orderedPatches.push(...removals);
     orderedPatches.push(...additions);
 
-    patchDataResourceAcls(currentData.id, etag, orderedPatches).then((status) => {
+    patchDataResourceAcls(currentData.id, etag, orderedPatches,accessToken).then((status) => {
         if (status === 204) {
             toast.update(id, {
                 render: `${orderedPatches.length} updates successfully applied.`,
@@ -107,10 +107,10 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     });
 }
 
-export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback:Function) => {
+export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
     const id = toast.loading("Updating resource...")
 
-    updateDataResource(currentData, etag ? etag : '').then((status) => {
+    updateDataResource(currentData, etag ? etag : '',accessToken).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
@@ -127,9 +127,9 @@ export const DoUpdateDataResource = (currentData: DataResource, etag: string, re
     });
 }
 
-export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance) => {
+export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance, accessToken?:string|undefined) => {
     const id = toast.loading("Creating resource...")
-    createDataResource(currentData).then((json) => {
+    createDataResource(currentData,accessToken).then((json) => {
         toast.update(id, {
             render: "Resource created.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {

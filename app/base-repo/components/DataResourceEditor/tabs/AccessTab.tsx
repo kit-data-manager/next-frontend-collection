@@ -181,7 +181,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
     function doPermissionUpdate(result: boolean) {
         setOpenPermissionCheck(false);
         if (result) {
-            DoUpdatePermissions(resource, etag, elements, reloadCallback);
+            DoUpdatePermissions(resource, etag, elements, reloadCallback, data?.accessToken);
         }
     }
 

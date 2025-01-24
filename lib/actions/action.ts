@@ -52,7 +52,7 @@ export class Action {
         return this.actionId;
     }
 
-    public static async performAction(actionId: string, callback?: Function) {
+    public static async performAction(actionId: string, accessToken?: string|undefined, callback?: (redirectTarget:string) => void) {
         console.log("performAction not overwritten!");
     }
 

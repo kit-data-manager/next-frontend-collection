@@ -5,12 +5,12 @@ export class QuickShareResourceAction extends Action{
         super(`${REPO_ACTIONS.QUICK_SHARE}_${resourceId}`, "QuickShare", "solar:share-outline", 'QuickShare Resource');
     }
 
-    public static async performAction(actionId:string, redirect?: Function){
+    public static async performAction(actionId:string, accessToken?: string|undefined, callback?: (redirectTarget:string) => void){
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
 
-        if(redirect) {
-            redirect(`/base-repo/resources/`);
+        if(callback) {
+            callback(`/base-repo/resources/`);
         }else{
             console.error("Redirect function missing.");
         }

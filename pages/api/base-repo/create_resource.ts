@@ -18,8 +18,6 @@ async function createResource(accessToken:string | undefined, req: NextApiReques
 
     const body =  req.body;
 
-    console.log("BOD ",  req.body);
-
     await fetch(url, {
         method: "POST",
         headers: headers,

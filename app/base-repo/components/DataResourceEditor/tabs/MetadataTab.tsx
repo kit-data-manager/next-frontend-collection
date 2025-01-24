@@ -11,6 +11,7 @@ import {DataResource} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 import {useRouter} from "next/navigation";
 import {MetadataTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/MetadataTabHelp";
+import {useSession} from "next-auth/react";
 
 interface MetadataTabProps {
     createMode: boolean;
@@ -25,6 +26,7 @@ interface MetadataTabProps {
 export function MetadataTab({createMode, resource, etag, schema, userPrefs, updateResourceCallback, reloadCallback}: MetadataTabProps) {
     const [editorReady, setEditorReady] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    const {data, status} = useSession();
 
     const router = useRouter();
 
@@ -43,13 +45,13 @@ export function MetadataTab({createMode, resource, etag, schema, userPrefs, upda
             {!createMode ?
                 <ConfirmCancelComponent confirmLabel={"Commit"}
                                         cancelLabel={"Cancel"}
-                                        confirmCallback={() => DoUpdateDataResource(resource, etag, reloadCallback)}
+                                        confirmCallback={() => DoUpdateDataResource(resource, etag, reloadCallback, data?.accessToken)}
                                         cancelHref={`/base-repo/resources/${resource.id}`}
                                         confirm={confirm}
                 /> :
                 <ConfirmCancelComponent confirmLabel={"Create"}
                                         cancelLabel={"Cancel"}
-                                        confirmCallback={() => DoCreateDataResource(resource, router)}
+                                        confirmCallback={() => DoCreateDataResource(resource, router, data?.accessToken)}
                                         cancelHref={`/base-repo/resources`}
                                         confirm={confirm}
                 />

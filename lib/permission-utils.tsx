@@ -6,7 +6,6 @@ export function resourcePermissionForUser(resource:DataResource, userId:string |
     }
 
     let userPermission: Permission = Permission.NONE;
-
     const userAcl = resource.acls?.find(element => element.sid === userId);
     if(userAcl){
         userPermission = userAcl.permission;

@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {Formidable} from "formidable";
-import {PassThrough, Writable} from "node:stream";
+import {Writable} from "node:stream";
 
 //promise api route config
 export const config = {
@@ -25,7 +25,6 @@ function formidablePromise(
             if (err) {
                 return reject(err);
             }
-            console.log("fields ", files);
             return accept({fields, files});
         });
     });

@@ -53,7 +53,7 @@ const fileConsumer = <T = unknown>(acc: T[]) => {
 async function uploadFile(resourceId: string, filename: string, accessToken:string | undefined, req: NextApiRequest, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
     const url = `${repoBaseUrl}/api/v1/dataresources/${resourceId}/data/${filename}`;
-
+console.log("Target ", url);
     const headers = {
     };
 
@@ -69,14 +69,13 @@ async function uploadFile(resourceId: string, filename: string, accessToken:stri
         // consume this, otherwise formidable tries to save the file to disk
         fileWriteStreamHandler: () => fileConsumer(chunks),
     });
-
     //concat received chunks
     const fileData = Buffer.concat(chunks);
-
     //create form data
     const formData = new FormData();
     formData.append('file', new Blob([fileData]));
 
+    console.log("Do POST");
     //submit
     await fetch(url, {
         method: "POST",
@@ -84,11 +83,14 @@ async function uploadFile(resourceId: string, filename: string, accessToken:stri
         body: formData
     }).then(response => {
         if (response.status != 201) {
+            console.log("Success");
             res.status(response.status).json({message: `Failed to upload file ${filename}.`});
             Promise.reject(`Failed to upload file ${filename}.`);
         }
         res.status(201).end();
     }).then(json => res.status(201).json(json));
+
+
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -96,15 +98,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({message: 'Not existing endpoint'})
         return
     }
+    console.log("In Handler");
 
     const session:ExtendedSession | null = await getServerSession(req, res, authOptions);
     const accessToken:string | undefined = session?.accessToken;
 
     try {
-        const {resourceId, filename} = req.query as {resourceId:string, filename:string};
 
+        const {resourceId, filename} = req.query as {resourceId:string, filename:string};
+console.log("Params {}, //{}", resourceId, filename)
         if(resourceId && filename){
             //upload file
+            console.log("Call async");
             await uploadFile(resourceId, filename, accessToken, req, res);
         }else{
             //invalid request
@@ -114,7 +119,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     } catch (exception) {
         //Conceal the exception, but log it
-        console.warn(exception)
+        console.log("ERROR!!!");
+        console.log(exception);
         res.status(500).json({message: 'Internal Server Error'});
     }
 }

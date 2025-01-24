@@ -5,7 +5,7 @@ export class ViewResourceAction extends Action{
         super(`${REPO_ACTIONS.VIEW_RESOURCE}_${resourceId}`, "View", "material-symbols-light:eye-tracking-outline", 'View Resource');
     }
 
-    public static async performAction(actionId:string, redirect?: Function){
+    public static async performAction(actionId:string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void){
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
 

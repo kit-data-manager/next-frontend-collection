@@ -32,11 +32,11 @@ export function ContentTab({resource, content, userPrefs, session, actionCallbac
                     <div className="rounded-lg p-2 mt-2 md:pt-0">
                         {content.map((element: ContentInformation, i: number) => {
                             let actionEvents: ActionButtonInterface[] = [];
-                            if (userCanDelete(resource, session?.user.id, session?.user.groups)) {
+                            if (userCanDelete(resource, session?.user.preferred_username, session?.user.groups)) {
                                 actionEvents.push(new DeleteContentAction(resource.id, element.relativePath).getDataCardAction());
                             }
 
-                            if (userCanDownload(resource, session?.user.id, session?.user.groups)) {
+                            if (userCanDownload(resource, session?.user.preferred_username, session?.user.groups)) {
                                 actionEvents.push(new DownloadContentAction(resource.id, element.relativePath).getDataCardAction());
                             }
 
