@@ -99,13 +99,16 @@ export async function patchDataResourceAcls(id: string, etag: string, patch: any
 
 export async function fetchMetadataSchemaEtag(id: string, token?: string | undefined) {
     try {
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
+        const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
         let headers = {"Accept": "application/json"};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await fetchWithBasePath(`/api/metastore/get?resourceId=${id}&type=schemaRecord`,
-            {headers: headers}).then(result => result.headers.get("ETag"));
+        return await fetch(`${metastoreBaseUrl}/api/v2/schemas/${id}`,
+            {
+                method:"GET",
+                headers: headers
+            }).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch schema ETag. Error:', error);
         return undefined;
@@ -130,8 +133,31 @@ export async function myFetch(url: string, init?: any, onlyExpectBody: boolean =
     return res;
 }
 
-export async function updateMetadataSchema(resource: DataResource) {
-    const response = await fetchWithBasePath(`/api/metastore/update?resourceId=${resource["id"]}&etag=${resource.etag}&type=schema`, {
+export async function updateMetadataSchema(resource: DataResource, etag:string, accessToken?: string|undefined) {
+    const headers = {
+        "Content-Type": "application/json",
+        "If-Match": etag
+    };
+
+    if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
+
+    const response = await fetch(`${metastoreBaseUrl}/api/v2/schemas/${resource['id']}}`, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(resource)
+    });
+
+    if (response.status === 200) {
+        return response.status;
+    } else {
+        throw new ResponseError('Failed to update metadata schema.', response);
+    }
+
+
+    /* const response = await fetchWithBasePath(`/api/metastore/update?resourceId=${resource["id"]}&etag=${resource.etag}&type=schema`, {
         method: "PUT",
         body: JSON.stringify(resource)
     });
@@ -140,22 +166,5 @@ export async function updateMetadataSchema(resource: DataResource) {
         return response.status;
     } else {
         throw new ResponseError('Failed to update resource.', response);
-    }
-}
-
-export async function createDataResource(resource: object) {
-    const headers = {
-        "Content-Type": "application/json"
-    };
-    const response = await fetchWithBasePath(`/api/base-repo/create`, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(resource)
-    });
-
-    if (response.status === 201) {
-        return response.json();
-    } else {
-        throw new ResponseError('Failed to create resource.', response);
-    }
+    }*/
 }

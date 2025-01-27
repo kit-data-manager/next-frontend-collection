@@ -48,8 +48,7 @@ export const propertiesForContentInformation = (resourceId: string,
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     let image = `${basePath}/data.png`;
-
-    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext)) && content.size < 100*1024) {
+    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext)) && content.size < 160*1024) {
         let isThumb = content.tags && content.tags.includes("thumb");
         let thumbTag: Tag;
         if (disableChangeThumb) {

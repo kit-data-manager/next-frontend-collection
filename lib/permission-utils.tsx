@@ -4,7 +4,6 @@ export function resourcePermissionForUser(resource:DataResource, userId:string |
     if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")) {
         return permissionToNumber(Permission.ADMINISTRATE);
     }
-
     let userPermission: Permission = Permission.NONE;
     const userAcl = resource.acls?.find(element => element.sid === userId);
     if(userAcl){

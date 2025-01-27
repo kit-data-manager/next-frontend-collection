@@ -17,7 +17,7 @@ export function ContentTabHelp() {
                                     or you can <Badge variant="outline"><Icon fontSize={16}
                                                                               icon={"material-symbols-light:skull-outline"}/> Delete</Badge> files if you have WRITE permissions.
                                     Furthermore, you can mark a file as <Badge variant="thumb_unset">Thumb</Badge> image. A thumb is shown in the resources listing and can be assigned to all files of type jpg, gif, and png
-                                    which are smaller than 100 Kb. Active thumb images are marked with <Badge
+                                    which are smaller than 160 Kb. Active thumb images are marked with <Badge
                                         variant="thumb_set">Thumb</Badge>. If multiple files are marked as thumb, only the latest assignment will count.
                                 </span>
                 <br/><br/>

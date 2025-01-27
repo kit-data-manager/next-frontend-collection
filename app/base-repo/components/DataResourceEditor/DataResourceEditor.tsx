@@ -59,7 +59,7 @@ export default function DataResourceEditor({...props}) {
             }
         }
 
-        runAction(eventIdentifier, (redirect: string) => {
+        runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
             //reset etag for reload
             setMustReload(true);
             router.push(redirect);

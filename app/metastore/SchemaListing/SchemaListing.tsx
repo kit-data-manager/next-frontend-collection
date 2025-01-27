@@ -40,9 +40,9 @@ export default function SchemaListing({page, size, sort}: {
         setSelectedResource(resource);
 
         if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
-            runAction(eventIdentifier, doQuickShare);
+            runAction(eventIdentifier, data?.accessToken, doQuickShare);
         } else {
-            runAction(eventIdentifier, (redirect: string) => {
+            runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
                 router.push(redirect);
             });
         }

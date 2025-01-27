@@ -53,7 +53,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
     useEffect(() => {
         if (status != "loading") {
             setIsLoading(true);
-            fetchDataResources(page, size, filter, sort).then((page) => {
+            fetchDataResources(page, size, filter, sort, data?.accessToken).then((page) => {
                 setTotalPages(page.totalPages);
                 setResources(page.resources);
                 setIsLoading(false);
@@ -80,7 +80,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
 
         const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
         //@TODO error notification if etag is not available
-        patchDataResourceForQuickShare(selectedResource.id, selectedResource.etag ? selectedResource.etag : "", aclEntries).finally(() => {
+        patchDataResourceForQuickShare(selectedResource.id, selectedResource.etag ? selectedResource.etag : "", aclEntries, data?.accessToken).finally(() => {
             router.push('/base-repo/resources');
         })
     }

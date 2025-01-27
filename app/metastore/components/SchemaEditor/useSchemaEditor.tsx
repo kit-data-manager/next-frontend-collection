@@ -108,10 +108,10 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     });
 }
 
-export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function) => {
+export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
     const id = toast.loading("Updating schema...")
 
-    updateMetadataSchema(currentData).then((status) => {
+    updateMetadataSchema(currentData, accessToken).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
@@ -128,10 +128,10 @@ export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCa
     });
 }
 
-export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance) => {
+export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance, accessToken?:string|undefined) => {
     const id = toast.loading("Creating resource...")
 
-    createDataResource(currentData).then((json) => {
+    createDataResource(currentData, accessToken).then((json) => {
         toast.update(id, {
             render: "Resource created.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {

@@ -78,7 +78,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     orderedPatches.push(...removals);
     orderedPatches.push(...additions);
 
-    patchDataResourceAcls(currentData.id, etag, orderedPatches,accessToken).then((status) => {
+    patchDataResourceAcls(currentData.id, etag, orderedPatches, accessToken).then((status) => {
         if (status === 204) {
             toast.update(id, {
                 render: `${orderedPatches.length} updates successfully applied.`,

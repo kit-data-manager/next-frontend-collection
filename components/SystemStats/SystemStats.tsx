@@ -1,10 +1,14 @@
 import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client_data";
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/format-utils";
-import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
+import {ActuatorInfo, ExtendedSession, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function SystemStats() {
+    const data:ExtendedSession | null = await getServerSession(authOptions);
+
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
     const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
@@ -30,22 +34,22 @@ export default async function SystemStats() {
     let validTiles = 0;
 
     if (repoAvailable) {
-        actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl);
+        actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if (metaStoreAvailable) {
-        actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl);
+        actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if (mappingAvailable) {
-        actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl);
+        actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if(typedPidMakerAvailable){
-        actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl);
+        actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl, data?.accessToken);
         validTiles++;
     }
 

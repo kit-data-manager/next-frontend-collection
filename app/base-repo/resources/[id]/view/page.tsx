@@ -36,7 +36,7 @@ export default function Page({params}) {
     const handleAction = useDebouncedCallback((event, resource: DataResource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
 
-        runAction(eventIdentifier, (redirect: string) => {
+        runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
             router.push(redirect);
         });
     });

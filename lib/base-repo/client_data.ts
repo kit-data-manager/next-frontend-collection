@@ -50,7 +50,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
         } else {
             return await fetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "GET",
-                headers: headers,
+                headers: headers
             }).then(async (res) => {
                 const resourcePage: DataResourcePage = {} as DataResourcePage;
                 resourcePage.resources = await res.json();
@@ -83,7 +83,10 @@ export async function fetchDataResource(resourceId: string, accessToken?: string
 
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
-        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`).then(res => {
+        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
+            method: "GET",
+            headers: headers
+        }).then(res => {
             return {
                 etag: res.headers.get('etag'),
                 json: res.json()
@@ -130,6 +133,7 @@ export async function patchDataResourceForQuickShare(resourceId: string, etag: s
     try {
         return fetch(`${repoBaseUrl}/api/v1/dataresourcxes/${resourceId}`, {
             method: "PATCH",
+            headers: headers,
             body: JSON.stringify(patch)
         }).then(res => res.status);
     } catch (error) {
@@ -189,7 +193,10 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string | u
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
         return await fetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
-            {headers: headers}).then(result => result.headers.get("ETag"));
+            {
+                method:"GET",
+                headers: headers
+            }).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
         return undefined;
@@ -370,7 +377,7 @@ export async function updateDataResource(resource: object, etag: string, accessT
     }
 }
 
-export async function createDataResource(resource: DataResource, accessToken?: string) {
+export async function createDataResource(resource: DataResource, accessToken?: string | undefined) {
     const headers = {
         "Content-Type": "application/json"
     };
