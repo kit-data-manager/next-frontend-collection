@@ -5,6 +5,7 @@
   "properties": {
     "id": {
       "type": "integer",
+      "default": null,
       "propertyOrder": 1,
       "readOnly": true,
       "options": {

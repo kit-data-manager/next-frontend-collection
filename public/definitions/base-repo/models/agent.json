@@ -11,7 +11,9 @@
   "properties": {
     "id": {
       "type": "integer",
-      "options": {
+      "default": null,
+      "readOnly":true,
+      "options":{
         "hidden": true
       }
     },

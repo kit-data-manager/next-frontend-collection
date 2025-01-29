@@ -6,6 +6,7 @@
   "properties": {
     "id": {
       "type": "integer",
+      "default": null,
       "readOnly": true,
       "options": {
         "hidden": true

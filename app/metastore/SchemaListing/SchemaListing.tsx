@@ -84,7 +84,8 @@ export default function SchemaListing({page, size, sort}: {
             selectedResource.acls.push({"sid": sid, permission: Permission.READ});
         })
 
-        updateMetadataSchema(selectedResource, data?.accessToken).finally(() => {
+        //@TODO add etag
+        updateMetadataSchema(selectedResource, "",data?.accessToken).finally(() => {
             router.push('/metastore/schemas');
         })
     }

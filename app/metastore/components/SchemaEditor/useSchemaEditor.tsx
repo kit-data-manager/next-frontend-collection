@@ -111,7 +111,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
 export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
     const id = toast.loading("Updating schema...")
 
-    updateMetadataSchema(currentData, accessToken).then((status) => {
+    updateMetadataSchema(currentData, etag, accessToken).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {

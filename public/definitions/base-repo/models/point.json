@@ -3,8 +3,13 @@
   "title": "Point",
   "properties": {
     "id": {
-      "type": "integer"
-    },
+      "type": "integer",
+      "default": null,
+      "readOnly":true,
+      "options": {
+        "hidden": true
+      }
+   },
     "latitude": {
       "type": "number"
     },

@@ -10,6 +10,7 @@ let contentModel = {
     "id": {
       "type": "integer",
       "readOnly": true,
+      "default": null,
       "options": {
         "hidden": true
       }

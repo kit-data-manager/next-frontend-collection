@@ -1,5 +1,4 @@
 {
-    "$schema": "https://json-schema.org/draft/2019-09/schema",
     "type": "object",
     "headerTemplate": "Data Resource {{#if self.id}} #{{ self.id }} {{else}} (New) {{/if}}",
     "options": {
@@ -11,10 +10,11 @@
         "id": {
             "type": "string",
             "propertyOrder": 1,
-            "readOnly": true,
             "title": "Internal Identifier",
+            "default": null,
+            "readOnly":true,
             "options":{
-                "infoText": "The internal identifier of the resource."
+                "hidden": true
             }
         },
         "publisher": {

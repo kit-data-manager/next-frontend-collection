@@ -56,6 +56,7 @@ export default function JsonForm(props) {
         titleHidden: true,
         disable_edit_json: true,
         remove_empty_properties: true,
+        remove_false_properties: true,
         disable_properties: true,
         prompt_before_delete: true,
         no_additional_properties: true,
