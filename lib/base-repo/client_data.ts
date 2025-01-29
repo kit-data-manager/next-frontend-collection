@@ -364,7 +364,7 @@ export async function updateDataResource(resource: object, etag: string, accessT
     }
     const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
 
-    const response = await fetch(`${baseUrl}/api/v1/dataresources/${resource['id']}}`, {
+    const response = await fetch(`${baseUrl}/api/v1/dataresources/${resource['id']}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(resource)
