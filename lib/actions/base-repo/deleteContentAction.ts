@@ -1,10 +1,9 @@
 import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
-import {fetchWithBasePath} from "@/lib/utils";
 
 export class DeleteContentAction extends Action {
-    constructor(resourceId: string, filename: string) {
-        super(`${REPO_ACTIONS.DELETE_CONTENT}_${resourceId}_${filename.replace(/_/g, '%5F')}`, "Delete", "material-symbols-light:skull-outline", 'Delete File');
+    constructor(resourceId: string, filename: string, etag:string) {
+        super(`${REPO_ACTIONS.DELETE_CONTENT}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}`, "Delete", "material-symbols-light:skull-outline", 'Delete File');
     }
 
     public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
@@ -13,11 +12,24 @@ export class DeleteContentAction extends Action {
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const filename = parts[2].replace(/%5F/g, '_');
-        //require etag
+        const etag = parts[3];
 
+        //require etag
+        const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
+
+        const headers = {
+            "If-Match": etag
+        };
+
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
 
         if (window.confirm(`Do you really want to delete the file ${filename}?`)) {
-            await fetchWithBasePath(`/api/base-repo/delete?resourceId=${identifier}&filename=${filename}`).then(response => {
+            await fetch(`${baseUrl}/api/v1/dataresources/${identifier}/data/${filename}`, {
+                method: "DELETE",
+                headers: headers
+            }).then(response => {
                 if (response.status === 204) {
                     toast.update(id, {
                         render: `Content ${filename} successfully deleted.`,

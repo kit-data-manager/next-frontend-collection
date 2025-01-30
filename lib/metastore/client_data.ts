@@ -55,7 +55,7 @@ export async function fetchMetadataSchemaDocument(id: string, token?: string | u
         return Promise.reject("No schema found");
     }
 }
-
+/*
 export function getAclDiff(sids: string[], acl: Acl[]) {
     const sidDiff: string[] = [];
 
@@ -94,7 +94,7 @@ export async function patchDataResourceAcls(id: string, etag: string, patch: any
         console.error('Failed to patch resource. Error:', error);
         return Promise.reject("Failed to patch resource.");
     }
-}
+}*/
 
 
 export async function fetchMetadataSchemaEtag(id: string, token?: string | undefined) {

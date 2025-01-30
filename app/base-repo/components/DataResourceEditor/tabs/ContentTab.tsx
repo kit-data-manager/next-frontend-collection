@@ -12,16 +12,17 @@ import {
     ContentTabHelp,
     ContentTabHelpNoContent
 } from "@/app/base-repo/components/DataResourceEditor/help/ContentTabHelp";
+import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 
 interface ContentTabProps {
     resource: DataResource;
     content: ContentInformation[];
     userPrefs: UserPrefsType;
     session: Session | null;
-    actionCallback: Function;
+    cardCallbackAction: (action: DataCardCustomEvent<ActionEvent>, resource: ContentInformation) => void;
 }
 
-export function ContentTab({resource, content, userPrefs, session, actionCallback}:ContentTabProps) {
+export function ContentTab({resource, content, userPrefs, session, cardCallbackAction}:ContentTabProps) {
     return (
         <TabsContent value="content">
             {content && content.length > 0 ?
@@ -33,7 +34,7 @@ export function ContentTab({resource, content, userPrefs, session, actionCallbac
                         {content.map((element: ContentInformation, i: number) => {
                             let actionEvents: ActionButtonInterface[] = [];
                             if (userCanDelete(resource, session?.user.preferred_username, session?.user.groups)) {
-                                actionEvents.push(new DeleteContentAction(resource.id, element.relativePath).getDataCardAction());
+                                actionEvents.push(new DeleteContentAction(resource.id, element.etag ? element.etag : "<NoEtag>", element.relativePath).getDataCardAction());
                             }
 
                             if (userCanDownload(resource, session?.user.preferred_username, session?.user.groups)) {
@@ -43,8 +44,8 @@ export function ContentTab({resource, content, userPrefs, session, actionCallbac
                             return (
                                 <ContentInformationCard
                                     key={i}
-                                    data={element}
-                                    onActionClick={(ev) => actionCallback(ev)}
+                                    content={element}
+                                    cardCallbackAction={(ev) => cardCallbackAction(ev, element)}
                                     actionEvents={actionEvents}></ContentInformationCard>
                             )
                         })}

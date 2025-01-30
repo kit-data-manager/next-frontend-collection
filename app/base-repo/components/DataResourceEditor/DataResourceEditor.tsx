@@ -47,7 +47,7 @@ export default function DataResourceEditor({...props}) {
     const {data, status} = useSession();
     const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
 
-    const handleAction = useDebouncedCallback((event) => {
+    const handleContentInformationAction = useDebouncedCallback((event, content:ContentInformation) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
         if (eventIdentifier.startsWith("toggleTag")) {
             //open addTag modal
@@ -65,6 +65,25 @@ export default function DataResourceEditor({...props}) {
             router.push(redirect);
         });
     });
+
+   /* const handleAction = useDebouncedCallback((event) => {
+        const eventIdentifier: string = event.detail.eventIdentifier;
+        if (eventIdentifier.startsWith("toggleTag")) {
+            //open addTag modal
+            let parts: string[] = eventIdentifier.split("_");
+            if (parts.length == 3) {
+                setContentToTag(`${parts[2]}`);
+                setOpenTagAddDialog(true);
+                return;
+            }
+        }
+
+        runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
+            //reset etag for reload
+            setMustReload(true);
+            router.push(redirect);
+        });
+    });*/
 
     //fetch data resource and content information
     useEffect(() => {
@@ -114,8 +133,13 @@ export default function DataResourceEditor({...props}) {
 
     function addTagCallback(filename: string | undefined, tag: string | undefined) {
         if (filename && tag) {
-            handleAction({detail: {eventIdentifier: new ToggleTagAction(id, filename, tag).getActionIdentifier()}});
+            console.log("HANDLE");
+            //handleAction({detail: {eventIdentifier: new ToggleTagAction(id, filename, tag).getActionIdentifier()}});
+            setContentToTag(`filename`);
+            setOpenTagAddDialog(true);
+            return;
         }
+        console.log("EXTER");
         setContentToTag("");
         setOpenTagAddDialog(false);
     }
@@ -147,7 +171,7 @@ export default function DataResourceEditor({...props}) {
                                 content={content}
                                 userPrefs={userPrefs}
                                 session={data}
-                                actionCallback={handleAction}/>
+                                cardCallbackAction={handleContentInformationAction}/>
                     <MetadataTab createMode={createMode}
                                  resource={resource}
                                  etag={etag}

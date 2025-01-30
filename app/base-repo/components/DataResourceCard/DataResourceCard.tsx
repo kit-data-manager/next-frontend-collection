@@ -48,7 +48,8 @@ export default function DataResourceCard({
 
                 contentInformation.map(element => {
                     let actionButtons = [
-                        //only add download button
+                        //only add download button as we do not have access to the content etag if action called via child component
+                        //content deletion will only work properly in edit resource view
                         new DownloadContentAction(resource.id, element.relativePath).getDataCardAction()
                     ];
                     children.push(propertiesForContentInformation(resource.id, element, actionButtons, true) as DataCard);

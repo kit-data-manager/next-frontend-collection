@@ -197,10 +197,12 @@ const rightTextForDataResource = (resource: DataResource) => {
 
 const tagsForDataResource = (resource: DataResource) => {
     //type tag
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
     let tags: Array<Tag> = new Array<Tag>;
     if (resource.resourceType) {
         const typeGeneral: TypeGeneral = resource.resourceType.typeGeneral;
-        const filterUrl = `/base-repo/resources/?typeGeneral=${typeGeneral}`;
+        const filterUrl = `${basePath}/base-repo/resources/?typeGeneral=${typeGeneral}`;
         tags.push({
             color: "#90EE90",
             text: typeGeneral,
@@ -211,7 +213,7 @@ const tagsForDataResource = (resource: DataResource) => {
     }
 
     //state tags
-    const filterUrl = `/base-repo/resources/?state=${resource.state}`;
+    const filterUrl = `${basePath}/base-repo/resources/?state=${resource.state}`;
     if (resource.state === "VOLATILE") {
         tags.push({
             color: "#90EE90",

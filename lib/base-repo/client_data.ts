@@ -173,7 +173,8 @@ export async function fetchAllContentInformation(resource: DataResource, accessT
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
-        return await fetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/`, {
+        //fetch max. number of content elements (100)
+        return await fetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/?page=0&size=100`, {
             method:"GET",
             headers: headers
         }).then(res => res.json()).catch(error => {
@@ -199,6 +200,24 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string | u
             }).then(result => result.headers.get("ETag"));
     } catch (error) {
         console.error('Failed to fetch resource ETag. Error:', error);
+        return undefined;
+    }
+}
+
+export async function fetchContentInformationEtag(id: string, filename:string,  accessToken?: string | undefined) {
+    try {
+        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+        let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+        return await fetch(`${repoBaseUrl}/api/v1/dataresources/${id}/data/${filename}`,
+            {
+                method:"GET",
+                headers: headers
+            }).then(result => result.headers.get("ETag"));
+    } catch (error) {
+        console.error('Failed to fetch content information ETag. Error:', error);
         return undefined;
     }
 }
