@@ -3,11 +3,11 @@ import {toast} from "react-toastify";
 import {fetchWithBasePath} from "@/lib/utils";
 
 export class ToggleTagAction extends Action {
-    constructor(resourceId: string, filename: string, tag?: string) {
+    constructor(resourceId: string, filename: string, etag:string, tag?: string) {
         if (tag) {
-            super(`${REPO_ACTIONS.TOGGLE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${tag.replace(/_/g, '%5F')}`, "", "", "");
+            super(`${REPO_ACTIONS.TOGGLE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}_${tag.replace(/_/g, '%5F')}`, "", "", "");
         } else {
-            super(`${REPO_ACTIONS.TOGGLE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}`, "", "", "");
+            super(`${REPO_ACTIONS.TOGGLE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}`, "", "", "");
         }
     }
 
@@ -20,9 +20,21 @@ export class ToggleTagAction extends Action {
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const filename = parts[2].replace(/%5F/g, '_');
-        const tag = parts[3].replace(/%5F/g, '_');
+        const etag = parts[3];
+        const tag = parts[4].replace(/%5F/g, '_');
+        const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
 
-        await fetchWithBasePath(`/api/base-repo/toggleTag?resourceId=${identifier}&path=${filename}&tag=${tag}`, {
+        const headers = {
+            "If-Match": etag
+        };
+
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+
+        
+
+        await fetchWithBasePath(`${baseUrl}/api/v1/dataresources/${identifier}/data/${filename}`, {
             method: "PATCH"
         }).then(response => {
             if (response.status === 204) {

@@ -1,45 +1,42 @@
-import {getToken, JWT} from "next-auth/jwt";
-import {NextRequest, NextResponse} from "next/server";
+import * as jwt from "next-auth/jwt"
+import { NextRequest } from "next/server"
+import { redirect } from "next/navigation"
+import { JWT } from "next-auth/jwt"
+import nextConfig from "@/next.config"
 
-function logoutParams(token: JWT): Record<string, string> {
-    return {
-        client_id: process.env.KEYCLOAK_CLIENT_ID as string,
-        post_logout_redirect_uri: process.env.NEXTAUTH_URL as string,
-    };
-}
+function federatedLogout(logoutPath: string) {
 
-function handleEmptyToken() {
-    const response = { error: "No session present" };
-    const responseHeaders = { status: 400 } as Response;
-    return NextResponse.json(response, responseHeaders);
-}
+    return async function (req: NextRequest) {
+        let token: JWT | null
 
-function sendEndSessionEndpointToURL(token: JWT) {
-    const endSessionEndPoint = new URL(
-        `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
-    );
-    const params: Record<string, string> = logoutParams(token);
-    const endSessionParams = new URLSearchParams(params);
-    const response = { url: `${endSessionEndPoint.href}/?${endSessionParams}` };
-    return NextResponse.json(response);
-}
-
-export async function GET(req: NextRequest) {
-    try {
-        console.log("FED LOGOUT");
-        const token = await getToken({ req })
-        if (token) {
-            return sendEndSessionEndpointToURL(token);
+        try {
+            token = await jwt.getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+        } catch (error) {
+            console.error(error)
+            redirect(process.env.NEXTAUTH_URL || "/")
         }
-        return handleEmptyToken();
-    } catch (error) {
-        console.error(error);
-        const response = {
-            error: "Unable to logout from the session",
-        };
-        const responseHeaders = {
-            status: 500,
-        } as Response;
-        return NextResponse.json(response, responseHeaders);
+
+        if (!token) {
+            console.warn("No JWT token found when calling /federated-logout endpoint")
+            return redirect(process.env.NEXTAUTH_URL || "/")
+        }
+
+        const endsessionURL = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
+
+        if (token.idToken) {
+            console.warn("Without an id_token the user won't be redirected back from the IdP after logout.")
+
+            const endsessionParams = new URLSearchParams({
+                id_token_hint: token.idToken as string,
+                post_logout_redirect_uri: nextConfig.assetPrefix + logoutPath || ""
+            })
+            return redirect(`${endsessionURL}?${endsessionParams}`)
+        } else {
+            return redirect(`${endsessionURL}`)
+        }
     }
 }
+
+const handler = federatedLogout("/logout")
+
+export { handler as GET }
