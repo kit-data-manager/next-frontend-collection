@@ -18,6 +18,8 @@ const badgeVariants = cva(
                 thumb_unset: "bg-error rounded text-black border-0",
                 thumb_set: "bg-success rounded text-black border-0",
                 properties: "bg-accent rounded text-accent-foreground border-0",
+                contextual: "bg-contextual text-contextual-foreground",
+                contextual_disabled: "bg-secondary"
             },
         },
         defaultVariants: {

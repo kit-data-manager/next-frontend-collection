@@ -1,31 +1,36 @@
 import JsonForm from "@/components/jsonform";
 import {
-    DataChanged,
-    DoCreateDataResource,
-    DoUpdateDataResource
+    DataChanged
 } from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useState} from "react";
 import {DataResource} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
-import {useRouter} from "next/navigation";
 import {MetadataTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/MetadataTabHelp";
+import {DoUpdateSchema} from "@/app/metastore/components/SchemaEditor/useSchemaEditor";
+import {useSession} from "next-auth/react";
 
 interface MetadataTabProps {
-    createMode: boolean;
     resource: DataResource;
     etag: string;
     schema: any;
     userPrefs: UserPrefsType;
     updateResourceCallback: Function;
-    reloadCallback:Function;
+    reloadCallback: Function;
 }
 
-export function MetadataTab({createMode, resource, etag, schema, userPrefs, updateResourceCallback, reloadCallback}: MetadataTabProps) {
+export function MetadataTab({
+                                resource,
+                                etag,
+                                schema,
+                                userPrefs,
+                                updateResourceCallback,
+                                reloadCallback
+                            }: MetadataTabProps) {
     const [editorReady, setEditorReady] = useState(false);
     const [confirm, setConfirm] = useState(false);
-    const router = useRouter();
+    const {data, status} = useSession();
 
     return (
         <TabsContent value="metadata">
@@ -35,23 +40,15 @@ export function MetadataTab({createMode, resource, etag, schema, userPrefs, upda
             {editorReady ? null :
                 <span>Loading editor...</span>
             }
-            <JsonForm id="DataResource" schema={schema} data={resource}
+            <JsonForm id="SchemaRecord" schema={schema} data={resource}
                       setEditorReady={setEditorReady}
                       onChange={(d: object) => DataChanged(d, setConfirm, updateResourceCallback)}/>
-            {!createMode ?
-                <ConfirmCancelComponent confirmLabel={"Commit"}
-                                        cancelLabel={"Cancel"}
-                                        confirmCallback={() => DoUpdateDataResource(resource, etag, reloadCallback)}
-                                        cancelHref={`/metastore/schemas/${resource.id}`}
-                                        confirm={confirm}
-                /> :
-                <ConfirmCancelComponent confirmLabel={"Create"}
-                                        cancelLabel={"Cancel"}
-                                        confirmCallback={() => DoCreateDataResource(resource, router)}
-                                        cancelHref={`/metastore/schemas`}
-                                        confirm={confirm}
-                />
-            }
+            <ConfirmCancelComponent confirmLabel={"Commit"}
+                                    cancelLabel={"Cancel"}
+                                    confirmCallback={() => DoUpdateSchema(resource, etag, reloadCallback, data?.accessToken)}
+                                    cancelHref={`/metastore/schemas/${resource.id}`}
+                                    confirm={confirm}
+            />
         </TabsContent>
     );
 }

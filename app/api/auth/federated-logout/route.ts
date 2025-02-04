@@ -30,6 +30,8 @@ function federatedLogout(logoutPath: string) {
                 id_token_hint: token.idToken as string,
                 post_logout_redirect_uri: nextConfig.assetPrefix + logoutPath || ""
             })
+
+            console.log("end ", endsessionParams)
             return redirect(`${endsessionURL}?${endsessionParams}`)
         } else {
             return redirect(`${endsessionURL}`)

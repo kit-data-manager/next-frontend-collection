@@ -6,9 +6,6 @@ export class QuickShareResourceAction extends Action{
     }
 
     public static async performAction(actionId:string, accessToken?: string|undefined, callback?: (redirectTarget:string) => void){
-        let parts: string[] = actionId.split("_");
-        const identifier = parts[1];
-
         if(callback) {
             callback(`/base-repo/resources/`);
         }else{

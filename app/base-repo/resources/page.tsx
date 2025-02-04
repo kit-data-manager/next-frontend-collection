@@ -11,7 +11,7 @@ import {Button} from "@/components/ui/button";
 import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
 import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 
 
 export default async function Page({searchParams}: {

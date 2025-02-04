@@ -160,6 +160,7 @@ export const authOptions: NextAuthOptions = {
             if (account && user) {
                 // Add access_token, refresh_token and expirations to the token right after sign in
                 token.accessToken = account.access_token;
+                token.idToken = account?.id_token;
                 token.refreshToken = account.refresh_token;
                 token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;
                 token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;

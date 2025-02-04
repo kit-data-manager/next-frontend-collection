@@ -1,17 +1,19 @@
-import {Action, REPO_ACTIONS} from "@/lib/actions/action";
+import {Action, METASTORE_ACTIONS, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
 
-export class DeleteResourceAction extends Action{
+export class DeleteSchemaAction extends Action{
     constructor(resourceId:string, etag:string) {
-        super(`${REPO_ACTIONS.DELETE_RESOURCE}_${resourceId}_${etag}`, "Delete", "material-symbols-light:skull-outline", 'Delete Resource');
+        super(`${METASTORE_ACTIONS.DELETE_SCHEMA}_${resourceId.replace(/_/g, '%5F')}_${etag}`, "Delete", "material-symbols-light:skull-outline", 'Delete Schema');
     }
 
     public static async performAction(actionId:string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void){
+        const id = toast.loading("Deleting schema...")
+
         let parts: string[] = actionId.split("_");
-        const identifier = parts[1];
+        const identifier = parts[1].replace(/%5F/g, '_');
         const etag = parts[2];
 
-        const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
+        const baseUrl: string = (process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040");
 
         const headers = {
             "If-Match": etag
@@ -21,22 +23,20 @@ export class DeleteResourceAction extends Action{
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
-        if (window.confirm(`Do you really want to delete resource ${identifier}?`)) {
-            const id = toast.loading("Deleting resource...")
-
-            await fetch(`${baseUrl}/api/v1/dataresources/${identifier}`, {
+        if (window.confirm(`Do you really want to delete schema ${identifier}?`)) {
+            await fetch(`${baseUrl}/api/v2/schemas/${identifier}`, {
                 method: "DELETE",
                 headers: headers
             }).then(response => {
                 if(response.status === 204){
                     toast.update(id, {
-                        render: `Resource ${identifier} successfully deleted.`,
+                        render: `Schema ${identifier} successfully deleted.`,
                         type: "success",
                         isLoading: false,
                         autoClose: 1000,
                         "onClose": () => {
                             if(redirect){
-                                redirect(`/base-repo/resources/`);
+                                redirect(`/metastore/schemas/`);
                             }else{
                                 console.error("Redirect function missing.");
                             }
@@ -44,16 +44,16 @@ export class DeleteResourceAction extends Action{
                     });
                 }else{
                     toast.update(id, {
-                        render: `Failed to delete resource. Status: ${response.status}`,
+                        render: `Failed to delete schema. Status: ${response.status}`,
                         type: "error",
                         closeButton: true,
                         isLoading: false
                     });
                 }
             }).catch(error => {
-                console.error("Failed to delete resource.", error);
+                console.error("Failed to delete schema.", error);
                 toast.update(id, {
-                    render: `Failed to delete resource. Status: ${error.response.status}`,
+                    render: `Failed to delete schema. Status: ${error.response.status}`,
                     type: "error",
                     closeButton: true,
                     isLoading: false

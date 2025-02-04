@@ -155,6 +155,17 @@ export type DataResourcesSearchParams = {
 
 export type DataResourcesSearchParamsPromise = Promise<DataResourcesSearchParams>;
 
+export type SchemaSearchParams = {
+    page?: Pagination;
+    id?: string;
+    publisher?: string;
+    publicationYear?: string;
+    state?: State;
+    sort?: string;
+}
+
+export type SchemaSearchParamsPromise = Promise<SchemaSearchParamsPromise>;
+
 export type ActuatorInfo = {
     status: number;
     branch: string;

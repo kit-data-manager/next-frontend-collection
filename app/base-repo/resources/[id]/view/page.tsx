@@ -73,13 +73,13 @@ export default function Page({params}) {
     }
 
     let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
+
     if (permission < permissionToNumber(Permission.READ)) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
     }
 
     if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
         actionEvents.push(new EditResourceAction(resource.id).getDataCardAction());
-        console.log("ED ", new EditResourceAction(resource.id).getActionId());
     }
 
     if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {

@@ -6,8 +6,8 @@ export const enum REPO_ACTIONS {
     "REVOKE_RESOURCE" = "revokeResource",
     "DELETE_RESOURCE" = "deleteResource",
     "DELETE_CONTENT" = "deleteContent",
-    "TOGGLE_THUMB" = "toggleThumb",
-    "TOGGLE_TAG" = "toggleTag",
+    "REMOVE_TAG" = "removeTag",
+    "ADD_TAG" = "addTag",
     "QUICK_SHARE" = "quickShareResource"
 }
 

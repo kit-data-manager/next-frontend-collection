@@ -10,7 +10,7 @@ export class EditMetadataAction extends Action{
         const identifier = parts[1].replace(/%5F/g, '_');
 
         if(redirect) {
-            redirect(`/metastore/metadata/${identifier}/edit`);
+            redirect(`/metastore/metadata/${identifier}/edit?target=metadata`);
         }else{
             console.error("Redirect function missing.");
         }

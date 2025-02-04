@@ -43,7 +43,7 @@ export default function Page({params}) {
             <div className="flex">
                 <div className="block min-w-full align-middle">
                     <div className="rounded-lg p-2 md:pt-0">
-                            <SchemaEditor schema={schema} uiSchema={uiSchema} id={id} target={target} createMode={false}/>
+                            <SchemaEditor schema={schema} uiSchema={uiSchema} id={id} target={target}/>
                     </div>
                 </div>
             </div>

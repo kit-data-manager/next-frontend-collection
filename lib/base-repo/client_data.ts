@@ -21,7 +21,7 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
         }
 
         const headers = {
-            "Accept": "application/json",
+            "Accept": "application/json"
         };
 
         if (accessToken) {
@@ -31,7 +31,8 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
         if (filterExample) {
-            return await fetch(`${repoBaseUrl}/api/v1/dataresources/?page=${realPage}&size=${size}&sort=${sorting}`, {
+            headers["Content-Type"] = "application/json";
+            return await fetch(`${repoBaseUrl}/api/v1/dataresources/search?page=${realPage}&size=${size}&sort=${sorting}`, {
                 method: "POST",
                 headers: headers,
                 body: JSON.stringify(filterExample)
@@ -131,7 +132,7 @@ export async function patchDataResourceForQuickShare(resourceId: string, etag: s
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
     try {
-        return fetch(`${repoBaseUrl}/api/v1/dataresourcxes/${resourceId}`, {
+        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify(patch)
@@ -154,7 +155,7 @@ export async function patchDataResourceAcls(resourceId: string, etag: string, pa
         }
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
 
-        return fetch(`${repoBaseUrl}/api/v1/dataresourcxes/${resourceId}`, {
+        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify(patch)

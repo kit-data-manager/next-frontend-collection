@@ -7,8 +7,6 @@ export class DeleteContentAction extends Action {
     }
 
     public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
-        const id = toast.loading("Deleting content...")
-
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const filename = parts[2].replace(/%5F/g, '_');
@@ -26,6 +24,7 @@ export class DeleteContentAction extends Action {
         }
 
         if (window.confirm(`Do you really want to delete the file ${filename}?`)) {
+            const id = toast.loading("Deleting content...")
             await fetch(`${baseUrl}/api/v1/dataresources/${identifier}/data/${filename}`, {
                 method: "DELETE",
                 headers: headers
@@ -52,7 +51,7 @@ export class DeleteContentAction extends Action {
                         isLoading: false
                     });
                 }
-            }).finally(() => {
+            }).catch(() => {
                 console.error("Failed to delete content.");
                 toast.update(id, {
                     render: `Failed to delete content. Status: `,

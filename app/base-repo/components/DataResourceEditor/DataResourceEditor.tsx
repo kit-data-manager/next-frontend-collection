@@ -12,7 +12,7 @@ import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
-import {ToggleTagAction} from "@/lib/actions/base-repo/toggleTagAction";
+import {RemoveTagAction} from "@/lib/actions/base-repo/removeTagAction";
 import {Tabs} from "@/components/ui/tabs";
 import {Icon} from "@iconify/react";
 import useUserPrefs from "@/lib/hooks/userUserPrefs";
@@ -22,6 +22,7 @@ import {ContentTab} from "@/app/base-repo/components/DataResourceEditor/tabs/Con
 import {MetadataTab} from "@/app/base-repo/components/DataResourceEditor/tabs/MetadataTab";
 import {AccessTab} from "@/app/base-repo/components/DataResourceEditor/tabs/AccessTab";
 import {AddTagDialog} from "@/app/base-repo/components/DataResourceEditor/dialogs/AddTagDialog";
+import {AddTagAction} from "@/lib/actions/base-repo/addTagAction";
 
 export default function DataResourceEditor({...props}) {
     //general props
@@ -42,6 +43,7 @@ export default function DataResourceEditor({...props}) {
     //add tag specific props
     const [openTagAddDialog, setOpenTagAddDialog] = useState<boolean>(false);
     const [contentToTag, setContentToTag] = useState<string>();
+    const [contentToTagEtag, setContentToTagEtag] = useState<string>();
 
     //auth and prefs
     const {data, status} = useSession();
@@ -49,11 +51,12 @@ export default function DataResourceEditor({...props}) {
 
     const handleContentInformationAction = useDebouncedCallback((event, content:ContentInformation) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-        if (eventIdentifier.startsWith("toggleTag")) {
+        if (eventIdentifier.startsWith("addTag")) {
             //open addTag modal
             let parts: string[] = eventIdentifier.split("_");
-            if (parts.length == 3) {
+            if (parts.length == 4) {
                 setContentToTag(`${parts[2]}`);
+                setContentToTagEtag(content.etag?content.etag:"NoEtag");
                 setOpenTagAddDialog(true);
                 return;
             }
@@ -65,25 +68,6 @@ export default function DataResourceEditor({...props}) {
             router.push(redirect);
         });
     });
-
-   /* const handleAction = useDebouncedCallback((event) => {
-        const eventIdentifier: string = event.detail.eventIdentifier;
-        if (eventIdentifier.startsWith("toggleTag")) {
-            //open addTag modal
-            let parts: string[] = eventIdentifier.split("_");
-            if (parts.length == 3) {
-                setContentToTag(`${parts[2]}`);
-                setOpenTagAddDialog(true);
-                return;
-            }
-        }
-
-        runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
-            //reset etag for reload
-            setMustReload(true);
-            router.push(redirect);
-        });
-    });*/
 
     //fetch data resource and content information
     useEffect(() => {
@@ -97,7 +81,7 @@ export default function DataResourceEditor({...props}) {
                 }
                 return res;
             }).then(async (res) => {
-                await fetchAllContentInformation(res, data?.accessToken).then((data) => setContent(data)).catch(error => {
+                await fetchAllContentInformation(res, data?.accessToken).then((res) => setContent(res)).catch(error => {
                     console.error(`Failed to fetch children for resource ${id}`, error)
                 });
                 return setResource(res);
@@ -109,7 +93,7 @@ export default function DataResourceEditor({...props}) {
             })
         }
         setMustReload(false);
-    }, [id, data?.accessToken, status, etag, createMode,  mustReload]);
+    }, [id, data?.accessToken, status, etag, createMode, mustReload]);
 
     if (status === "loading" || isLoading || !props.schema) {
         return (<Loader/>)
@@ -131,15 +115,16 @@ export default function DataResourceEditor({...props}) {
         }
     }
 
-    function addTagCallback(filename: string | undefined, tag: string | undefined) {
+    function addTagCallback(filename: string | undefined, etag:string, tag: string | undefined) {
         if (filename && tag) {
-            console.log("HANDLE");
-            //handleAction({detail: {eventIdentifier: new ToggleTagAction(id, filename, tag).getActionIdentifier()}});
-            setContentToTag(`filename`);
-            setOpenTagAddDialog(true);
+            runAction(new AddTagAction(id, filename, etag, tag).getActionIdentifier(), data?.accessToken, (redirect: string) => {
+                //reset etag for reload
+                setMustReload(true);
+                setOpenTagAddDialog(false);
+                router.push(redirect);
+            });
             return;
         }
-        console.log("EXTER");
         setContentToTag("");
         setOpenTagAddDialog(false);
     }
@@ -187,8 +172,8 @@ export default function DataResourceEditor({...props}) {
 
             </div>
             <AddTagDialog openModal={openTagAddDialog}
-                          resourceId={id}
                           filename={contentToTag}
+                          etag={contentToTagEtag}
                           actionCallback={addTagCallback}/>
 
         </div>

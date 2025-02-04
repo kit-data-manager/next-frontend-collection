@@ -6,39 +6,30 @@ import XHRUpload from "@uppy/xhr-upload";
 import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
-import {useRouter} from 'next/navigation'
-import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
 import {useTheme} from "next-themes";
-import {DataChanged} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import JsonForm from "@/components/jsonform";
 import {DataResource} from "@/lib/definitions";
-import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
 import {Button} from "@/components/ui/button";
 import Loader from "@/components/general/Loader";
-import {toast} from "react-toastify";
 import {Icon} from "@iconify/react";
+import {useSession} from "next-auth/react";
+import {installEventHandlers} from "@/app/metastore/components/RecordFileUploader/useRecordFileUploader";
 
 interface RecordFileUploaderProps {
-    createMode: boolean;
     schema: any;
-    updateResourceCallback: Function;
     reloadCallback: Function;
-    resource?: DataResource;
 }
 
 export default function RecordFileUploader({
-                                               createMode,
-                                               resource,
                                                schema,
-                                               updateResourceCallback,
                                                reloadCallback
                                            }: RecordFileUploaderProps) {
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
-    const router = useRouter();
+    const baseUrl: string = (process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "");
+
     const [uppy, setUppy] = useState(() => new Uppy()
         .use(XHRUpload, {
-            endpoint: createMode ? `${basePath}/api/metastore/create` : `${basePath}/api/metastore/update`,
-            method: createMode ? "post" : "put",
+            endpoint: `${baseUrl}/api/v2/schemas/`,
+            method: "post",
             formData: true,
             bundle: true
         }));
@@ -46,7 +37,8 @@ export default function RecordFileUploader({
     const {theme} = useTheme();
     const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme);
     const [editorReady, setEditorReady] = useState(false);
-    const [metadata, setMetadata] = useState(resource);
+    const [metadata, setMetadata] = useState({} as DataResource);
+    const {data, status} = useSession();
 
     const [confirm, setConfirm] = useState(false);
 
@@ -55,12 +47,15 @@ export default function RecordFileUploader({
         uppy.close();
         setUppy(new Uppy()
             .use(XHRUpload, {
-                endpoint: createMode ? `${basePath}/api/metastore/create` : `${basePath}/api/metastore/update`,
-                method: createMode ? "post" : "put",
-                formData: true,
+                endpoint: `${baseUrl}/api/v2/schemas/` ,
+                method: "post",
                 bundle: true
             }));
-    }, [theme]);
+
+        installEventHandlers(uppy, data?.accessToken, () => {
+            reloadCallback(`/metastore/schemas/${metadata.id}/edit?target=metadata`);
+        });
+    }, [theme, status]);
 
     if (!schema) {
         return (<Loader/>)
@@ -73,43 +68,8 @@ export default function RecordFileUploader({
         restrictions: {maxNumberOfFiles: 2, minNumberOfFiles: 2}
     })
 
-    uppy.off("upload", ()=>{}).on('upload', (result) => {
-        for (let i = 0; i < result.fileIDs.length; i++) {
-            let fileID = result.fileIDs[i];
-
-            const file = uppy.getFile(fileID);
-            uppy.setFileState(fileID, {
-                xhrUpload: {
-                    //  ...file.xhrUpload,
-                    endpoint: `${basePath}/api/metastore/create`,
-                    fieldName: file.name === "record.json" ? "record" : "schema"
-                }
-            })
-        }
-    });
-
-    uppy.off("complete", ()=>{}).on('complete', (result) => {
-        uppy.resetProgress();
-        const successful = result.successful.length;
-        const failed = result.failed.length;
-        if (failed > 0) {
-            toast.error(`Failed to upload ${failed} file(s).`, {
-                    autoClose: 1000,
-                    isLoading: false
-                }
-            );
-        }
-
-        toast.success(`Successfully uploaded ${successful} file(s).`, {
-            type: "success",
-            isLoading: false,
-            autoClose: 1000,
-            "onClose": () => {
-                if (reloadCallback) {
-                    reloadCallback();
-                }
-            }
-        });
+    installEventHandlers(uppy, data?.accessToken, () => {
+        reloadCallback(`/metastore/schemas/${metadata.id}/edit?target=metadata`);
     });
 
     function updateData(data: object) {
@@ -118,7 +78,6 @@ export default function RecordFileUploader({
     }
 
     function addMetadataToUppy() {
-        console.log("ADD META ", JSON.stringify(metadata));
         uppy.addFile({
             name: 'record.json', // file name
             type: 'application/json', // file type
@@ -130,18 +89,21 @@ export default function RecordFileUploader({
     }
 
     return (
-        <div className="w-full flex grid-cols-3 mb-6 justify-left">
+        <div className="flex flex-col xl:flex-row mb-6 justify-left">
             <div className={"grow"}>
                 {editorReady ? null :
                     <span>Loading editor...</span>
                 }
-                <JsonForm id="DataResource" schema={schema} data={resource}
+                <JsonForm id="DataResource" schema={schema} data={metadata}
                           setEditorReady={setEditorReady}
                           onChange={(d: object) => updateData(d)}/>
 
             </div>
             <div className={"flex-shrink"}>
-                <Button variant={"accent"} title={"Add Metadata to Upload"} className={"h-full ml-4 mr-4"} disabled={!confirm} onClick={addMetadataToUppy}><Icon icon={"ic:outline-double-arrow"}/></Button>
+                <Button variant={"contextual"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
+                    <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>
+                    <Icon className={"w-12 h-12 xl:hidden visible"} icon={"ri:arrow-down-double-line"}/>
+                </Button>
             </div>
                 <div className={"flex-none"}>
                     <Dashboard uppy={uppy}

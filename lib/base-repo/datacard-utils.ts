@@ -2,8 +2,7 @@ import {ContentInformation, DataResource, ResourceType, TypeGeneral} from "@/lib
 import {formatDateToLocal, humanFileSize} from "@/lib/format-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {DownloadContentAction} from "@/lib/actions/base-repo/downloadContentAction";
-import {ToggleThumbAction} from "@/lib/actions/base-repo/toggleThumbAction";
-import {ToggleTagAction} from "@/lib/actions/base-repo/toggleTagAction";
+import {RemoveTagAction} from "@/lib/actions/base-repo/removeTagAction";
 import {
     Components,
     Tag,
@@ -12,6 +11,7 @@ import {
     ValueLabelObjWithUrl
 } from "@kit-data-manager/data-view-web-component";
 import DataCard = Components.DataCard;
+import {AddTagAction} from "@/lib/actions/base-repo/addTagAction";
 
 export const propertiesForDataResource = (resource: DataResource) => {
     let children: Array<DataCard> = childrenForDataResource(resource);
@@ -48,47 +48,51 @@ export const propertiesForContentInformation = (resourceId: string,
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     let image = `${basePath}/data.png`;
-    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext)) && content.size < 160*1024) {
-        let isThumb = content.tags && content.tags.includes("thumb");
-        let thumbTag: Tag;
-        if (disableChangeThumb) {
-            if (isThumb) {
-                thumbTag = {
-                    color: "var(--success)",
+
+    if (['jpg', 'jpeg', 'gif', 'png'].some(ext => content.relativePath.toLowerCase().endsWith(ext))) {
+        if (content.size < 160 * 1024) {
+            let isThumb = content.tags && content.tags.includes("thumb");
+            if (!isThumb) {
+                let thumbTag: Tag = {
+                    color: "var(--error)",
                     text: "Thumb",
-                    tooltip: "Thumbnail for Resource."
+                    eventIdentifier: new AddTagAction(resourceId, content.relativePath, content.etag ? content.etag : "NoEtag", "thumb").getActionId(),
+                    tooltip: "Click to use this image as resource thumbnail."
                 }
                 tags.push(thumbTag);
             }
-        } else {
-            thumbTag = {
-                color: isThumb ? "var(--success)" : "var(--error)",
-                text: "Thumb",
-                eventIdentifier: new ToggleThumbAction(resourceId, content.relativePath).getActionId(),
-                tooltip: isThumb ? "Click to NOT use this image as resource thumbnail." : "Click to use this image as resource thumbnail."
-            }
-            tags.push(thumbTag);
         }
         image = `${basePath}/api/base-repo/download?resourceId=${resourceId}&filename=${content.relativePath}&type=thumb`
     }
 
     if (content.tags) {
-        content.tags.forEach(tag => {
+        content.tags.forEach((tag, index) => {
             if (tag.toLowerCase() != "thumb") {
                 let tagElement: Tag = {
                     color: "var(--info)",
-                    eventIdentifier: new ToggleTagAction(resourceId, content.relativePath, tag).getActionIdentifier(),
+                    eventIdentifier: new RemoveTagAction(resourceId, content.relativePath, content.etag ? content.etag : "NoEtag", index).getActionIdentifier(),
                     text: tag,
                     tooltip: "Click to remove tag '" + tag + "'"
                 }
                 tags.push(tagElement);
-                /*let removeTagElement:Tag = {
-                    color: "var(--destructive)",
-                    text:"x",
-                    eventIdentifier: new ToggleTagAction(resourceId, content.relativePath, tag).getActionIdentifier(),
-                    tooltip: "Click to remove tag '" + tag + "'"
+            } else {
+                //existing thumb tag
+                let thumbTagElement: Tag;
+                if (!disableChangeThumb) {
+                    thumbTagElement = {
+                        color: "var(--success)",
+                        eventIdentifier: new RemoveTagAction(resourceId, content.relativePath, content.etag ? content.etag : "NoEtag", index).getActionIdentifier(),
+                        text: "Thumb",
+                        tooltip: "Click to NOT use this image as resource thumbnail."
+                    }
+                } else {
+                    thumbTagElement = {
+                        color: "var(--success)",
+                        text: "Thumb",
+                        tooltip: "Thumbnail for Resource."
+                    }
                 }
-                tags.push(removeTagElement);*/
+                tags.push(thumbTagElement);
             }
         });
     }
@@ -97,7 +101,7 @@ export const propertiesForContentInformation = (resourceId: string,
         tags.push({
             color: "var(--info)",
             iconName: "heroicons:plus-small-20-solid",
-            eventIdentifier: new ToggleTagAction(resourceId, content.relativePath).getActionIdentifier(),
+            eventIdentifier: new AddTagAction(resourceId, content.relativePath, content.etag ? content.etag : "NoEtag").getActionIdentifier(),
             tooltip: "Click to add a new tag."
 
         } as Tag);
@@ -316,7 +320,6 @@ export const thumbFromContentArray = (content: ContentInformation[]) => {
             });
         });
     }
-
     return thumb;
 }
 

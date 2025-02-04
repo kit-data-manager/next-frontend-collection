@@ -4,7 +4,7 @@ import stream from 'stream';
 import {promisify} from 'util';
 import {ContentInformation, ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 
 async function downloadData(resourceId:string, filename:string, accessToken:string | undefined, res: NextApiResponse) {
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';

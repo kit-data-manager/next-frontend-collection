@@ -4,7 +4,7 @@ import {humanFileSize} from "@/lib/format-utils";
 import {ActuatorInfo, ExtendedSession, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 
 export default async function SystemStats() {
     const data:ExtendedSession | null = await getServerSession(authOptions);

@@ -26,13 +26,13 @@ export function QuickShareDialog({openModal, resource, closeCallback}: QuickShar
     const [users, setUsers] = useState<ListItem[]>([] as ListItem[]);
     const [usersLoading, setUsersLoading] = useState(false);
 
-    function doSelect(values: string[]) {
+    /*function doSelect(values: string[]) {
         setSelectedValues(values);
-    }
+    }*/
 
-    const shareIt = () => {
+ /*  const shareIt = () => {
         closeCallback(true, selectedValues);
-    }
+    }*/
 
     useEffect(() => {
         if (resource.acls) {
@@ -64,7 +64,6 @@ export function QuickShareDialog({openModal, resource, closeCallback}: QuickShar
 
                 setUsers(newUsers);
                 setSelectedValues(selection);
-
             }).finally(() => {
                 setUsersLoading(false);
             });
@@ -86,7 +85,9 @@ export function QuickShareDialog({openModal, resource, closeCallback}: QuickShar
                     </DialogDescription>
                     <div className="grid w-full max-w-sm items-center gap-1.5">
                         <AutoCompleteList selectedValues={selectedValues}
-                                          onSelectedValuesChange={doSelect}
+                                          onSelectedValuesChange={(values: string[])=>  {
+                                              setSelectedValues(values);
+                                          }}
                                           searchValue={searchValue}
                                           onSearchValueChange={setSearchValue}
                                           items={users ?? []}
@@ -95,7 +96,7 @@ export function QuickShareDialog({openModal, resource, closeCallback}: QuickShar
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button onClick={() => shareIt()} className={"bg-accent text-accent-foreground"}>Add</Button>
+                    <Button onClick={() => closeCallback(true, selectedValues)} className={"bg-accent text-accent-foreground"}>Add</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

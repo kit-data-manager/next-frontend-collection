@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 import fetch from "node-fetch";
 
 async function listSchemas(accessToken: string | undefined, req: NextApiRequest, res: NextApiResponse) {

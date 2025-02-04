@@ -10,7 +10,7 @@ export class EditSchemaAction extends Action{
         const identifier = parts[1].replace(/%5F/g, '_');
 
         if(redirect) {
-            redirect(`/metastore/schemas/${identifier}/edit`);
+            redirect(`/metastore/schemas/${identifier}/edit?target=metadata`);
         }else{
             console.error("Redirect function missing.");
         }

@@ -4,7 +4,7 @@ const nextConfig = {
     typescript: {ignoreBuildErrors: false},
     trailingSlash: true,
     basePath: "",
-    assetPrefix: "",
+    assetPrefix: "http://localhost:3000",
     images: {
         remotePatterns: [
             {

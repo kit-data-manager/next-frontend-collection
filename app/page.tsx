@@ -5,10 +5,10 @@ import {getServerSession, Session} from "next-auth";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SiteSearch from "@/components/search/site-search";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {SearchX, ShieldCheck} from "lucide-react";
+import {SearchX} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import SystemStats from "@/components/SystemStats/SystemStats";
+import {authOptions} from "@/lib/auth-options";
 
 export default async function Page() {
     let session:Session | undefined = undefined;

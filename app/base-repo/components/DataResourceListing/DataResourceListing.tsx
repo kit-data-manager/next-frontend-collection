@@ -21,6 +21,7 @@ import {REPO_ACTIONS} from "@/lib/actions/action";
 import {runAction} from "@/lib/actions/actionExecutor";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useRouter} from "next/navigation";
+import {toast} from "react-toastify";
 
 export default function DataResourceListing({page, size, filter, sort}: {
     page: number;
@@ -80,8 +81,16 @@ export default function DataResourceListing({page, size, filter, sort}: {
 
         const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
         //@TODO error notification if etag is not available
-        patchDataResourceForQuickShare(selectedResource.id, selectedResource.etag ? selectedResource.etag : "", aclEntries, data?.accessToken).finally(() => {
-            router.push('/base-repo/resources');
+        patchDataResourceForQuickShare(selectedResource.id, selectedResource.etag ? selectedResource.etag : "NoEtag", aclEntries, data?.accessToken).finally(() => {
+            toast.success(`Successfully updated access control list.`, {
+                type: "success",
+                isLoading: false,
+                autoClose: 1000,
+                "onClose": () => {
+                    router.push('/base-repo/resources');
+                }
+            });
+
         })
     }
 

@@ -21,7 +21,6 @@ export default function SchemaEditor({...props}) {
     //general props
     const target = props.target ? props.target : "metadata";
     const id = props.id;
-    const createMode = props.createMode;
     const router = useRouter();
 
     //loading props
@@ -38,45 +37,40 @@ export default function SchemaEditor({...props}) {
 
     //fetch schema
     useEffect(() => {
-        if (createMode) {
+        setIsLoading(true);
+        fetchMetadataSchema(id, data?.accessToken).then((res) => {
+            if (res.etag) {
+                setEtag(res.etag);
+            }
+            return res;
+        }).then((res) => {
+            setResource(res);
             setIsLoading(false);
-        } else {
-            setIsLoading(true);
-            fetchMetadataSchema(id, data?.accessToken).then((res) => {
-                if (res.etag) {
-                    setEtag(res.etag);
-                }
-                return res;
-            }).then((res) => {
-                setResource(res);
-                setIsLoading(false);
-            }).catch(error => {
-                console.log(`Failed to fetch schema ${id}`, error)
-                setIsLoading(false);
-            })
-        }
+        }).catch(error => {
+            console.log(`Failed to fetch schema ${id}`, error)
+            setIsLoading(false);
+        })
+
         setMustReload(false);
-    }, [id, data?.accessToken, status, etag, createMode, mustReload]);
+    }, [id, data?.accessToken, status, etag, mustReload]);
 
     if (status === "loading" || isLoading) {
         return (<Loader/>)
     }
 
     if (!isLoading) {
-        if (!createMode) {
-            if (!resource || !resource.id) {
-                return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
-            }
+        if (!resource || !resource.id) {
+            return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
+        }
 
-            let permission: 0|1|2|3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
+        let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
 
-            if (permission < permissionToNumber(Permission.WRITE)) {
-                return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
-            }
+        if (permission < permissionToNumber(Permission.WRITE)) {
+            return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
         }
     }
 
-    function reload(target:string){
+    function reload(target: string) {
         router.push(target);
         setMustReload(true);
     }
@@ -94,10 +88,9 @@ export default function SchemaEditor({...props}) {
                         style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
                     />
                 </button>
-                <Tabs defaultValue={createMode ? "metadata" : target} className="w-full">
-                    <TabsHeader createMode={createMode}/>
-                    <MetadataTab createMode={createMode}
-                                 resource={resource}
+                <Tabs defaultValue={"access"} className="w-full">
+                    <TabsHeader/>
+                    <MetadataTab resource={resource}
                                  etag={etag}
                                  schema={props.schema}
                                  userPrefs={userPrefs}

@@ -4,7 +4,7 @@ import stream from 'stream';
 import {promisify} from 'util';
 import {ExtendedSession} from "@/lib/definitions";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 
 async function downloadMetadata(resourceId: string, type: string, format: string, accessToken: string | undefined, res: NextApiResponse) {
     const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';

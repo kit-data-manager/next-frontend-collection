@@ -1,13 +1,12 @@
 import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
-import {fetchWithBasePath} from "@/lib/utils";
 
-export class RemoveTagAction extends Action {
-    constructor(resourceId: string, filename: string, etag:string, tagIndex?: number) {
-        if (tagIndex != undefined) {
-            super(`${REPO_ACTIONS.REMOVE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}_${tagIndex}`, "", "", "");
+export class AddTagAction extends Action {
+    constructor(resourceId: string, filename: string, etag:string, tag?: string) {
+        if (tag) {
+            super(`${REPO_ACTIONS.ADD_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}_${tag.replace(/_/g, '%5F')}`, "", "", "");
         } else {
-            super(`${REPO_ACTIONS.REMOVE_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}`, "", "", "");
+            super(`${REPO_ACTIONS.ADD_TAG}_${resourceId}_${filename.replace(/_/g, '%5F')}_${etag}`, "", "", "");
         }
     }
 
@@ -16,13 +15,12 @@ export class RemoveTagAction extends Action {
     }
 
     public static async performAction(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {
-        const id = toast.loading("Updating tags...");
+        const id = toast.loading("Adding tag...");
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const filename = parts[2].replace(/%5F/g, '_');
         const etag = parts[3];
-        const tagIndex = parts[4];
-        console.log("REM ET ", etag);
+        const tag = parts[4].replace(/%5F/g, '_');
         const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
 
         const headers = {
@@ -34,7 +32,7 @@ export class RemoveTagAction extends Action {
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
-        let body =  [{"op": "remove", "path": `/tags/${tagIndex}`}]
+        let body = [{"op": "add", "path": `/tags/0`, "value": tag}]
 
         await fetch(`${baseUrl}/api/v1/dataresources/${identifier}/data/${filename}`, {
             method: "PATCH",
@@ -43,7 +41,7 @@ export class RemoveTagAction extends Action {
         }).then(response => {
             if (response.status === 204) {
                 toast.update(id, {
-                    render: `Tag successfully removed.`,
+                    render: `Tag successfully added.`,
                     type: "success",
                     isLoading: false,
                     autoClose: 1000,
@@ -57,7 +55,7 @@ export class RemoveTagAction extends Action {
                 });
             } else {
                 toast.update(id, {
-                    render: `Failed to remove tag. Status: ${response.status}`,
+                    render: `Failed to add tag. Status: ${response.status}`,
                     type: "error",
                     closeButton: true,
                     isLoading: false

@@ -9,18 +9,19 @@ import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {QuickShareResourceAction} from "@/lib/actions/base-repo/quickShareResourceAction";
 import {fetchMetadataSchemas, updateMetadataSchema} from "@/lib/metastore/client_data";
 import {ViewSchemaAction} from "@/lib/actions/metastore/viewSchemaAction";
 import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
 import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useDebouncedCallback} from "use-debounce";
-import {REPO_ACTIONS} from "@/lib/actions/action";
+import {METASTORE_ACTIONS} from "@/lib/actions/action";
 import {runAction} from "@/lib/actions/actionExecutor";
 import {useRouter} from "next/navigation";
 import {getAclDiff} from "@/lib/base-repo/client_data";
 import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
+import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
+import {toast} from "react-toastify";
 
 export default function SchemaListing({page, size, sort}: {
     page: number;
@@ -34,12 +35,16 @@ export default function SchemaListing({page, size, sort}: {
     const [openModal, setOpenModal] = useState(false);
     const [selectedResource, setSelectedResource] = useState({} as DataResource);
     const router = useRouter();
+    const [mustReload, setMustReload] = useState(false);
 
     const handleAction = useDebouncedCallback((event, resource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
+
+        console.log("SELECTION ", resource);
+
         setSelectedResource(resource);
 
-        if (eventIdentifier.startsWith(REPO_ACTIONS.QUICK_SHARE)) {
+        if (eventIdentifier.startsWith(METASTORE_ACTIONS.QUICK_SHARE_SCHEMA)) {
             runAction(eventIdentifier, data?.accessToken, doQuickShare);
         } else {
             runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
@@ -52,14 +57,14 @@ export default function SchemaListing({page, size, sort}: {
     useEffect(() => {
         if (status != "loading") {
             setIsLoading(true);
-            fetchMetadataSchemas(page, size, sort).then((page) => {
-                console.log("page.resources ", page.resources);
+            fetchMetadataSchemas(page, size, sort, data?.accessToken).then((page) => {
                 setTotalPages(page.totalPages);
                 setResources(page.resources);
                 setIsLoading(false);
             })
         }
-    }, [page, size, sort, status])
+        setMustReload(false);
+    }, [page, size, sort, status, mustReload])
 
     if (status === "loading" || isLoading || !resources) {
         return (<Loader/>)
@@ -74,19 +79,35 @@ export default function SchemaListing({page, size, sort}: {
     }
 
     function shareIt(result: boolean, selectedValues?: string[]) {
-        setSelectedResource({} as DataResource);
         setOpenModal(false);
-        if (!result || !selectedValues) return;
 
+        if (!result || !selectedValues){
+            return;
+            setSelectedResource({} as DataResource);
+        }
         const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
 
         aclEntries.map((sid: string) => {
             selectedResource.acls.push({"sid": sid, permission: Permission.READ});
         })
+        const id = toast.loading("Updating access control list...");
+        console.log("selec ", selectedResource);
 
-        //@TODO add etag
-        updateMetadataSchema(selectedResource, "",data?.accessToken).finally(() => {
-            router.push('/metastore/schemas');
+        updateMetadataSchema(selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag" ,data?.accessToken).then((res) => {
+           console.log("RESPO ", res)
+            toast.update(id, {
+                render: `Successfully updated access control list.`,
+                type: "success",
+                isLoading: false,
+                autoClose: 1000,
+                "onClose": () => {
+                  setMustReload(true);
+                }
+            });
+            //reset etag for reload
+            setMustReload(true);
+            setSelectedResource({} as DataResource);
+            router.push("/metastore/schemas");
         })
     }
 
@@ -98,7 +119,7 @@ export default function SchemaListing({page, size, sort}: {
                     const actionEvents: ActionButtonInterface[] = [];
 
                     if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
-                        actionEvents.push(new QuickShareResourceAction(element.id).getDataCardAction());
+                        actionEvents.push(new QuickShareSchemaAction(element.id).getDataCardAction());
                     }
 
                     if (userCanView(element, data?.user.preferred_username, data?.user.groups)) {

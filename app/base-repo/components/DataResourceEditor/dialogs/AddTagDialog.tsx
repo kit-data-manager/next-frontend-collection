@@ -12,16 +12,16 @@ import React, {useState} from "react";
 
 interface AddTagDialogProps {
     openModal:boolean;
-    resourceId: string;
     filename:string | undefined;
+    etag: string | undefined;
     actionCallback: Function;
 }
 
-export function AddTagDialog({openModal, resourceId, filename, actionCallback}: AddTagDialogProps) {
+export function AddTagDialog({openModal, filename, etag, actionCallback}: AddTagDialogProps) {
     const [tag, setTag] = useState("");
 
     return (
-        <Dialog open={openModal} modal={true} onOpenChange={() => actionCallback}>
+        <Dialog open={openModal} modal={true} onOpenChange={() => actionCallback(undefined, undefined)}>
             <DialogContent className="bg-secondary" onPointerDownOutside={() => {
             }} onInteractOutside={() => {
             }}>
@@ -36,7 +36,7 @@ export function AddTagDialog({openModal, resourceId, filename, actionCallback}: 
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button onClick={() => actionCallback(filename, tag)}
+                    <Button onClick={() => actionCallback(filename, etag, tag)}
                             className={"bg-accent text-accent-foreground"}>Add</Button>
                 </DialogFooter>
             </DialogContent>

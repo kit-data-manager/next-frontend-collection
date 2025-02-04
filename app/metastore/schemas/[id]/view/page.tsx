@@ -26,6 +26,8 @@ import {useTheme} from "next-themes";
 import {runAction} from "@/lib/actions/actionExecutor";
 import {useDebouncedCallback} from "use-debounce";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
+import {RevokeSchemaAction} from "@/lib/actions/metastore/revokeSchemaAction";
+import {DeleteSchemaAction} from "@/lib/actions/metastore/deleteSchemaAction";
 
 export default function Page({params}) {
     const used = React.use(params) as { id: string };
@@ -44,7 +46,7 @@ export default function Page({params}) {
 
     const handleAction = useDebouncedCallback((event, resource: DataResource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-
+console.log("ACTION ", eventIdentifier);
         runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
             router.push(redirect);
         });
@@ -71,7 +73,8 @@ export default function Page({params}) {
             });
             return res;
         }).then((res) => {
-            fetchMetadataSchemaDocument(res.id, data?.accessToken).then(res => {
+            const accept = res.resourceType.value === "JSON_Schema"?"application/json":"application/xml";
+            fetchMetadataSchemaDocument(res.id, accept, data?.accessToken).then(res => {
                 setEditorValue(res);
             })
             setResource(res);
@@ -105,10 +108,10 @@ export default function Page({params}) {
     }
 
     if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {
-        if (resource.state == State.REVOKED) {
-            actionEvents.push(new DeleteResourceAction(resource.id, etag).getDataCardAction());
+        if (resource.state === State.REVOKED) {
+            actionEvents.push(new DeleteSchemaAction(resource.id, etag).getDataCardAction());
         } else {
-            actionEvents.push(new RevokeResourceAction(resource.id, etag).getDataCardAction());
+            actionEvents.push(new RevokeSchemaAction(resource.id, etag).getDataCardAction());
         }
     }
 

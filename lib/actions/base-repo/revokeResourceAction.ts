@@ -7,8 +7,6 @@ export class RevokeResourceAction extends Action{
     }
 
     public static async performAction(actionId:string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void){
-        const id = toast.loading("Revoking resource...");
-
         let parts: string[] = actionId.split("_");
         const identifier = parts[1];
         const etag = parts[2];
@@ -24,6 +22,7 @@ export class RevokeResourceAction extends Action{
         }
 
         if (window.confirm(`Do you really want to revoke resource ${identifier}?`)) {
+            const id = toast.loading("Revoking resource...");
             await fetch(`${baseUrl}/api/v1/dataresources/${identifier}`, {
                 method: "DELETE",
                 headers: headers

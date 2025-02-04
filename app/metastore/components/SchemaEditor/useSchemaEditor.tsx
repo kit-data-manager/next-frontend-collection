@@ -1,7 +1,5 @@
 import {toast} from "react-toastify";
 import {DataResource} from "@/lib/definitions";
-import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
-import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
 import {updateMetadataSchema} from "@/lib/metastore/client_data";
@@ -79,7 +77,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     orderedPatches.push(...removals);
     orderedPatches.push(...additions);
 
-    patchDataResourceAcls(currentData.id, etag, orderedPatches).then((status) => {
+    /*patchDataResourceAcls(currentData.id, etag, orderedPatches).then((status) => {
         if (status === 204) {
             toast.update(id, {
                 render: `${orderedPatches.length} updates successfully applied.`,
@@ -105,7 +103,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
             type: "error",
             isLoading: false
         });
-    });
+    });*/
 }
 
 export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
@@ -122,27 +120,6 @@ export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCa
         console.error("Failed to update schema.", error);
         toast.update(id, {
             render: `Failed to update schema. Status: ${error.response.status}`,
-            type: "error",
-            isLoading: false
-        });
-    });
-}
-
-export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance, accessToken?:string|undefined) => {
-    const id = toast.loading("Creating resource...")
-
-    createDataResource(currentData, accessToken).then((json) => {
-        toast.update(id, {
-            render: "Resource created.", type: "success", isLoading: false, autoClose: 1000,
-            "onClose": () => {
-                router.push(`/base-repo/resources/${json.id}/edit`);
-            }
-        });
-
-    }).catch(error => {
-        console.error("Failed to create resource.", error);
-        toast.update(id, {
-            render: `Failed to create resource. Status: ${error.response.status}`,
             type: "error",
             isLoading: false
         });

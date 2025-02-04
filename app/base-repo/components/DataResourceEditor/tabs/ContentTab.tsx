@@ -32,21 +32,14 @@ export function ContentTab({resource, content, userPrefs, session, cardCallbackA
                         : undefined}
                     <div className="rounded-lg p-2 mt-2 md:pt-0">
                         {content.map((element: ContentInformation, i: number) => {
-                            let actionEvents: ActionButtonInterface[] = [];
-                            if (userCanDelete(resource, session?.user.preferred_username, session?.user.groups)) {
-                                actionEvents.push(new DeleteContentAction(resource.id, element.etag ? element.etag : "<NoEtag>", element.relativePath).getDataCardAction());
-                            }
-
-                            if (userCanDownload(resource, session?.user.preferred_username, session?.user.groups)) {
-                                actionEvents.push(new DownloadContentAction(resource.id, element.relativePath).getDataCardAction());
-                            }
 
                             return (
                                 <ContentInformationCard
                                     key={i}
                                     content={element}
-                                    cardCallbackAction={(ev) => cardCallbackAction(ev, element)}
-                                    actionEvents={actionEvents}></ContentInformationCard>
+                                    enableDownload={userCanDownload(resource, session?.user.preferred_username, session?.user.groups)}
+                                    enableDelete={userCanDelete(resource, session?.user.preferred_username, session?.user.groups)}
+                                    cardCallbackAction={(ev) => cardCallbackAction(ev, element)}></ContentInformationCard>
                             )
                         })}
                     </div>

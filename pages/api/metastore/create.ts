@@ -2,7 +2,7 @@ import {ExtendedSession} from "@/lib/definitions";
 import {NextApiRequest, NextApiResponse} from "next";
 import fetch from 'node-fetch';
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {authOptions} from "@/lib/auth-options";
 import {Formidable} from "formidable";
 import {Writable} from "node:stream";
 
