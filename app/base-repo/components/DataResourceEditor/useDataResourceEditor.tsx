@@ -1,9 +1,10 @@
 import {toast} from "react-toastify";
-import {DataResource} from "@/lib/definitions";
+import {Acl, DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
+import {stringToPermission} from "@/lib/permission-utils";
 
 export const accessControlColumns: NestedColumn[] = [
     {
@@ -37,7 +38,7 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
     }
 }
 
-export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback:Function, accessToken?:string|undefined) => {
+export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback: Function, accessToken?: string | undefined) => {
     const id = toast.loading("Processing permission update...")
 
     const additions: any[] = [];
@@ -89,7 +90,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
                     reloadCallback(`/base-repo/resources/${currentData.id}/edit?target=access`);
                 }
             });
-        }else{
+        } else {
             console.error(`Unexpected response ${status} while patching resource.`);
             toast.update(id, {
                 render: `Failed to update access permissions. Status: ${status}`,
@@ -107,10 +108,10 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     });
 }
 
-export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
+export const DoUpdateDataResource = (currentData: DataResource, etag: string, reloadCallback: Function, accessToken?: string | undefined) => {
     const id = toast.loading("Updating resource...")
 
-    updateDataResource(currentData, etag ? etag : '',accessToken).then((status) => {
+    updateDataResource(currentData, etag ? etag : '', accessToken).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
@@ -127,9 +128,9 @@ export const DoUpdateDataResource = (currentData: DataResource, etag: string, re
     });
 }
 
-export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance, accessToken?:string|undefined) => {
+export const DoCreateDataResource = (currentData: DataResource, router: AppRouterInstance, accessToken?: string | undefined) => {
     const id = toast.loading("Creating resource...")
-    createDataResource(currentData,accessToken).then((json) => {
+    createDataResource(currentData, accessToken).then((json) => {
         toast.update(id, {
             render: "Resource created.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {

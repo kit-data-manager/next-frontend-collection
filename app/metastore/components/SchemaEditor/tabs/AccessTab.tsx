@@ -1,8 +1,7 @@
 import {Input} from "@/components/ui/input";
 import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
 import {
-    accessControlColumns,
-    DoUpdatePermissions
+    accessControlColumns
 } from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
@@ -17,6 +16,7 @@ import {useSession} from "next-auth/react";
 import {
     PermissionUpdateCheckDialog
 } from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
+import {DoUpdatePermissions} from "@/app/metastore/components/SchemaEditor/useSchemaEditor";
 
 interface AccessTabProps {
     resource: DataResource;
@@ -173,13 +173,15 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
         if (issues.length > 0) {
             setIssues(issues);
             setOpenPermissionCheck(true);
+        }else{
+            doPermissionUpdate(true);
         }
     }
 
     function doPermissionUpdate(result: boolean) {
         setOpenPermissionCheck(false);
         if (result) {
-            DoUpdatePermissions(resource, etag, elements, reloadCallback);
+            DoUpdatePermissions(resource, etag, elements, data?.accessToken, reloadCallback);
         }
     }
 

@@ -40,8 +40,6 @@ export default function SchemaListing({page, size, sort}: {
     const handleAction = useDebouncedCallback((event, resource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
 
-        console.log("SELECTION ", resource);
-
         setSelectedResource(resource);
 
         if (eventIdentifier.startsWith(METASTORE_ACTIONS.QUICK_SHARE_SCHEMA)) {
@@ -91,10 +89,7 @@ export default function SchemaListing({page, size, sort}: {
             selectedResource.acls.push({"sid": sid, permission: Permission.READ});
         })
         const id = toast.loading("Updating access control list...");
-        console.log("selec ", selectedResource);
-
         updateMetadataSchema(selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag" ,data?.accessToken).then((res) => {
-           console.log("RESPO ", res)
             toast.update(id, {
                 render: `Successfully updated access control list.`,
                 type: "success",

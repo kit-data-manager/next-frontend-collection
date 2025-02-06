@@ -26,3 +26,16 @@ export function permissionToNumber(permission:Permission){
         case Permission.ADMINISTRATE: return 3;
     }
 }
+
+export function stringToPermission(permissionString:string){
+    switch(permissionString){
+        case "READ":
+            return Permission.READ;
+        case "WRITE":
+            return Permission.WRITE;
+        case "ADMINISTRATE":
+            return Permission.ADMINISTRATE;
+    }
+
+    return Permission.NONE;
+}

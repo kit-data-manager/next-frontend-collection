@@ -91,7 +91,7 @@ export async function fetchMetadataSchema(id: string, accessToken?: string | und
     }
 }
 
-export async function fetchMetadataSchemaDocument(id: string, mimeType:string, accessToken?: string | undefined): Promise<string> {
+export async function fetchMetadataSchemaDocument(id: string, mimeType: string, accessToken?: string | undefined): Promise<string> {
     try {
         const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
         const headers = {
@@ -154,7 +154,6 @@ export async function patchDataResourceAcls(id: string, etag: string, patch: any
     }
 }*/
 
-
 export async function fetchMetadataSchemaEtag(id: string, accessToken?: string | undefined) {
     try {
         const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
@@ -186,7 +185,7 @@ export class ResponseError extends Error {
     }
 }
 
-export async function updateMetadataSchema(resource: DataResource, etag: string, accessToken?: string | undefined) {
+export async function updateMetadataSchema(resource: DataResource, etag: string, accessToken?: string | undefined): Promise<number> {
     console.log("ET ", etag);
     const headers = {
         "If-Match": etag
@@ -201,8 +200,9 @@ export async function updateMetadataSchema(resource: DataResource, etag: string,
         headers["Authorization"] = `Bearer ${accessToken}`;
     }
     const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
-
-    fetch(`${metastoreBaseUrl}/api/v2/schemas/${resource['id']}`, {
+console.log("TARGET ", `${metastoreBaseUrl}/api/v2/schemas/${resource.id}`);
+console.log("HEADERS ", headers);
+    return await fetch(`${metastoreBaseUrl}/api/v2/schemas/${resource.id}`, {
         method: "PUT",
         headers: headers,
         body: formData
@@ -210,9 +210,7 @@ export async function updateMetadataSchema(resource: DataResource, etag: string,
         if (response.status === 200) {
             return response.status;
         } else {
-            throw new ResponseError('Failed to update metadata schema.', response);
+            throw new ResponseError('Response not HTTP 200.', response);
         }
     });
-
-
 }

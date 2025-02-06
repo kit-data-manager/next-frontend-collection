@@ -26,6 +26,14 @@ export default function RecordFileUploader({
                                            }: RecordFileUploaderProps) {
     const baseUrl: string = (process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "");
 
+
+
+    const {theme} = useTheme();
+    const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme);
+    const [editorReady, setEditorReady] = useState(false);
+    const [metadata, setMetadata] = useState({} as DataResource);
+    const {data, status} = useSession();
+    const [confirm, setConfirm] = useState(false);
     const [uppy, setUppy] = useState(() => new Uppy()
         .use(XHRUpload, {
             endpoint: `${baseUrl}/api/v2/schemas/`,
@@ -33,15 +41,6 @@ export default function RecordFileUploader({
             formData: true,
             bundle: true
         }));
-
-    const {theme} = useTheme();
-    const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme);
-    const [editorReady, setEditorReady] = useState(false);
-    const [metadata, setMetadata] = useState({} as DataResource);
-    const {data, status} = useSession();
-
-    const [confirm, setConfirm] = useState(false);
-
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme);
         uppy.close();
@@ -49,6 +48,9 @@ export default function RecordFileUploader({
             .use(XHRUpload, {
                 endpoint: `${baseUrl}/api/v2/schemas/` ,
                 method: "post",
+                headers: {
+                    "Authorization": `Bearer ${data?.accessToken}`
+                },
                 bundle: true
             }));
 

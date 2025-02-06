@@ -1,8 +1,9 @@
 import {toast} from "react-toastify";
-import {DataResource} from "@/lib/definitions";
+import {Acl, DataResource} from "@/lib/definitions";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
 import {updateMetadataSchema} from "@/lib/metastore/client_data";
+import {stringToPermission} from "@/lib/permission-utils";
 
 export const accessControlColumns: NestedColumn[] = [
     {
@@ -36,60 +37,56 @@ export const DataChanged = (data: object, setConfirm: Function, setCurrentData: 
     }
 }
 
-export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], reloadCallback:Function) => {
+export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], accessToken?: string, reloadCallback?: Function) => {
     const id = toast.loading("Processing permission update...")
 
-    const additions: any[] = [];
-    const updates: any[] = [];
-    const removals: any[] = [];
-
     //go through all permissions and identify additions, updates, and removals
+    let new_permissions: Acl[] = [];
+
     permissions.map((permission) => {
         //permission assigned
         const existingIndex: number | undefined = currentData.acls.findIndex((entry, index) => entry.sid === permission.id);
 
         if (existingIndex >= 0 && permission.columnId === "users") {
             //entry is in current ACL but now in 'users' column -> fully revoke
-            removals.push({
-                "op": "remove",
-                "path": `/acls/${existingIndex}`
-            });
         } else if (existingIndex >= 0 && permission.columnId != "users" && currentData.acls[existingIndex].permission.toLowerCase() != permission.columnId) {
             //entry is in current ACL but now in another column than the permission indicates -> update
-            updates.push({
-                "op": "replace",
-                "path": `/acls/${existingIndex}/permission`,
-                value: permission.columnId.toString().toUpperCase()
-            });
+            new_permissions.push({
+                id: existingIndex.toString(),
+                sid: permission.id,
+                permission: stringToPermission(permission.columnId.toString().toUpperCase())
+            } as Acl);
         } else if (existingIndex < 0 && permission.columnId != "users") {
             //entry is not yet in ACL and not in 'users' column -> add new
-            additions.push({
-                "op": "add",
-                "path": `/acls/-`,
-                value: {'sid': permission.id, 'permission': permission.columnId.toString().toUpperCase()}
-            });
+            new_permissions.push({
+                sid: permission.id,
+                permission: stringToPermission(permission.columnId.toString().toUpperCase())
+            } as Acl);
+        }else{
+            console.log("EXIST ", existingIndex);
+            if(existingIndex != undefined && existingIndex > 0){
+                new_permissions.push(currentData.acls[existingIndex]);
+            }
         }
     })
+    console.log("NEW ", new_permissions);
+    currentData.acls = new_permissions;
 
-    //order single patches to avoid conflicts during patch (update > removal > add)
-    const orderedPatches: any[] = [];
-    orderedPatches.push(...updates);
-    orderedPatches.push(...removals);
-    orderedPatches.push(...additions);
-
-    /*patchDataResourceAcls(currentData.id, etag, orderedPatches).then((status) => {
-        if (status === 204) {
+    updateMetadataSchema(currentData, etag, accessToken).then((status) => {
+        if (status === 200) {
             toast.update(id, {
-                render: `${orderedPatches.length} updates successfully applied.`,
+                render: `Updates successfully applied.`,
                 type: "success",
                 isLoading: false,
                 autoClose: 1000,
                 "onClose": () => {
-                    reloadCallback(`/base-repo/resources/${currentData.id}/edit?target=access`);
+                    if (reloadCallback) {
+                        reloadCallback(`/metastore/schemas/${currentData.id}/edit?target=access`);
+                    }
                 }
             });
-        }else{
-            console.error(`Unexpected response ${status} while patching resource.`);
+        } else {
+            console.error(`Unexpected response ${status} while patching schema.`);
             toast.update(id, {
                 render: `Failed to update access permissions. Status: ${status}`,
                 type: "error",
@@ -99,14 +96,14 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     }).catch(error => {
         console.error("Failed to update access permissions.", error);
         toast.update(id, {
-            render: `Failed to update access permissions. Status: ${error.response.status}`,
+            render: `Failed to update access permissions. Status: ${error.response?.status}`,
             type: "error",
             isLoading: false
         });
-    });*/
+    });
 }
 
-export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback:Function, accessToken?:string|undefined) => {
+export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback: Function, accessToken?: string | undefined) => {
     const id = toast.loading("Updating schema...")
 
     updateMetadataSchema(currentData, etag, accessToken).then((status) => {
