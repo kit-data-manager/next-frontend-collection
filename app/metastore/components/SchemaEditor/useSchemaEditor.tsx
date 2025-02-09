@@ -49,8 +49,8 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
 
         if (existingIndex >= 0 && permission.columnId === "users") {
             //entry is in current ACL but now in 'users' column -> fully revoke
-        } else if (existingIndex >= 0 && permission.columnId != "users" && currentData.acls[existingIndex].permission.toLowerCase() != permission.columnId) {
-            //entry is in current ACL but now in another column than the permission indicates -> update
+        } else if (existingIndex >= 0 && permission.columnId != "users") {
+            //entry is in current ACL and has to be added, also updates will be applied here
             new_permissions.push({
                 id: existingIndex.toString(),
                 sid: permission.id,
@@ -62,11 +62,6 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
                 sid: permission.id,
                 permission: stringToPermission(permission.columnId.toString().toUpperCase())
             } as Acl);
-        }else{
-            console.log("EXIST ", existingIndex);
-            if(existingIndex != undefined && existingIndex > 0){
-                new_permissions.push(currentData.acls[existingIndex]);
-            }
         }
     })
     console.log("NEW ", new_permissions);
