@@ -3,8 +3,8 @@
 import {DocumentDuplicateIcon, PlayIcon, PuzzlePieceIcon} from '@heroicons/react/24/outline';
 
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {formatNumber} from "@/lib/format-utils";
-import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
+import {formatNumber} from "@/lib/general/format-utils";
+import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client-data";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 import {useEffect, useState} from "react";
 

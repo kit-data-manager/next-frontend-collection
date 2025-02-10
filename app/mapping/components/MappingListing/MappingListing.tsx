@@ -1,11 +1,11 @@
 'use client'
 
-import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import React, {useEffect, useState} from "react";
 import {JobStatus, Mapping} from "@/lib/mapping/definitions";
 import {useSession} from "next-auth/react";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
-import {deleteMappingJobStatus, fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client_data";
+import {deleteMappingJobStatus, fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client-data";
 import Loader from "@/components/general/Loader";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {TriangleAlert} from "lucide-react";

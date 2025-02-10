@@ -8,14 +8,14 @@ import {useSession} from "next-auth/react";
 import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
-import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
+import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permission-utils";
 import {Tabs} from "@/components/ui/tabs";
 import {Icon} from "@iconify/react";
-import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {TabsHeader} from "@/app/metastore/components/SchemaEditor/tabs/TabsHeader";
 import {MetadataTab} from "@/app/metastore/components/SchemaEditor/tabs/MetadataTab";
 import {AccessTab} from "@/app/metastore/components/SchemaEditor/tabs/AccessTab";
-import {fetchMetadataSchema} from "@/lib/metastore/client_data";
+import {fetchMetadataSchema} from "@/lib/metastore/client-data";
 
 export default function SchemaEditor({...props}) {
     //general props

@@ -7,8 +7,8 @@ import {
     UserIcon
 } from '@heroicons/react/24/outline';
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {formatNumber, humanFileSize} from "@/lib/format-utils";
-import {fetchMetastoreOverview} from "@/lib/metastore/data";
+import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
+import {fetchMetastoreOverview} from "@/lib/metastore/server-data";
 
 export default async function MetastoreStats() {
 

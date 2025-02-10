@@ -5,13 +5,13 @@ import DataResourceListing from "@/app/base-repo/components/DataResourceListing/
 import FilterResourceForm from "@/app/base-repo/components/FilterForm/FilterForm";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib/definitions";
-import {valueOrDefault} from "@/lib/searchParamHelper";
+import {valueOrDefault} from "@/lib/general/search-param-helper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
 import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
 import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/auth-options";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 
 export default async function Page({searchParams}: {

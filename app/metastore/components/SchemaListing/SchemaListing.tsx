@@ -9,16 +9,16 @@ import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {fetchMetadataSchemas, updateMetadataSchema} from "@/lib/metastore/client_data";
+import {fetchMetadataSchemas, updateMetadataSchema} from "@/lib/metastore/client-data";
 import {ViewSchemaAction} from "@/lib/actions/metastore/viewSchemaAction";
 import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
 import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useDebouncedCallback} from "use-debounce";
 import {METASTORE_ACTIONS} from "@/lib/actions/action";
-import {runAction} from "@/lib/actions/actionExecutor";
+import {runAction} from "@/lib/actions/action-executor";
 import {useRouter} from "next/navigation";
-import {getAclDiff} from "@/lib/base-repo/client_data";
+import {getAclDiff} from "@/lib/base-repo/client-data";
 import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
 import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
 import {toast} from "react-toastify";
@@ -80,8 +80,8 @@ export default function SchemaListing({page, size, sort}: {
         setOpenModal(false);
 
         if (!result || !selectedValues){
-            return;
             setSelectedResource({} as DataResource);
+            return;
         }
         const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
 

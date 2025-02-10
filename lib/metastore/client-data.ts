@@ -1,28 +1,5 @@
-import {Acl, DataResource, DataResourcePage} from "@/lib/definitions";
-import {fetchWithBasePath} from "@/lib/utils";
+import {DataResource, DataResourcePage} from "@/lib/definitions";
 
-
-export async function createMetadataSchema(resource: DataResource, accessToken?: string | undefined) {
-    const headers = {
-        "Content-Type": "application/json"
-    };
-    if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-    const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
-
-    const response = await fetch(`${baseUrl}/api/v1/dataresources/`, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(resource)
-    });
-
-    if (response.status === 201) {
-        return response.json();
-    } else {
-        throw new ResponseError('Failed to create resource.', response);
-    }
-}
 
 export async function fetchMetadataSchemas(page: number, size: number, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {
@@ -113,47 +90,6 @@ export async function fetchMetadataSchemaDocument(id: string, mimeType: string, 
     }
 }
 
-/*
-export function getAclDiff(sids: string[], acl: Acl[]) {
-    const sidDiff: string[] = [];
-
-    sids.map((sid: string) => {
-        if (!acl.find((element) => element.sid === sid)) {
-            sidDiff.push(sid);
-        }
-    })
-    return sidDiff;
-}
-
-export async function patchDataResourceForQuickShare(id: string, etag: string, sids: string[]) {
-    const patch: any[] = [];
-    sids.map((sid: string) => {
-        patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission': "READ"}});
-    })
-
-    try {
-        return fetchWithBasePath(`/api/base-repo/patch?resourceId=${id}&etag=${etag}`, {
-            method: "PATCH",
-            body: JSON.stringify(patch)
-        }).then(res => res.status);
-    } catch (error) {
-        console.error('Failed to patch resource. Error:', error);
-        return Promise.reject("Failed to patch resource.");
-    }
-}
-
-export async function patchDataResourceAcls(id: string, etag: string, patch: any[]) {
-    try {
-        return fetchWithBasePath(`/api/metastore/patch?resourceId=${id}&etag=${etag}`, {
-            method: "PATCH",
-            body: JSON.stringify(patch)
-        }).then(res => res.status);
-    } catch (error) {
-        console.error('Failed to patch resource. Error:', error);
-        return Promise.reject("Failed to patch resource.");
-    }
-}*/
-
 export async function fetchMetadataSchemaEtag(id: string, accessToken?: string | undefined) {
     try {
         const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
@@ -175,18 +111,7 @@ export async function fetchMetadataSchemaEtag(id: string, accessToken?: string |
     }
 }
 
-
-export class ResponseError extends Error {
-    public response: string;
-
-    constructor(message, res) {
-        super(message);
-        this.response = res;
-    }
-}
-
 export async function updateMetadataSchema(resource: DataResource, etag: string, accessToken?: string | undefined): Promise<number> {
-    console.log("ET ", etag);
     const headers = {
         "If-Match": etag
     };
@@ -200,8 +125,7 @@ export async function updateMetadataSchema(resource: DataResource, etag: string,
         headers["Authorization"] = `Bearer ${accessToken}`;
     }
     const metastoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040";
-console.log("TARGET ", `${metastoreBaseUrl}/api/v2/schemas/${resource.id}`);
-console.log("HEADERS ", headers);
+
     return await fetch(`${metastoreBaseUrl}/api/v2/schemas/${resource.id}`, {
         method: "PUT",
         headers: headers,
@@ -214,3 +138,14 @@ console.log("HEADERS ", headers);
         }
     });
 }
+
+export class ResponseError extends Error {
+    public response: string;
+
+    constructor(message, res) {
+        super(message);
+        this.response = res;
+    }
+}
+
+

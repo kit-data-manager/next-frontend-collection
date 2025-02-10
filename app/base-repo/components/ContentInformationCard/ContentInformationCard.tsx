@@ -1,22 +1,14 @@
 'use client'
 
 import {DataCard} from "@kit-data-manager/data-view-web-component-react/dist/components";
-import {propertiesForContentInformation, thumbFromContentArray} from "@/lib/base-repo/datacard-utils";
-import {useDebouncedCallback} from "use-debounce";
-import {useRouter} from "next/compat/router";
+import {propertiesForContentInformation} from "@/lib/base-repo/datacard-utils";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {ContentInformation} from "@/lib/definitions";
-import {runAction} from "@/lib/actions/actionExecutor";
 import {useSession} from "next-auth/react";
 import {useEffect, useState} from "react";
-import {
-    fetchAllContentInformation,
-    fetchContentInformationEtag,
-    fetchDataResourceEtag
-} from "@/lib/base-repo/client_data";
+import {fetchContentInformationEtag} from "@/lib/base-repo/client-data";
 import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 import {DownloadContentAction} from "@/lib/actions/base-repo/downloadContentAction";
-import {userCanDelete, userCanDownload} from "@/lib/event-utils";
 import {DeleteContentAction} from "@/lib/actions/base-repo/deleteContentAction";
 
 

@@ -5,7 +5,7 @@ import DataResourceEditor from '@/app/base-repo/components/DataResourceEditor/Da
 import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {fetchSchema} from "@/lib/base-repo/client_data";
+import {fetchSchema} from "@/lib/base-repo/client-data";
 import {useSession} from "next-auth/react";
 
 export default function Page() {

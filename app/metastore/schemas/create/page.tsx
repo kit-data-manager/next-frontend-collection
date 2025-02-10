@@ -1,16 +1,14 @@
 "use client";
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import DataResourceEditor from '@/app/base-repo/components/DataResourceEditor/DataResourceEditor'
 import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {fetchSchema} from "@/lib/base-repo/client_data";
+import {fetchSchema} from "@/lib/base-repo/client-data";
 import RecordFileUploader from "@/app/metastore/components/RecordFileUploader/RecordFileUploader";
 import {useRouter} from "next/navigation";
-import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
 import {Icon} from "@iconify/react";
-import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {useSession} from "next-auth/react";
 import {CreateHelp} from "@/app/metastore/schemas/create/CreateHelp";
 

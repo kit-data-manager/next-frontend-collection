@@ -8,7 +8,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger
 } from "@/components/ui/navigation-menu";
-import {cn} from "@/lib/utils";
+import {cn} from "@/lib/general/utils";
 import React from "react";
 import {useSession} from "next-auth/react";
 import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";

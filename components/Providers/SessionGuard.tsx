@@ -1,7 +1,7 @@
 "use client";
-import { signIn, useSession } from "next-auth/react";
-import { ReactNode, useEffect } from "react";
-import federatedLogout from "@/lib/federatedLogout";
+import {signIn, useSession} from "next-auth/react";
+import {ReactNode, useEffect} from "react";
+import federatedLogout from "@/lib/next-auth/federatedLogout";
 
 export default function SessionGuard({ children }: { children: ReactNode }) {
     const { data, status } = useSession();

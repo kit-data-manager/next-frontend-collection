@@ -2,8 +2,8 @@ import {toast} from "react-toastify";
 import {Acl, DataResource} from "@/lib/definitions";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
-import {updateMetadataSchema} from "@/lib/metastore/client_data";
-import {stringToPermission} from "@/lib/permission-utils";
+import {updateMetadataSchema} from "@/lib/metastore/client-data";
+import {stringToPermission} from "@/lib/general/permission-utils";
 
 export const accessControlColumns: NestedColumn[] = [
     {
@@ -52,7 +52,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
         } else if (existingIndex >= 0 && permission.columnId != "users") {
             //entry is in current ACL and has to be added, also updates will be applied here
             new_permissions.push({
-                id: existingIndex.toString(),
+                id: currentData.acls[existingIndex].id,
                 sid: permission.id,
                 permission: stringToPermission(permission.columnId.toString().toUpperCase())
             } as Acl);
@@ -64,7 +64,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
             } as Acl);
         }
     })
-    console.log("NEW ", new_permissions);
+    console.log("New permissions ", new_permissions);
     currentData.acls = new_permissions;
 
     updateMetadataSchema(currentData, etag, accessToken).then((status) => {

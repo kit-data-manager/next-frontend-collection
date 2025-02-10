@@ -1,6 +1,6 @@
 import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
-import {fetchWithBasePath} from "@/lib/utils";
+import {fetchWithBasePath} from "@/lib/general/utils";
 
 export class ToggleThumbAction extends Action {
     constructor(resourceId: string, filename: string) {

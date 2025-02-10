@@ -1,6 +1,6 @@
 import {twMerge} from "tailwind-merge";
 import clsx, {ClassValue} from "clsx";
-import {ResponseError} from "@/lib/base-repo/client_data";
+import {ResponseError} from "@/lib/base-repo/client-data";
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
     // If the total number of pages is 7 or less,

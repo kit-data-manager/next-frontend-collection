@@ -3,7 +3,6 @@
 import {signIn, useSession} from "next-auth/react";
 import {Icon} from "@iconify/react";
 import React from "react";
-import federatedLogout from "@/lib/federatedLogout";
 import {redirect} from "next/navigation";
 
 export default function LoginLogoutButton({icon, ...props}) {

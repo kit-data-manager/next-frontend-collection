@@ -8,8 +8,8 @@ import {
     KeycloakInfo,
     KeycloakUser
 } from "@/lib/definitions";
-import {filterFormToDataResource} from "@/lib/filter-utils";
-import {fetchWithBasePath} from "@/lib/utils";
+import {filterFormToDataResource} from "@/app/base-repo/components/FilterForm/filter-utils";
+import {fetchWithBasePath} from "@/lib/general/utils";
 
 export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {

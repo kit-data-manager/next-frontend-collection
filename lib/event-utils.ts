@@ -1,5 +1,5 @@
 import {DataResource, Permission, State} from "@/lib/definitions";
-import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
+import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permission-utils";
 
 export const enum REPO_EVENTS {
     "VIEW_RESOURCE" = "viewResource",

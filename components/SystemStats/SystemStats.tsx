@@ -1,10 +1,11 @@
-import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client_data";
+import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client-data";
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {humanFileSize} from "@/lib/format-utils";
-import {ActuatorInfo, ExtendedSession, KeycloakInfo} from "@/lib/definitions";
+import {humanFileSize} from "@/lib/general/format-utils";
+import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/auth-options";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {ExtendedSession} from "@/lib/next-auth/next-auth";
 
 export default async function SystemStats() {
     const data:ExtendedSession | null = await getServerSession(authOptions);
@@ -81,7 +82,7 @@ export default async function SystemStats() {
                 <StatusCard cardStatus={
                     {
                         title: metastoreInstanceName,
-                        subtitle: "v1.0.0",
+                        subtitle: actuatorInfoMetaStore.version,
                         status: actuatorInfoMetaStore.status,
                         visitRef: actuatorInfoMetaStore.status ? `/metastore` : '',
                         detailsRef: actuatorInfoMetaStore.status ? `/metastore` : ''

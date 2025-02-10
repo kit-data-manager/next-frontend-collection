@@ -1,4 +1,4 @@
-import {ActionButtonInterface, Tag, TextPropType} from "@kit-data-manager/data-view-web-component";
+import {Tag, TextPropType} from "@kit-data-manager/data-view-web-component";
 
 export function createLabeledField( value:string, label=undefined, defaultValue="Unspecified Title") :TextPropType{
     if(label){
@@ -15,12 +15,4 @@ export function createTag(value:string, color:string, icon = undefined, url=unde
         "iconName": icon,
         "url": url
     } as Tag;
-}
-
-export function createActionButton(url:string, label:string, icon:string): ActionButtonInterface{
-    return {
-        "iconName": icon,
-        "label": label,
-        "url": url
-    } as ActionButtonInterface;
 }

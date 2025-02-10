@@ -1,12 +1,10 @@
 import JsonForm from "@/components/jsonform";
-import {
-    DataChanged
-} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
+import {DataChanged} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useState} from "react";
 import {DataResource} from "@/lib/definitions";
-import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
+import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import {MetadataTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/MetadataTabHelp";
 import {DoUpdateSchema} from "@/app/metastore/components/SchemaEditor/useSchemaEditor";
 import {useSession} from "next-auth/react";

@@ -1,4 +1,4 @@
-import {ResponseError} from "@/lib/base-repo/client_data";
+import {ResponseError} from "@/lib/base-repo/client-data";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {JobStatus, MappingPage, MappingPlugin} from "@/lib/mapping/definitions";
 

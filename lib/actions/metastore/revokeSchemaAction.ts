@@ -1,4 +1,4 @@
-import {Action, METASTORE_ACTIONS, REPO_ACTIONS} from "@/lib/actions/action";
+import {Action, METASTORE_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
 
 export class RevokeSchemaAction extends Action{

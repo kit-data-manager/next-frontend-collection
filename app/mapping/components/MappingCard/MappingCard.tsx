@@ -3,10 +3,10 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Button} from "@/components/ui/button";
 import {Icon} from "@iconify/react";
 import React, {useEffect, useState} from "react";
-import {fetchMappingJobStatus} from "@/lib/mapping/client_data";
+import {fetchMappingJobStatus} from "@/lib/mapping/client-data";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
-import {stringToColour} from "@/lib/utils";
+import {stringToColour} from "@/lib/general/utils";
 
 interface MappingCardProps {
     job: JobStatus;

@@ -8,7 +8,7 @@ import ConfirmCancelComponent from "@/components/general/confirm-cancel-componen
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useState} from "react";
 import {DataResource} from "@/lib/definitions";
-import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
+import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import {useRouter} from "next/navigation";
 import {MetadataTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/MetadataTabHelp";
 import {useSession} from "next-auth/react";

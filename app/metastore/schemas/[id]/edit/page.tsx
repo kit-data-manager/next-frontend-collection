@@ -1,6 +1,6 @@
 "use client";
 
-import {fetchSchema} from "@/lib/base-repo/client_data";
+import {fetchSchema} from "@/lib/base-repo/client-data";
 import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";

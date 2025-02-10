@@ -7,8 +7,8 @@ import {
     UserIcon
 } from '@heroicons/react/24/outline';
 import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {fetchContentOverview} from "@/lib/base-repo/data";
-import {formatNumber, humanFileSize} from "@/lib/format-utils";
+import {fetchContentOverview} from "@/lib/base-repo/server-data";
+import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
 
 export default async function RepositoryStats() {
 

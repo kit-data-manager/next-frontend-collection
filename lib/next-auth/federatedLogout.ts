@@ -1,5 +1,5 @@
 import {signOut} from "next-auth/react";
-import {fetchWithBasePath} from "@/lib/utils";
+import {fetchWithBasePath} from "@/lib/general/utils";
 
 export default async function federatedLogout() {
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");

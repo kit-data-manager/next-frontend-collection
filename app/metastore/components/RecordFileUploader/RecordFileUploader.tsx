@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from "react";
-import Uppy, {UploadCallback} from "@uppy/core";
+import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';

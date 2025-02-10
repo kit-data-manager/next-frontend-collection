@@ -1,7 +1,7 @@
 'use client';
 
 import {DataResource, State} from "@/lib/definitions";
-import {fetchDataResources, getAclDiff, patchDataResourceForQuickShare} from "@/lib/base-repo/client_data";
+import {fetchDataResources, getAclDiff, patchDataResourceForQuickShare} from "@/lib/base-repo/client-data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import {userCanDownload, userCanEdit, userCanView} from "@/lib/event-utils";
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
@@ -18,7 +18,7 @@ import {DownloadResourceAction} from "@/lib/actions/base-repo/downloadResourceAc
 import {QuickShareResourceAction} from "@/lib/actions/base-repo/quickShareResourceAction";
 import {useDebouncedCallback} from "use-debounce";
 import {REPO_ACTIONS} from "@/lib/actions/action";
-import {runAction} from "@/lib/actions/actionExecutor";
+import {runAction} from "@/lib/actions/action-executor";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useRouter} from "next/navigation";
 import {toast} from "react-toastify";

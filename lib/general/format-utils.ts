@@ -1,12 +1,5 @@
 import moment from "moment";
 
-export const formatCurrency = (amount: number) => {
-    return (amount / 100).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
-};
-
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }

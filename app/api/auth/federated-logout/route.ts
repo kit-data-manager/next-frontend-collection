@@ -1,7 +1,7 @@
 import * as jwt from "next-auth/jwt"
-import { NextRequest } from "next/server"
-import { redirect } from "next/navigation"
-import { JWT } from "next-auth/jwt"
+import {JWT} from "next-auth/jwt"
+import {NextRequest} from "next/server"
+import {redirect} from "next/navigation"
 import nextConfig from "@/next.config"
 
 function federatedLogout(logoutPath: string) {

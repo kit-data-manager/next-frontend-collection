@@ -1,6 +1,5 @@
 import {Action, REPO_ACTIONS} from "@/lib/actions/action";
 import {toast} from "react-toastify";
-import {fetchWithBasePath} from "@/lib/utils";
 
 export class RemoveTagAction extends Action {
     constructor(resourceId: string, filename: string, etag:string, tagIndex?: number) {

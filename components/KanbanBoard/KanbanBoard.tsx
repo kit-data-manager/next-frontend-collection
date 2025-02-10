@@ -1,24 +1,24 @@
-import {startTransition, useCallback, useId, useMemo, useRef, useState} from "react";
+import {startTransition, useCallback, useId, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
 
 import {
+    Active,
+    DataRef,
     DndContext,
     type DragEndEvent,
     type DragOverEvent,
     DragOverlay,
     type DragStartEvent,
+    KeyboardSensor,
+    MouseSensor,
+    Over,
+    TouchSensor,
     useSensor,
     useSensors,
-    KeyboardSensor,
-    TouchSensor,
-    MouseSensor,
-    Active,
-    Over,
-    DataRef,
 } from "@dnd-kit/core";
-import {SortableContext, arrayMove} from "@dnd-kit/sortable";
-import {type Element, BoardCard, ElementDragData} from "./BoardCard";
-import {type Column, BoardColumn, BoardContainer, ColumnDragData} from "./BoardColumn";
+import {arrayMove, SortableContext} from "@dnd-kit/sortable";
+import {BoardCard, type Element, ElementDragData} from "./BoardCard";
+import {BoardColumn, BoardContainer, type Column, ColumnDragData} from "./BoardColumn";
 import {coordinateGetter} from "./multipleContainersKeyboardPreset";
 
 export type NestedColumn = Column & {

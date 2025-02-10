@@ -1,12 +1,9 @@
 import {ContentInformation, DataResource} from "@/lib/definitions";
-import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {userCanDelete, userCanDownload} from "@/lib/event-utils";
-import {DeleteContentAction} from "@/lib/actions/base-repo/deleteContentAction";
-import {DownloadContentAction} from "@/lib/actions/base-repo/downloadContentAction";
 import ContentInformationCard from "@/app/base-repo/components/ContentInformationCard/ContentInformationCard";
 import {TabsContent} from "@/components/ui/tabs";
 import React from "react";
-import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
+import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import {Session} from "next-auth";
 import {
     ContentTabHelp,

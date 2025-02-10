@@ -2,12 +2,12 @@
 
 import {Calendar, CircleUser, CircleX, Filter} from "lucide-react"
 
-import {filterResources} from '@/lib/filter-form-actions';
+import {filterResources} from '@/app/base-repo/components/FilterForm/filter-form-actions';
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {Button} from "@/components/ui/button";
 import React from "react";
 import {useSession} from "next-auth/react";
-import {getStateList, getTypeGeneralList} from "@/lib/filter-utils";
+import {getStateList, getTypeGeneralList} from "@/app/base-repo/components/FilterForm/filter-utils";
 import {Label} from "@/components/ui/label";
 
 export default function FilterResourceForm({filter}: {

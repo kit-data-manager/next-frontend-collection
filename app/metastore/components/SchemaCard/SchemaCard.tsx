@@ -7,7 +7,7 @@ import {DataResource} from "@/lib/definitions";
 import {propertiesForSchema} from "@/lib/metastore/datacard-utils";
 import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 import {useSession} from "next-auth/react";
-import {fetchMetadataSchemaEtag} from "@/lib/metastore/client_data";
+import {fetchMetadataSchemaEtag} from "@/lib/metastore/client-data";
 
 export interface SchemaCardProps {
     resource: DataResource;

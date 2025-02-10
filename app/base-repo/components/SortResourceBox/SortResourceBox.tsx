@@ -3,14 +3,14 @@
 import * as React from "react"
 import {Check, SortDesc} from "lucide-react"
 
-import {cn} from "@/lib/utils"
+import {cn} from "@/lib/general/utils"
 import {Button} from "@/components/ui/button"
 import {Command, CommandGroup, CommandItem, CommandList,} from "@/components/ui/command"
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
 import {Sort} from "@/lib/definitions";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useSession} from "next-auth/react";
-import useUserPrefs from "@/lib/hooks/userUserPrefs";
+import useUserPrefs from "@/lib/hooks/useUserPrefs";
 
 const sortings = [
     {

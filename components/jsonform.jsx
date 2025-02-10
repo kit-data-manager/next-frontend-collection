@@ -1,8 +1,8 @@
 'use client';
 
-import React, {useRef, useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import './JsonForm.css'
-import {fetchUsers} from "@/lib/base-repo/client_data";
+import {fetchUsers} from "@/lib/base-repo/client-data";
 
 const useScript = (id, url) => {
     useEffect(() => {

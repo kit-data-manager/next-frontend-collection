@@ -1,3 +1,5 @@
+import {Profile, Session} from "next-auth";
+
 export declare module 'next-auth' {
     /**
      * Returned by `useSession`, `getSession` and received as a prop on the `Provider` React Context
@@ -77,3 +79,13 @@ declare module 'next-auth/jwt' {
         error: string;
     }
 }
+
+export type ExtendedSession = Session & { accessToken?: string, groups?: string[] | undefined };
+export type ExtendedProfile = Profile & { groups?: string[] }
+
+export type User = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+};

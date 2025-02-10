@@ -1,16 +1,14 @@
 import {Input} from "@/components/ui/input";
 import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
-import {
-    accessControlColumns
-} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
+import {accessControlColumns} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useEffect, useState} from "react";
 import {Acl, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
-import {UserPrefsType} from "@/lib/hooks/userUserPrefs";
+import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import capitalize from "@mui/utils/capitalize";
-import {fetchUsers} from "@/lib/base-repo/client_data";
+import {fetchUsers} from "@/lib/base-repo/client-data";
 import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
 import {useSession} from "next-auth/react";
 import {

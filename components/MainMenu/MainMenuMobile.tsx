@@ -12,7 +12,7 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {cn} from "@/lib/utils";
+import {cn} from "@/lib/general/utils";
 import Link from "next/link";
 import {useSession} from "next-auth/react";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";

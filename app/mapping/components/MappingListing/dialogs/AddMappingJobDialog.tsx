@@ -7,7 +7,7 @@ import {Info} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@radix-ui/react-collapsible";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {cn} from "@/lib/utils";
+import {cn} from "@/lib/general/utils";
 import {Icon} from "@iconify/react";
 
 interface AddTagDialogProps {

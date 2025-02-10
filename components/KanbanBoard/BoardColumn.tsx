@@ -1,12 +1,12 @@
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import React, { useMemo } from "react";
-import { Element, BoardCard } from "./BoardCard";
-import { cva } from "class-variance-authority";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Badge } from "../ui/badge";
+import {SortableContext, useSortable} from "@dnd-kit/sortable";
+import {type UniqueIdentifier, useDndContext} from "@dnd-kit/core";
+import {CSS} from "@dnd-kit/utilities";
+import React, {useMemo} from "react";
+import {BoardCard, Element} from "./BoardCard";
+import {cva} from "class-variance-authority";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
+import {Badge} from "../ui/badge";
 import {Icon} from "@iconify/react";
 
 export interface Column {

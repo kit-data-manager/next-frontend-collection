@@ -1,4 +1,4 @@
-import { HiOutlineHome } from "react-icons/hi";
+import {HiOutlineHome} from "react-icons/hi";
 import {Breadcrumb} from "flowbite-react";
 import {BreadcrumbEntry, theme} from "@/components/Breadcrumbs/Breadcrumbs.d";
 

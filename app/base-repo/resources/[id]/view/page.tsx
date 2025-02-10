@@ -1,7 +1,7 @@
 'use client';
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
-import {fetchAllContentInformation, fetchDataResource, fetchDataResourceEtag} from "@/lib/base-repo/client_data";
+import {fetchAllContentInformation, fetchDataResource, fetchDataResourceEtag} from "@/lib/base-repo/client-data";
 import DataResourceCard from "@/app/base-repo/components/DataResourceCard/DataResourceCard";
 import React, {useEffect, useState} from "react";
 import {userCanDelete, userCanDownload, userCanEdit} from "@/lib/event-utils";
@@ -11,7 +11,7 @@ import {useSession} from "next-auth/react";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import Loader from "@/components/general/Loader";
-import {permissionToNumber, resourcePermissionForUser} from "@/lib/permission-utils";
+import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permission-utils";
 import {EditResourceAction} from "@/lib/actions/base-repo/editResourceAction";
 import {DownloadResourceAction} from "@/lib/actions/base-repo/downloadResourceAction";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
@@ -19,7 +19,7 @@ import {DeleteResourceAction} from "@/lib/actions/base-repo/deleteResourceAction
 import {RevokeResourceAction} from "@/lib/actions/base-repo/revokeResourceAction";
 import {ToastContainer} from "react-toastify";
 import {useDebouncedCallback} from "use-debounce";
-import {runAction} from "@/lib/actions/actionExecutor";
+import {runAction} from "@/lib/actions/action-executor";
 import {useRouter} from "next/navigation";
 
 export default function Page({params}) {

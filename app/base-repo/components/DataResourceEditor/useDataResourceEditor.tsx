@@ -1,10 +1,9 @@
 import {toast} from "react-toastify";
-import {Acl, DataResource} from "@/lib/definitions";
+import {DataResource} from "@/lib/definitions";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
-import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client_data";
+import {createDataResource, patchDataResourceAcls, updateDataResource} from "@/lib/base-repo/client-data";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
-import {stringToPermission} from "@/lib/permission-utils";
 
 export const accessControlColumns: NestedColumn[] = [
     {
