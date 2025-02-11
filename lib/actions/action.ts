@@ -12,6 +12,7 @@ export const enum REPO_ACTIONS {
 }
 
 export const enum METASTORE_ACTIONS {
+    "CREATE_METADATA" = "createMetadata",
     "VIEW_SCHEMA" = "viewSchema",
     "VIEW_METADATA" = "viewMetadata",
     "EDIT_SCHEMA" = "editSchema",

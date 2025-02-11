@@ -235,10 +235,10 @@
         },
         "rights": {
             "type": "array",
-            "title":"Rights Information",
-            "description": "Rights information for the schema, e.g., access license.",
+            "title":"License Information",
+            "description": "License information for the schema, e.g., access license.",
             "items": {
-                "headerTemplate": "Right #{{ i1 }} {{#if self.schemeId}} ({{ self.schemeId }}) {{else}} (None) {{/if}}",
+                "headerTemplate": "License #{{ i1 }} {{#if self.schemeId}} ({{ self.schemeId }}) {{else}} (None) {{/if}}",
                 "$ref": "/definitions/base-repo/models/scheme.json"
             },
             "options": {
@@ -272,6 +272,6 @@
         }
     },
     "required": [
-        "id", "titles"
+        "id", "titles", "rights"
     ]
 }

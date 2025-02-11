@@ -13,14 +13,14 @@ import {Button} from "@/components/ui/button";
 import Loader from "@/components/general/Loader";
 import {Icon} from "@iconify/react";
 import {useSession} from "next-auth/react";
-import {installEventHandlers} from "@/app/metastore/components/RecordFileUploader/useRecordFileUploader";
+import {installEventHandlers} from "@/app/metastore/components/SchemaRecordFileUploader/useSchemaRecordFileUploader";
 
 interface RecordFileUploaderProps {
     schema: any;
     reloadCallback: Function;
 }
 
-export default function RecordFileUploader({
+export default function SchemaRecordFileUploader({
                                                schema,
                                                reloadCallback
                                            }: RecordFileUploaderProps) {
@@ -96,7 +96,7 @@ export default function RecordFileUploader({
                 {editorReady ? null :
                     <span>Loading editor...</span>
                 }
-                <JsonForm id="DataResource" schema={schema} data={metadata}
+                <JsonForm id="SchemaRecord" schema={schema} data={metadata}
                           setEditorReady={setEditorReady}
                           onChange={(d: object) => updateData(d)}/>
 

@@ -67,7 +67,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
     }
 
     if (resources.length === 0) {
-        return ErrorPage({errorCode: Errors.NotFound, backRef: "/base-repo/resources"})
+        return ErrorPage({errorCode: Errors.Empty, backRef: "/base-repo/resources"})
     }
 
     function doQuickShare(redirect: string) {
@@ -140,7 +140,6 @@ export default function DataResourceListing({page, size, filter, sort}: {
                 })}
             </div>
             <QuickShareDialog openModal={openModal} resource={selectedResource} closeCallback={shareIt}/>
-
 
             <div className="mt-5 flex w-full justify-center">
                 {totalPages ?

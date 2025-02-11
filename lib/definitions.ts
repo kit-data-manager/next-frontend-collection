@@ -28,7 +28,7 @@ export type DataResource = {
 
 export type RelatedIdentifier = {
     identifierType: string;
-    value: string;
+    value: string | null;
     relationType: string;
 }
 

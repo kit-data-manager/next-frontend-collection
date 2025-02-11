@@ -33,6 +33,10 @@ export default function ContentInformationCard({
     const {data: session, status} = useSession();
     const [miscProperties, setMiscProperties] = useState({} as any);
 
+    /**
+     * Effect fetching the content information's ETag and all content information.
+     * The effect is triggered if authentication information or the content information changes.
+     */
     useEffect(() => {
         fetchContentInformationEtag(content.parentResource.id, content.relativePath, session?.accessToken).then((etag) => {
             content.etag = etag;
@@ -48,7 +52,7 @@ export default function ContentInformationCard({
     }, [session?.accessToken, content]);
 
     return (
-        <DataCard key={content.parentResource.id}
+        <DataCard key={content.parentResource.id + "_" + content.relativePath}
                   variant={variant}
                   childrenVariant={childrenVariant}
                   onActionClick={ev => cardCallbackAction(ev, content)} {...miscProperties}></DataCard>

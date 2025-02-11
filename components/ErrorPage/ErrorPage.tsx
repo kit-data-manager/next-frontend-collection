@@ -7,6 +7,7 @@ import {
     QuestionMarkCircleIcon
 } from "@heroicons/react/24/outline";
 import React, {JSX} from "react";
+import {Icon} from "@iconify/react";
 
 export default function ErrorPage(errorDescription: ErrorDescription) {
     let ICON:JSX.Element, title:string, text:string;
@@ -28,6 +29,14 @@ export default function ErrorPage(errorDescription: ErrorDescription) {
             ICON = <FaceFrownIcon className="w-10 text-gray-400"/>
             title = "404 Not Found";
             text = "No resources found. Please check your filters and permissions.";
+            break;
+        }
+        case Errors.Empty: {
+            ICON =  <Icon
+                          icon={"mdi:search-minus"}
+                          className="h-10 w-10"/>
+            title = "Nothing found";
+            text = "No elements found. Please check your filters and permissions.";
             break;
         }
         default: {

@@ -14,6 +14,7 @@ import {AddTagAction} from "@/lib/actions/base-repo/addTagAction";
 import {RevokeSchemaAction} from "@/lib/actions/metastore/revokeSchemaAction";
 import {DeleteSchemaAction} from "@/lib/actions/metastore/deleteSchemaAction";
 import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
+import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
 
 let actionMapping: Map<string, (actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) => void> = new Map();
 //base-repo actions
@@ -37,6 +38,7 @@ actionMapping.set(METASTORE_ACTIONS.DELETE_SCHEMA, DeleteSchemaAction.performAct
 actionMapping.set(METASTORE_ACTIONS.DELETE_METADATA, dummy);
 actionMapping.set(METASTORE_ACTIONS.QUICK_SHARE_SCHEMA, QuickShareSchemaAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.QUICK_SHARE_METADATA, dummy);
+actionMapping.set(METASTORE_ACTIONS.CREATE_METADATA, CreateMetadataAction.performAction);
 
 
 function dummy(actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) {

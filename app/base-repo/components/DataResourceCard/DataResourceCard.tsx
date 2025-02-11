@@ -17,16 +17,12 @@ import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-
 
 export interface ResourceCardProps {
     resource: DataResource;
-    variant?: "default" | "detailed" | "minimal" | undefined;
-    childrenVariant?: "default" | "minimal";
     actionEvents?: ActionButtonInterface[];
     cardCallbackAction: (action: DataCardCustomEvent<ActionEvent>, resource: DataResource) => void;
 }
 
 export default function DataResourceCard({
                                              resource,
-                                             variant,
-                                             childrenVariant,
                                              actionEvents = [] as ActionButtonInterface[],
                                              cardCallbackAction
                                          }: ResourceCardProps) {
@@ -37,6 +33,10 @@ export default function DataResourceCard({
     const [childrenLabel, setChildrenLabel] = useState("Loading...");
     const [thumb, setThumb] = useState(`${basePath}/data.png`);
 
+    /**
+     * Effect fetching the resource's ETag and all content information.
+     * The effect is triggered if authentication information or the resource changes.
+     */
     useEffect(() => {
         fetchDataResourceEtag(resource.id, data?.accessToken).then((etag) => {
             resource.etag = etag;
@@ -69,8 +69,7 @@ export default function DataResourceCard({
     return (
         <>
             <DataCard key={resource.id}
-                      variant={variant}
-                      childrenVariant={childrenVariant}
+                      childrenVariant={"default"}
                       actionButtons={actionEvents}
                       onActionClick={ev => cardCallbackAction(ev, resource)} {...miscProperties}></DataCard>
         </>

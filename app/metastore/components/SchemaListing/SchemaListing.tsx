@@ -19,9 +19,10 @@ import {METASTORE_ACTIONS} from "@/lib/actions/action";
 import {runAction} from "@/lib/actions/action-executor";
 import {useRouter} from "next/navigation";
 import {getAclDiff} from "@/lib/base-repo/client-data";
-import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
+import {DownloadSchemaAction} from "@/lib/actions/metastore/downloadSchemaAction";
 import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
 import {toast} from "react-toastify";
+import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
 
 export default function SchemaListing({page, size, sort}: {
     page: number;
@@ -52,6 +53,11 @@ export default function SchemaListing({page, size, sort}: {
 
     });
 
+    /**
+     * Effect that loads all schemas of the current page, sets the pagination information, and the resources.
+     * The effect will run each time pagination information is changed (page, size, sort), if authorization information
+     * changes, or if a reload is triggered via 'mustReload'
+     */
     useEffect(() => {
         if (status != "loading") {
             setIsLoading(true);
@@ -69,25 +75,42 @@ export default function SchemaListing({page, size, sort}: {
     }
 
     if (resources.length === 0) {
-        return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
+        return ErrorPage({errorCode: Errors.Empty, backRef: "/metastore/schemas"})
     }
 
+    /**
+     * Trigger quickshare dialog to open.
+     *
+     * @param redirect Dummy argument required by runAction
+     */
     function doQuickShare(redirect: string) {
         setOpenModal(true);
     }
 
+    /**
+     * Perform share action, i.e., update the schema with the new permissions.
+     *
+     * @param result The result returned by the quickshare dialog, i.e., OK=true, Cancel=false.
+     * @param selectedValues The selected entries, i.e., userIds, that should receive READ access.
+     */
     function shareIt(result: boolean, selectedValues?: string[]) {
+        //close quickshare dialog
         setOpenModal(false);
 
+        //nothing selected, reset and return
         if (!result || !selectedValues){
             setSelectedResource({} as DataResource);
             return;
         }
+        //get ACL difference from selection
         const aclEntries: string[] = getAclDiff(selectedValues, selectedResource.acls);
 
+        //add new ACL entries with READ permissions
         aclEntries.map((sid: string) => {
             selectedResource.acls.push({"sid": sid, permission: Permission.READ});
         })
+
+        //apply update
         const id = toast.loading("Updating access control list...");
         updateMetadataSchema(selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag" ,data?.accessToken).then((res) => {
             toast.update(id, {
@@ -99,7 +122,7 @@ export default function SchemaListing({page, size, sort}: {
                   setMustReload(true);
                 }
             });
-            //reset etag for reload
+            //reload to reset etag
             setMustReload(true);
             setSelectedResource({} as DataResource);
             router.push("/metastore/schemas");
@@ -112,12 +135,14 @@ export default function SchemaListing({page, size, sort}: {
                 {resources?.map((element: DataResource, i: number) => {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];
+                    let addCreate:boolean = false;
 
                     if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new QuickShareSchemaAction(element.id).getDataCardAction());
                     }
 
                     if (userCanView(element, data?.user.preferred_username, data?.user.groups)) {
+                        addCreate = true;
                         actionEvents.push(new ViewSchemaAction(element.id).getDataCardAction());
                     }
 
@@ -126,9 +151,12 @@ export default function SchemaListing({page, size, sort}: {
                     }
 
                     if (userCanDownload(element, data?.user.preferred_username, data?.user.groups)) {
-                        actionEvents.push(new DownloadAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
+                        actionEvents.push(new DownloadSchemaAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
                     }
 
+                    if(addCreate){
+                        actionEvents.push(new CreateMetadataAction(element.id, element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
+                    }
                     let classname = "volatile_or_fixed";
                     switch (element.state) {
                         case State.REVOKED:
@@ -143,7 +171,7 @@ export default function SchemaListing({page, size, sort}: {
                         <div key={element.id} className={classname}>
                             <SchemaCard
                                 key={element.id}
-                                resource={element}
+                                schemaRecord={element}
                                 actionEvents={actionEvents}
                                 cardCallbackAction={handleAction}
                             ></SchemaCard>

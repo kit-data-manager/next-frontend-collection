@@ -1,41 +1,8 @@
 import {toast} from "react-toastify";
 import {Acl, DataResource} from "@/lib/definitions";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
-import {NestedColumn} from "@/components/KanbanBoard/KanbanBoard";
 import {updateMetadataSchema} from "@/lib/metastore/client-data";
 import {stringToPermission} from "@/lib/general/permission-utils";
-
-export const accessControlColumns: NestedColumn[] = [
-    {
-        id: "users",
-        title: "Users",
-        icon: "gridicons:multiple-users"
-    },
-    {
-        id: "read",
-        title: "Read",
-        icon: "material-symbols-light:eye-tracking-outline"
-    },
-    {
-        id: "write",
-        title: "Write",
-        icon: "material-symbols-light:edit-square-outline"
-    },
-    {
-        id: "administrate",
-        title: "Owner",
-        icon: "arcticons:vivo-i-manager"
-    }
-];
-
-export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
-    if (!data) {
-        setConfirm(false);
-    } else {
-        setCurrentData(data);
-        setConfirm(true);
-    }
-}
 
 export const DoUpdatePermissions = (currentData: DataResource, etag: string, permissions: Element[], accessToken?: string, reloadCallback?: Function) => {
     const id = toast.loading("Processing permission update...")

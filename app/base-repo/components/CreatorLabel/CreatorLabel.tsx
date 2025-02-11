@@ -1,4 +1,4 @@
-import capitalize from "@mui/utils/capitalize";
+import {capitalizeFirstLetter} from "@/lib/general/format-utils";
 
 export function CreatorLabel({firstname, lastname}: {
     firstname: string;
@@ -9,8 +9,8 @@ export function CreatorLabel({firstname, lastname}: {
     if(firstname === "SELF") {
         result += "Anonymous User";
     }else{
-        result += (lastname) ? capitalize(lastname) + "," : "";
-        result += (firstname) ? capitalize(firstname) : "";
+        result += (lastname) ? capitalizeFirstLetter(lastname) + "," : "";
+        result += (firstname) ? capitalizeFirstLetter(firstname) : "";
         //link = "https://orcid.org/orcid-search/search?firstName=" + firstname + "&lastName=" + lastname;
     }
 

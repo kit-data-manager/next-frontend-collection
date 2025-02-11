@@ -1,6 +1,6 @@
 import {UrlAction} from "@/lib/actions/urlAction";
 
-export class DownloadAction extends UrlAction{
+export class DownloadSchemaAction extends UrlAction{
     constructor(resourceId:string, type:string, format:string) {
         const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 

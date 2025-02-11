@@ -54,21 +54,9 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
         }
     }, [mappingId, fileTypes, singleUploadCallback]);
 
-  /*  uppy.off("complete", null).on('complete', (result) => {
-        uppy.close();
-        const successful = result.successful.length;
-        const failed = result.failed.length;
-        if(failed > 0) {
-            toast.error(`Failed to upload ${failed} file(s).`);
-        }
-
-        toast.success(`Successfully uploaded ${successful} file(s).`,{
-        });
-    });*/
     return (
         <div className="w-full flex mb-6 justify-center">
             <Dashboard uppy={uppy} note={`You can upload 5 files at once. InputType limitations of the selected mapping (${fileTypes}) may apply. `} width={384} height={256} showProgressDetails={true}/>
-
      </div>
 
     );

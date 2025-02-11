@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client-data";
-import RecordFileUploader from "@/app/metastore/components/RecordFileUploader/RecordFileUploader";
+import SchemaRecordFileUploader from "@/app/metastore/components/SchemaRecordFileUploader/SchemaRecordFileUploader";
 import {useRouter} from "next/navigation";
 import {Icon} from "@iconify/react";
 import useUserPrefs from "@/lib/hooks/useUserPrefs";
@@ -57,8 +57,8 @@ export default function Page() {
                         : undefined}
                     <div className="block min-w-full mt-4 align-middle">
                         <div className="rounded-lg p-2 md:pt-0">
-                            <RecordFileUploader reloadCallback={(target: string) => reload(target)}
-                                                schema={schema}/>
+                            <SchemaRecordFileUploader reloadCallback={(target: string) => reload(target)}
+                                                      schema={schema}/>
                         </div>
                     </div>
                 </div>

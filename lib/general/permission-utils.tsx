@@ -5,13 +5,13 @@ import {DataResource, Permission} from "@/lib/definitions";
  * ROLE_ADMINISTRATOR, which then overrides are user permissions. If userId has no administrator role, the function
  * will check all acl entries of the resource and returns either the specific permission for userId and if userId is
  * not in the acl, the permission for anonymousUser, which stands for public access. The function returns the numeric
- * permission.
+ * permission which is one of 0|1|2|3.
  *
  * @param resource The resource to check.
  * @param userId The userId.
  * @param groups An array of groups userId is member of.
  */
-export function resourcePermissionForUser(resource:DataResource, userId:string | undefined, groups: string[] | undefined):number{
+export function resourcePermissionForUser(resource:DataResource, userId:string | undefined, groups: string[] | undefined):0|1|2|3{
     if(groups?.find((group) => group == "ROLE_ADMINISTRATOR")) {
         return permissionToNumber(Permission.ADMINISTRATE);
     }
@@ -30,11 +30,11 @@ export function resourcePermissionForUser(resource:DataResource, userId:string |
 }
 
 /**
- * Transform a permission into its numeric representation. Returns a number.
+ * Transform a permission into its numeric representation. Returns a number of 0|1|2|3.
  *
  * @param permission The permission to transform.
  */
-export function permissionToNumber(permission:Permission):number{
+export function permissionToNumber(permission:Permission):0|1|2|3{
     switch(permission){
         case Permission.NONE:return 0;
         case Permission.READ: return 1;

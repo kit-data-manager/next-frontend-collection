@@ -15,7 +15,7 @@ import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {useRouter} from "next/navigation";
 import {fetchMetadataSchema, fetchMetadataSchemaDocument, fetchMetadataSchemaEtag} from "@/lib/metastore/client-data";
 import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
-import {DownloadAction} from "@/lib/actions/metastore/downloadAction";
+import {DownloadSchemaAction} from "@/lib/actions/metastore/downloadSchemaAction";
 import {Editor, useMonaco} from "@monaco-editor/react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Upload} from "lucide-react";
@@ -114,7 +114,7 @@ console.log("ACTION ", eventIdentifier);
     }
 
     if (userCanDownload(resource, data?.user.preferred_username, data?.user.groups)) {
-        actionEvents.push(new DownloadAction(resource.id, "schema", resource.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
+        actionEvents.push(new DownloadSchemaAction(resource.id, "schema", resource.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
     }
 
     return (
