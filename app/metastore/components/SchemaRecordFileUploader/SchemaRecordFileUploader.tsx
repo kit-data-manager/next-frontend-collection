@@ -51,7 +51,10 @@ export default function SchemaRecordFileUploader({
                 headers: {
                     "Authorization": `Bearer ${data?.accessToken}`
                 },
-                bundle: true
+                bundle: true,
+                getResponseError (responseText, response) {
+                    return new Error(JSON.parse(responseText).detail)
+                }
             }));
 
         installEventHandlers(uppy, data?.accessToken, () => {

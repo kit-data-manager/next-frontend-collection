@@ -1,4 +1,4 @@
-    'use client'
+'use client'
 
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import React, {useEffect} from "react";
@@ -7,40 +7,40 @@ import {DataResource} from "@/lib/definitions";
 import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-component";
 import {useSession} from "next-auth/react";
 import {fetchMetadataEtag} from "@/lib/metastore/client-data";
-import { propertiesForSchemaRecord} from "@/lib/metastore/datacard-utils";
+import {propertiesForMetadataRecord} from "@/lib/metastore/datacard-utils";
 
 export interface SchemaCardProps {
-    schemaRecord: DataResource;
+    metadataRecord: DataResource;
     detailed: boolean;
     actionEvents?: ActionButtonInterface[];
     cardCallbackAction: (action: DataCardCustomEvent<ActionEvent>, resource: DataResource) => void;
 }
 
-export default function SchemaCard({
-                                       schemaRecord,
-                                        detailed,
-                                       actionEvents = [] as ActionButtonInterface[],
-                                       cardCallbackAction
-                                   }: SchemaCardProps) {
+export default function MetadataDocumentCard({
+                                                 metadataRecord,
+                                                 detailed,
+                                                 actionEvents = [] as ActionButtonInterface[],
+                                                 cardCallbackAction
+                                             }: SchemaCardProps) {
     const {data, status} = useSession();
 
     /**
      * Effect fetching the schema's ETag. The effect is triggered if authentication information or the schema changes.
      */
     useEffect(() => {
-        fetchMetadataEtag("schema", schemaRecord.id, data?.accessToken).then((etag) => {
-            schemaRecord.etag = etag;
+        fetchMetadataEtag("document", metadataRecord.id, data?.accessToken).then((etag) => {
+            metadataRecord.etag = etag;
         })
-    }, [data?.accessToken, schemaRecord]);
+    }, [data?.accessToken, metadataRecord]);
 
-    let miscProperties = propertiesForSchemaRecord(schemaRecord);
+    let miscProperties = propertiesForMetadataRecord(metadataRecord);
 
     return (
         <>
-            <DataCard key={schemaRecord.id}
+            <DataCard key={metadataRecord.id}
                       variant={detailed ? "detailed" : "default"}
                       actionButtons={actionEvents}
-                      onActionClick={ev => cardCallbackAction(ev, schemaRecord)} {...miscProperties}></DataCard>
+                      onActionClick={ev => cardCallbackAction(ev, metadataRecord)} {...miscProperties}></DataCard>
         </>
     )
 }

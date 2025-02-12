@@ -13,12 +13,14 @@ import {CreateHelp} from "@/app/metastore/metadata/create/CreateHelp";
 import MetadataRecordFileUploader
     from "@/app/metastore/components/MetadataRecordFileUploader/MetadataRecordFileUploader";
 import {DataResource, TypeGeneral} from "@/lib/definitions";
+import Loader from "@/components/general/Loader";
 
 export default function Page() {
     const searchParams = useSearchParams();
 
-    const schemaId = searchParams?.get('schemaId')
-    const schemaType = searchParams?.get('schemaType')
+    const schemaId = searchParams?.get('schemaId');
+    const schemaType = searchParams?.get('schemaType');
+    const schemaVersion = searchParams?.get('schemaVersion');
 
     const [schema, setSchema] = useState(undefined);
     const router = useRouter();
@@ -39,7 +41,7 @@ export default function Page() {
     const metadataRecord: DataResource = {} as DataResource;
     metadataRecord.relatedIdentifiers = [{
         "identifierType": "URL",
-        "value": `${baseUrl}/api/v2/schemas/${schemaId}`,
+        "value": `${baseUrl}/api/v2/schemas/${schemaId}?version=${schemaVersion}`,
         "relationType": "HAS_METADATA"
     },
         {

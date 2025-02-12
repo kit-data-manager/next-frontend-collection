@@ -13,7 +13,7 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
             const file = uppy.getFile(fileID);
             uppy.setFileState(fileID, {
                 xhrUpload: {
-                    fieldName: file.name === "record.json" ? "record" : "schema",
+                    fieldName: file.name === "record.json" ? "record" : "document",
                     endpoint: `${baseUrl}/api/v2/metadata`,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -21,6 +21,14 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
                 },
             });
         }
+    });
+
+    // @ts-ignore
+    uppy.off("upload-error", null).on('upload-error', (file, error, response) => {
+        toast.error(`Failed create metadata document. Cause: ${error.message}`, {
+                isLoading: false
+            }
+        );
     });
 
     // @ts-ignore

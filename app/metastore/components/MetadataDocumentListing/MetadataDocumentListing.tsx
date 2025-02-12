@@ -9,22 +9,21 @@ import Loader from "@/components/general/Loader";
 import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {ViewSchemaAction} from "@/lib/actions/metastore/viewSchemaAction";
-import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
-import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {QuickShareDialog} from "@/components/dialogs/QuickShareDialog";
 import {useDebouncedCallback} from "use-debounce";
 import {METASTORE_ACTIONS} from "@/lib/actions/action";
 import {runAction} from "@/lib/actions/action-executor";
 import {useRouter} from "next/navigation";
 import {getAclDiff} from "@/lib/base-repo/client-data";
-import {DownloadSchemaAction} from "@/lib/actions/metastore/downloadSchemaAction";
-import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
 import {toast} from "react-toastify";
-import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
+import MetadataDocumentCard from "@/app/metastore/components/MetadataDocumentCard/MetadataDocumentCard";
 import {fetchMetadataRecords, updateMetadataRecord} from "@/lib/metastore/client-data";
+import {QuickShareMetadataDocumentAction} from "@/lib/actions/metastore/quickShareMetadataDocumentAction";
+import {ViewMetadataDocumentAction} from "@/lib/actions/metastore/viewMetadataDocumentAction";
+import {EditMetadataDocumentAction} from "@/lib/actions/metastore/editMetadataDocumentAction";
+import {DownloadMetadataDocumentAction} from "@/lib/actions/metastore/downloadMetadataDocumentAction";
 
-export default function SchemaListing({page, size, sort}: {
+export default function MetadataDocumentListing({page, size, sort}: {
     page: number;
     size: number;
     sort: string;
@@ -43,7 +42,7 @@ export default function SchemaListing({page, size, sort}: {
 
         setSelectedResource(resource);
 
-        if (eventIdentifier.startsWith(METASTORE_ACTIONS.QUICK_SHARE_SCHEMA)) {
+        if (eventIdentifier.startsWith(METASTORE_ACTIONS.QUICK_SHARE_METADATA)) {
             runAction(eventIdentifier, data?.accessToken, doQuickShare);
         } else {
             runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
@@ -61,7 +60,7 @@ export default function SchemaListing({page, size, sort}: {
     useEffect(() => {
         if (status != "loading") {
             setIsLoading(true);
-            fetchMetadataRecords("schema", page, size, sort, data?.accessToken).then((page) => {
+            fetchMetadataRecords("document", page, size, sort, data?.accessToken).then((page) => {
                 setTotalPages(page.totalPages);
                 setResources(page.resources);
                 setIsLoading(false);
@@ -75,7 +74,7 @@ export default function SchemaListing({page, size, sort}: {
     }
 
     if (resources.length === 0) {
-        return ErrorPage({errorCode: Errors.Empty, backRef: "/metastore/schemas"})
+        return ErrorPage({errorCode: Errors.Empty, backRef: "/metastore/metadata"})
     }
 
     /**
@@ -98,7 +97,7 @@ export default function SchemaListing({page, size, sort}: {
         setOpenModal(false);
 
         //nothing selected, reset and return
-        if (!result || !selectedValues){
+        if (!result || !selectedValues) {
             setSelectedResource({} as DataResource);
             return;
         }
@@ -112,20 +111,20 @@ export default function SchemaListing({page, size, sort}: {
 
         //apply update
         const id = toast.loading("Updating access control list...");
-        updateMetadataRecord("schema", selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag" ,data?.accessToken).then((res) => {
+        updateMetadataRecord("document", selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag", data?.accessToken).then((res) => {
             toast.update(id, {
                 render: `Successfully updated access control list.`,
                 type: "success",
                 isLoading: false,
                 autoClose: 1000,
                 "onClose": () => {
-                  setMustReload(true);
+                    setMustReload(true);
                 }
             });
             //reload to reset etag
             setMustReload(true);
             setSelectedResource({} as DataResource);
-            router.push("/metastore/schemas");
+            router.push("/metastore/metadata");
         })
     }
 
@@ -135,28 +134,23 @@ export default function SchemaListing({page, size, sort}: {
                 {resources?.map((element: DataResource, i: number) => {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];
-                    let addCreate:boolean = false;
 
                     if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
-                        actionEvents.push(new QuickShareSchemaAction(element.id).getDataCardAction());
+                        actionEvents.push(new QuickShareMetadataDocumentAction(element.id).getDataCardAction());
                     }
 
                     if (userCanView(element, data?.user.preferred_username, data?.user.groups)) {
-                        addCreate = true;
-                        actionEvents.push(new ViewSchemaAction(element.id).getDataCardAction());
+                        actionEvents.push(new ViewMetadataDocumentAction(element.id).getDataCardAction());
                     }
 
                     if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
-                        actionEvents.push(new EditSchemaAction(element.id).getDataCardAction());
+                        actionEvents.push(new EditMetadataDocumentAction(element.id).getDataCardAction());
                     }
 
                     if (userCanDownload(element, data?.user.preferred_username, data?.user.groups)) {
-                        actionEvents.push(new DownloadSchemaAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
+                        actionEvents.push(new DownloadMetadataDocumentAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
                     }
 
-                    if(addCreate){
-                        actionEvents.push(new CreateMetadataAction(element.id, element.resourceType.value === "JSON_Schema" ? "json" : "xml",  element.version).getDataCardAction());
-                    }
                     let classname = "volatile_or_fixed";
                     switch (element.state) {
                         case State.REVOKED:
@@ -169,13 +163,13 @@ export default function SchemaListing({page, size, sort}: {
 
                     return (
                         <div key={element.id} className={classname}>
-                            <SchemaCard
+                            <MetadataDocumentCard
                                 key={element.id}
-                                schemaRecord={element}
+                                metadataRecord={element}
                                 detailed={false}
                                 actionEvents={actionEvents}
                                 cardCallbackAction={handleAction}
-                            ></SchemaCard>
+                            ></MetadataDocumentCard>
                         </div>
                     );
                 })}

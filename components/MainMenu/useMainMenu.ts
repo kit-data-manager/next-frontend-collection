@@ -80,13 +80,13 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                     href: `${basePath}/metastore/schemas`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Schema."
-                }/*,
+                },
                 {
                     name: 'Metadata',
                     href: `${basePath}/metastore/metadata`,
                     icon: ListBulletIcon,
                     description: "List all Metadata Documents"
-                }*/
+                }
             ]
         });
     }

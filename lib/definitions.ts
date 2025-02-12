@@ -23,6 +23,7 @@ export type DataResource = {
     state: State | undefined;
     lastUpdate: string;
     children: ContentInformation[];
+    version: string;
     etag: string | null | undefined;
 };
 

@@ -24,6 +24,14 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
     });
 
     // @ts-ignore
+    uppy.off("upload-error", null).on('upload-error', (file, error, response) => {
+        toast.error(`Failed create metadata schema. Cause: ${error.message}`, {
+                isLoading: false
+            }
+        );
+    });
+
+    // @ts-ignore
     uppy.off("complete", null).on('complete', (result) => {
         uppy.resetProgress();
         const successful = result.successful.length;

@@ -13,7 +13,6 @@ import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permi
 import {ToastContainer} from "react-toastify";
 import SchemaCard from "@/app/metastore/components/SchemaCard/SchemaCard";
 import {useRouter} from "next/navigation";
-import {fetchMetadataSchema, fetchMetadataSchemaDocument, fetchMetadataSchemaEtag} from "@/lib/metastore/client-data";
 import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
 import {DownloadSchemaAction} from "@/lib/actions/metastore/downloadSchemaAction";
 import {Editor, useMonaco} from "@monaco-editor/react";
@@ -26,6 +25,8 @@ import {useDebouncedCallback} from "use-debounce";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
 import {RevokeSchemaAction} from "@/lib/actions/metastore/revokeSchemaAction";
 import {DeleteSchemaAction} from "@/lib/actions/metastore/deleteSchemaAction";
+import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
+import {fetchMetadataDocument, fetchMetadataEtag, fetchMetadataRecord} from "@/lib/metastore/client-data";
 
 export default function Page({params}) {
     const used = React.use(params) as { id: string };
@@ -44,7 +45,6 @@ export default function Page({params}) {
 
     const handleAction = useDebouncedCallback((event, resource: DataResource) => {
         const eventIdentifier: string = event.detail.eventIdentifier;
-console.log("ACTION ", eventIdentifier);
         runAction(eventIdentifier, data?.accessToken, (redirect: string) => {
             router.push(redirect);
         });
@@ -65,14 +65,14 @@ console.log("ACTION ", eventIdentifier);
 
     useEffect(() => {
         setLoading(true);
-        fetchMetadataSchema(id, data?.accessToken).then(async (res) => {
-            await fetchMetadataSchemaEtag(res.id, data?.accessToken).then(result => setEtag(result as string)).catch(error => {
+        fetchMetadataRecord("schema", id, data?.accessToken).then(async (res) => {
+            await fetchMetadataEtag("schema", res.id, data?.accessToken).then(result => setEtag(result as string)).catch(error => {
                 console.error(`Failed to obtain etag for schema ${id}`, error)
             });
             return res;
         }).then((res) => {
             const accept = res.resourceType.value === "JSON_Schema"?"application/json":"application/xml";
-            fetchMetadataSchemaDocument(res.id, accept, data?.accessToken).then(res => {
+            fetchMetadataDocument("schema", res.id, accept, data?.accessToken).then(res => {
                 setEditorValue(res);
             })
             setResource(res);
@@ -100,7 +100,7 @@ console.log("ACTION ", eventIdentifier);
     if (permission < permissionToNumber(Permission.READ)) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
     }
-
+    actionEvents.push(new CreateMetadataAction(resource.id, resource.resourceType.value === "JSON_Schema" ? "json" : "xml", resource.version).getDataCardAction());
     if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
         actionEvents.push(new EditSchemaAction(resource.id).getDataCardAction());
     }
@@ -140,8 +140,8 @@ console.log("ACTION ", eventIdentifier);
                                                           className="h-4 w-4 mr-2"/>Schema</TabsTrigger>
                     </TabsList>
                     <TabsContent value="metadata">
-                        <SchemaCard resource={resource}
-                                    variant={"detailed"}
+                        <SchemaCard schemaRecord={resource}
+                                    detailed={true}
                                     actionEvents={actionEvents}
                                     cardCallbackAction={(ev) => handleAction(ev, resource)}></SchemaCard>
                     </TabsContent>

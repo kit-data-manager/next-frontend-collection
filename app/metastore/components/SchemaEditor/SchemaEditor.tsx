@@ -15,7 +15,7 @@ import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {TabsHeader} from "@/app/metastore/components/SchemaEditor/tabs/TabsHeader";
 import {MetadataTab} from "@/app/metastore/components/SchemaEditor/tabs/MetadataTab";
 import {AccessTab} from "@/app/metastore/components/SchemaEditor/tabs/AccessTab";
-import {fetchMetadataSchema} from "@/lib/metastore/client-data";
+import {fetchMetadataRecord} from "@/lib/metastore/client-data";
 
 export default function SchemaEditor({...props}) {
     //general props
@@ -38,7 +38,7 @@ export default function SchemaEditor({...props}) {
     //fetch schema
     useEffect(() => {
         setIsLoading(true);
-        fetchMetadataSchema(id, data?.accessToken).then((res) => {
+        fetchMetadataRecord("schema", id, data?.accessToken).then((res) => {
             if (res.etag) {
                 setEtag(res.etag);
             }

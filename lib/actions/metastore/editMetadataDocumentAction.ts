@@ -1,8 +1,8 @@
 import {Action, METASTORE_ACTIONS} from "@/lib/actions/action";
 
-export class ViewMetadataAction extends Action{
+export class EditMetadataDocumentAction extends Action{
     constructor(resourceId:string) {
-        super(`${METASTORE_ACTIONS.VIEW_METADATA}_${resourceId.replace(/_/g, '%5F')}`, "View", "material-symbols-light:eye-tracking-outline", 'View Metadata');
+        super(`${METASTORE_ACTIONS.EDIT_METADATA}_${resourceId.replace(/_/g, '%5F')}`, "Edit", "material-symbols-light:edit-square-outline", 'Edit Metadata');
     }
 
     public static async performAction(actionId:string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void){
@@ -10,7 +10,7 @@ export class ViewMetadataAction extends Action{
         const identifier = parts[1].replace(/%5F/g, '_');
 
         if(redirect) {
-            redirect(`/metastore/metadata/${identifier}/view`);
+            redirect(`/metastore/metadata/${identifier}/edit?target=metadata`);
         }else{
             console.error("Redirect function missing.");
         }

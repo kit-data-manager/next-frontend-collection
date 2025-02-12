@@ -49,10 +49,14 @@ export default function MetadataRecordFileUploader({
             .use(XHRUpload, {
                 endpoint: `${baseUrl}/api/v2/metadata/` ,
                 method: "post",
+                formData: true,
                 headers: {
                     "Authorization": `Bearer ${data?.accessToken}`
                 },
-                bundle: true
+                bundle: true,
+                getResponseError (responseText, response) {
+                    return new Error(JSON.parse(responseText).detail)
+                }
             }));
 
         installEventHandlers(uppy, data?.accessToken, () => {
@@ -64,7 +68,7 @@ export default function MetadataRecordFileUploader({
         return (<Loader/>)
     }
 
-    uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 10, thumbnailHeight: 10});
+    uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 5, thumbnailHeight: 5});
 
     uppy.setOptions({
         //autoProceed: true,
@@ -77,7 +81,6 @@ export default function MetadataRecordFileUploader({
 
     function updateData(data: object) {
         setMetadata(data as DataResource);
-        console.log("DATA ", data);
         setConfirm(data != undefined);
     }
 

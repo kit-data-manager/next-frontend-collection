@@ -5,16 +5,17 @@ import {RevokeResourceAction} from "@/lib/actions/base-repo/revokeResourceAction
 import {DeleteResourceAction} from "@/lib/actions/base-repo/deleteResourceAction";
 import {RemoveTagAction} from "@/lib/actions/base-repo/removeTagAction";
 import {QuickShareResourceAction} from "@/lib/actions/base-repo/quickShareResourceAction";
-import {ViewMetadataAction} from "@/lib/actions/metastore/viewMetadataAction";
+import {ViewMetadataDocumentAction} from "@/lib/actions/metastore/viewMetadataDocumentAction";
 import {ViewSchemaAction} from "@/lib/actions/metastore/viewSchemaAction";
 import {EditSchemaAction} from "@/lib/actions/metastore/editSchemaAction";
-import {EditMetadataAction} from "@/lib/actions/metastore/editMetadataAction";
+import {EditMetadataDocumentAction} from "@/lib/actions/metastore/editMetadataDocumentAction";
 import {ViewResourceAction} from "@/lib/actions/base-repo/viewResourceAction";
 import {AddTagAction} from "@/lib/actions/base-repo/addTagAction";
 import {RevokeSchemaAction} from "@/lib/actions/metastore/revokeSchemaAction";
 import {DeleteSchemaAction} from "@/lib/actions/metastore/deleteSchemaAction";
 import {QuickShareSchemaAction} from "@/lib/actions/metastore/quickShareSchemaAction";
 import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
+import {QuickShareMetadataDocumentAction} from "@/lib/actions/metastore/quickShareMetadataDocumentAction";
 
 let actionMapping: Map<string, (actionId: string, accessToken?: string|undefined, redirect?: (redirectTarget:string) => void) => void> = new Map();
 //base-repo actions
@@ -29,15 +30,15 @@ actionMapping.set(REPO_ACTIONS.QUICK_SHARE, QuickShareResourceAction.performActi
 
 //metastore actions
 actionMapping.set(METASTORE_ACTIONS.VIEW_SCHEMA, ViewSchemaAction.performAction);
-actionMapping.set(METASTORE_ACTIONS.VIEW_METADATA, ViewMetadataAction.performAction);
+actionMapping.set(METASTORE_ACTIONS.VIEW_METADATA, ViewMetadataDocumentAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.EDIT_SCHEMA, EditSchemaAction.performAction);
-actionMapping.set(METASTORE_ACTIONS.EDIT_METADATA, EditMetadataAction.performAction);
+actionMapping.set(METASTORE_ACTIONS.EDIT_METADATA, EditMetadataDocumentAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.REVOKE_SCHEMA, RevokeSchemaAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.REVOKE_METADATA, dummy);
 actionMapping.set(METASTORE_ACTIONS.DELETE_SCHEMA, DeleteSchemaAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.DELETE_METADATA, dummy);
 actionMapping.set(METASTORE_ACTIONS.QUICK_SHARE_SCHEMA, QuickShareSchemaAction.performAction);
-actionMapping.set(METASTORE_ACTIONS.QUICK_SHARE_METADATA, dummy);
+actionMapping.set(METASTORE_ACTIONS.QUICK_SHARE_METADATA, QuickShareMetadataDocumentAction.performAction);
 actionMapping.set(METASTORE_ACTIONS.CREATE_METADATA, CreateMetadataAction.performAction);
 
 
