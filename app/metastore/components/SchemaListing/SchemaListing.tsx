@@ -98,7 +98,7 @@ export default function SchemaListing({page, size, sort}: {
         setOpenModal(false);
 
         //nothing selected, reset and return
-        if (!result || !selectedValues){
+        if (!result || !selectedValues) {
             setSelectedResource({} as DataResource);
             return;
         }
@@ -112,14 +112,14 @@ export default function SchemaListing({page, size, sort}: {
 
         //apply update
         const id = toast.loading("Updating access control list...");
-        updateMetadataRecord("schema", selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag" ,data?.accessToken).then((res) => {
+        updateMetadataRecord("schema", selectedResource, selectedResource.etag ? selectedResource.etag : "NoEtag", data?.accessToken).then((res) => {
             toast.update(id, {
                 render: `Successfully updated access control list.`,
                 type: "success",
                 isLoading: false,
                 autoClose: 1000,
                 "onClose": () => {
-                  setMustReload(true);
+                    setMustReload(true);
                 }
             });
             //reload to reset etag
@@ -135,7 +135,7 @@ export default function SchemaListing({page, size, sort}: {
                 {resources?.map((element: DataResource, i: number) => {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];
-                    let addCreate:boolean = false;
+                    let addCreate: boolean = false;
 
                     if (userCanEdit(element, data?.user.preferred_username, data?.user.groups)) {
                         actionEvents.push(new QuickShareSchemaAction(element.id).getDataCardAction());
@@ -154,8 +154,8 @@ export default function SchemaListing({page, size, sort}: {
                         actionEvents.push(new DownloadSchemaAction(element.id, "schema", element.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
                     }
 
-                    if(addCreate){
-                        actionEvents.push(new CreateMetadataAction(element.id, element.resourceType.value === "JSON_Schema" ? "json" : "xml",  element.version).getDataCardAction());
+                    if (addCreate) {
+                        actionEvents.push(new CreateMetadataAction(element.id, element.resourceType.value === "JSON_Schema" ? "json" : "xml", element.version).getDataCardAction());
                     }
                     let classname = "volatile_or_fixed";
                     switch (element.state) {
