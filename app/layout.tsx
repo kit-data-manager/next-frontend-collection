@@ -20,14 +20,24 @@ export default async function RootLayout({children}: {
             <title>Next Frontend</title>
         </head>
         <body className={`${inter.className} antialiased`}>
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <SecurityProviders>
-                        <AppHeader securityEnabled={securityEnabled}>
-                            {children}
-                        </AppHeader>
-                    </SecurityProviders>
+        <script src={"https://cdn.tailwindcss.com/"} async/>
+        <script src={"https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"} async/>
+        <script src={"https://unpkg.com/@trevoreyre/autocomplete-js"} async/>
+        <script src={"https://unpkg.com/@trevoreyre/autocomplete-js"} async/>
+        <script src={"https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"} async/>
+        <script src={"https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"} async/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css"/>
 
-                </ThemeProvider>
+
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <SecurityProviders>
+                <AppHeader securityEnabled={securityEnabled}>
+                    {children}
+                </AppHeader>
+            </SecurityProviders>
+
+        </ThemeProvider>
         </body>
         </html>
     );

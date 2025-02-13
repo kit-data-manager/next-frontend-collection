@@ -7,11 +7,10 @@ import {formatNumber} from "@/lib/general/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client-data";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 import {useEffect, useState} from "react";
+import {InfoCard} from "@/components/StatusCard/InfoCard";
 
 export default function MappingServiceStats() {
 
-   // const plugins = await fetchMappingPlugins();
-   // const mappings = await fetchMappings(1,1);
     const jobStore:JobStore = useMappingStore.getState();
     const [mappingPlugins, setMappingPlugins] = useState(-1);
     const [mappings, setMappings] = useState(-1);
@@ -29,17 +28,17 @@ export default function MappingServiceStats() {
         {
             "text": "Plugin(s)",
             "value": mappingPlugins > -1 ? formatNumber(mappingPlugins) : "Loading...",
-            "icon": PuzzlePieceIcon
+            "icon": "clarity:plugin-line"
         },
         {
             "text": "Mapping(s)",
             "value": mappings > -1 ? formatNumber(mappings) : "Loading...",
-            "icon": DocumentDuplicateIcon
+            "icon": "tabler:transform"
         },
         {
             "text": "Mapping Jobs",
             "value": formatNumber(jobStore.mappingStatus.length) + " / 20",
-            "icon": PlayIcon
+            "icon": "fluent-mdl2:processing-run"
         }
     ]
 
@@ -48,15 +47,7 @@ export default function MappingServiceStats() {
             {stats.map((stat, i) => {
                 const Icon = stat.icon;
                 return (
-                    <StatusCard key={i}
-                                cardStatus={
-                                    {
-                                        title: stat.value,
-                                        subtitle: stat.text,
-                                        icon: <Icon className="w-6 h-6"/>,
-                                        status: 0
-                                    }
-                                }/>
+                    <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
         </>

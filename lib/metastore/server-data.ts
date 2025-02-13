@@ -10,8 +10,8 @@ export async function fetchMetastoreOverview() {
     let resources = 0;
     let openResources = 0;
     let closedResources = 0;
-    let files = 0;
-    let size = 0;
+    let schemas = 0;
+    let metadata = 0;
 
     try {
         const client = new Pool({
@@ -24,29 +24,36 @@ export async function fetchMetastoreOverview() {
 
         //build queries
         const uniqueUsersPromise = client.query("SELECT COUNT(DISTINCT sid) FROM acl_entry");
-        const resourcesPromise = client.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')");
-        const openResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid='anonymousUser'");
-        const closedResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid!='anonymousUser'");
-        const filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
-        const sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+        const resourcesPromise = client.query("SELECT COUNT(*) FROM \n" +
+            "(SELECT resource_type.type_general, data_resource.state FROM data_resource JOIN resource_type ON data_resource.resource_id = resource_type.id) as j\n" +
+            "WHERE j.type_general = 'MODEL' AND j.state IN ('VOLATILE', 'FIXED');");
+        const openResourcesPromise = client.query("SELECT COUNT(*) FROM \n" +
+            "(SELECT acl_entry.sid, data_resource.resource_id, data_resource.state FROM data_resource JOIN acl_entry ON data_resource.id = acl_entry.resource_id) as j\n" +
+            "WHERE j.sid='anonymousUser' AND j.state IN ('VOLATILE', 'FIXED');");
+        const schemaCountPromise = client.query("SELECT COUNT(*) FROM " +
+            "(SELECT type_general, resource_id, resource_type.value as res_val, state FROM data_resource JOIN resource_type ON data_resource.resource_id = resource_type.id) as j " +
+            "WHERE j.type_general='MODEL' AND j.res_val LIKE '%Schema%' AND j.state IN ('VOLATILE', 'FIXED');")
+        const metadataCountPromise = client.query("SELECT COUNT(*) FROM " +
+            "(SELECT type_general, resource_id, resource_type.value as res_val, state FROM data_resource JOIN resource_type ON data_resource.resource_id = resource_type.id) as j " +
+            "WHERE j.type_general='MODEL' AND j.res_val LIKE '%Metadata%' AND j.state IN ('VOLATILE', 'FIXED');")
 
         //wait for all query results
         const data = await Promise.all([
             uniqueUsersPromise,
             resourcesPromise,
             openResourcesPromise,
-            closedResourcesPromise,
-            filesPromise,
-            sizePromise
+            schemaCountPromise,
+            metadataCountPromise
         ]);
 
         //extract information from query results
         uniqueUsers = Number(data[0].rows[0].count ?? '0');
         resources = Number(data[1].rows[0].count ?? '0');
         openResources = Number(data[2].rows[0].count ?? '0');
-        closedResources = Number(data[3].rows[0].count ?? '0');
-        files = Number(data[4].rows[0].count ?? '0');
-        size = Number(data[5].rows[0].sum ?? '0');
+        schemas = Number(data[3].rows[0].count ?? '0');
+        metadata = Number(data[4].rows[0].count ?? '0');
+        closedResources = Number(schemas+metadata-openResources ?? '0');
+
     } catch (error) {
         console.error('Failed to fetch content overview. Database Error:', error);
     }
@@ -57,8 +64,8 @@ export async function fetchMetastoreOverview() {
         resources,
         openResources,
         closedResources,
-        files,
-        size
+        schemas,
+        metadata
     };
 }
 
@@ -91,51 +98,6 @@ export async function fetchLatestActivities():Promise<Activity[]> {
     } catch (error) {
         console.error('Failed to fetch latest activities. Database Error:', error);
         return [];
-
-        /*return [
-            {
-                "id": 1,
-                "type": "INITIAL",
-                "managed_type": "edu.kit.datamanager.repo.domain.DataResource",
-                "author": "SELF",
-                "commit_date": "2023-09-21 12:52:43.325"
-            },
-            {
-                "id": 2,
-                "type": "INITIAL",
-                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-                "author": "SELF",
-                "commit_date": "2023-12-06 19:03:29.858"
-            },
-            {
-                "id": 3,
-                "type": "UPDATE",
-                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-                "author": "SELF",
-                "commit_date": "2023-12-06 19:03:29.858"
-            },
-            {
-                "id": 4,
-                "type": "TERMINAL",
-                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-                "author": "SELF",
-                "commit_date": "2023-12-06 19:03:29.858"
-            },
-            {
-                "id": 5,
-                "type": "TERMINAL",
-                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-                "author": "SELF",
-                "commit_date": "2023-12-06 19:03:29.858"
-            },
-            {
-                "id": 6,
-                "type": "TERMINAL",
-                "managed_type": "edu.kit.datamanager.repo.domain.ContentInformation",
-                "author": "SELF",
-                "commit_date": "2023-12-06 19:03:29.858"
-            },
-        ];*/
     }
 }
 

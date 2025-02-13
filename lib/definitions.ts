@@ -168,6 +168,25 @@ export type ActuatorInfo = {
     version: string;
 }
 
+export type ActuatorHealth = {
+    harddisk: {
+        status: string;
+        details?: string;
+    }
+    database: {
+        status: string;
+        details?: string;
+    }
+    rabbitMq: {
+        status:string;
+        details?:string;
+    }
+    elastic: {
+        status:string;
+        details?:string;
+    }
+}
+
 export type KeycloakInfo = {
     status: number;
     realm: string;

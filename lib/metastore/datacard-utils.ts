@@ -1,4 +1,4 @@
-import {DataResource} from "@/lib/definitions";
+import {Acl, DataResource, RelatedIdentifier, Right, State} from "@/lib/definitions";
 import {Tag} from "@kit-data-manager/data-view-web-component";
 import {
     descriptionForDataResource, metadataForDataResource,
@@ -43,86 +43,9 @@ const tagsForSchemaRecord = (resource: DataResource) => {
         } as Tag);
     }
 
-    //state tags
-    if (resource.state === "VOLATILE") {
-        tags.push({
-            color: "#90EE90",
-            text: "Volatile",
-            iconName: "f7:pin-slash",
-            tooltip: "The resource can be modified.",
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "FIXED") {
-        tags.push({
-            color: "yellow",
-            text: "Fixed",
-            iconName: "f7:pin",
-            tooltip: "The resource cannot be modified."
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "REVOKED") {
-        tags.push({
-            color: "#FFD580",
-            text: "Revoked",
-            iconName: "bytesize:trash",
-            tooltip: "The resource is no longer publicly available."
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "GONE") {
-        tags.push({
-            color: "#FFCCCB",
-            text: "Gone",
-            iconName: "bytesize:trash",
-            tooltip: "The resource is no longer available."
-            //url: filterUrl
-        } as Tag);
-    }
-
-    //access tags
-    let open = false;
-    if (resource.acls) {
-        resource.acls.map((acl, i) => {
-            if (acl.sid === "anonymousUser") {
-                open = true;
-            }
-        });
-    } else {
-        //no acls, should be hidden due to public access
-        open = true;
-    }
-
-    if (open) {
-        tags.push({
-            color: "#90EE90",
-            text: "Open",
-            iconName: "zondicons:lock-open",
-            tooltip: "The resource is publicly accessible."
-        } as Tag);
-    } else {
-        tags.push({
-            color: "#FFCCCB",
-            text: "Protected",
-            iconName: "zondicons:lock-closed",
-            tooltip: "The resource has access restrictions."
-        } as Tag);
-    }
-
-    //rights tag
-    if (resource.rights && resource.rights.length > 0) {
-        tags.push({
-            "color": "#90EE90",
-            "text": "Licensed",
-            "iconName": "mynaui:copyright",
-            "url": resource.rights[0].schemeUri
-        } as Tag);
-    } else {
-        tags.push({
-            color: "#FFCCCB",
-            text: "Unlicensed",
-            iconName: "mynaui:copyright-slash",
-            tooltip: "The resource has no license assigned."
-        } as Tag);
-    }
+    tags.push(stateToTag(resource.state));
+    tags.push(getOpenStateTag(resource.acls));
+    tags.push(rightsToTag(resource.rights));
 
     return tags;
 }
@@ -140,91 +63,110 @@ const tagsForMetadataRecord = (resource: DataResource) => {
         } as Tag);
     }
 
-    //state tags
-    //const filterUrl = `/base-repo/resources/?state=${resource.state}`;
-    if (resource.state === "VOLATILE") {
+    tags.push(stateToTag(resource.state));
+    tags.push(getOpenStateTag(resource.acls));
+    tags.push(rightsToTag(resource.rights));
+
+    //@TODO add link to schema using related identifiers
+
+    const schemaIdentifier: RelatedIdentifier | undefined = resource.relatedIdentifiers.find((identifier) => identifier.relationType === "HAS_METADATA");
+    if (schemaIdentifier) {
+        const schemaId: string | undefined = schemaIdentifier.value?.substring(schemaIdentifier.value?.lastIndexOf("/") + 1, schemaIdentifier.value?.indexOf("?"));
+        const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+
         tags.push({
-            color: "#90EE90",
-            text: "Volatile",
-            iconName: "f7:pin-slash",
-            tooltip: "The resource can be modified.",
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "FIXED") {
-        tags.push({
-            color: "yellow",
-            text: "Fixed",
-            iconName: "f7:pin",
-            tooltip: "The resource cannot be modified."
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "REVOKED") {
-        tags.push({
-            color: "#FFD580",
-            text: "Revoked",
-            iconName: "bytesize:trash",
-            tooltip: "The resource is no longer publicly available."
-            //url: filterUrl
-        } as Tag);
-    } else if (resource.state === "GONE") {
-        tags.push({
-            color: "#FFCCCB",
-            text: "Gone",
-            iconName: "bytesize:trash",
-            tooltip: "The resource is no longer available."
-            //url: filterUrl
+            "color": "#33CCFF",
+            "text": schemaId,
+            "iconName": "line-md:link",
+            "url": `${basePath}/metastore/schemas/${schemaId}/view`,
+            "target": "_self",
+            "tooltip": "Show schema"
         } as Tag);
     }
 
-    //access tags
-    let open = false;
-    if (resource.acls) {
-        resource.acls.map((acl, i) => {
-            if (acl.sid === "anonymousUser") {
-                open = true;
-            }
-        });
-    } else {
-        //no acls, should be hidden due to public access
-        open = true;
-    }
+    return tags;
+}
 
-    if (open) {
-        tags.push({
-            color: "#90EE90",
-            text: "Open",
-            iconName: "zondicons:lock-open",
-            tooltip: "The resource is publicly accessible."
-        } as Tag);
-    } else {
-        tags.push({
-            color: "#FFCCCB",
-            text: "Protected",
-            iconName: "zondicons:lock-closed",
-            tooltip: "The resource has access restrictions."
-        } as Tag);
-    }
-
+function rightsToTag(rights: Right[]): Tag {
     //rights tag
-    if (resource.rights && resource.rights.length > 0) {
-        tags.push({
+    if (rights && rights.length > 0) {
+        return {
             "color": "#90EE90",
             "text": "Licensed",
             "iconName": "mynaui:copyright",
-            "url": resource.rights[0].schemeUri
-        } as Tag);
+            "url": rights[0].schemeUri
+        } as Tag;
     } else {
-        tags.push({
+        return {
             color: "#FFCCCB",
             text: "Unlicensed",
             iconName: "mynaui:copyright-slash",
             tooltip: "The resource has no license assigned."
-        } as Tag);
+        } as Tag;
+    }
+}
+
+function getOpenStateTag(acls: Acl[] | undefined): Tag {
+    //access tags
+    let open = false;
+    if (acls && acls.find((acl) => acl.sid === "anonymousUser")) {
+        open = true;
     }
 
-    //@TODO add link to schema using related identifiers
+    if (open) {
+        return {
+            color: "#90EE90",
+            text: "Open",
+            iconName: "zondicons:lock-open",
+            tooltip: "The resource is publicly accessible."
+        } as Tag;
+    }
 
-    return tags;
+    return {
+        color: "#FFCCCB",
+        text: "Protected",
+        iconName: "zondicons:lock-closed",
+        tooltip: "The resource has access restrictions."
+    } as Tag;
+}
+
+function stateToTag(state: State | undefined): Tag {
+    if (state === "VOLATILE") {
+        return {
+            color: "#90EE90",
+            text: "Volatile",
+            iconName: "f7:pin-slash",
+            tooltip: "The resource can be modified.",
+        } as Tag;
+    } else if (state === "FIXED") {
+        return {
+            color: "yellow",
+            text: "Fixed",
+            iconName: "f7:pin",
+            tooltip: "The resource cannot be modified."
+        } as Tag;
+    } else if (state === "REVOKED") {
+        return {
+            color: "#FFD580",
+            text: "Revoked",
+            iconName: "bytesize:trash",
+            tooltip: "The resource is no longer publicly available."
+        } as Tag;
+    } else if (state === "GONE") {
+        return {
+            color: "#FFCCCB",
+            text: "Gone",
+            iconName: "bytesize:trash",
+            tooltip: "The resource is no longer available."
+        } as Tag;
+    }
+
+    return {
+        color: "#686868",
+        text: "Unknown",
+        iconName: "ic:sharp-question-mark",
+        tooltip: "The state is unknown."
+    } as Tag;
 }
 
 export const thumbForMetadataRecord = (resource: DataResource) => {

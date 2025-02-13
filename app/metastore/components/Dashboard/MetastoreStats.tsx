@@ -1,56 +1,67 @@
-import {
-    CircleStackIcon,
-    DocumentIcon,
-    DocumentTextIcon,
-    LockClosedIcon,
-    LockOpenIcon,
-    UserIcon
-} from '@heroicons/react/24/outline';
-import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
 import {fetchMetastoreOverview} from "@/lib/metastore/server-data";
+import {InfoCard} from "@/components/StatusCard/InfoCard";
+import {useEffect, useState} from "react";
 
-export default async function MetastoreStats() {
+export default function MetastoreStats() {
 
-    const {
-        uniqueUsers,
-        resources,
-        openResources,
-        closedResources,
-        files,
-        size
-    } = await fetchMetastoreOverview();
+    const [users, setUsers] = useState(-1);
+    const [resources, setResources] = useState(-1);
+    const [openResources, setOpenResources] = useState(-1);
+    const [closedResources, setClosedResources] = useState(-1);
+    const [schemas, setSchemas] = useState(-1);
+    const [metadata, setMetadata] = useState(-1);
+
+    useEffect(() => {
+
+      /*  const {
+            uniqueUsers,
+            resources,
+            openResources,
+            closedResources,
+            schemas,
+            metadata
+        } = fetchMetastoreOverview();
+        */
+
+        setUsers(1);
+        setResources(1);
+        setOpenResources(1);
+        setClosedResources(1);
+        setSchemas(1);
+        setMetadata(1);
+    }, [])
 
     const stats = [
         {
             "text": "Unique Users",
             "value": formatNumber(uniqueUsers),
-            "icon": UserIcon
+            "icon": "clarity:users-line"
         },
         {
             "text": "Resources",
             "value": formatNumber(resources),
-            "icon": DocumentIcon
+            "icon": "fluent-emoji-high-contrast:card-index-dividers"
+        },
+        {
+            "text": "Schemas",
+            "value": formatNumber(schemas),
+            "icon": "lucide:file-json"
+        },
+        {
+            "text": "Metadata Documents",
+            "value": formatNumber(metadata),
+            "icon": "bxs:file-json"
         },
         {
             "text": "Public Resources",
             "value": formatNumber(openResources),
-            "icon": LockOpenIcon
+            "icon": "fontisto:unlocked"
         },
         {
             "text": "Protected Resources",
             "value": formatNumber(closedResources),
-            "icon": LockClosedIcon
-        },
-        {
-            "text": "Files",
-            "value": formatNumber(files),
-            "icon": DocumentTextIcon
-        },
-        {
-            "text": "File Size",
-            "value": humanFileSize(size),
-            "icon": CircleStackIcon
+            "icon": "fontisto:locked"
         }
     ]
 
@@ -59,15 +70,7 @@ export default async function MetastoreStats() {
             {stats.map((stat, i) => {
                 const Icon = stat.icon;
                 return (
-                    <StatusCard key={i}
-                                cardStatus={
-                                    {
-                                        title: stat.value,
-                                        subtitle: stat.text,
-                                        icon: <Icon className="w-6 h-6"/>,
-                                        status: 0
-                                    }
-                                }/>
+                    <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
         </>

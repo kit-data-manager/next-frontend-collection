@@ -1,6 +1,6 @@
 import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
 import {
-    Acl,
+    Acl, ActuatorHealth,
     ActuatorInfo,
     ContentInformation,
     DataResource,
@@ -10,6 +10,7 @@ import {
 } from "@/lib/definitions";
 import {filterFormToDataResource} from "@/app/base-repo/components/FilterForm/filter-utils";
 import {fetchWithBasePath} from "@/lib/general/utils";
+import {humanFileSize} from "@/lib/general/format-utils";
 
 export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {
@@ -257,15 +258,8 @@ export async function fetchActuatorInfo(baseUrl: string, token?: string | undefi
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(serviceUrl: string, token?: string | undefined) {
-    let database = "unknown";
-    let databaseStatus = "unknown";
-    let harddisk = 0;
-    let harddiskStatus = "unknown";
-    let rabbitMqStatus = "unknown";
-    let rabbitMq = "unknown";
-    let elasticStatus = "unknown";
-    let elastic = "unknown";
+export async function fetchActuatorHealth(serviceUrl: string, token?: string | undefined)  {
+    let healthStatus:ActuatorHealth = {harddisk:{status:"unknown"}, database:{status:"unknown"}, rabbitMq:{status:"unknown"}, elastic:{status:"unknown"}};
 
     try {
         let headers = {};
@@ -275,40 +269,28 @@ export async function fetchActuatorHealth(serviceUrl: string, token?: string | u
 
         const json = await myFetch(`${serviceUrl}/actuator/health`, {headers: headers}, true).then((response) => response.json());
 
-        database = json.components.db.details.database;
-        databaseStatus = json.components.db.status;
-        harddisk = json.components.diskSpace.details.free;
-        harddiskStatus = json.components.diskSpace.status;
-        rabbitMqStatus = json.components.rabbitMQMessagingService?.status;
-        rabbitMq = "unknown";
+        healthStatus.database.details = `Database Type ${json.components.db.details.database}`;
+        healthStatus.database.status  = json.components.db.status;
+        healthStatus.harddisk.details  = `Harddisk ${humanFileSize(json.components.diskSpace.details.free)} free`
+        healthStatus.harddisk.status = json.components.diskSpace.status;
+        healthStatus.rabbitMq.status = json.components.rabbitMQMessagingService?.status;
         if (json.components.hasOwnProperty("rabbit") &&
             json.components.rabbit.hasOwnProperty("details") &&
             json.components.rabbit.details.hasOwnProperty("version")) {
-            rabbitMq = json.components.rabbit.details.version;
+            healthStatus.rabbitMq.details = `RabbitMQ Version ${json.components.rabbit.details.version}`
         }
-        elasticStatus = "unknown";
-        elastic = "unknown";
         if (json.components.hasOwnProperty("elasticsearch") &&
             json.components.elasticsearch.hasOwnProperty("status") &&
             json.components.elasticsearch.hasOwnProperty("details") &&
             json.components.elasticsearch.details.hasOwnProperty("status")) {
-            elasticStatus = json.components.elasticsearch?.status;
-            elastic = json.components.elasticsearch?.details.status;
+            healthStatus.elastic.status = json.components.elasticsearch?.status;
+            healthStatus.elastic.details = `Elasticsearch Status ${json.components.elasticsearch?.details.status}`;
         }
     } catch (error) {
         console.error('Failed to fetch actuator health. Error:', error);
     }
 
-    return {
-        databaseStatus,
-        database,
-        harddiskStatus,
-        harddisk,
-        rabbitMqStatus,
-        rabbitMq,
-        elasticStatus,
-        elastic
-    }
+    return healthStatus;
 }
 
 export async function fetchKeyCloakStatus(realmUrl: string) {

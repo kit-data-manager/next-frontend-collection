@@ -1,11 +1,12 @@
 import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client-data";
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {humanFileSize} from "@/lib/general/format-utils";
-import {ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
+import {ActuatorHealth, ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {ExtendedSession} from "@/lib/next-auth/next-auth";
+import ServiceStatusCard from "@/components/ServiceStatusCard";
 
 export default async function SystemStats() {
     const data:ExtendedSession | null = await getServerSession(authOptions);
@@ -27,30 +28,38 @@ export default async function SystemStats() {
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
     let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
+    let actuatorHealthBaseRepo:ActuatorHealth | undefined = undefined;
     let actuatorInfoMetaStore: ActuatorInfo | undefined = undefined;
+    let actuatorHealthMetaStore:ActuatorHealth | undefined = undefined;
     let actuatorInfoMappingService: ActuatorInfo | undefined = undefined;
+    let actuatorHealthMappingService:ActuatorHealth | undefined = undefined;
     let actuatorInfoTypedPIDMaker: ActuatorInfo | undefined = undefined;
+    let actuatorHealthTypedPIDMaker:ActuatorHealth | undefined = undefined;
 
     let keycloakInfo: KeycloakInfo | undefined = undefined;
     let validTiles = 0;
 
     if (repoAvailable) {
         actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl, data?.accessToken);
+        actuatorHealthBaseRepo = await fetchActuatorHealth(repoBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if (metaStoreAvailable) {
         actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl, data?.accessToken);
+        actuatorHealthMetaStore = await fetchActuatorHealth(metaStoreBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if (mappingAvailable) {
         actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl, data?.accessToken);
+        actuatorHealthMappingService = await fetchActuatorHealth(mappingBaseUrl, data?.accessToken);
         validTiles++;
     }
 
     if(typedPidMakerAvailable){
         actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl, data?.accessToken);
+        actuatorHealthTypedPIDMaker = await fetchActuatorHealth(typedPidMakerBaseUrl, data?.accessToken);
         validTiles++;
     }
 
@@ -64,64 +73,83 @@ export default async function SystemStats() {
     if(missingCols != 0){
         missing = Array(missingCols).fill(0);
     }
+
     return (
         <>
             {actuatorInfoBaseRepo ?
-                <StatusCard cardStatus={
-                    {
-                        title: repoInstanceName,
-                        subtitle: actuatorInfoBaseRepo.version,
-                        status: actuatorInfoBaseRepo.status,
-                        visitRef: actuatorInfoBaseRepo.status ? `/base-repo/resources` : '',
-                        detailsRef: actuatorInfoBaseRepo.status ? `/base-repo` : ''
-                    }
-                }/> : null
+                <ServiceStatusCard
+                    key={"1"}
+                    serviceName={repoInstanceName}
+                    serviceVersion={actuatorInfoBaseRepo.status === 1 ? `${actuatorInfoBaseRepo.version}` : `Unknown`}
+                    status={actuatorInfoBaseRepo.status === 1? "active" : actuatorInfoBaseRepo.status === 0 ? "maintenance" : "inactive"}
+                    link={actuatorInfoBaseRepo.status === 1 ? `/base-repo` : undefined}
+                    ledStatus={ [
+                        { status: actuatorHealthBaseRepo?.harddisk.status, tooltip: actuatorHealthBaseRepo?.harddisk.details },
+                        { status: actuatorHealthBaseRepo?.database.status, tooltip: actuatorHealthBaseRepo?.database.details },
+                        { status: actuatorHealthBaseRepo?.elastic.status, tooltip: actuatorHealthBaseRepo?.elastic.details },
+                        { status: actuatorHealthBaseRepo?.rabbitMq.status, tooltip: actuatorHealthBaseRepo?.rabbitMq.details }
+                    ]}
+                /> : null
             }
 
             {actuatorInfoMetaStore ?
-                <StatusCard cardStatus={
-                    {
-                        title: metastoreInstanceName,
-                        subtitle: actuatorInfoMetaStore.version,
-                        status: actuatorInfoMetaStore.status,
-                        visitRef: actuatorInfoMetaStore.status ? `/metastore` : '',
-                        detailsRef: actuatorInfoMetaStore.status ? `/metastore` : ''
-                    }
-                }/> : null
+                <ServiceStatusCard
+                    key={"2"}
+                    serviceName={metastoreInstanceName}
+                    serviceVersion={actuatorInfoMetaStore.status === 1 ? `${actuatorInfoMetaStore.version}` : `Unknown`}
+                    status={actuatorInfoMetaStore.status === 1? "active" : actuatorInfoMetaStore.status === 0 ? "maintenance" : "inactive"}
+                    link={actuatorInfoMetaStore.status === 1 ? `/metastore` : undefined}
+                    ledStatus={ [
+                        { status: actuatorHealthMetaStore?.harddisk.status, tooltip: actuatorHealthMetaStore?.harddisk.details },
+                        { status: actuatorHealthMetaStore?.database.status, tooltip: actuatorHealthMetaStore?.database.details },
+                        { status: actuatorHealthMetaStore?.elastic.status, tooltip: actuatorHealthMetaStore?.elastic.details },
+                        { status: actuatorHealthMetaStore?.rabbitMq.status, tooltip: actuatorHealthMetaStore?.rabbitMq.details }
+                    ]}
+                />  : null
             }
 
             {actuatorInfoMappingService ?
-                <StatusCard cardStatus={
-                    {
-                        title: mappingInstanceName,
-                        subtitle: actuatorInfoMappingService.version,
-                        status: actuatorInfoMappingService.status,
-                        visitRef: actuatorInfoMappingService.status ? `/mapping` : '',
-                        detailsRef: actuatorInfoMappingService.status ? `/mapping` : ''
-                    }
-                }/> : null
+                <ServiceStatusCard
+                    key={"3"}
+                    serviceName={mappingInstanceName}
+                    serviceVersion={actuatorInfoMappingService.status === 1 ? `${actuatorInfoMappingService.version}` : `Unknown`}
+                    status={actuatorInfoMappingService.status === 1? "active" : actuatorInfoMappingService.status === 0 ? "maintenance" : "inactive"}
+                    link={actuatorInfoMappingService.status === 1 ? `/mapping` : undefined}
+                    ledStatus={ [
+                        { status: actuatorHealthMappingService?.harddisk.status, tooltip: actuatorHealthMappingService?.harddisk.details },
+                        { status: actuatorHealthMappingService?.database.status, tooltip: actuatorHealthMappingService?.database.details },
+                        { status: actuatorHealthMappingService?.elastic.status, tooltip: actuatorHealthMappingService?.elastic.details },
+                        { status: actuatorHealthMappingService?.rabbitMq.status, tooltip: actuatorHealthMappingService?.rabbitMq.details }
+                    ]}
+                />  : null
             }
 
             {actuatorInfoTypedPIDMaker ?
-                <StatusCard cardStatus={
-                    {
-                        title: "FAIR DO Repo",
-                        subtitle: "v1.0.0",
-                        status: actuatorInfoTypedPIDMaker.status,
-                        visitRef: actuatorInfoTypedPIDMaker.status ? `/typed-pid-maker` : '',
-                        detailsRef: actuatorInfoTypedPIDMaker.status ? `/typed-pid-maker` : ''
-                    }
-                }/> : null
+                <ServiceStatusCard
+                    key={"4"}
+                    serviceName={"FAIR DO Repo"}
+                    serviceVersion={actuatorInfoTypedPIDMaker.status === 1 ? `${actuatorInfoTypedPIDMaker.version}` : `Unknown`}
+                    status={actuatorInfoTypedPIDMaker.status === 1? "active" : actuatorInfoTypedPIDMaker.status === 0 ? "maintenance" : "inactive"}
+                    link={actuatorInfoTypedPIDMaker.status === 1 ? `/typed-pid-maker` : undefined}
+                    ledStatus={[
+                        { status: actuatorHealthTypedPIDMaker?.harddisk.status, tooltip: actuatorHealthTypedPIDMaker?.harddisk.details },
+                        { status: actuatorHealthTypedPIDMaker?.database.status, tooltip: actuatorHealthTypedPIDMaker?.database.details },
+                        { status: actuatorHealthTypedPIDMaker?.elastic.status, tooltip: actuatorHealthTypedPIDMaker?.elastic.details },
+                        { status: actuatorHealthTypedPIDMaker?.rabbitMq.status, tooltip: actuatorHealthTypedPIDMaker?.rabbitMq.details }
+                    ]}
+                /> : null
             }
 
             {keycloakInfo ?
-                <StatusCard cardStatus={
-                    {
-                        title: "Keycloak",
-                        subtitle: `Realm: ${keycloakInfo.realm}`,
-                        status: keycloakInfo.status
-                    }
-                }/> : null
+                <ServiceStatusCard
+                    key={"5"}
+                    serviceName={"Keycloak"}
+                    serviceVersion={`Realm: ${keycloakInfo.realm}`}
+                    status={keycloakInfo.status === 1? "active" : keycloakInfo.status === 0 ? "maintenance" : "inactive"}
+                    ledStatus={ [
+                    ]}
+                    link={undefined}
+                /> : null
             }
 
             {
@@ -157,29 +185,29 @@ export async function ActuatorHealthStatusCardWrapper({serviceUrl}: {
             <StatusCard cardStatus={
                 {
                     title: "Database",
-                    subtitle: actuatorInfo.database,
-                    status: statusStringToInt(actuatorInfo.databaseStatus)
+                    subtitle: actuatorInfo.database.details,
+                    status: statusStringToInt(actuatorInfo.database.status)
                 }
             }/>
             <StatusCard cardStatus={
                 {
                     title: "HardDisk",
-                    subtitle: humanFileSize(actuatorInfo.harddisk) + " free",
-                    status: statusStringToInt(actuatorInfo.harddiskStatus)
+                    subtitle: humanFileSize(actuatorInfo.harddisk.details) + " free",
+                    status: statusStringToInt(actuatorInfo.harddisk.status)
                 }
             }/>
             <StatusCard cardStatus={
                 {
                     title: "RabbitMQ",
-                    subtitle: actuatorInfo.rabbitMq,
-                    status: statusStringToInt(actuatorInfo.rabbitMqStatus)
+                    subtitle: actuatorInfo.rabbitMq.details,
+                    status: statusStringToInt(actuatorInfo.rabbitMq.status)
                 }
             }/>
             <StatusCard cardStatus={
                 {
                     title: "Elastic",
-                    subtitle: actuatorInfo.elastic,
-                    status: statusStringToInt(actuatorInfo.elasticStatus)
+                    subtitle: actuatorInfo.elastic.details,
+                    status: statusStringToInt(actuatorInfo.elastic.status)
                 }
             }/>
         </>

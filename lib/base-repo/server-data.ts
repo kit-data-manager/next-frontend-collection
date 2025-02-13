@@ -26,16 +26,16 @@ export async function fetchContentOverview() {
         const uniqueUsersPromise = client.query("SELECT COUNT(DISTINCT sid) FROM acl_entry");
         const resourcesPromise = client.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')");
         const openResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid='anonymousUser'");
-        const closedResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid!='anonymousUser'");
-        const filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
-        const sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+        const filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content " +
+            "WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+        const sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content " +
+            "WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
 
         //wait for all query results
         const data = await Promise.all([
             uniqueUsersPromise,
             resourcesPromise,
             openResourcesPromise,
-            closedResourcesPromise,
             filesPromise,
             sizePromise
         ]);
@@ -44,9 +44,10 @@ export async function fetchContentOverview() {
         uniqueUsers = Number(data[0].rows[0].count ?? '0');
         resources = Number(data[1].rows[0].count ?? '0');
         openResources = Number(data[2].rows[0].count ?? '0');
-        closedResources = Number(data[3].rows[0].count ?? '0');
-        files = Number(data[4].rows[0].count ?? '0');
-        size = Number(data[5].rows[0].sum ?? '0');
+        files = Number(data[3].rows[0].count ?? '0');
+        size = Number(data[4].rows[0].sum ?? '0');
+        closedResources = Number(resources - openResources ?? '0');
+
     } catch (error) {
         console.error('Failed to fetch content overview. Database Error:', error);
     }

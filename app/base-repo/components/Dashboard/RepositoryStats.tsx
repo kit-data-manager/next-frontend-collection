@@ -9,6 +9,7 @@ import {
 import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {fetchContentOverview} from "@/lib/base-repo/server-data";
 import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
+import {InfoCard} from "@/components/StatusCard/InfoCard";
 
 export default async function RepositoryStats() {
 
@@ -25,49 +26,40 @@ export default async function RepositoryStats() {
         {
             "text": "Unique Users",
             "value": formatNumber(uniqueUsers),
-            "icon": UserIcon
+            "icon": "clarity:users-line"
         },
         {
             "text": "Resources",
             "value": formatNumber(resources),
-            "icon": DocumentIcon
-        },
-        {
-            "text": "Public Resources",
-            "value": formatNumber(openResources),
-            "icon": LockOpenIcon
-        },
-        {
-            "text": "Protected Resources",
-            "value": formatNumber(closedResources),
-            "icon": LockClosedIcon
+            "icon": "fluent-emoji-high-contrast:card-index-dividers"
         },
         {
             "text": "Files",
             "value": formatNumber(files),
-            "icon": DocumentTextIcon
+            "icon": "game-icons:files"
         },
         {
             "text": "File Size",
             "value": humanFileSize(size),
-            "icon": CircleStackIcon
+            "icon": "lucide-lab:coins-stack"
+        },
+        {
+            "text": "Public Resources",
+            "value": formatNumber(openResources),
+            "icon": "fontisto:unlocked"
+        },
+        {
+            "text": "Protected Resources",
+            "value": formatNumber(closedResources),
+            "icon": "fontisto:locked"
         }
     ]
 
     return (
         <>
             {stats.map((stat, i) => {
-                const Icon = stat.icon;
                 return (
-                    <StatusCard key={i}
-                                cardStatus={
-                                    {
-                                        title: stat.value,
-                                        subtitle: stat.text,
-                                        icon: <Icon className="w-6 h-6"/>,
-                                        status: 0
-                                    }
-                                }/>
+                    <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
         </>

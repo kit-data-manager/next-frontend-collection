@@ -18,17 +18,9 @@ export default async function Page() {
             />
             <SectionCaption caption={"Overview"}/>
 
-            <SectionCaption caption={"Sub-System Status"} level={"h2"}/>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <Suspense fallback={<CardsSkeleton/>}>
-                    <ActuatorHealthStatusCardWrapper serviceUrl={mappingBaseUrl}/>
-                </Suspense>
-            </div>
-
             <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
                 <div className="flex w-full flex-col">
-                    <SectionCaption caption={"Content Overview"} level={"h2"}/>
+                    <SectionCaption caption={"Usage Statistics"} level={"h2"}/>
 
                     <div className="grid grid-cols-3 gap-4 px-4 py-8">
                         <Suspense fallback={<MappingServiceStatsSkeleton/>}>

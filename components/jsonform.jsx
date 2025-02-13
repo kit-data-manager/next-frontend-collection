@@ -70,15 +70,15 @@ export default function JsonForm(props) {
 
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useScript('tailwind', 'https://cdn.tailwindcss.com/')
+   /* useScript('tailwind', 'https://cdn.tailwindcss.com/')
     useScript('handlebars', 'https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js')
     useScript('autocomplete', 'https://unpkg.com/@trevoreyre/autocomplete-js')
     useScript('cleave', 'https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js')
-    useScript('jsoneditor', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')
+    useScript('jsoneditor', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js')*/
     //useScript('dompurify' ,'https://cdn.jsdelivr.net/npm/dompurify@latest/dist/purify.min.js')
 
-    useCss('fontawesome5', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
-    useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css')
+    /*useCss('fontawesome5', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
+    useCss('jsoneditor-css', 'https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css')*/
   //  useCss('autocomplete-css', 'https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css')
 
     const validate = function () {
