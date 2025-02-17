@@ -206,3 +206,9 @@ data-card::part(action-btn-icon){
   min-height: unset !important; /* Remove the default min-height */
   max-width: unset !important;
 }
+
+iconify-icon{
+  display:inline-block;
+  width:1em;
+  height:1em;
+}

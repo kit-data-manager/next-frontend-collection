@@ -34,7 +34,7 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     console.log("New permissions ", new_permissions);
     currentData.acls = new_permissions;
 
-    updateMetadataRecord("schema", currentData, etag, accessToken).then((status) => {
+    updateMetadataRecord("document", currentData, etag, accessToken).then((status) => {
         if (status === 200) {
             toast.update(id, {
                 render: `Updates successfully applied.`,
@@ -43,12 +43,12 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
                 autoClose: 1000,
                 "onClose": () => {
                     if (reloadCallback) {
-                        reloadCallback(`/metastore/schemas/${currentData.id}/edit?target=access`);
+                        reloadCallback(`/metastore/metadata/${currentData.id}/edit?target=access`);
                     }
                 }
             });
         } else {
-            console.error(`Unexpected response ${status} while patching schema.`);
+            console.error(`Unexpected response ${status} while patching metadata.`);
             toast.update(id, {
                 render: `Failed to update access permissions. Status: ${status}`,
                 type: "error",
@@ -65,20 +65,20 @@ export const DoUpdatePermissions = (currentData: DataResource, etag: string, per
     });
 }
 
-export const DoUpdateSchema = (currentData: DataResource, etag: string, reloadCallback: Function, accessToken?: string | undefined) => {
-    const id = toast.loading("Updating schema...")
+export const DoUpdateMetadata = (currentData: DataResource, etag: string, reloadCallback: Function, accessToken?: string | undefined) => {
+    const id = toast.loading("Updating metadata...")
 
-    updateMetadataRecord("schema", currentData, etag, accessToken).then((status) => {
+    updateMetadataRecord("document", currentData, etag, accessToken).then((status) => {
         toast.update(id, {
             render: "Resource updated.", type: "success", isLoading: false, autoClose: 1000,
             "onClose": () => {
-                reloadCallback(`/metastore/schemas/${currentData.id}/edit?target=metadata`);
+                reloadCallback(`/metastore/metadata/${currentData.id}/edit?target=metadata`);
             }
         });
     }).catch(error => {
-        console.error("Failed to update schema.", error);
+        console.error("Failed to update metadata.", error);
         toast.update(id, {
-            render: `Failed to update schema. Status: ${error.response.status}`,
+            render: `Failed to update metadata. Status: ${error.response.status}`,
             type: "error",
             isLoading: false
         });

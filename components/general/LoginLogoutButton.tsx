@@ -1,7 +1,7 @@
 "use client";
 
 import {signIn, useSession} from "next-auth/react";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React from "react";
 import {redirect} from "next/navigation";
 
@@ -12,7 +12,7 @@ export default function LoginLogoutButton({icon, ...props}) {
         if (icon) {
             return (
                 <button title="Logout" onClick={() => redirect("/api/auth/federated-logout")} {...props}>
-                    <Icon className="w-6 h-6 pointer-events:auto" icon="pepicons-pencil:key-circle-off"/>
+                    <Icon className="w-6 h-6 pointer-events:auto" width={"24"} height={"24"} icon="pepicons-pencil:key-circle-off"/>
                 </button>
             )
         }
@@ -25,7 +25,7 @@ export default function LoginLogoutButton({icon, ...props}) {
         if (icon) {
             return (
                 <button title="Login" onClick={() => signIn("keycloak")} {...props}>
-                    <Icon className="w-6 h-6 pointer-events:auto" icon="pepicons-pencil:key-circle"/>
+                    <Icon className="w-6 h-6 pointer-events:auto" width={"24"} height={"24"} icon="pepicons-pencil:key-circle"/>
                 </button>
             )
         }

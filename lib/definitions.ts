@@ -206,5 +206,14 @@ export type Activity = {
     managed_type: string;
     author: string;
     commit_date: string;
+}
+
+export type MetastoreStatsType = {
+    uniqueUsers: number;
+    resources: number;
+    openResources: number;
+    closedResources: number;
+    schemas: number;
+    metadata: number;
 
 }

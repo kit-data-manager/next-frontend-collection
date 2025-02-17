@@ -12,12 +12,12 @@ import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permi
 import {Tabs} from "@/components/ui/tabs";
 import {Icon} from "@iconify-icon/react";
 import useUserPrefs from "@/lib/hooks/useUserPrefs";
-import {TabsHeader} from "@/app/metastore/components/SchemaEditor/tabs/TabsHeader";
-import {MetadataTab} from "@/app/metastore/components/SchemaEditor/tabs/MetadataTab";
-import {AccessTab} from "@/app/metastore/components/SchemaEditor/tabs/AccessTab";
+import {TabsHeader} from "@/app/metastore/components/MetadataEditor/tabs/TabsHeader";
+import {MetadataTab} from "@/app/metastore/components/MetadataEditor/tabs/MetadataTab";
+import {AccessTab} from "@/app/metastore/components/MetadataEditor/tabs/AccessTab";
 import {fetchMetadataRecord} from "@/lib/metastore/client-data";
 
-export default function SchemaEditor({...props}) {
+export default function MetadataEditor({...props}) {
     //general props
     const target = props.target ? props.target : "metadata";
     const id = props.id;
@@ -35,10 +35,10 @@ export default function SchemaEditor({...props}) {
     const {data, status} = useSession();
     const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
 
-    //fetch schema
+    //fetch metadata
     useEffect(() => {
         setIsLoading(true);
-        fetchMetadataRecord("schema", id, data?.accessToken).then((res) => {
+        fetchMetadataRecord("document", id, data?.accessToken).then((res) => {
             if (res.etag) {
                 setEtag(res.etag);
             }
@@ -47,7 +47,7 @@ export default function SchemaEditor({...props}) {
             setResource(res);
             setIsLoading(false);
         }).catch(error => {
-            console.log(`Failed to fetch schema ${id}`, error)
+            console.log(`Failed to fetch metadata ${id}`, error)
             setIsLoading(false);
         })
 
@@ -60,13 +60,13 @@ export default function SchemaEditor({...props}) {
 
     if (!isLoading) {
         if (!resource || !resource.id) {
-            return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/schemas"})
+            return ErrorPage({errorCode: Errors.NotFound, backRef: "/metastore/metadata"})
         }
 
         let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, data?.user.preferred_username, data?.user.groups);
 
         if (permission < permissionToNumber(Permission.WRITE)) {
-            return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
+            return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/metadata"})
         }
     }
 
@@ -89,7 +89,7 @@ export default function SchemaEditor({...props}) {
                         style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
                     />
                 </button>
-                <Tabs defaultValue={"access"} className="w-full">
+                <Tabs defaultValue={target} className="w-full">
                     <TabsHeader/>
                     <MetadataTab resource={resource}
                                  etag={etag}

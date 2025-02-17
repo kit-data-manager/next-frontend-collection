@@ -8,7 +8,6 @@ import MappingServiceStats from "@/app/mapping/components/Dashboard/MappingServi
 import MappingServiceStatsSkeleton from "@/app/mapping/components/Dashboard/MappingServiceStatsSkeleton";
 
 export default async function Page() {
-    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
     return (
         <main>
             <Breadcrumbs

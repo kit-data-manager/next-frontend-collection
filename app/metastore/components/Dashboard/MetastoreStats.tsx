@@ -1,66 +1,41 @@
-import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
+import {formatNumber} from "@/lib/general/format-utils";
 import {fetchMetastoreOverview} from "@/lib/metastore/server-data";
 import {InfoCard} from "@/components/StatusCard/InfoCard";
-import {useEffect, useState} from "react";
+import {MetastoreStatsType} from "@/lib/definitions";
 
-export default function MetastoreStats() {
+export default async function MetastoreStats() {
 
-    const [users, setUsers] = useState(-1);
-    const [resources, setResources] = useState(-1);
-    const [openResources, setOpenResources] = useState(-1);
-    const [closedResources, setClosedResources] = useState(-1);
-    const [schemas, setSchemas] = useState(-1);
-    const [metadata, setMetadata] = useState(-1);
-
-    useEffect(() => {
-
-      /*  const {
-            uniqueUsers,
-            resources,
-            openResources,
-            closedResources,
-            schemas,
-            metadata
-        } = fetchMetastoreOverview();
-        */
-
-        setUsers(1);
-        setResources(1);
-        setOpenResources(1);
-        setClosedResources(1);
-        setSchemas(1);
-        setMetadata(1);
-    }, [])
+    const metastoreStats: MetastoreStatsType = await fetchMetastoreOverview();
 
     const stats = [
         {
             "text": "Unique Users",
-            "value": formatNumber(uniqueUsers),
+            "value": formatNumber(metastoreStats.uniqueUsers),
             "icon": "clarity:users-line"
         },
         {
             "text": "Resources",
-            "value": formatNumber(resources),
+            "value": formatNumber(metastoreStats.resources),
             "icon": "fluent-emoji-high-contrast:card-index-dividers"
         },
         {
             "text": "Schemas",
-            "value": formatNumber(schemas),
+            "value": formatNumber(metastoreStats.schemas),
             "icon": "lucide:file-json"
         },
         {
             "text": "Metadata Documents",
-            "value": formatNumber(metadata),
+            "value": formatNumber(metastoreStats.metadata),
             "icon": "bxs:file-json"
         },
         {
             "text": "Public Resources",
-            "value": formatNumber(openResources),
+            "value": formatNumber(metastoreStats.openResources),
             "icon": "fontisto:unlocked"
         },
         {
             "text": "Protected Resources",
-            "value": formatNumber(closedResources),
+            "value": formatNumber(metastoreStats.closedResources),
             "icon": "fontisto:locked"
         }
     ]

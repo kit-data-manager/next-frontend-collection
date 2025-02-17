@@ -1,6 +1,6 @@
 import {Card, CardContent} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React from "react";
 import {cva} from "class-variance-authority";
 

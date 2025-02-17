@@ -1,17 +1,12 @@
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {Pool} from "pg";
-import {Activity} from "@/lib/definitions";
+import {Activity, MetastoreStatsType} from "@/lib/definitions";
 
 export async function fetchMetastoreOverview() {
     noStore()
 
     //initial values (defaults if database query fails)
-    let uniqueUsers = 0;
-    let resources = 0;
-    let openResources = 0;
-    let closedResources = 0;
-    let schemas = 0;
-    let metadata = 0;
+    const stats: MetastoreStatsType = {} as MetastoreStatsType;
 
     try {
         const client = new Pool({
@@ -47,29 +42,21 @@ export async function fetchMetastoreOverview() {
         ]);
 
         //extract information from query results
-        uniqueUsers = Number(data[0].rows[0].count ?? '0');
-        resources = Number(data[1].rows[0].count ?? '0');
-        openResources = Number(data[2].rows[0].count ?? '0');
-        schemas = Number(data[3].rows[0].count ?? '0');
-        metadata = Number(data[4].rows[0].count ?? '0');
-        closedResources = Number(schemas+metadata-openResources ?? '0');
-
+        stats.uniqueUsers = Number(data[0].rows[0].count ?? '0');
+        stats.resources = Number(data[1].rows[0].count ?? '0');
+        stats.openResources = Number(data[2].rows[0].count ?? '0');
+        stats.schemas = Number(data[3].rows[0].count ?? '0');
+        stats.metadata = Number(data[4].rows[0].count ?? '0');
+        stats.closedResources = Number(stats.schemas + stats.metadata - stats.openResources ?? '0');
     } catch (error) {
         console.error('Failed to fetch content overview. Database Error:', error);
     }
 
     //return results
-    return {
-        uniqueUsers,
-        resources,
-        openResources,
-        closedResources,
-        schemas,
-        metadata
-    };
+    return stats;
 }
 
-export async function fetchLatestActivities():Promise<Activity[]> {
+export async function fetchLatestActivities(): Promise<Activity[]> {
     noStore()
     try {
         const client = new Pool({

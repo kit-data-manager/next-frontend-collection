@@ -1,7 +1,7 @@
 import {JobStatus, Status} from "@/lib/mapping/definitions";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React, {useEffect, useState} from "react";
 import {fetchMappingJobStatus} from "@/lib/mapping/client-data";
 import {Badge} from "@/components/ui/badge";

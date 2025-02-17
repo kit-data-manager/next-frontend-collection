@@ -9,6 +9,7 @@ import {SearchX} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import SystemStats from "@/components/SystemStats/SystemStats";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import ElasticSearch from "@/components/ElasticSearch/ElasticSearch";
 
 export default async function Page() {
     let session:Session | undefined = undefined;
@@ -44,7 +45,7 @@ export default async function Page() {
                     <>
                         <h2 className={`${lusitana.className} mt-4 text-l md:text-xl border-b-2 border-sky-200 rounded-sm`}>
                             Search
-                        </h2><SiteSearch/>
+                        </h2><ElasticSearch/>
                     </> :
                     <div
                         className="flex justify-center gap-6 rounded-lg px-6 pt-10 pb-10 md:h-3/5 lg:px-20 grid-cols-3">

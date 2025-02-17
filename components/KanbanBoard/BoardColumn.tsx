@@ -7,7 +7,7 @@ import {cva} from "class-variance-authority";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 import {Badge} from "../ui/badge";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 
 export interface Column {
   id: UniqueIdentifier;
@@ -70,8 +70,10 @@ export const BoardColumn = ({ column, elements, isOverlay }: BoardColumnProps) =
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}>
       <CardHeader className="p-4 font-semibold text-sm border-b-2 bg-gray-100 dark:bg-secondary flex flex-row items-center justify-between">
-        <Icon fontSize={24} icon={column.icon}
-              className="h-6 w-6 mr-2"/>
+        <Icon icon={column.icon}
+              className="h-6 w-6 mr-2"
+              width={"24"}
+              height={"24"}/>
         <h1>{column.title}</h1>
         <Badge variant="outline">{elements.length}</Badge>
       </CardHeader>
@@ -112,10 +114,4 @@ export const BoardContainer = ({ children }: { children: React.ReactNode }) => {
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
-/*
-  return (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start justify-center">
-          {children}
-        </div>
-  );*/
 }

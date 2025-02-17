@@ -1,21 +1,28 @@
 import React from "react"
 import 'react-loading-skeleton/dist/skeleton.css'
-import {lusitana} from "@/components/fonts";
+import {Card} from "@/components/ui/card";
+import {Icon} from "@iconify-icon/react";
 
-export function LatestActivitiesSkeleton(props:any) {
+export function RepositoryStatsSkeleton(props: any) {
     return (
-
         Array(6).fill(0).map((el, index) => (
-            <div key={index}>
-                <div
-                    className={`${lusitana.className} flex flex-col bg-card text-card-foreground border shadow justify-center items-center gap-2 p-4 rounded-md animate-pulse`}>
-                    <div className="flex gap-2 items-center">
-                        <a className="font-bold text-l animate-pulse">Loading...</a>
+            <>
+                <Card className="w-full max-w-xs bg-card shadow-md rounded-lg overflow-hidden flex">
+                    {/* Icon section */}
+                    <div
+                        className="flex items-center justify-center bg-card brightness-150 w-1/3 h-full p-3 animate-pulse">
+                        <Icon icon={"eos-icons:bubble-loading"} color={"bg-card"} className={"h-12 w-12 mr-2"} width={"42"} height={"42"}/>
                     </div>
 
-                 </div>
-            </div>
+                    {/* Text section */}
+                    <div className="flex-1 p-4 flex flex-col justify-center">
+                        <div className="text-xl font-semibold text-card-500 animate-pulse">Loading</div>
+                        <div className="text-sm text-gray-500 animate-pulse">...</div>
+                    </div>
+                </Card>
+            </>
         ))
     )
 }
- export default LatestActivitiesSkeleton
+
+export default RepositoryStatsSkeleton

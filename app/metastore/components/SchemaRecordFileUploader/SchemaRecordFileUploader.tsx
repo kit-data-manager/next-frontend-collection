@@ -11,7 +11,7 @@ import JsonForm from "@/components/jsonform";
 import {DataResource} from "@/lib/definitions";
 import {Button} from "@/components/ui/button";
 import Loader from "@/components/general/Loader";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import {useSession} from "next-auth/react";
 import {installEventHandlers} from "@/app/metastore/components/SchemaRecordFileUploader/useSchemaRecordFileUploader";
 

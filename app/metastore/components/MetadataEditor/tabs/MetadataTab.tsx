@@ -5,9 +5,9 @@ import {TabsContent} from "@/components/ui/tabs";
 import React, {useState} from "react";
 import {DataResource} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
-import {DoUpdateSchema} from "@/app/metastore/components/SchemaEditor/useSchemaEditor";
 import {useSession} from "next-auth/react";
 import {MetadataTabHelp} from "@/app/metastore/components/MetadataEditor/help/MetadataTabHelp";
+import {DoUpdateMetadata} from "@/app/metastore/components/MetadataEditor/useMetadataEditor";
 
 interface MetadataTabProps {
     resource: DataResource;
@@ -38,13 +38,13 @@ export function MetadataTab({
             {editorReady ? null :
                 <span>Loading editor...</span>
             }
-            <JsonForm id="SchemaRecord" schema={schema} data={resource}
+            <JsonForm id="MetadataRecord" schema={schema} data={resource}
                       setEditorReady={setEditorReady}
                       onChange={(d: object) => DataChanged(d, setConfirm, updateResourceCallback)}/>
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Cancel"}
-                                    confirmCallback={() => DoUpdateSchema(resource, etag, reloadCallback, data?.accessToken)}
-                                    cancelHref={`/metastore/schemas/`}
+                                    confirmCallback={() => DoUpdateMetadata(resource, etag, reloadCallback, data?.accessToken)}
+                                    cancelHref={`/metastore/metadata/`}
                                     confirm={confirm}
             />
         </TabsContent>

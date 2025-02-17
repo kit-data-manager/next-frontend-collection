@@ -5,7 +5,7 @@ import {Card, CardContent} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {cva} from "class-variance-authority";
 import {ColumnId} from "./KanbanBoard";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React from "react";
 
 export type Element = {
@@ -75,8 +75,10 @@ export function BoardCard({element, isOverlay}: BoardCardProps) {
                     {...listeners}
                     className="p-1 -ml-2 h-auto cursor-grab">
                     <span className="sr-only">Move Element</span>
-                    <Icon fontSize={24} icon={element.icon}
-                          className="h-6 w-6 mr-2"/>
+                    <Icon icon={element.icon}
+                          className="h-6 w-6 mr-2"
+                          width={"24"}
+                          height={"24"}/>
                 </Button>
                 {element.content}
             </CardContent>

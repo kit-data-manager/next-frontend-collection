@@ -6,7 +6,7 @@ import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client-data";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {useSession} from "next-auth/react";
 import {CreateHelp} from "@/app/metastore/metadata/create/CreateHelp";
@@ -83,9 +83,10 @@ export default function Page() {
                         title={"Show/Hide Help"}
                         className={"justify-self-end"}>
                     <Icon
-                        fontSize={24}
                         icon={"material-symbols-light:help-outline"}
                         className={"h-8 w-8 mr-2"}
+                        width={"24"}
+                        height={"24"}
                         style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
                     />
                 </button>

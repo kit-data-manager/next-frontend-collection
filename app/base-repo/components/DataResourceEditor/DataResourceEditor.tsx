@@ -13,7 +13,7 @@ import ErrorPage from "@/components/ErrorPage/ErrorPage";
 import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permission-utils";
 import {Tabs} from "@/components/ui/tabs";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {TabsHeader} from "@/app/base-repo/components/DataResourceEditor/tabs/TabsHeader";
 import {UploadTab} from "@/app/base-repo/components/DataResourceEditor/tabs/UploadTab";
@@ -140,9 +140,10 @@ export default function DataResourceEditor({...props}) {
                         title={"Show/Hide Help"}
                         className={"justify-self-end"}>
                     <Icon
-                        fontSize={24}
                         icon={"material-symbols-light:help-outline"}
                         className={"h-8 w-8 mr-2"}
+                        width={"24"}
+                        height={"24"}
                         style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
                     />
                 </button>

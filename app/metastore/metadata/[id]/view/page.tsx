@@ -2,7 +2,7 @@
 
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs';
 import React, {useEffect, useState} from "react";
-import {userCanDelete, userCanDownload, userCanEdit} from "@/lib/event-utils";
+import {userCanDownload, userCanEdit} from "@/lib/event-utils";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {DataResource, Permission, State} from "@/lib/definitions";
 import {useSession} from "next-auth/react";
@@ -15,12 +15,11 @@ import {useRouter} from "next/navigation";
 import {Editor, useMonaco} from "@monaco-editor/react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Upload} from "lucide-react";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import {useTheme} from "next-themes";
 import {runAction} from "@/lib/actions/action-executor";
 import {useDebouncedCallback} from "use-debounce";
 import {ActionButtonInterface} from "@/app/base-repo/components/DataResourceCard/DataResourceCard.d";
-import {CreateMetadataAction} from "@/lib/actions/metastore/createMetadataAction";
 import {fetchMetadataDocument, fetchMetadataEtag, fetchMetadataRecord} from "@/lib/metastore/client-data";
 import {DownloadMetadataDocumentAction} from "@/lib/actions/metastore/downloadMetadataDocumentAction";
 import {EditMetadataDocumentAction} from "@/lib/actions/metastore/editMetadataDocumentAction";

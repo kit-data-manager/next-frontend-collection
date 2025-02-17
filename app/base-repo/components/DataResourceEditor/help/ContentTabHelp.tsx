@@ -1,5 +1,5 @@
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import {Badge} from "@/components/ui/badge";
 import React from "react";
 import {CircleSlash2, Upload} from "lucide-react";

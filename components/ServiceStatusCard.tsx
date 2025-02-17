@@ -1,7 +1,7 @@
 // ServiceStatusCard.js
 
 import React from 'react';
-import { Icon } from '@iconify/react';
+import {Icon} from "@iconify-icon/react";
 import classNames from 'classnames';
 import {Badge} from "@/components/ui/badge";
 import {CardHeader, Card, CardContent, CardFooter} from "@/components/ui/card";

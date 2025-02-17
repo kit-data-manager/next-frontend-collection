@@ -8,7 +8,7 @@ import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@radix-ui/react-collapsible";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {cn} from "@/lib/general/utils";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 
 interface AddTagDialogProps {
     openModal: boolean;
@@ -76,6 +76,8 @@ export function AddMappingJobDialog({openModal, mappings, dialogCloseCallback, s
                                     <div className={"flex"}><Icon
                                         icon={"material-symbols-light:help-outline"}
                                         className={"h-5 w-5 mr-2 "}
+                                        width={"24"}
+                                        height={"24"}
                                         style={{color: "#0F0"}}/>
                                         Click to Open Mapping Description
                                     </div>

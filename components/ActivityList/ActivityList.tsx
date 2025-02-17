@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Icon } from '@iconify/react';
+import {Icon} from "@iconify-icon/react";
 import {Activity} from "@/app/base-repo/components/Dashboard/LatestActivities";
 
 export function ActivityList ({activities}: {
@@ -13,11 +13,11 @@ export function ActivityList ({activities}: {
                 <div key={index} className="flex items-start border-b last:border-0">
                     {/* Icon Section */}
                     <div className="w-1/5 flex items-center bg-card p-3 brightness-150 justify-center h-full">
-                        <Icon icon={activity.icon} width="40" height="40" />
+                        <Icon icon={activity.icon} width={"30"} height={"30"} className={"mb-4"} />
                     </div>
 
                     {/* Title and Subtitle Section */}
-                    <div className="w-2/5 pl-4">
+                    <div className="w-2/5 pl-4 mb-2">
                         <div className="text-l font-semibold text-card-800 mt-2">{activity.title}</div>
                         <div className="text-sm text-gray-600">{activity.subtitle}</div>
                     </div>

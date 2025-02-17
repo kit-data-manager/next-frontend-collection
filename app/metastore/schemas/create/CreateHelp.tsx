@@ -1,7 +1,7 @@
 import {ShieldCheck} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Badge} from "@/components/ui/badge";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React from "react";
 
 export function CreateHelp() {
@@ -22,13 +22,15 @@ export function CreateHelp() {
                                     identifier and title into the form, metadata has to be added to the list of file uploads. As soon as all mandatory
                                     metadata is provided, the transfer button&nbsp;
                                     <Badge variant="contextual_disabled">
-                                                <Icon fontSize={16}
-                                                      icon={"ic:outline-double-arrow"}
-                                                      className="h-4 w-4"/></Badge> will change to  <Badge
+                                                <Icon icon={"ic:outline-double-arrow"}
+                                                      className="h-4 w-4"
+                                                      width={"24"}
+                                                      height={"24"}/></Badge> will change to  <Badge
                                         variant="contextual">
-                                                <Icon fontSize={16}
-                                                      icon={"ic:outline-double-arrow"}
-                                                      className="h-4 w-4"/></Badge> and can be used to transfer the metadata document the the upload element on the right
+                                                <Icon icon={"ic:outline-double-arrow"}
+                                                      className="h-4 w-4"
+                                                      width={"24"}
+                                                      height={"24"}/></Badge> and can be used to transfer the metadata document the the upload element on the right
                                     hand side and will appear as <i>record.json</i>. <br/>
                                     Now, the actual metadata schema must be provided. Therefor, click <span
                                         className={"text-sky-400"}>+ Add more</span> in the upper right corner of the upload element

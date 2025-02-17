@@ -1,9 +1,6 @@
 import {Input} from "@/components/ui/input";
 import {KanbanBoard} from "@/components/KanbanBoard/KanbanBoard";
-import {
-    accessControlColumns,
-    DoUpdatePermissions
-} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
+import {accessControlColumns} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";
 import React, {useEffect, useState} from "react";
@@ -12,11 +9,12 @@ import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import capitalize from "@mui/utils/capitalize";
 import {fetchUsers} from "@/lib/base-repo/client-data";
-import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
 import {useSession} from "next-auth/react";
 import {
     PermissionUpdateCheckDialog
 } from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
+import {AccessTabHelp} from "@/app/metastore/components/MetadataEditor/help/AccessTabHelp";
+import {DoUpdatePermissions} from "@/app/metastore/components/MetadataEditor/useMetadataEditor";
 
 interface AccessTabProps {
     resource: DataResource;
@@ -38,7 +36,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
         fetchUsers(userFilter).then((res) => {
             //init users array with acl entries
             let userElements: Element[] = [];
-            resource?.acls?.forEach((acl: Acl) => {
+            resource.acls.forEach((acl: Acl) => {
                 let targetColumn = "users";
                 switch (acl.permission) {
                     case Permission.READ:
@@ -140,14 +138,11 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
     function updateUserFilter(val: string) {
         if (val && val.length > 2) {
             setUserFilter(val);
-        }else{
-            setUserFilter(undefined);
         }
     }
 
     function doReset() {
         setElements([]);
-        setUserFilter(undefined);
         setForceReload(true);
     }
 
@@ -184,7 +179,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
     function doPermissionUpdate(result: boolean) {
         setOpenPermissionCheck(false);
         if (result) {
-            DoUpdatePermissions(resource, etag, elements, reloadCallback, data?.accessToken);
+            DoUpdatePermissions(resource, etag, elements, data?.accessToken, reloadCallback);
         }
     }
 

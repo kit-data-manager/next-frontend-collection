@@ -87,7 +87,7 @@ export async function fetchLatestActivities():Promise<Activity[]> {
             WHERE \
                 com.commit_pk = sna.commit_fk AND \
                 sna.managed_type IN (\'edu.kit.datamanager.repo.domain.ContentInformation\', \'edu.kit.datamanager.repo.domain.DataResource\') \
-            ORDER BY com.commit_date DESC LIMIT 6');
+            ORDER BY com.commit_date DESC LIMIT 10');
         return activities.rows;
     } catch (error) {
         console.error('Failed to fetch latest activities. Database Error:', error);

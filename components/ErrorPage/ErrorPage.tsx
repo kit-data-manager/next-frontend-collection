@@ -7,7 +7,7 @@ import {
     QuestionMarkCircleIcon
 } from "@heroicons/react/24/outline";
 import React, {JSX} from "react";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 
 export default function ErrorPage(errorDescription: ErrorDescription) {
     let ICON:JSX.Element, title:string, text:string;

@@ -18,7 +18,7 @@ import {DownloadSchemaAction} from "@/lib/actions/metastore/downloadSchemaAction
 import {Editor, useMonaco} from "@monaco-editor/react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Upload} from "lucide-react";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import {useTheme} from "next-themes";
 import {runAction} from "@/lib/actions/action-executor";
 import {useDebouncedCallback} from "use-debounce";

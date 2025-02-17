@@ -1,7 +1,7 @@
 import {ShieldCheck} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Badge} from "@/components/ui/badge";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import React from "react";
 
 export function AccessTabHelp(){

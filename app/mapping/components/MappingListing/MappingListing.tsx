@@ -12,7 +12,7 @@ import {TriangleAlert} from "lucide-react";
 import {MappingCard} from "@/app/mapping/components/MappingCard/MappingCard";
 import {NewJobCard} from "@/app/mapping/components/MappingCard/NewJobCard";
 import {AddMappingJobDialog} from "@/app/mapping/components/MappingListing/dialogs/AddMappingJobDialog";
-import {Icon} from "@iconify/react";
+import {Icon} from "@iconify-icon/react";
 import {ClearJobsCard} from "@/app/mapping/components/MappingCard/ClearJobsCard";
 import {MappingHelp} from "@/app/mapping/components/MappingListing/help/MappingHelp";
 
@@ -113,9 +113,10 @@ export function MappingListing({}: MappingListing2Props) {
                     title={"Show/Hide Help"}
                     className={"justify-self-end mb-2"}>
                 <Icon
-                    fontSize={24}
                     icon={"material-symbols-light:help-outline"}
                     className={"h-8 w-8 mr-2"}
+                    width={"24"}
+                    height={"24"}
                     style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
                 />
             </button>
