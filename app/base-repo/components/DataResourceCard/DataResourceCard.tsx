@@ -17,12 +17,14 @@ import {ActionEvent, DataCardCustomEvent} from "@kit-data-manager/data-view-web-
 
 export interface ResourceCardProps {
     resource: DataResource;
+    variant?: string;
     actionEvents?: ActionButtonInterface[];
     cardCallbackAction: (action: DataCardCustomEvent<ActionEvent>, resource: DataResource) => void;
 }
 
 export default function DataResourceCard({
                                              resource,
+                                             variant,
                                              actionEvents = [] as ActionButtonInterface[],
                                              cardCallbackAction
                                          }: ResourceCardProps) {
@@ -40,7 +42,7 @@ export default function DataResourceCard({
     useEffect(() => {
         fetchDataResourceEtag(resource.id, data?.accessToken).then((etag) => {
             resource.etag = etag;
-        }).then(()=> {
+        }).then(() => {
             fetchAllContentInformation(resource, data?.accessToken).then(contentInformation => {
                 let children: Array<DataCard> = new Array<DataCard>;
 
@@ -69,6 +71,7 @@ export default function DataResourceCard({
     return (
         <>
             <DataCard key={resource.id}
+                      variant={variant ? variant : "default"}
                       childrenVariant={"default"}
                       actionButtons={actionEvents}
                       onActionClick={ev => cardCallbackAction(ev, resource)} {...miscProperties}></DataCard>

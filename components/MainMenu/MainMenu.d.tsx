@@ -1,6 +1,7 @@
 export interface SubMenu  {
     serviceName:string;
-    menuItems: MenuItem[];
+    href?:string;
+    menuItems?: MenuItem[];
 }
 export interface MenuItem  {
     name: string;

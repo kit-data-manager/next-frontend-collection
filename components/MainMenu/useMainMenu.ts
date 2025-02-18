@@ -1,14 +1,33 @@
-import {ChartPieIcon, ListBulletIcon, PlayIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
+import {ChartPieIcon, ListBulletIcon, MagnifyingGlassIcon, PlayIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 
-export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
+export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable: boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
     const mappingAvailable: boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
+    const searchAvailable: boolean = !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
 
     const basePath: string = ((withBasePath && process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "");
 
     const items: SubMenu[] = [];
+
+    /**
+     * menuItems: [
+     *                 {
+     *                     name: 'Search',
+     *                     href: `${basePath}/search`,
+     *                     icon: MagnifyingGlassIcon,
+     *                     requiresSearch:true,
+     *                     description: "Search in all supported Services"
+     *                 }
+     *             ]
+     * */
+    if (searchAvailable) {
+        items.push({
+            serviceName: "Site Search",
+            href: `${basePath}/search`
+        })
+    }
 
     if (repoAvailable) {
         items.push({
@@ -26,13 +45,6 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                     icon: PlusCircleIcon,
                     description: "Create a new Data Resource.",
                     requiresSession: true
-                },
-                {
-                    name: 'Search',
-                    href: `${basePath}/base-repo/resources/search`,
-                    icon: PlusCircleIcon,
-                    description: "Search for Data Resources.",
-                    requiresSearch: true
                 },
                 {
                     name: 'Resources',
@@ -61,20 +73,6 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
                     description: "Create a new Metadata Schema.",
                     requiresSession: true
                 },
-                /*{
-                    name: 'Create Metadata',
-                    href: `${basePath}/metastore/metadata/create`,
-                    icon: PlusCircleIcon,
-                    description: "Create a new Metadata Document.",
-                    requiresSession: true
-                },
-                {
-                    name: 'Search',
-                    href: `${basePath}/metastore/metadata/search`,
-                    icon: PlusCircleIcon,
-                    description: "Search for Metadata Documents.",
-                    requiresSearch: true
-                },*/
                 {
                     name: 'Schemas',
                     href: `${basePath}/metastore/schemas`,
@@ -114,8 +112,8 @@ export function getMenuEntries(withBasePath:boolean = false): SubMenu[] {
     return items;
 }
 
-export function shouldRender(menuItem: MenuItem, sessionAvailable:boolean, searchAvailable:boolean):boolean{
-    if(menuItem.requiresSession && !sessionAvailable){
+export function shouldRender(menuItem: MenuItem, sessionAvailable: boolean, searchAvailable: boolean): boolean {
+    if (menuItem.requiresSession && !sessionAvailable) {
         //session required but not available
         return false;
     }

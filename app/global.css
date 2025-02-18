@@ -207,6 +207,15 @@ data-card::part(action-btn-icon){
   max-width: unset !important;
 }
 
+.sui-layout-body, .sui-layout-body:after {
+  background: none!important;
+}
+
+.sui-layout-header {
+  --tw-border-opacity: 1;
+  border-bottom: rgb(186 230 253 / var(--tw-border-opacity, 1))!important;
+}
+
 iconify-icon{
   display:inline-block;
   width:1em;

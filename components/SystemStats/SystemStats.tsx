@@ -15,18 +15,24 @@ export default async function SystemStats() {
     const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
     const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
 
+    const searchAvailable:boolean = !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
     const repoAvailable:boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
     const metaStoreAvailable:boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
     const mappingAvailable:boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
     const typedPidMakerAvailable:boolean = (process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE ? process.env.NEXT_PUBLIC_TYPED_PID_MAKERG_AVAILABLE : "false") == "true";
 
+    const searchBaseUrl: string = process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : '';
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
     const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
-    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
     const typedPidMakerBaseUrl: string = process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL ? process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL : '';
+    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
+
+
 
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
+    let actuatorInfoSearch: ActuatorInfo | undefined = undefined;
+    let actuatorHealthSearch:ActuatorHealth | undefined = undefined;
     let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
     let actuatorHealthBaseRepo:ActuatorHealth | undefined = undefined;
     let actuatorInfoMetaStore: ActuatorInfo | undefined = undefined;
@@ -38,6 +44,12 @@ export default async function SystemStats() {
 
     let keycloakInfo: KeycloakInfo | undefined = undefined;
     let validTiles = 0;
+
+    if (searchAvailable) {
+        actuatorInfoSearch = await fetchActuatorInfo(searchBaseUrl.replace("/api/v1", ""), data?.accessToken);
+        actuatorHealthSearch = await fetchActuatorHealth(searchBaseUrl.replace("/api/v1", ""), data?.accessToken);
+        validTiles++;
+    }
 
     if (repoAvailable) {
         actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl, data?.accessToken);
@@ -68,14 +80,29 @@ export default async function SystemStats() {
         validTiles++;
     }
 
-    let missingCols = validTiles % 4;
+    let missingCols = 5 - validTiles % 5;
+    missingCols = missingCols === 5?0:missingCols;
     let missing:number[] = [];
     if(missingCols != 0){
         missing = Array(missingCols).fill(0);
     }
+    console.log("MIS ", missing);
 
     return (
         <>
+            {actuatorInfoSearch ?
+                <ServiceStatusCard
+                    key={"1"}
+                    serviceName={"Site Search"}
+                    serviceVersion={actuatorInfoSearch.status === 1 ? `${actuatorInfoSearch.version}` : `Unknown`}
+                    status={actuatorInfoSearch.status === 1? "active" : actuatorInfoSearch.status === 0 ? "maintenance" : "inactive"}
+                    link={actuatorInfoSearch.status === 1 ? `/search` : undefined}
+                    ledStatus={ [
+                        { status: actuatorHealthSearch?.elastic.status, tooltip: actuatorHealthSearch?.elastic.details },
+                    ]}
+                /> : null
+            }
+
             {actuatorInfoBaseRepo ?
                 <ServiceStatusCard
                     key={"1"}
@@ -155,7 +182,7 @@ export default async function SystemStats() {
             {
                 missing.map((el, index) => {
                     return (<div key={index}
-                        className={`${lusitana.className} opacity-10 flex flex-col bg-card text-card-foreground border shadow justify-start items-center gap-2 p-4 rounded-md`}>
+                        className={`${lusitana.className} opacity-10 w-80 bg-card text-card-foreground border border-gray-200 shadow-md justify-start items-center gap-2 p-4 rounded-md`}>
                     </div>
                     )
                 })

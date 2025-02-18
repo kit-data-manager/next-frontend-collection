@@ -6,13 +6,14 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger
+    NavigationMenuTrigger, navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
 import {cn} from "@/lib/general/utils";
 import React from "react";
 import {useSession} from "next-auth/react";
 import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
+import Link from "next/link";
 
 export default function MainMenu() {
     const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
@@ -24,8 +25,8 @@ export default function MainMenu() {
         <NavigationMenu className="px-2 py-2.5 sm:px-4">
             <NavigationMenuList>
                 {items.map((item:SubMenu, idx:number) => {
-                    return (
-                       <NavigationMenuItem key={`main_menu_${idx}`}>
+                    if(item.menuItems){
+                       return (<NavigationMenuItem key={`main_menu_${idx}`}>
                            <NavigationMenuTrigger>{item.serviceName}</NavigationMenuTrigger>
                            <NavigationMenuContent>
                                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
@@ -42,6 +43,17 @@ export default function MainMenu() {
                                </ul>
                            </NavigationMenuContent>
                        </NavigationMenuItem>
+                    }else{
+                    return (
+                        <NavigationMenuItem>
+                            <Link href={item.href} legacyBehavior passHref>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    Documentation
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+                    )
+                }
                 )})}
             </NavigationMenuList>
         </NavigationMenu>
