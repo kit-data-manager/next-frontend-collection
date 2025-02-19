@@ -8,39 +8,45 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {ExtendedSession} from "@/lib/next-auth/next-auth";
 import ServiceStatusCard from "@/components/ServiceStatusCard";
 
+type ServiceStats = {
+    check:boolean;
+    serviceUrl: string;
+    info: ActuatorInfo;
+    health: ActuatorHealth;
+}
+
 export default async function SystemStats() {
-    const data:ExtendedSession | null = await getServerSession(authOptions);
+    const data: ExtendedSession | null = await getServerSession(authOptions);
+    //const {data, status} = useSession();
+    //const size = useWindowSize();
 
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
     const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
 
-    const searchAvailable:boolean = !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
-    const repoAvailable:boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
-    const metaStoreAvailable:boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
-    const mappingAvailable:boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
-    const typedPidMakerAvailable:boolean = (process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE ? process.env.NEXT_PUBLIC_TYPED_PID_MAKERG_AVAILABLE : "false") == "true";
+    const searchAvailable: boolean = !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
+    const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
+    const metaStoreAvailable: boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
+    const mappingAvailable: boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
+    const typedPidMakerAvailable: boolean = (process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE ? process.env.NEXT_PUBLIC_TYPED_PID_MAKERG_AVAILABLE : "false") == "true";
 
     const searchBaseUrl: string = process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : '';
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
     const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
     const typedPidMakerBaseUrl: string = process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL ? process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL : '';
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
-
-
-
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
     let actuatorInfoSearch: ActuatorInfo | undefined = undefined;
-    let actuatorHealthSearch:ActuatorHealth | undefined = undefined;
+    let actuatorHealthSearch: ActuatorHealth | undefined = undefined;
     let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
-    let actuatorHealthBaseRepo:ActuatorHealth | undefined = undefined;
+    let actuatorHealthBaseRepo: ActuatorHealth | undefined = undefined;
     let actuatorInfoMetaStore: ActuatorInfo | undefined = undefined;
-    let actuatorHealthMetaStore:ActuatorHealth | undefined = undefined;
+    let actuatorHealthMetaStore: ActuatorHealth | undefined = undefined;
     let actuatorInfoMappingService: ActuatorInfo | undefined = undefined;
-    let actuatorHealthMappingService:ActuatorHealth | undefined = undefined;
+    let actuatorHealthMappingService: ActuatorHealth | undefined = undefined;
     let actuatorInfoTypedPIDMaker: ActuatorInfo | undefined = undefined;
-    let actuatorHealthTypedPIDMaker:ActuatorHealth | undefined = undefined;
+    let actuatorHealthTypedPIDMaker: ActuatorHealth | undefined = undefined;
 
     let keycloakInfo: KeycloakInfo | undefined = undefined;
     let validTiles = 0;
@@ -69,7 +75,7 @@ export default async function SystemStats() {
         validTiles++;
     }
 
-    if(typedPidMakerAvailable){
+    if (typedPidMakerAvailable) {
         actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl, data?.accessToken);
         actuatorHealthTypedPIDMaker = await fetchActuatorHealth(typedPidMakerBaseUrl, data?.accessToken);
         validTiles++;
@@ -80,101 +86,147 @@ export default async function SystemStats() {
         validTiles++;
     }
 
-    let missingCols = 5 - validTiles % 5;
-    missingCols = missingCols === 5?0:missingCols;
-    let missing:number[] = [];
-    if(missingCols != 0){
+    let remainder = validTiles % 4;
+    let missingCols: number = remainder > 0 ? 4 - remainder : 0;
+    let missing: number[] = [];
+    if (missingCols != 0) {
         missing = Array(missingCols).fill(0);
     }
-    console.log("MIS ", missing);
 
     return (
         <>
             {actuatorInfoSearch ?
                 <ServiceStatusCard
-                    key={"1"}
+                    key={"search_card"}
                     serviceName={"Site Search"}
                     serviceVersion={actuatorInfoSearch.status === 1 ? `${actuatorInfoSearch.version}` : `Unknown`}
-                    status={actuatorInfoSearch.status === 1? "active" : actuatorInfoSearch.status === 0 ? "maintenance" : "inactive"}
+                    status={actuatorInfoSearch.status === 1 ? "active" : actuatorInfoSearch.status === 0 ? "maintenance" : "inactive"}
                     link={actuatorInfoSearch.status === 1 ? `/search` : undefined}
-                    ledStatus={ [
-                        { status: actuatorHealthSearch?.elastic.status, tooltip: actuatorHealthSearch?.elastic.details },
+                    ledStatus={[
+                        {status: actuatorHealthSearch?.elastic.status, tooltip: actuatorHealthSearch?.elastic.details},
                     ]}
                 /> : null
             }
 
             {actuatorInfoBaseRepo ?
                 <ServiceStatusCard
-                    key={"1"}
+                    key={"repo_card"}
                     serviceName={repoInstanceName}
                     serviceVersion={actuatorInfoBaseRepo.status === 1 ? `${actuatorInfoBaseRepo.version}` : `Unknown`}
-                    status={actuatorInfoBaseRepo.status === 1? "active" : actuatorInfoBaseRepo.status === 0 ? "maintenance" : "inactive"}
+                    status={actuatorInfoBaseRepo.status === 1 ? "active" : actuatorInfoBaseRepo.status === 0 ? "maintenance" : "inactive"}
                     link={actuatorInfoBaseRepo.status === 1 ? `/base-repo` : undefined}
-                    ledStatus={ [
-                        { status: actuatorHealthBaseRepo?.harddisk.status, tooltip: actuatorHealthBaseRepo?.harddisk.details },
-                        { status: actuatorHealthBaseRepo?.database.status, tooltip: actuatorHealthBaseRepo?.database.details },
-                        { status: actuatorHealthBaseRepo?.elastic.status, tooltip: actuatorHealthBaseRepo?.elastic.details },
-                        { status: actuatorHealthBaseRepo?.rabbitMq.status, tooltip: actuatorHealthBaseRepo?.rabbitMq.details }
+                    ledStatus={[
+                        {
+                            status: actuatorHealthBaseRepo?.harddisk.status,
+                            tooltip: actuatorHealthBaseRepo?.harddisk.details
+                        },
+                        {
+                            status: actuatorHealthBaseRepo?.database.status,
+                            tooltip: actuatorHealthBaseRepo?.database.details
+                        },
+                        {
+                            status: actuatorHealthBaseRepo?.elastic.status,
+                            tooltip: actuatorHealthBaseRepo?.elastic.details
+                        },
+                        {
+                            status: actuatorHealthBaseRepo?.rabbitMq.status,
+                            tooltip: actuatorHealthBaseRepo?.rabbitMq.details
+                        }
                     ]}
                 /> : null
             }
 
             {actuatorInfoMetaStore ?
                 <ServiceStatusCard
-                    key={"2"}
+                    key={"metastore_card"}
                     serviceName={metastoreInstanceName}
                     serviceVersion={actuatorInfoMetaStore.status === 1 ? `${actuatorInfoMetaStore.version}` : `Unknown`}
-                    status={actuatorInfoMetaStore.status === 1? "active" : actuatorInfoMetaStore.status === 0 ? "maintenance" : "inactive"}
+                    status={actuatorInfoMetaStore.status === 1 ? "active" : actuatorInfoMetaStore.status === 0 ? "maintenance" : "inactive"}
                     link={actuatorInfoMetaStore.status === 1 ? `/metastore` : undefined}
-                    ledStatus={ [
-                        { status: actuatorHealthMetaStore?.harddisk.status, tooltip: actuatorHealthMetaStore?.harddisk.details },
-                        { status: actuatorHealthMetaStore?.database.status, tooltip: actuatorHealthMetaStore?.database.details },
-                        { status: actuatorHealthMetaStore?.elastic.status, tooltip: actuatorHealthMetaStore?.elastic.details },
-                        { status: actuatorHealthMetaStore?.rabbitMq.status, tooltip: actuatorHealthMetaStore?.rabbitMq.details }
+                    ledStatus={[
+                        {
+                            status: actuatorHealthMetaStore?.harddisk.status,
+                            tooltip: actuatorHealthMetaStore?.harddisk.details
+                        },
+                        {
+                            status: actuatorHealthMetaStore?.database.status,
+                            tooltip: actuatorHealthMetaStore?.database.details
+                        },
+                        {
+                            status: actuatorHealthMetaStore?.elastic.status,
+                            tooltip: actuatorHealthMetaStore?.elastic.details
+                        },
+                        {
+                            status: actuatorHealthMetaStore?.rabbitMq.status,
+                            tooltip: actuatorHealthMetaStore?.rabbitMq.details
+                        }
                     ]}
-                />  : null
+                /> : null
             }
 
             {actuatorInfoMappingService ?
                 <ServiceStatusCard
-                    key={"3"}
+                    key={"mapping_card"}
                     serviceName={mappingInstanceName}
                     serviceVersion={actuatorInfoMappingService.status === 1 ? `${actuatorInfoMappingService.version}` : `Unknown`}
-                    status={actuatorInfoMappingService.status === 1? "active" : actuatorInfoMappingService.status === 0 ? "maintenance" : "inactive"}
+                    status={actuatorInfoMappingService.status === 1 ? "active" : actuatorInfoMappingService.status === 0 ? "maintenance" : "inactive"}
                     link={actuatorInfoMappingService.status === 1 ? `/mapping` : undefined}
-                    ledStatus={ [
-                        { status: actuatorHealthMappingService?.harddisk.status, tooltip: actuatorHealthMappingService?.harddisk.details },
-                        { status: actuatorHealthMappingService?.database.status, tooltip: actuatorHealthMappingService?.database.details },
-                        { status: actuatorHealthMappingService?.elastic.status, tooltip: actuatorHealthMappingService?.elastic.details },
-                        { status: actuatorHealthMappingService?.rabbitMq.status, tooltip: actuatorHealthMappingService?.rabbitMq.details }
+                    ledStatus={[
+                        {
+                            status: actuatorHealthMappingService?.harddisk.status,
+                            tooltip: actuatorHealthMappingService?.harddisk.details
+                        },
+                        {
+                            status: actuatorHealthMappingService?.database.status,
+                            tooltip: actuatorHealthMappingService?.database.details
+                        },
+                        {
+                            status: actuatorHealthMappingService?.elastic.status,
+                            tooltip: actuatorHealthMappingService?.elastic.details
+                        },
+                        {
+                            status: actuatorHealthMappingService?.rabbitMq.status,
+                            tooltip: actuatorHealthMappingService?.rabbitMq.details
+                        }
                     ]}
-                />  : null
+                /> : null
             }
 
             {actuatorInfoTypedPIDMaker ?
                 <ServiceStatusCard
-                    key={"4"}
+                    key={"tpidm_card"}
                     serviceName={"FAIR DO Repo"}
                     serviceVersion={actuatorInfoTypedPIDMaker.status === 1 ? `${actuatorInfoTypedPIDMaker.version}` : `Unknown`}
-                    status={actuatorInfoTypedPIDMaker.status === 1? "active" : actuatorInfoTypedPIDMaker.status === 0 ? "maintenance" : "inactive"}
+                    status={actuatorInfoTypedPIDMaker.status === 1 ? "active" : actuatorInfoTypedPIDMaker.status === 0 ? "maintenance" : "inactive"}
                     link={actuatorInfoTypedPIDMaker.status === 1 ? `/typed-pid-maker` : undefined}
                     ledStatus={[
-                        { status: actuatorHealthTypedPIDMaker?.harddisk.status, tooltip: actuatorHealthTypedPIDMaker?.harddisk.details },
-                        { status: actuatorHealthTypedPIDMaker?.database.status, tooltip: actuatorHealthTypedPIDMaker?.database.details },
-                        { status: actuatorHealthTypedPIDMaker?.elastic.status, tooltip: actuatorHealthTypedPIDMaker?.elastic.details },
-                        { status: actuatorHealthTypedPIDMaker?.rabbitMq.status, tooltip: actuatorHealthTypedPIDMaker?.rabbitMq.details }
+                        {
+                            status: actuatorHealthTypedPIDMaker?.harddisk.status,
+                            tooltip: actuatorHealthTypedPIDMaker?.harddisk.details
+                        },
+                        {
+                            status: actuatorHealthTypedPIDMaker?.database.status,
+                            tooltip: actuatorHealthTypedPIDMaker?.database.details
+                        },
+                        {
+                            status: actuatorHealthTypedPIDMaker?.elastic.status,
+                            tooltip: actuatorHealthTypedPIDMaker?.elastic.details
+                        },
+                        {
+                            status: actuatorHealthTypedPIDMaker?.rabbitMq.status,
+                            tooltip: actuatorHealthTypedPIDMaker?.rabbitMq.details
+                        }
                     ]}
                 /> : null
             }
 
             {keycloakInfo ?
                 <ServiceStatusCard
-                    key={"5"}
+                    key={"keycloak_card"}
                     serviceName={"Keycloak"}
                     serviceVersion={`Realm: ${keycloakInfo.realm}`}
-                    status={keycloakInfo.status === 1? "active" : keycloakInfo.status === 0 ? "maintenance" : "inactive"}
-                    ledStatus={ [
-                    ]}
+                    status={keycloakInfo.status === 1 ? "active" : keycloakInfo.status === 0 ? "maintenance" : "inactive"}
+                    ledStatus={[]}
                     link={undefined}
                 /> : null
             }
@@ -182,61 +234,11 @@ export default async function SystemStats() {
             {
                 missing.map((el, index) => {
                     return (<div key={index}
-                        className={`${lusitana.className} opacity-10 w-80 bg-card text-card-foreground border border-gray-200 shadow-md justify-start items-center gap-2 p-4 rounded-md`}>
-                    </div>
+                                 className={`${lusitana.className} opacity-10 w-full bg-card text-card-foreground border border-gray-200 shadow-md justify-start items-center gap-2 p-4 rounded-md`}>
+                        </div>
                     )
                 })
             }
-        </>
-    );
-}
-
-function statusStringToInt(status: string) {
-    switch (status) {
-        case "UP":
-            return 1;
-        case "DOWN":
-            return -1;
-        default:
-            return 0;
-    }
-}
-
-export async function ActuatorHealthStatusCardWrapper({serviceUrl}: {
-    serviceUrl: string
-}) {
-    const actuatorInfo = await fetchActuatorHealth(serviceUrl);
-
-    return (
-        <>
-            <StatusCard cardStatus={
-                {
-                    title: "Database",
-                    subtitle: actuatorInfo.database.details,
-                    status: statusStringToInt(actuatorInfo.database.status)
-                }
-            }/>
-            <StatusCard cardStatus={
-                {
-                    title: "HardDisk",
-                    subtitle: humanFileSize(actuatorInfo.harddisk.details) + " free",
-                    status: statusStringToInt(actuatorInfo.harddisk.status)
-                }
-            }/>
-            <StatusCard cardStatus={
-                {
-                    title: "RabbitMQ",
-                    subtitle: actuatorInfo.rabbitMq.details,
-                    status: statusStringToInt(actuatorInfo.rabbitMq.status)
-                }
-            }/>
-            <StatusCard cardStatus={
-                {
-                    title: "Elastic",
-                    subtitle: actuatorInfo.elastic.details,
-                    status: statusStringToInt(actuatorInfo.elastic.status)
-                }
-            }/>
         </>
     );
 }

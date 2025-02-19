@@ -55,7 +55,7 @@ export function StatusCard({cardStatus}: {
             })}>{cardStatus.subtitle}</span>
             {cardStatus.detailsRef ?
                 <div className="w-full flex justify-end">
-                    <Link href={cardStatus.detailsRef}
+                    <Link href={cardStatus.detailsRef} target={"_self"}
                        className="text-xs font-semibold pointer-events-auto hover:underline">details...</Link>
                 </div>
                 :

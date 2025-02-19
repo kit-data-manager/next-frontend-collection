@@ -1,14 +1,11 @@
-import {inter, lusitana} from '@/components/fonts';
+import {inter} from '@/components/fonts';
 import React, {Suspense} from "react";
 import {CardsSkeleton} from "@/components/skeletons";
 import {getServerSession, Session} from "next-auth";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
+//import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import {SearchX} from "lucide-react";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import SystemStats from "@/components/SystemStats/SystemStats";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import ElasticSearch from "@/components/ElasticSearch/ElasticSearch";
 
 export default async function Page() {
     let session:Session | undefined = undefined;
@@ -34,7 +31,7 @@ export default async function Page() {
                 </div>
                 <SectionCaption caption={"Status"} level={"h2"}/>
                 <div
-                    className="grid justify-center gap-6 rounded-lg  px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-5">
+                    className="grid justify-center gap-6 rounded-lg px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
                     <Suspense fallback={<CardsSkeleton/>}>
                         <SystemStats/>
                     </Suspense>

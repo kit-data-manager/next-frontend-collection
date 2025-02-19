@@ -177,7 +177,7 @@ export async function fetchAllContentInformation(resource: DataResource, accessT
 
         //fetch max. number of content elements (100)
         return await fetch(`${repoBaseUrl}/api/v1/dataresources/${resource.id}/data/?page=0&size=100`, {
-            method:"GET",
+            method: "GET",
             headers: headers
         }).then(res => res.json()).catch(error => {
             throw error
@@ -197,7 +197,7 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string | u
         }
         return await fetch(`${repoBaseUrl}/api/v1/dataresources/${id}`,
             {
-                method:"GET",
+                method: "GET",
                 headers: headers
             }).then(result => result.headers.get("ETag"));
     } catch (error) {
@@ -206,7 +206,7 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string | u
     }
 }
 
-export async function fetchContentInformationEtag(id: string, filename:string,  accessToken?: string | undefined) {
+export async function fetchContentInformationEtag(id: string, filename: string, accessToken?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
         let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
@@ -215,7 +215,7 @@ export async function fetchContentInformationEtag(id: string, filename:string,  
         }
         return await fetch(`${repoBaseUrl}/api/v1/dataresources/${id}/data/${filename}`,
             {
-                method:"GET",
+                method: "GET",
                 headers: headers
             }).then(result => result.headers.get("ETag"));
     } catch (error) {
@@ -258,8 +258,13 @@ export async function fetchActuatorInfo(baseUrl: string, token?: string | undefi
     } as ActuatorInfo;
 }
 
-export async function fetchActuatorHealth(serviceUrl: string, token?: string | undefined)  {
-    let healthStatus:ActuatorHealth = {harddisk:{status:"unknown"}, database:{status:"unknown"}, rabbitMq:{status:"unknown"}, elastic:{status:"unknown"}};
+export async function fetchActuatorHealth(serviceUrl: string, token?: string | undefined) {
+    let healthStatus: ActuatorHealth = {
+        harddisk: {status: "unknown", details:"Harddisk information not available."},
+        database: {status: "unknown", details:"Database information not available."},
+        rabbitMq: {status: "unknown", details:"RabbitMQ information not available."},
+        elastic: {status: "unknown", details:"Elasticsearch information not available."}
+    };
 
     try {
         let headers = {};
@@ -270,8 +275,8 @@ export async function fetchActuatorHealth(serviceUrl: string, token?: string | u
         const json = await myFetch(`${serviceUrl}/actuator/health`, {headers: headers}, true).then((response) => response.json());
 
         healthStatus.database.details = `Database Type ${json.components.db.details.database}`;
-        healthStatus.database.status  = json.components.db.status;
-        healthStatus.harddisk.details  = `Harddisk ${humanFileSize(json.components.diskSpace.details.free)} free`
+        healthStatus.database.status = json.components.db.status;
+        healthStatus.harddisk.details = `Harddisk ${humanFileSize(json.components.diskSpace.details.free)} free`
         healthStatus.harddisk.status = json.components.diskSpace.status;
         healthStatus.rabbitMq.status = json.components.rabbitMQMessagingService?.status;
         if (json.components.hasOwnProperty("rabbit") &&

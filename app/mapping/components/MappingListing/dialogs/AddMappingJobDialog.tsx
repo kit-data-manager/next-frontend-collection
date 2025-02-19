@@ -33,7 +33,6 @@ export function AddMappingJobDialog({openModal, mappings, dialogCloseCallback, s
     }, [openModal]);
 
     function updateValue(selection: string) {
-        console.log("CHANGE ", selection);
         const selectedMapping: Mapping | undefined = mappings.find((mapping: Mapping) => mapping.mappingId === selection);
         if (selectedMapping) {
             setUploadEnabled(true);

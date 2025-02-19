@@ -15,7 +15,8 @@ export function AccessTabHelp(){
                                         <tbody>
                                         <tr>
                                             <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"}
+                                                      height={"16"}
                                                       icon={"material-symbols-light:eye-tracking-outline"}
                                                       className="h-4 w-4 mr-2"/> Read:</Badge>
                                             </td>
@@ -23,7 +24,8 @@ export function AccessTabHelp(){
                                         </tr>
                                          <tr>
                                             <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"}
+                                                      height={"16"}
                                                       icon={"material-symbols-light:edit-square-outline"}
                                                       className="h-4 w-4 mr-2"/> Write:</Badge>
                                             </td>
@@ -31,7 +33,8 @@ export function AccessTabHelp(){
                                         </tr>
                                          <tr>
                                             <td><Badge variant="nodeco">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"}
+                                                      height={"16"}
                                                       icon={"arcticons:vivo-i-manager"}
                                                       className="h-4 w-4 mr-2"/> Owner:</Badge>
                                             </td>
@@ -42,7 +45,8 @@ export function AccessTabHelp(){
 
                                     To change permissions of a user, grab an item at its icon and drag it to the according column. The outer left column lists all available users which currently have to specific permission assigned.
                                     You&apos;ll also find one special item <Badge variant="outline">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"}
+                                                      height={"16"}
                                                       icon={"fluent-mdl2:world"}
                                                       className="h-4 w-4 mr-2"/> Public Access</Badge>
                                     which includes all users as well as anonymous access. Assigning permissions to this element will open the resource to the public. Once you finished changing permissions

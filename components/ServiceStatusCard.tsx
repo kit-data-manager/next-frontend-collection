@@ -1,40 +1,32 @@
-// ServiceStatusCard.js
-
 import React from 'react';
-import {Icon} from "@iconify-icon/react";
 import classNames from 'classnames';
 import {Badge} from "@/components/ui/badge";
 import {CardHeader, Card, CardContent, CardFooter} from "@/components/ui/card";
 
 const ServiceStatusCard = ({ serviceName,serviceVersion, status, link, ledStatus }) => {
   let statusColor = '';
-  let statusIcon = '';
   let statusText = '';
 
   switch (status) {
     case 'active':
       statusColor = 'bg-green-800';
-      statusIcon = 'icon-park-outline:check-circle';
       statusText = 'Active';
       break;
     case 'inactive':
       statusColor = 'bg-red-800';
-      statusIcon = 'icon-park-outline:close-circle';
       statusText = 'Inactive';
       break;
     case 'maintenance':
       statusColor = 'bg-yellow-600';
-      statusIcon = 'icon-park-outline:tools';
       statusText = 'Maintenance';
       break;
     default:
       statusColor = 'bg-gray-600';
-      statusIcon = 'icon-park-outline:question-circle';
       statusText = 'Unknown';
   }
 
   return (
-    <Card className="w-80 rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all">
+    <Card className="w-full rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all">
       <CardHeader>
         <div className="bg-ring-background p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-primary-background truncate">{serviceName}</h3>
@@ -46,11 +38,11 @@ const ServiceStatusCard = ({ serviceName,serviceVersion, status, link, ledStatus
         <div className="flex gap-1 mt-1">
           {ledStatus.length === 0?
               <div className="w-3 h-3 ">
-
+                {/* Spacing for uniform alignment */}
               </div>
           :null}
           {ledStatus.map((led, index) => (
-              <div key={index} className="relative group">
+              <div key={`card_${index}`} className="relative group">
                 <div
                     className={classNames(
                         'w-3 h-3 transition-all shadow-md',
@@ -83,17 +75,16 @@ const ServiceStatusCard = ({ serviceName,serviceVersion, status, link, ledStatus
                  transition: 'all 0.3s ease-in-out' // Smooth transition for the embossed look
                }}
         >
-          <Icon icon={statusIcon} className="mr-2" width={20} height={20}/>
           {statusText}
         </Badge>
         {link && (
             <a
                 href={link}
                 className="text-blue-500 hover:text-blue-700 text-sm"
-                target="_blank"
+                target="_self"
                 rel="noopener noreferrer"
             >
-              More...
+              Visit...
             </a>
         )}
       </CardFooter>

@@ -6,7 +6,8 @@ import React from "react";
 export function MetadataTabHelp() {
     return (
         <Alert>
-            <Icon fontSize={16} icon={"material-symbols-light:edit-square-outline"}
+            <Icon width={"16"}
+                  height={"16"} icon={"material-symbols-light:edit-square-outline"}
                   className="h-4 w-4 mr-2"/>
             <AlertTitle>Edit Metadata</AlertTitle>
             <AlertDescription>

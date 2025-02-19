@@ -1,5 +1,6 @@
 import {ChartPieIcon, ListBulletIcon, MagnifyingGlassIcon, PlayIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
+import {SearchIcon} from "lucide-react";
 
 export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
@@ -25,6 +26,7 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
     if (searchAvailable) {
         items.push({
             serviceName: "Site Search",
+            icon: "material-symbols:search-rounded",
             href: `${basePath}/search`
         })
     }
@@ -36,20 +38,20 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
                 {
                     name: 'Overview',
                     href: `${basePath}/base-repo`,
-                    icon: ChartPieIcon,
+                    icon: "iconoir:stats-report",
                     description: "Show system status information."
                 },
                 {
                     name: 'Create Resource',
                     href: `${basePath}/base-repo/resources/create`,
-                    icon: PlusCircleIcon,
+                    icon: "grommet-icons:new",
                     description: "Create a new Data Resource.",
                     requiresSession: true
                 },
                 {
                     name: 'Resources',
                     href: `${basePath}/base-repo/resources`,
-                    icon: ListBulletIcon,
+                    icon: "fluent-emoji-high-contrast:card-index-dividers",
                     description: "List all Data Resources."
                 }
             ]
@@ -63,26 +65,26 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
                 {
                     name: 'Overview',
                     href: `${basePath}/metastore`,
-                    icon: ChartPieIcon,
+                    icon: "iconoir:stats-report",
                     description: "Show system status information."
                 },
                 {
                     name: 'Create Schema',
                     href: `${basePath}/metastore/schemas/create`,
-                    icon: PlusCircleIcon,
+                    icon: "grommet-icons:new",
                     description: "Create a new Metadata Schema.",
                     requiresSession: true
                 },
                 {
                     name: 'Schemas',
                     href: `${basePath}/metastore/schemas`,
-                    icon: ListBulletIcon,
+                    icon: "lucide:file-json",
                     description: "List all Metadata Schema."
                 },
                 {
                     name: 'Metadata',
                     href: `${basePath}/metastore/metadata`,
-                    icon: ListBulletIcon,
+                    icon: "bxs:file-json",
                     description: "List all Metadata Documents"
                 }
             ]
@@ -96,13 +98,13 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
                 {
                     name: 'Overview',
                     href: `${basePath}/mapping`,
-                    icon: ChartPieIcon,
+                    icon: "iconoir:stats-report",
                     description: "Show system status information."
                 },
                 {
                     name: 'Map',
                     href: `${basePath}/mapping/map`,
-                    icon: PlayIcon,
+                    icon: "game-icons:transform",
                     description: "Execute Mappings."
                 }
             ]

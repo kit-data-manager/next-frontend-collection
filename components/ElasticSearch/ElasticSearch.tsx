@@ -3,17 +3,18 @@
 import {
     FairDOConfig,
     FairDOElasticSearch,
-    GenericResultView,
     ResultViewProps
 } from "@kit-data-manager/react-fairdo-search";
-import {useCallback, useMemo} from "react";
-import {AtomIcon, GlobeIcon, GraduationCap, ScaleIcon} from "lucide-react";
-import {tryURLPrettyPrint} from "@kit-data-manager/react-fairdo-search/dist/lib/utils";
+import React, {useCallback, useMemo} from "react";
 import {RecordResultView} from "@/components/ElasticSearch/RecordResultView";
+import {useTheme} from "next-themes";
+import {useSession} from "next-auth/react";
+import Loader from "@/components/general/Loader";
 
 export default function ElasticSearch() {
-    // First we configure the search itself. Here we defined the elastic endpoint as well as the facets.
     const searchUrl: string = (process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : "");
+    const {theme} = useTheme();
+    const {data, status} = useSession();
 
     const config: FairDOConfig = useMemo(() => {
         return {
@@ -26,40 +27,32 @@ export default function ElasticSearch() {
                         {
                             key: "_index",
                             label: "Index",
-                            prettyPrintURLs: false // Will remove https://www.
+                            prettyPrintURLs: false
                         },
                         {
                             key: "metadata.resourceType.typeGeneral",
                             label: "Resource Type",
-                            prettyPrintURLs: false // Will remove https://www.
+                            prettyPrintURLs: false
                         },
                         {
                             key: "metadata.publicationYear",
                             label: "Publication Year",
                             type: "date_year",
-                            prettyPrintURLs: false // Will remove https://www.
+                            prettyPrintURLs: false
                         },
                         {
                             key: "metadata.rights.schemeId",
                             label: "License",
-                            prettyPrintURLs: false // Will remove https://www.
+                            prettyPrintURLs: false
                         },
                         {
                             key: "metadata.state",
                             label: "State",
-                            prettyPrintURLs: false // Will remove https://www.
-                        },
-                        {
-                            key: "metadata.dates.value",
-                            label: "Dates",
-                            type: "date_year",
-                            prettyPrintURLs: false // Will remove https://www.
+                            prettyPrintURLs: false
                         }
-
-
                     ],
                     resultFields: [], // Leave empty to get all fields
-                    searchFields: ["metadata.titles.value", "metadata.publisher"]
+                    searchFields: ["metadata.titles.value", "metadata.publisher", "metadata.descriptions.description"]
                 }
             ],
             sortOptions: [{
@@ -74,31 +67,25 @@ export default function ElasticSearch() {
             ],
             connectionOptions: {
                 headers: {
-                    // Pass your authentication headers here
+                    "Authorization": "Bearer " + data?.accessToken
                 }
             }
         }
-    }, []) // Make sure to add all non-static dependencies here! E.g. access code
+    }, [status, data?.accessToken])
 
-    // To display our results we have to define a result view. Since every FDOs can look very different, the different
-    // field names have to be defined here. You can also define your own component for rendering results.
-    /*
-    imageField="locationPreview/Sample"
-
-                parentItemPidField="hasMetadata"
-                childItemPidField="isMetadataFor"
-    */
     const resultView = useCallback((props: ResultViewProps) => {
-        // GenericResultView is a configurable fallback component for displaying simple results
         return (
             <RecordResultView
                 result={props.result}
-                // ...many more options exist, use TypeScript to easily view them in your code
             />
         )
     }, [])
 
+    if (status === "loading") {
+        return (<Loader/>)
+    }
+
     return (
-        <FairDOElasticSearch config={config} resultView={resultView}/>
+        <FairDOElasticSearch config={config} resultView={resultView} dark={theme === "dark"}/>
     )
 }

@@ -17,6 +17,7 @@ import Link from "next/link";
 import {useSession} from "next-auth/react";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
 import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
+import {Icon} from "@iconify-icon/react";
 
 export default function MainMenuMobile() {
     const {data: session, status} = useSession();
@@ -38,6 +39,7 @@ export default function MainMenuMobile() {
             <DropdownMenuContent className="w-56">
 
                 {items.map((item: SubMenu, idx: number) => {
+                    if(item.menuItems){
                     return (
                         <DropdownMenuSub key={`main_menu_${idx}`}>
                             <DropdownMenuSubTrigger>
@@ -46,7 +48,6 @@ export default function MainMenuMobile() {
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>
                                     {item.menuItems.map((menuItem: MenuItem, idx2: number) => {
-                                        const LinkIcon = menuItem.icon;
                                         if (shouldRender(menuItem, session != null, searchEnabled)) {
                                             return (
                                                 <DropdownMenuItem key={`sub_menu_${idx2}`}>
@@ -60,7 +61,7 @@ export default function MainMenuMobile() {
                                                             },
                                                         )}
                                                     >
-                                                        <LinkIcon className="w-6"/>
+                                                        {menuItem.icon ? <Icon icon={menuItem.icon} width={"1em"} height={"1em"} className="w-4"/>:null}
                                                         <p className="md:block">{menuItem.name}</p>
                                                     </Link>
                                                 </DropdownMenuItem>
@@ -70,7 +71,23 @@ export default function MainMenuMobile() {
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
                         </DropdownMenuSub>
-                    )
+                    )}else{
+                        return ( <Link
+                            key={item.serviceName}
+                            href={item.href ? item.href : ""}
+                            className={cn(
+                                'flex h-[20px] items-start justify-start gap-2 hover:underline font-medium m-2',
+                                {
+                                    'underline': pathname === item.href,
+                                },
+                            )}
+                        >
+                            {item.icon ?
+                            <Icon icon={item.icon} width={"1em"} height={"1em"} className="w-4"/>
+                                :null}
+                            <p className="md:block">{item.serviceName}</p>
+                        </Link>)
+                    }
                 })}
             </DropdownMenuContent>
         </DropdownMenu>

@@ -1,7 +1,5 @@
-import {CardsSkeleton} from '@/components/skeletons';
 import * as React from 'react';
 import {Suspense} from 'react';
-import {ActuatorHealthStatusCardWrapper} from "@/components/SystemStats/SystemStats";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import MappingServiceStats from "@/app/mapping/components/Dashboard/MappingServiceStats";

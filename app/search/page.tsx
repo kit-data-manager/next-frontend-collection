@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
-import {lusitana} from "@/components/fonts";
 import ElasticSearch from "@/components/ElasticSearch/ElasticSearch";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {SearchX} from "lucide-react";

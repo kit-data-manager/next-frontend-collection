@@ -1,15 +1,13 @@
 export interface SubMenu  {
     serviceName:string;
+    icon? : string;
     href?:string;
     menuItems?: MenuItem[];
 }
 export interface MenuItem  {
     name: string;
     href: string;
-    icon: React.ForwardRefExoticComponent<React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & {
-        title?: string;
-        titleId?: string
-    } & React.RefAttributes<SVGSVGElement>>;
+    icon: string;
     description: string;
     requiresSession?:boolean;
     requiresSearch?:boolean;
