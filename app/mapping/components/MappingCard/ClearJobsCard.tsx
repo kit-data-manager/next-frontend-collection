@@ -33,7 +33,7 @@ export function ClearJobsCard({removeJobsCallback}: ClearJobsCardProps) {
                     onClick={() => removeJobsCallback()}
                     title="Remove all Mapping Jobs"
                     className="w-full h-full self-center">
-                    <Icon icon={"solar:eraser-linear"} width={"24"} height={"24"}
+                    <Icon icon={"solar:eraser-linear"} width={"96"} height={"96"}
                           className="h-24 w-24 align-middle justify-center"/>
                 </Button>
             </CardContent>

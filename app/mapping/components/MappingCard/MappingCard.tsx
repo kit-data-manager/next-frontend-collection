@@ -60,13 +60,13 @@ export function MappingCard({job, unregisterCallback}: MappingCardProps) {
     const basePath: string = (process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : "");
 
     return (
-        <Card> <Icon icon={"ph:map-pin-fill"} width={"4"} height={"4"}
+        <Card> <Icon icon={"ph:map-pin-fill"} width={"18"} height={"18"}
                      className="h-4 w-4 ml-2 mt-2" color={stringToColour(job.mappingId)}/>
             <CardHeader className={"h-2/5"}>
 
                 <CardTitle className={"-mt-6"}>
                     <Badge variant="nodeco">
-                        <Icon icon={icon} width={"8"} height={"8"}
+                        <Icon icon={icon} width={"24"} height={"24"}
                               className="h-8 w-8 mr-2"/>{jobStatus}</Badge>
                 </CardTitle>
                 <CardDescription>
@@ -82,13 +82,13 @@ export function MappingCard({job, unregisterCallback}: MappingCardProps) {
                     <>
                         <Button variant={"ghost"} size={"sm"} title={"Download Job Output"} asChild>
                             <Link className={"underline justify-self-start"} href={basePath + jobOutput}>
-                                <Icon icon={"material-symbols-light:download"} width={"8"} height={"8"} className="h-8 w-8 mr-2"/> </Link>
+                                <Icon icon={"material-symbols-light:download"} width={"24"} height={"24"} className="h-8 w-8 mr-2"/> </Link>
                         </Button>
 
                     </>
                     : "No download available, yet."}
                 <Button variant={"ghost"} size={"sm"} title={"Remove Mapping Job"} className={"underline justify-self-end"} onClick={removeJob}>
-                    <Icon icon={"solar:eraser-linear"} width={"8"} height={"8"} className="h-8 w-8 mr-2"/></Button>
+                    <Icon icon={"solar:eraser-linear"} width={"24"} height={"24"} className="h-8 w-8 mr-2"/></Button>
                </div>
             </CardFooter>
         </Card>
