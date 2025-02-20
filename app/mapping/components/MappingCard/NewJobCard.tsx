@@ -37,7 +37,7 @@ export function NewJobCard({addJobCallback}: MappingCardProps) {
                     onClick={() => addJobCallback()}
                     title="Schedule new Mapping Job"
                     className="w-full h-full self-center">
-                    <Icon icon={"gridicons:add"}
+                    <Icon icon={"gridicons:add"} width={"24"} height={"24"}
                           className="h-24 w-24 align-middle justify-center"/>
                 </Button>
             </CardContent>
