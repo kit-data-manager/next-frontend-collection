@@ -68,7 +68,7 @@ export default function SchemaListing({page, size, sort}: {
             })
         }
         setMustReload(false);
-    }, [page, size, sort, status, mustReload])
+    }, [page, size, sort, status, mustReload, data?.accessToken])
 
     if (status === "loading" || isLoading || !resources) {
         return (<Loader/>)

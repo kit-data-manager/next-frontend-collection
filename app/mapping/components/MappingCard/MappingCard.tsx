@@ -36,7 +36,7 @@ export function MappingCard({job, unregisterCallback}: MappingCardProps) {
                 setJobError(`Failed to query job status.`);
             }
         }
-    }, [jobStatus, jobOutput, jobError]);
+    }, [jobStatus, jobOutput, jobError, job.jobId]);
 
     let icon: string = "line-md:loading-alt-loop";
     switch (jobStatus) {

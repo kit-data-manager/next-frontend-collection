@@ -3,7 +3,7 @@ import './autocomplete.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {inter} from '@/components/fonts';
-import React from "react";
+import React, {Suspense} from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
 import {ThemeProvider} from "@/components/Providers/ThemeProvider";
 import AppHeader from "@/components/AppHeader/AppHeader";
@@ -33,7 +33,9 @@ export default async function RootLayout({children}: {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <SecurityProviders>
                 <AppHeader securityEnabled={securityEnabled}>
-                    {children}
+                    <Suspense fallback={<div>Loading...</div>}>
+                        {children}
+                    </Suspense>
                 </AppHeader>
             </SecurityProviders>
 

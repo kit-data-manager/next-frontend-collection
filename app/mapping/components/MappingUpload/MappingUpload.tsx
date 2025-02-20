@@ -52,7 +52,7 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
             uppy.off('upload-success', successCallback);
             uppy.off('complete', completeCallback);
         }
-    }, [mappingId, fileTypes, singleUploadCallback]);
+    }, [mappingId, fileTypes, singleUploadCallback, uploadCompleteCallback, uppy]);
 
     return (
         <div className="w-full flex mb-6 justify-center">

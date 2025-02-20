@@ -49,7 +49,7 @@ export default function ContentInformationCard({
             }
             setMiscProperties(propertiesForContentInformation(content.parentResource.id, content, buttons, false));
         })
-    }, [session?.accessToken, content]);
+    }, [session?.accessToken, content, enableDelete, enableDownload]);
 
     return (
         <DataCard key={content.parentResource.id + "_" + content.relativePath}

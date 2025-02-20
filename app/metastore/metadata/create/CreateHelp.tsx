@@ -22,11 +22,11 @@ export function CreateHelp() {
                                     a title and completing the IS_METADATA_FOR entry by adding a value, the metadata has to be added to the list of file uploads.
                                     As soon as all mandatory metadata is provided, the transfer button&nbsp;
                                     <Badge variant="contextual_disabled">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"} height={"16"}
                                                       icon={"ic:outline-double-arrow"}
                                                       className="h-4 w-4"/></Badge> will change to  <Badge
                                         variant="contextual">
-                                                <Icon fontSize={16}
+                                                <Icon width={"16"} height={"16"}
                                                       icon={"ic:outline-double-arrow"}
                                                       className="h-4 w-4"/></Badge> and can be used to transfer the metadata document the the upload element on the right
                                     hand side and will appear as <i>record.json</i>. <br/>

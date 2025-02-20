@@ -27,7 +27,6 @@ export function MappingListing({}: MappingListing2Props) {
     const [showAlert, setShowAlert] = useState(false)
     const [openModal, setOpenModal] = useState(false)
     const {data, status} = useSession();
-    const accessToken = data?.accessToken;
     const jobStore: JobStore = useMappingStore.getState();
     const [forceReload, setForceReload] = useState(false)
     const {userPrefs, updateUserPrefs} = useUserPrefs(data?.user.id);
@@ -36,7 +35,7 @@ export function MappingListing({}: MappingListing2Props) {
         setForceReload(false);
         if (status != "loading") {
             setIsLoading(true);
-            fetchMappings(0, 20, undefined, undefined, accessToken).then((page) => {
+            fetchMappings(0, 20, undefined, undefined, data?.accessToken).then((page) => {
                 return page.resources;
             }).then((mappings) => {
                 fetchMappingPlugins(data?.accessToken).then(plugins => {
@@ -52,7 +51,7 @@ export function MappingListing({}: MappingListing2Props) {
         }
 
         setShowAlert(jobStore.mappingStatus.length > maxJobs);
-    }, [status, accessToken, forceReload, showAlert])
+    }, [status, data?.accessToken, forceReload, showAlert, jobStore.mappingStatus.length, maxJobs])
 
     if (status === "loading" || isLoading || !mappings) {
         return (<Loader/>)

@@ -2,8 +2,8 @@ import KeycloakProvider from 'next-auth/providers/keycloak'
 
 import type {JWT} from 'next-auth/jwt';
 import {AdapterUser} from "next-auth/adapters";
-import {ExtendedProfile} from "@/lib/definitions";
 import NextAuth, {Account, NextAuthOptions, Session, User} from 'next-auth'
+import {ExtendedProfile} from "@/lib/next-auth/next-auth";
 /**
  * Takes a token, and returns a new token with updated
  * `accessToken` and `accessTokenExpires`. If an error occurs,

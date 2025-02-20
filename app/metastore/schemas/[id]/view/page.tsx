@@ -136,7 +136,7 @@ export default function Page({params}) {
                 <Tabs defaultValue={"metadata"} className="w-full">
                     <TabsList>
                         <TabsTrigger value="metadata"><Upload className="h-4 w-4 mr-2"/> Metadata</TabsTrigger>
-                        <TabsTrigger value="schema"><Icon fontSize={16} icon={"mdi:file-edit-outline"}
+                        <TabsTrigger value="schema"><Icon width={"16"} height={"16"} icon={"mdi:file-edit-outline"}
                                                           className="h-4 w-4 mr-2"/>Schema</TabsTrigger>
                     </TabsList>
                     <TabsContent value="metadata">

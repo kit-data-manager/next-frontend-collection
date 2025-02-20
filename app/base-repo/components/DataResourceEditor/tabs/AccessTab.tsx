@@ -135,7 +135,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
             setElements(res);
         });
         setForceReload(false);
-    }, [userFilter, data?.accessToken, status, forceReload]);
+    }, [userFilter, data?.accessToken, data?.user.preferred_username, resource?.acls, status, forceReload]);
 
     function updateUserFilter(val: string) {
         if (val && val.length > 2) {

@@ -62,7 +62,7 @@ export default function MetadataRecordFileUploader({
         installEventHandlers(uppy, data?.accessToken, () => {
             reloadCallback(`/metastore/metadata/${metadata.id}/edit?target=metadata`);
         });
-    }, [theme, status]);
+    }, [theme, status, baseUrl, data?.accessToken, metadata.id, reloadCallback, uppy]);
 
     if (!schema) {
         return (<Loader/>)

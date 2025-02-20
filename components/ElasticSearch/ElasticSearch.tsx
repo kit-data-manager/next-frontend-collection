@@ -71,7 +71,7 @@ export default function ElasticSearch() {
                 }
             }
         }
-    }, [status, data?.accessToken])
+    }, [searchUrl, data?.accessToken])
 
     const resultView = useCallback((props: ResultViewProps) => {
         return (

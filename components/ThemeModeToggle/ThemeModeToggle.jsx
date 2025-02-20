@@ -18,7 +18,7 @@ export function ThemeModeToggle(params) {
 
     useEffect(() => {
         setTheme(userPrefs.theme);
-    }, [userPrefs.theme]);
+    }, [userPrefs.theme, setTheme]);
 
     function setThemeInternal(selection) {
         updateUserPrefs({theme: selection});

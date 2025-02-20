@@ -1,8 +1,7 @@
 import {CirclePlus} from "lucide-react"
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
-import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
-import {DataResourcesSearchParams, SchemaSearchParams} from "@/lib/definitions";
+import {DataResourcesSearchParams, DataResourcesSearchParamsPromise, SchemaSearchParams} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/general/search-param-helper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
@@ -13,7 +12,7 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import SchemaListing from "@/app/metastore/components/SchemaListing/SchemaListing";
 
 export default async function Page({searchParams}: {
-    searchParams?: SchemaSearchParams;
+    searchParams?: DataResourcesSearchParamsPromise;
 }) {
 
     const params:DataResourcesSearchParams | undefined = await searchParams;
@@ -21,14 +20,7 @@ export default async function Page({searchParams}: {
     const page: number = valueOrDefault(params, "page", 0);
     const size: number = valueOrDefault(params, "size", 10);
     const sort:string = valueOrDefault(params, "sort", "lastUpdate,desc");
-    const filter: FilterForm = {} as FilterForm;
     let session:Session | undefined = await getServerSession(authOptions) as Session;
-
-    //filter.id = valueOrDefault(params, "id", undefined);
-    //filter.state = valueOrDefault(params, "state", undefined);
-   // filter.publisher = valueOrDefault(params, "publisher", undefined);
-    //filter.publicationYear = valueOrDefault(params, "publicationYear", undefined);
-    //filter.typeGeneral = valueOrDefault(params, "typeGeneral", undefined);
 
     return (
         <main>

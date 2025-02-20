@@ -60,7 +60,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
                 setIsLoading(false);
             })
         }
-    }, [page, size, filter, sort, status])
+    }, [page, size, filter, sort, status, data?.accessToken])
 
     if (status === "loading" || isLoading || !resources) {
         return (<Loader/>)

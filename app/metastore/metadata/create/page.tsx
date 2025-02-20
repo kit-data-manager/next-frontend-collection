@@ -13,7 +13,6 @@ import {CreateHelp} from "@/app/metastore/metadata/create/CreateHelp";
 import MetadataRecordFileUploader
     from "@/app/metastore/components/MetadataRecordFileUploader/MetadataRecordFileUploader";
 import {DataResource, TypeGeneral} from "@/lib/definitions";
-import Loader from "@/components/general/Loader";
 
 export default function Page() {
     const searchParams = useSearchParams();
@@ -66,43 +65,43 @@ export default function Page() {
 
     return (
         <main>
-            <Breadcrumbs
-                breadcrumbs={[
-                    {label: 'Overview', href: '/metastore'},
-                    {label: 'Metadata', href: '/metastore/metadata'},
-                    {
-                        label: `Create Metadata`,
-                        href: `/metastore/metadata/create`,
-                        active: true,
-                    },
-                ]}
-            />
-            <SectionCaption caption={"Create Metadata Document"}/>
-            <div className="grid flex-grow justify-items-stretch">
-                <button onClick={() => updateUserPrefs({helpVisible: !userPrefs.helpVisible})}
-                        title={"Show/Hide Help"}
-                        className={"justify-self-end"}>
-                    <Icon
-                        icon={"material-symbols-light:help-outline"}
-                        className={"h-8 w-8 mr-2"}
-                        width={"24"}
-                        height={"24"}
-                        style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
-                    />
-                </button>
-                {userPrefs.helpVisible ?
-                    <CreateHelp/>
-                    : undefined}
-                <div className="block min-w-full mt-4 align-middle">
-                    <div className="rounded-lg p-2 md:pt-0">
-                        <MetadataRecordFileUploader metadataRecord={metadataRecord}
-                                                    reloadCallback={(target: string) => reload(target)}
-                                                    schema={schema}/>
+
+                <Breadcrumbs
+                    breadcrumbs={[
+                        {label: 'Overview', href: '/metastore'},
+                        {label: 'Metadata', href: '/metastore/metadata'},
+                        {
+                            label: `Create Metadata`,
+                            href: `/metastore/metadata/create`,
+                            active: true,
+                        },
+                    ]}
+                />
+                <SectionCaption caption={"Create Metadata Document"}/>
+                <div className="grid flex-grow justify-items-stretch">
+                    <button onClick={() => updateUserPrefs({helpVisible: !userPrefs.helpVisible})}
+                            title={"Show/Hide Help"}
+                            className={"justify-self-end"}>
+                        <Icon
+                            icon={"material-symbols-light:help-outline"}
+                            className={"h-8 w-8 mr-2"}
+                            width={"24"}
+                            height={"24"}
+                            style={userPrefs.helpVisible ? {color: "#0F0"} : {color: "#F00"}}
+                        />
+                    </button>
+                    {userPrefs.helpVisible ?
+                        <CreateHelp/>
+                        : undefined}
+                    <div className="block min-w-full mt-4 align-middle">
+                        <div className="rounded-lg p-2 md:pt-0">
+                            <MetadataRecordFileUploader metadataRecord={metadataRecord}
+                                                        reloadCallback={(target: string) => reload(target)}
+                                                        schema={schema}/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ToastContainer/>
-
+                <ToastContainer/>
         </main>
     );
 }

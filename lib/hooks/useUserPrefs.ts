@@ -40,12 +40,12 @@ const useUserPrefs = (userId: string | undefined) => {
     useEffect(() => {
         const currentValue = getLocalStorage(key);
         setValue(currentValue);
-    }, [id])
+    }, [id, key])
 
     useEffect(() => {
         if (!value) return;
         localStorage.setItem(key, JSON.stringify(value))
-    }, [value])
+    }, [value, key])
 
     const updateUserPrefs = (userPref: Partial<UserPrefsType>) => {
         const currentValue = getLocalStorage(key);

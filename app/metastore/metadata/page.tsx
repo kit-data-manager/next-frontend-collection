@@ -1,24 +1,23 @@
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
+import {
+    DataResourcesSearchParams,
+    DataResourcesSearchParamsPromise
+} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/general/search-param-helper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {SortResourceBox} from "@/app/base-repo/components/SortResourceBox/SortResourceBox";
 import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {useSearchParams} from "next/navigation";
 import MetadataDocumentListing from "@/app/metastore/components/MetadataDocumentListing/MetadataDocumentListing";
-import {DataResourcesSearchParams, SchemaSearchParams} from "@/lib/definitions";
 
 export default async function Page({searchParams}: {
-    searchParams?: SchemaSearchParams;
+    searchParams?: DataResourcesSearchParamsPromise;
 }) {
 
     const params:DataResourcesSearchParams | undefined = await searchParams;
 
-    const page: number = valueOrDefault(searchParams, "page", 0);
-    const size: number = valueOrDefault(searchParams, "size", 10);
-    const sort:string = valueOrDefault(searchParams, "sort", "lastUpdate,desc");
-    let session:Session | undefined = await getServerSession(authOptions) as Session;
+    const page: number = valueOrDefault(params, "page", 0);
+    const size: number = valueOrDefault(params, "size", 10);
+    const sort:string = valueOrDefault(params, "sort", "lastUpdate,desc");
 
     return (
         <main>
