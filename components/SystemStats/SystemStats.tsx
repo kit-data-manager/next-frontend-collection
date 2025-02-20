@@ -37,6 +37,8 @@ export default async function SystemStats() {
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
     const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
 
+    const basePath:string = process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : '';
+
     let actuatorInfoSearch: ActuatorInfo | undefined = undefined;
     let actuatorHealthSearch: ActuatorHealth | undefined = undefined;
     let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
@@ -101,7 +103,7 @@ export default async function SystemStats() {
                     serviceName={"Site Search"}
                     serviceVersion={actuatorInfoSearch.status === 1 ? `${actuatorInfoSearch.version}` : `Unknown`}
                     status={actuatorInfoSearch.status === 1 ? "active" : actuatorInfoSearch.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoSearch.status === 1 ? `/search` : undefined}
+                    link={actuatorInfoSearch.status === 1 ? `${basePath}/search` : undefined}
                     ledStatus={[
                         {status: actuatorHealthSearch?.elastic.status, tooltip: actuatorHealthSearch?.elastic.details},
                     ]}
@@ -114,7 +116,7 @@ export default async function SystemStats() {
                     serviceName={repoInstanceName}
                     serviceVersion={actuatorInfoBaseRepo.status === 1 ? `${actuatorInfoBaseRepo.version}` : `Unknown`}
                     status={actuatorInfoBaseRepo.status === 1 ? "active" : actuatorInfoBaseRepo.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoBaseRepo.status === 1 ? `/base-repo` : undefined}
+                    link={actuatorInfoBaseRepo.status === 1 ? `${basePath}/base-repo` : undefined}
                     ledStatus={[
                         {
                             status: actuatorHealthBaseRepo?.harddisk.status,
@@ -142,7 +144,7 @@ export default async function SystemStats() {
                     serviceName={metastoreInstanceName}
                     serviceVersion={actuatorInfoMetaStore.status === 1 ? `${actuatorInfoMetaStore.version}` : `Unknown`}
                     status={actuatorInfoMetaStore.status === 1 ? "active" : actuatorInfoMetaStore.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoMetaStore.status === 1 ? `/metastore` : undefined}
+                    link={actuatorInfoMetaStore.status === 1 ? `${basePath}/metastore` : undefined}
                     ledStatus={[
                         {
                             status: actuatorHealthMetaStore?.harddisk.status,
@@ -170,7 +172,7 @@ export default async function SystemStats() {
                     serviceName={mappingInstanceName}
                     serviceVersion={actuatorInfoMappingService.status === 1 ? `${actuatorInfoMappingService.version}` : `Unknown`}
                     status={actuatorInfoMappingService.status === 1 ? "active" : actuatorInfoMappingService.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoMappingService.status === 1 ? `/mapping` : undefined}
+                    link={actuatorInfoMappingService.status === 1 ? `${basePath}/mapping` : undefined}
                     ledStatus={[
                         {
                             status: actuatorHealthMappingService?.harddisk.status,
@@ -198,7 +200,7 @@ export default async function SystemStats() {
                     serviceName={"FAIR DO Repo"}
                     serviceVersion={actuatorInfoTypedPIDMaker.status === 1 ? `${actuatorInfoTypedPIDMaker.version}` : `Unknown`}
                     status={actuatorInfoTypedPIDMaker.status === 1 ? "active" : actuatorInfoTypedPIDMaker.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoTypedPIDMaker.status === 1 ? `/typed-pid-maker` : undefined}
+                    link={actuatorInfoTypedPIDMaker.status === 1 ? `${basePath}/typed-pid-maker` : undefined}
                     ledStatus={[
                         {
                             status: actuatorHealthTypedPIDMaker?.harddisk.status,
