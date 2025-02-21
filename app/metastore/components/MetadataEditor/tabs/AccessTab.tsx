@@ -7,7 +7,6 @@ import React, {useEffect, useState} from "react";
 import {Acl, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
-import capitalize from "@mui/utils/capitalize";
 import {fetchUsers} from "@/lib/base-repo/client-data";
 import {useSession} from "next-auth/react";
 import {
@@ -15,6 +14,7 @@ import {
 } from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
 import {AccessTabHelp} from "@/app/metastore/components/MetadataEditor/help/AccessTabHelp";
 import {DoUpdatePermissions} from "@/app/metastore/components/MetadataEditor/useMetadataEditor";
+import {capitalizeFirstLetter} from "@/lib/general/format-utils";
 
 interface AccessTabProps {
     resource: DataResource;
@@ -56,7 +56,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: acl.sid,
                         columnId: targetColumn,
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
+                        content: `${capitalizeFirstLetter(user.lastName)}, ${capitalizeFirstLetter(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
                         hidden: false,
                         anonymous: false,
@@ -102,7 +102,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: user.username,
                         columnId: "users",
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
+                        content: `${capitalizeFirstLetter(user.lastName)}, ${capitalizeFirstLetter(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
                         hidden: false,
                         anonymous: false,

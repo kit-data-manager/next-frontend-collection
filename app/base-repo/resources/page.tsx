@@ -55,7 +55,7 @@ export default async function Page({searchParams}: {
                     </div>
                 </div>
 
-                <div className="lg:initial xl:w-full lg:w-2/3 ">
+                <div className="lg:initial w-full">
                     <div className="p-4 grid grid-cols-2">
                         <div className="mr-4 w-48 justify-items-start">
                             <Button asChild variant="outline">

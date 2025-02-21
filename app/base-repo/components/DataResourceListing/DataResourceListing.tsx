@@ -96,7 +96,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
 
     return (
         <div>
-            <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
+            <div className="rounded-lg lg:pl-4 lg:w-full">
                 {resources?.map((element: DataResource, i: number) => {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];

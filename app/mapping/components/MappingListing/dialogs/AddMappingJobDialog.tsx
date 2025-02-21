@@ -5,10 +5,10 @@ import {JobStatus, Mapping, MappingPlugin} from "@/lib/mapping/definitions";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Info} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@radix-ui/react-collapsible";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {cn} from "@/lib/general/utils";
 import {Icon} from "@iconify-icon/react";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
 
 interface AddTagDialogProps {
     openModal: boolean;

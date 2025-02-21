@@ -10,13 +10,13 @@ import React, {useEffect, useState} from "react";
 import {Acl, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
-import capitalize from "@mui/utils/capitalize";
 import {fetchUsers} from "@/lib/base-repo/client-data";
 import {AccessTabHelp} from "@/app/base-repo/components/DataResourceEditor/help/AccessTabHelp";
 import {useSession} from "next-auth/react";
 import {
     PermissionUpdateCheckDialog
 } from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
+import {capitalizeFirstLetter} from "@/lib/general/format-utils";
 
 interface AccessTabProps {
     resource: DataResource;
@@ -58,7 +58,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: acl.sid,
                         columnId: targetColumn,
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
+                        content: `${capitalizeFirstLetter(user.lastName)}, ${capitalizeFirstLetter(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
                         hidden: false,
                         anonymous: false,
@@ -104,7 +104,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
                     userElements.push({
                         id: user.username,
                         columnId: "users",
-                        content: `${capitalize(user.lastName)}, ${capitalize(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
+                        content: `${capitalizeFirstLetter(user.lastName)}, ${capitalizeFirstLetter(user.firstName)} ${data?.user.preferred_username === user.username ? "(You)" : ""}`,
                         icon: "gridicons:user-circle",
                         hidden: false,
                         anonymous: false,

@@ -131,7 +131,7 @@ export default function SchemaListing({page, size, sort}: {
 
     return (
         <div>
-            <div className="rounded-lg p-4 lg:pt-0 lg:w-auto">
+            <div className="rounded-lg w-auto">
                 {resources?.map((element: DataResource, i: number) => {
                     //make edit optional depending on permissions
                     const actionEvents: ActionButtonInterface[] = [];

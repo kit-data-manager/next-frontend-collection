@@ -49,6 +49,11 @@ export default function ElasticSearch() {
                             key: "metadata.state",
                             label: "State",
                             prettyPrintURLs: false
+                        },
+                        {
+                            key: "lastUpdate",
+                            label: "Last Update",
+                            type: "date_time_no_millis"
                         }
                     ],
                     resultFields: [], // Leave empty to get all fields

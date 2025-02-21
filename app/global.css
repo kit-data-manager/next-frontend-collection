@@ -157,6 +157,19 @@ data-card::part(detailed-card-container){
   background-color: light-dark(#EEEEEE, #18181B);
 }
 
+/**Customization for mobile view*/
+@media (max-width: 640px) {
+  data-card::part(detailed-card-container){
+    flex-wrap: wrap;
+    display:block;
+  }
+  data-card::part(detailed-metadata-container){
+    text-align: center;
+    border-radius: 0;
+    border-bottom: 1px solid lightgray;
+  }
+}
+
 data-card::part(detailed-metadata-container){
   background-color: light-dark(#EEEEEE, #18181B);
 }
@@ -173,7 +186,6 @@ data-card::part(orcid-logo){
 data-card::part(orcid-link){
   text-decoration: underline!important;
 }
-
 
 data-card::part(action-btn-icon){
   color: light-dark(var(--accent-foreground), var(--accent-foreground));

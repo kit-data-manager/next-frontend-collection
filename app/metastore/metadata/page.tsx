@@ -34,7 +34,7 @@ export default async function Page({searchParams}: {
             <SectionCaption caption={"Metadata Documents"}/>
 
             <div className="flex columns-2">
-                  <div className="lg:initial xl:w-full lg:w-2/3 ">
+                  <div className="lg:initial w-full">
                     <div className="p-4 grid grid-cols-1">
                          <div className="justify-items-end">
                             <div className="flex space-x-2 justify-content-right">

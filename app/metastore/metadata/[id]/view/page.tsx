@@ -143,7 +143,7 @@ export default function Page({params}) {
                                     cardCallbackAction={(ev) => handleAction(ev, resource)}></MetadataDocumentCard>
                     </TabsContent>
                     <TabsContent value="document">
-                        <div className="mt-4 max-w-[75%]">
+                        <div className="mt-4 w-full">
                             <Editor height="90vh"
                                     defaultLanguage={resource.resourceType.value === "JSON_Metadata" ? "json" : "xml"}
                                     value={editorValue}
