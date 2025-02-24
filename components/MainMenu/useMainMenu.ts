@@ -27,7 +27,7 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
         items.push({
             serviceName: "Site Search",
             icon: "material-symbols:search-rounded",
-            href: `${basePath}/search`
+            href: `/search`
         })
     }
 
