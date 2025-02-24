@@ -1,6 +1,4 @@
-import {ChartPieIcon, ListBulletIcon, MagnifyingGlassIcon, PlayIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
-import {SearchIcon} from "lucide-react";
 
 export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
     const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";

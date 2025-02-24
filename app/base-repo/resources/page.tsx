@@ -13,7 +13,6 @@ import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
-
 export default async function Page({searchParams}: {
     searchParams?: DataResourcesSearchParamsPromise;
 }) {

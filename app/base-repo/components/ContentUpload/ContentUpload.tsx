@@ -35,7 +35,7 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         installEventHandlers(uppy, id, data?.accessToken, () => {
             reloadCallback(`/base-repo/resources/${id}/edit?target=content`);
         });
-    }, [theme, status, id, baseUrl, data?.accessToken, uppy, reloadCallback]);
+    }, [theme, status, id, baseUrl, data?.accessToken]);
 
     uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 10, thumbnailHeight: 10});
 

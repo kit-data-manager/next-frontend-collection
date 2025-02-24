@@ -12,16 +12,11 @@ import useUserPrefs from "@/lib/hooks/useUserPrefs";
 
 export function ThemeModeToggle(params) {
     const { data, status } = useSession();
-    const { userPrefs, updateUserPrefs } = useUserPrefs(data?.user.id);
 
-    const { setTheme } = useTheme();
-
-    useEffect(() => {
-        setTheme(userPrefs.theme);
-    }, [userPrefs.theme, setTheme]);
+    const { theme, setTheme } = useTheme();
 
     function setThemeInternal(selection) {
-        updateUserPrefs({theme: selection});
+        console.log("SET THEME ", selection),
         setTheme(selection);
     }
 

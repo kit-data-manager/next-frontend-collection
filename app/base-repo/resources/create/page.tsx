@@ -7,9 +7,12 @@ import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client-data";
 import {useSession} from "next-auth/react";
+import {useTheme} from "next-themes";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);
+    const {theme} = useTheme();
+
     const {status } = useSession();
 
     useEffect(() => {

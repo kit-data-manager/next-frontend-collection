@@ -60,7 +60,7 @@ export default function SchemaRecordFileUploader({
         installEventHandlers(uppy, data?.accessToken, () => {
             reloadCallback(`/metastore/schemas/${metadata.id}/edit?target=metadata`);
         });
-    }, [theme, status, baseUrl, data?.accessToken, metadata.id, reloadCallback, uppy]);
+    }, [theme, status, data?.accessToken]);
 
     if (!schema) {
         return (<Loader/>)
