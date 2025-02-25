@@ -13,6 +13,9 @@ import {CreateHelp} from "@/app/metastore/metadata/create/CreateHelp";
 import MetadataRecordFileUploader
     from "@/app/metastore/components/MetadataRecordFileUploader/MetadataRecordFileUploader";
 import {DataResource, TypeGeneral} from "@/lib/definitions";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 
 export default function Page() {
     const searchParams = useSearchParams();
@@ -30,6 +33,14 @@ export default function Page() {
     useEffect(() => {
         fetchSchema(`/definitions/base-repo/models/createMetadataModel.json`).then(schema => setSchema(schema));
     }, []);
+
+    if (status === "loading") {
+        return (<Loader/>)
+    }
+
+    if(status === "unauthenticated"){
+        return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/metadata"})
+    }
 
     function reload(target: string) {
         router.push(target);

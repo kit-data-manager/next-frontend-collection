@@ -1,22 +1,16 @@
 "use client"
 
 import * as React from "react"
-import {useEffect} from "react"
 import {Moon, Sun} from "lucide-react"
 import {useTheme} from "next-themes"
 
 import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
-import {useSession} from "next-auth/react";
-import useUserPrefs from "@/lib/hooks/useUserPrefs";
 
 export function ThemeModeToggle(params) {
-    const { data, status } = useSession();
-
     const { theme, setTheme } = useTheme();
 
     function setThemeInternal(selection) {
-        console.log("SET THEME ", selection),
         setTheme(selection);
     }
 

@@ -103,7 +103,8 @@ export function getMenuEntries(withBasePath: boolean = false): SubMenu[] {
                     name: 'Map',
                     href: `${basePath}/mapping/map`,
                     icon: "game-icons:transform",
-                    description: "Execute Mappings."
+                    description: "Execute Mappings.",
+                    requiresSession: true
                 }
             ]
         });

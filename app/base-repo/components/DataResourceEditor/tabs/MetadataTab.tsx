@@ -1,4 +1,4 @@
-import JsonForm from "@/components/jsonform";
+import JsonForm from "@/components/JsonForm/jsonform";
 import {
     DataChanged,
     DoCreateDataResource,

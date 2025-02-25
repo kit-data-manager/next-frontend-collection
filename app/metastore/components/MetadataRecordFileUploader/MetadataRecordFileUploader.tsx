@@ -7,7 +7,7 @@ import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import {useTheme} from "next-themes";
-import JsonForm from "@/components/jsonform";
+import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
 import {Button} from "@/components/ui/button";
 import Loader from "@/components/general/Loader";

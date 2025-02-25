@@ -1,4 +1,4 @@
-import JsonForm from "@/components/jsonform";
+import JsonForm from "@/components/JsonForm/jsonform";
 import {DataChanged} from "@/app/base-repo/components/DataResourceEditor/useDataResourceEditor";
 import ConfirmCancelComponent from "@/components/general/confirm-cancel-component";
 import {TabsContent} from "@/components/ui/tabs";

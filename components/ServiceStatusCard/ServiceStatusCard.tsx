@@ -3,7 +3,8 @@ import classNames from 'classnames';
 import {Badge} from "@/components/ui/badge";
 import {CardHeader, Card, CardContent, CardFooter} from "@/components/ui/card";
 
-const ServiceStatusCard = ({ serviceName,serviceVersion, status, link, ledStatus }) => {
+const ServiceStatusCard =
+    ({ serviceName,serviceVersion, status, link, ledStatus }) => {
   let statusColor = '';
   let statusText = '';
 
@@ -91,6 +92,12 @@ const ServiceStatusCard = ({ serviceName,serviceVersion, status, link, ledStatus
     </Card>
   );
 };
+
+export function ServiceStatusCardSkeleton() {
+    return (
+        <ServiceStatusCard serviceName={"Loading..."} serviceVersion={""} status={"unknown"} ledStatus={[]} link={undefined}/>
+    )
+}
 
 export default ServiceStatusCard;
 

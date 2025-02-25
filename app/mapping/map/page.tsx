@@ -1,20 +1,29 @@
+"use client";
+
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import {DataResourcesSearchParamsPromise} from "@/lib/definitions";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {ToastContainer} from "react-toastify";
 import React from "react";
 import {MappingListing} from "@/app/mapping/components/MappingListing/MappingListing";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
+import {useSession} from "next-auth/react";
 
-export default async function Page({searchParams}: {
+export default function Page({searchParams}: {
     searchParams?: DataResourcesSearchParamsPromise;
 }) {
-   // const params: DataResourcesSearchParams | undefined = await searchParams;
+    const {status} = useSession();
 
-   /* const page: number = valueOrDefault(params, "page", 0);
-    const size: number = valueOrDefault(params, "size", 10);
-    const sort:string  = valueOrDefault(params, "sort", "title,desc");
-    const filter: FilterForm = {} as FilterForm;
-*/
+    if (status === "loading") {
+        return (<Loader/>)
+    }
+
+    if(status === "unauthenticated"){
+        return ErrorPage({errorCode: Errors.Forbidden, backRef: "/mapping"})
+    }
+
     return (
         <main>
             <Breadcrumbs

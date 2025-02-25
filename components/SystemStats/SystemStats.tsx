@@ -6,7 +6,7 @@ import {lusitana} from "@/components/fonts";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {ExtendedSession} from "@/lib/next-auth/next-auth";
-import ServiceStatusCard from "@/components/ServiceStatusCard";
+import ServiceStatusCard, {ServiceStatusCardSkeleton} from "@/components/ServiceStatusCard/ServiceStatusCard";
 
 type ServiceStats = {
     check:boolean;
@@ -243,4 +243,15 @@ export default async function SystemStats() {
             }
         </>
     );
+}
+
+export function SystemStatsSkeleton() {
+    return (
+        <>
+            <ServiceStatusCardSkeleton />
+            <ServiceStatusCardSkeleton />
+            <ServiceStatusCardSkeleton />
+            <ServiceStatusCardSkeleton />
+        </>
+    )
 }

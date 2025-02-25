@@ -7,17 +7,27 @@ import {ToastContainer} from "react-toastify";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {fetchSchema} from "@/lib/base-repo/client-data";
 import {useSession} from "next-auth/react";
-import {useTheme} from "next-themes";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);
-    const {theme} = useTheme();
 
     const {status } = useSession();
 
+    console.log("STAT ", status);
     useEffect(() => {
         fetchSchema(`/definitions/base-repo/models/resourceModel.json`).then(schema => setSchema(schema));
     }, [status]);
+
+    if (status === "loading") {
+        return (<Loader/>)
+    }
+
+    if(status === "unauthenticated"){
+        return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
+    }
 
     return (
         <main>

@@ -7,7 +7,7 @@ import {Dashboard} from "@uppy/react";
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import {useTheme} from "next-themes";
-import JsonForm from "@/components/jsonform";
+import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
 import {Button} from "@/components/ui/button";
 import Loader from "@/components/general/Loader";
@@ -25,9 +25,6 @@ export default function SchemaRecordFileUploader({
                                                reloadCallback
                                            }: RecordFileUploaderProps) {
     const baseUrl: string = (process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "");
-
-
-
     const {theme} = useTheme();
     const [uppyTheme, setUppyTheme] = useState(theme === "system" ? "auto" : theme);
     const [editorReady, setEditorReady] = useState(false);
@@ -41,6 +38,7 @@ export default function SchemaRecordFileUploader({
             formData: true,
             bundle: true
         }));
+
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme);
         uppy.close();
@@ -69,7 +67,6 @@ export default function SchemaRecordFileUploader({
     uppy.getPlugin("Dashboard:ThumbnailGenerator")?.setOptions({thumbnailWidth: 10, thumbnailHeight: 10});
 
     uppy.setOptions({
-        //autoProceed: true,
         restrictions: {maxNumberOfFiles: 2, minNumberOfFiles: 2}
     })
 
@@ -77,11 +74,21 @@ export default function SchemaRecordFileUploader({
         reloadCallback(`/metastore/schemas/${metadata.id}/edit?target=metadata`);
     });
 
+    /**
+     * Callback function for JsonForm to notify on updated metadata. The function sets the
+     * metadata state and the confirm state in case a valid object was provided.
+     *
+     * @param {object} data  - The resource of undefined in case of validation errors.
+     */
     function updateData(data: object) {
         setMetadata(data as DataResource);
         setConfirm(data != undefined);
     }
 
+    /**
+     * Forward the current metadata set by JsonForm as upload to Uppy.
+     * The upload received a default filename (record.json), mime type, and the serialized metadata.
+     */
     function addMetadataToUppy() {
         uppy.addFile({
             name: 'record.json', // file name
@@ -105,7 +112,9 @@ export default function SchemaRecordFileUploader({
 
             </div>
             <div className={"flex-shrink"}>
-                <Button variant={"contextual"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
+                <Button variant={"contextual"} title={"Add Metadata to Upload"}
+                        className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"}
+                        disabled={!confirm} onClick={addMetadataToUppy}>
                     <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>
                     <Icon className={"w-12 h-12 xl:hidden visible"} icon={"ri:arrow-down-double-line"}/>
                 </Button>

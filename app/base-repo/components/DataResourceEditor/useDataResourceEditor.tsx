@@ -28,6 +28,14 @@ export const accessControlColumns: NestedColumn[] = [
     }
 ];
 
+/**
+ * Callback function for JsonForm to notify on updated metadata. The function sets the
+ * metadata state via setCurrentData and the confirm state in case a valid object was provided.
+ *
+ * @param {object} data  - The resource of undefined in case of validation errors.
+ * @param {Function} setConfirm  - The confirm state setter.
+ * @param {Function} setCurrentData  - The metadata state setter.
+ */
 export const DataChanged = (data: object, setConfirm: Function, setCurrentData: Function) => {
     if (!data) {
         setConfirm(false);

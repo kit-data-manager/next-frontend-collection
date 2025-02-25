@@ -11,6 +11,9 @@ import {Icon} from "@iconify-icon/react";
 import useUserPrefs from "@/lib/hooks/useUserPrefs";
 import {useSession} from "next-auth/react";
 import {CreateHelp} from "@/app/metastore/schemas/create/CreateHelp";
+import Loader from "@/components/general/Loader";
+import ErrorPage from "@/components/ErrorPage/ErrorPage";
+import {Errors} from "@/components/ErrorPage/ErrorPage.d";
 
 export default function Page() {
     const [schema, setSchema] = useState(undefined);
@@ -22,6 +25,14 @@ export default function Page() {
     useEffect(() => {
         fetchSchema(`/definitions/base-repo/models/createSchemaModel.json`).then(schema => setSchema(schema));
     }, []);
+
+    if (status === "loading") {
+        return (<Loader/>)
+    }
+
+    if(status === "unauthenticated"){
+        return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
+    }
 
     function reload(target:string){
         router.push(target);

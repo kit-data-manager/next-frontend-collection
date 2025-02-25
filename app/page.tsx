@@ -1,10 +1,8 @@
 import {inter} from '@/components/fonts';
 import React, {Suspense} from "react";
-import {CardsSkeleton} from "@/components/skeletons";
 import {getServerSession, Session} from "next-auth";
-//import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import SystemStats from "@/components/SystemStats/SystemStats";
+import SystemStats, {SystemStatsSkeleton} from "@/components/SystemStats/SystemStats";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function Page() {
@@ -32,7 +30,7 @@ export default async function Page() {
                 <SectionCaption caption={"Status"} level={"h2"}/>
                 <div
                     className="grid justify-center gap-6 rounded-lg px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
-                    <Suspense fallback={<CardsSkeleton/>}>
+                    <Suspense fallback={<SystemStatsSkeleton/>}>
                         <SystemStats/>
                     </Suspense>
                 </div>
