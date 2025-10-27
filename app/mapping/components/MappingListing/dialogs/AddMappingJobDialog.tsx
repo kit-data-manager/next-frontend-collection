@@ -134,7 +134,7 @@ export function AddMappingJobDialog({openModal, mappings, dialogCloseCallback, s
                             <Info className="h-4 w-4" />
                             <AlertTitle>Selection Required</AlertTitle>
                             <AlertDescription>
-                                Please select a mapping on order to be able to upload inputs.
+                                Please select a mapping in order to be able to upload inputs.
                             </AlertDescription>
                         </Alert>}
                 </DialogHeader>
