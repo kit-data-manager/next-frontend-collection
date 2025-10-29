@@ -170,6 +170,7 @@ export async function patchDataResourceAcls(resourceId: string, etag: string, pa
 export async function fetchAllContentInformation(resource: DataResource, accessToken?: string | undefined): Promise<ContentInformation[]> {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
         let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
         if (accessToken) {
             headers["Authorization"] = `Bearer ${accessToken}`;
@@ -191,6 +192,7 @@ export async function fetchAllContentInformation(resource: DataResource, accessT
 export async function fetchDataResourceEtag(id: string, accessToken?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
         let headers = {"Accept": "application/json"};
         if (accessToken) {
             headers["Authorization"] = `Bearer ${accessToken}`;
@@ -209,6 +211,7 @@ export async function fetchDataResourceEtag(id: string, accessToken?: string | u
 export async function fetchContentInformationEtag(id: string, filename: string, accessToken?: string | undefined) {
     try {
         const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
         let headers = {"Accept": "application/vnd.datamanager.content-information+json"};
         if (accessToken) {
             headers["Authorization"] = `Bearer ${accessToken}`;

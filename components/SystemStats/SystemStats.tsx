@@ -1,6 +1,4 @@
 import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client-data";
-import {StatusCard} from "@/components/StatusCard/StatusCard";
-import {humanFileSize} from "@/lib/general/format-utils";
 import {ActuatorHealth, ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
 import {lusitana} from "@/components/fonts";
 import {getServerSession} from "next-auth";
@@ -32,6 +30,7 @@ export default async function SystemStats() {
 
     const searchBaseUrl: string = process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : '';
     const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+
     const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
     const typedPidMakerBaseUrl: string = process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL ? process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL : '';
     const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';

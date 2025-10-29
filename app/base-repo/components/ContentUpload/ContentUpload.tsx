@@ -18,6 +18,7 @@ interface ContentUploadProps {
 
 export default function ContentUpload({id, reloadCallback}: ContentUploadProps) {
     const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "");
+
     const router = useRouter();
 
     const [uppy, setUppy] = useState(() => new Uppy()

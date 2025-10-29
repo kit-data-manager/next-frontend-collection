@@ -4,12 +4,12 @@ const nextConfig = {
     typescript: {ignoreBuildErrors: false},
     trailingSlash: true,
     basePath: "",
-    assetPrefix: "http://localhost:3000",
+    assetPrefix: "https://localhost/frontend",
     images: {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'matwerk.datamanager.kit.edu',
+                hostname: 'localhost',
                 port: '',
                 pathname: '/**',
             },

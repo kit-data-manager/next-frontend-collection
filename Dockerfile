@@ -1,23 +1,18 @@
-# Use an official node runtime as a parent image
-FROM node:20-alpine
+# Stage 1: base environment for Next.js builds
+FROM node:20-bullseye
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files to the working directory
+# Copy package and lock files
 COPY package*.json ./
 
-# Install the dependencies
-RUN npm install
+# Install dependencies (exact versions)
+RUN npm ci
 
-# Copy the rest of the application code to the working directory
+# Copy source code (from the release)
 COPY . .
 
-# Build the Next.js app
-RUN npm run build
-
-# Start the Next.js app
-CMD ["npm", "start"]
-
-# Expose port 3000
-EXPOSE 3000
+# This image DOES NOT build Next.js.
+# It provides the source code and dependencies ready to build later.
+CMD ["/bin/bash"]
