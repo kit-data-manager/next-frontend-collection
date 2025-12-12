@@ -52,7 +52,7 @@
     "@vercel/postgres": "^0.10.0",
     "@visx/text": "^3.3.0",
     "@visx/wordcloud": "^3.3.0",
-    "autoprefixer": "10.4.15",
+    "autoprefixer": "10.4.22",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
     "class-variance-authority": "^0.7.0",
