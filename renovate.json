@@ -1,5 +1,4 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":semanticCommits",
@@ -11,7 +10,7 @@
   ],
 
   "labels": ["dependencies"],
-  "baseBranches": ["development"]
+  "baseBranches": ["development"],
   "rangeStrategy": "bump",
   "timezone": "Europe/Berlin",
 
