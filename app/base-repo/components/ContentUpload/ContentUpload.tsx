@@ -3,9 +3,9 @@
 import {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
-import {Dashboard} from "@uppy/react";
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
+import Dashboard from '@uppy/react/dashboard';
+//import '@uppy/core/dist/style.min.css';
+//import '@uppy/dashboard/dist/style.min.css';
 import {useRouter} from 'next/navigation'
 import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
 import {useTheme} from "next-themes";
@@ -30,7 +30,7 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
 
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme?theme : "auto");
-        uppy.close();
+        uppy.destroy();
         setUppy(new Uppy()
             .use(XHRUpload, {endpoint: `${baseUrl}/api/v1/dataresources`, method: "post", formData: true, fieldName: "file"}));
         installEventHandlers(uppy, id, data?.accessToken, () => {
@@ -53,8 +53,7 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
     return (
         <div className="w-full flex mb-6 justify-left">
             <Dashboard uppy={uppy}  theme={uppyTheme as "auto"|"dark"|"light"|undefined}
-                       width={256} height={180} showSelectedFiles={true}
-                       showProgressDetails={true}/>
+                       width={256} height={180} showSelectedFiles={true}/>
         </div>
 
     );

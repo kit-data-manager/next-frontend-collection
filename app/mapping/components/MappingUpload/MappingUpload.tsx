@@ -3,9 +3,9 @@
 import {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
-import {Dashboard} from "@uppy/react";
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
+import Dashboard from "@uppy/react/dashboard";
+//import '@uppy/core/dist/style.min.css';
+//import '@uppy/dashboard/dist/style.min.css';
 
 interface MappingUploadProps {
     mappingId: string;
@@ -56,7 +56,10 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
 
     return (
         <div className="w-full flex mb-6 justify-center">
-            <Dashboard uppy={uppy} note={`You can upload 5 files at once. InputType limitations of the selected mapping (${fileTypes}) may apply. `} width={384} height={256} showProgressDetails={true}/>
+            <Dashboard uppy={uppy}
+                       note={`You can upload 5 files at once. InputType limitations of the selected mapping (${fileTypes}) may apply. `}
+                       width={384}
+                       height={256}/>
      </div>
 
     );

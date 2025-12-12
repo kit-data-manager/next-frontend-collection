@@ -3,9 +3,9 @@
 import React, {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
-import {Dashboard} from "@uppy/react";
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
+import Dashboard from "@uppy/react/dashboard";
+//import '@uppy/core/dist/style.min.css';
+//import '@uppy/dashboard/dist/style.min.css';
 import {useTheme} from "next-themes";
 import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
@@ -41,17 +41,19 @@ export default function SchemaRecordFileUploader({
 
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme);
-        uppy.close();
+        uppy.destroy();
         setUppy(new Uppy()
             .use(XHRUpload, {
-                endpoint: `${baseUrl}/api/v2/schemas/` ,
+                endpoint: `${baseUrl}/api/v2/schemas/`,
                 method: "post",
                 headers: {
                     "Authorization": `Bearer ${data?.accessToken}`
                 },
                 bundle: true,
-                getResponseError (responseText, response) {
-                    return new Error(JSON.parse(responseText).detail)
+                onAfterResponse(xhr) {
+                    if(xhr.status != 201){
+                        throw new Error(JSON.parse(xhr.responseText).detail)
+                    }
                 }
             }));
 
@@ -123,8 +125,7 @@ export default function SchemaRecordFileUploader({
                     <Dashboard uppy={uppy}
                                note={`You must upload exactly 2 files: a metadata record and a schema file. For creating a metadata record, use the form to the right and select add schema file afterwards.`}
                                theme={uppyTheme as "auto"|"dark"|"light"|undefined}
-                               showSelectedFiles={true}
-                               showProgressDetails={true}/>
+                               showSelectedFiles={true}/>
                 </div>
             </div>
 

@@ -199,7 +199,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
             <KanbanBoard elements={elements} setElements={setElements} columns={accessControlColumns}/>
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Reset"}
-                                    confirmCallback={() => {
+                                    confirmAction={() => {
                                         checkPermissions();
                                     }}
                                     cancelHref={() => {

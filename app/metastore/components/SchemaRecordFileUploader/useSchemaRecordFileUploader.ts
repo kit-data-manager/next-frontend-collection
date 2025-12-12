@@ -6,12 +6,9 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
     const baseUrl: string = (process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : "http://localhost:8040");
 
     // @ts-ignore
-    uppy.off("upload", null).on('upload', (result) => {
-        for (let i = 0; i < result.fileIDs.length; i++) {
-            let fileID = result.fileIDs[i];
-
-            const file = uppy.getFile(fileID);
-            uppy.setFileState(fileID, {
+    uppy.off("upload", null).on('upload', (uploadId, result) => {
+        result.forEach((file) => {
+            uppy.setFileState(file.id, {
                 xhrUpload: {
                     fieldName: file.name === "record.json" ? "record" : "schema",
                     endpoint: `${baseUrl}/api/v2/schemas`,
@@ -20,7 +17,7 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
                     }
                 },
             });
-        }
+        })
     });
 
     // @ts-ignore
@@ -34,8 +31,8 @@ export function installEventHandlers(uppy: Uppy, accessToken?: string, onCloseCa
     // @ts-ignore
     uppy.off("complete", null).on('complete', (result) => {
         uppy.resetProgress();
-        const successful = result.successful.length;
-        const failed = result.failed.length;
+        const successful = result.successful ? result.successful.length : 0;
+        const failed = result.failed ? result.failed.length : 0;
         if (failed > 0) {
             toast.error(`Failed to upload ${failed} file(s).`, {
                     autoClose: 1000,

@@ -15,14 +15,10 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, accessToke
     //add filename to base-url
     // @ts-ignore
     uppy.off("upload", () => {
-    }).on('upload', (result) => {
-
-        for (let i = 0; i < result.fileIDs.length; i++) {
-            let fileID = result.fileIDs[i];
-            const file = uppy.getFile(fileID);
-
+    }).on('upload', (uploadId, result) => {
+        result.forEach((file) => {
             if (resourceId) {
-                uppy.setFileState(fileID, {
+                uppy.setFileState(file.id, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
                         //endpoint: `${basePath}/api/base-repo/createContent?resourceId=${resourceId}&filename=${file.name}`
@@ -33,14 +29,14 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, accessToke
                     }
                 })
             } else {
-                uppy.setFileState(fileID, {
+                uppy.setFileState(file.id, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
                         endpoint: `${baseUrl}/api/v1/dataresources/`
                     }
                 })
             }
-        }
+        });
     });
 
 
@@ -48,8 +44,9 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, accessToke
     // @ts-ignore
     uppy.off("complete", null).on('complete', (result) => {
         uppy.resetProgress();
-        const successful = result.successful.length;
-        const failed = result.failed.length;
+
+        const successful = result.successful ? result.successful.length : 0;
+        const failed = result.failed ? result.failed.length : 0;
         if (failed > 0) {
             toast.error(`Failed to upload ${failed} file(s).`, {
                     autoClose: 1000,
