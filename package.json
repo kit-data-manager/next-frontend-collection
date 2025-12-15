@@ -61,7 +61,7 @@
     "cookies-next": "^5.1.0",
     "flowbite-react": "^0.12.13",
     "formidable": "^3.5.4",
-    "framer-motion": "^11.18.2",
+    "framer-motion": "^12.23.26",
     "jsonpath-plus": "^10.3.0",
     "lucide-react": "^0.561.0",
     "mime-types": "^2.1.35",
