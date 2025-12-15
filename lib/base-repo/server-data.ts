@@ -46,7 +46,7 @@ export async function fetchContentOverview() {
         openResources = Number(data[2].rows[0].count ?? '0');
         files = Number(data[3].rows[0].count ?? '0');
         size = Number(data[4].rows[0].sum ?? '0');
-        closedResources = Number(resources - openResources ?? '0');
+        closedResources = Number(resources - openResources);
 
     } catch (error) {
         console.error('Failed to fetch content overview. Database Error:', error);

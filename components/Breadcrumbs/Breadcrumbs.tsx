@@ -1,5 +1,5 @@
-import {HiOutlineHome} from "react-icons/hi";
-import {Breadcrumb} from "flowbite-react";
+import {HiOutlineHome} from "@react-icons/all-files/hi/HiOutlineHome";
+import {Breadcrumb, BreadcrumbItem} from "flowbite-react";
 import {BreadcrumbEntry, theme} from "@/components/Breadcrumbs/Breadcrumbs.d";
 
 export default function Breadcrumbs({
@@ -14,13 +14,13 @@ export default function Breadcrumbs({
       <Breadcrumb theme={theme.root}>
           {breadcrumbs.map((breadcrumb, index) => {
               if (index === 0) {
-                  return (<Breadcrumb.Item key={index} href={`${basePath}${breadcrumb.href}`} icon={HiOutlineHome} theme={theme.item} className={breadcrumb.active ? "underline":""}>
+                  return (<BreadcrumbItem key={index} href={`${basePath}${breadcrumb.href}`} icon={HiOutlineHome} theme={theme.item} className={breadcrumb.active ? "underline":""}>
                       {breadcrumb.label}
-                  </Breadcrumb.Item>)
+                  </BreadcrumbItem>)
               } else {
-                  return (<Breadcrumb.Item key={index} href={`${basePath}${breadcrumb.href}`} theme={theme.item} className={breadcrumb.active ? "underline":""}>
+                  return (<BreadcrumbItem key={index} href={`${basePath}${breadcrumb.href}`} theme={theme.item} className={breadcrumb.active ? "underline":""}>
                       {breadcrumb.label}
-                  </Breadcrumb.Item>)
+                  </BreadcrumbItem>)
               }
           })}
       </Breadcrumb>

@@ -1,4 +1,4 @@
-import flowbite from "flowbite-react/tailwind";
+import flowbite from "flowbite/plugin";
 
 const config = {
   darkMode: 'class',
@@ -7,7 +7,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    flowbite.content()
+	"./node_modules/flowbite-react/**/*.js",
   ],
   theme: {
   	container: {

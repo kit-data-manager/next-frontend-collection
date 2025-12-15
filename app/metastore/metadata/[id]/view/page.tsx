@@ -49,7 +49,7 @@ export default function Page({params}) {
 
     useEffect(() => {
         // do conditional chaining
-        monaco?.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+        // monaco?.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         // or make sure that it exists by other ways
         monaco?.editor.addKeybindingRules([
             {

@@ -47,7 +47,7 @@ export async function fetchMetastoreOverview() {
         stats.openResources = Number(data[2].rows[0].count ?? '0');
         stats.schemas = Number(data[3].rows[0].count ?? '0');
         stats.metadata = Number(data[4].rows[0].count ?? '0');
-        stats.closedResources = Number(stats.schemas + stats.metadata - stats.openResources ?? '0');
+        stats.closedResources = Number(stats.schemas + stats.metadata - stats.openResources);
     } catch (error) {
         console.error('Failed to fetch content overview. Database Error:', error);
     }
