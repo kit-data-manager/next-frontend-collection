@@ -17,7 +17,7 @@
     "@heroicons/react": "^2.0.18",
     "@iconify/react": "^6.0.2",
     "@jsonforms/core": "^3.2.1",
-    "@jsonforms/examples": "^3.2.1",
+    "@jsonforms/examples": "^3.7.0",
     "@jsonforms/material-renderers": "^3.2.1",
     "@jsonforms/react": "^3.2.1",
     "@kit-data-manager/data-view-web-component": "^0.0.23",
