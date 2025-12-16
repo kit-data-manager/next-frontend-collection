@@ -19,7 +19,7 @@
     "@jsonforms/core": "^3.7.0",
     "@jsonforms/examples": "^3.7.0",
     "@jsonforms/material-renderers": "^3.7.0",
-    "@jsonforms/react": "^3.2.1",
+    "@jsonforms/react": "^3.7.0",
     "@kit-data-manager/data-view-web-component": "^0.0.23",
     "@kit-data-manager/data-view-web-component-react": "^0.0.23",
     "@kit-data-manager/react-search-component": "^0.1.0",
