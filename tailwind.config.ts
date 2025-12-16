@@ -1,14 +1,16 @@
-import flowbite from "flowbite/plugin";
-
 const config = {
   darkMode: 'class',
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
     "./src/**/*.{ts,tsx}",
-	"./node_modules/flowbite-react/**/*.js",
+	"./node_modules/flowbite-react/**/*.js"
   ],
+    safelist: [
+        { pattern: /bg-(error|success|accent|primary|secondary)/ },
+        { pattern: /text-(error|success|accent|primary|secondary)/ },
+    ],
   theme: {
   	container: {
   		center: 'true',
@@ -19,59 +21,59 @@ const config = {
   	},
   	extend: {
   		colors: {
-  			border: 'var(--border)',
-  			input: 'var(--input)',
-  			ring: 'var(--ring)',
-  			background: 'var(--primary)',
-  			foreground: 'var(--primary-foreground)',
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			background: 'hsl(var(--primary))',
+  			foreground: 'hsl(var(--primary-foreground))',
   			primary: {
-  				DEFAULT: 'var(--primary)',
-  				foreground: 'var(--primary-foreground)'
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
   			},
   			secondary: {
-  				DEFAULT: 'var(--secondary)',
-  				foreground: 'var(--secondary-foreground)'
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
   			},
   			destructive: {
-  				DEFAULT: 'var(--destructive)',
-  				foreground: 'var(--destructive-foreground)'
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
   			},
   			muted: {
-  				DEFAULT: 'var(--muted)',
-  				foreground: 'var(--muted-foreground)'
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
   			},
   			accent: {
-  				DEFAULT: 'var(--accent)',
-  				foreground: 'var(--accent-foreground)'
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
   			},
   			popover: {
-  				DEFAULT: 'var(--popover)',
-  				foreground: 'var(--popover-foreground)'
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
   			},
   			card: {
-  				DEFAULT: 'var(--card)',
-  				foreground: 'var(--card-foreground)'
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
   			},
   			success: {
-  				DEFAULT: 'var(--success)'
+  				DEFAULT: 'hsl(var(--success))'
   			},
   			info: {
-  				DEFAULT: 'var(--info)'
+  				DEFAULT: 'hsl(var(--info))'
   			},
   			warn: {
-  				DEFAULT: 'var(--warn)'
+  				DEFAULT: 'hsl(var(--warn))'
   			},
   			root: {
-  				DEFAULT: 'var(--root)'
+  				DEFAULT: 'hsl(var(--root))'
   			},
   			data: {
-  				DEFAULT: 'var(--data)'
+  				DEFAULT: 'hsl(var(--data))'
   			},
   			contextual: {
-  				DEFAULT: 'var(--contextual)'
+  				DEFAULT: 'hsl(var(--contextual))'
   			},
   			error: {
-  				DEFAULT: 'var(--error)'
+  				DEFAULT: 'hsl(var(--error))'
   			}
   		},
   		borderRadius: {

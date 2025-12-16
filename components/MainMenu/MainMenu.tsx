@@ -13,8 +13,9 @@ import React from "react";
 import {useSession} from "next-auth/react";
 import {getMenuEntries, shouldRender} from "@/components/MainMenu/useMainMenu";
 import {MenuItem, SubMenu} from "@/components/MainMenu/MainMenu.d";
-import Link from "next/link";
 import {Icon} from "@iconify-icon/react";
+import {Slot} from "@radix-ui/react-slot";
+import Link from "next/link";
 
 export default function MainMenu() {
     const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
@@ -33,7 +34,8 @@ export default function MainMenu() {
                                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                                     {item.menuItems.map((menuItem: MenuItem, idx2: number) => {
                                         if (shouldRender(menuItem, session != null, searchEnabled)) {
-                                            return (<ListItem
+                                            return (
+                                                <ListItem
                                                     key={`sub_menu_${idx2}`}
                                                     title={menuItem.name}
                                                     href={menuItem.href}
@@ -49,44 +51,51 @@ export default function MainMenu() {
                     } else {
                         return (
                             <NavigationMenuItem key={`menu_${item.serviceName}`}>
-                                <Link href={item.href ? item.href : ""} legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        {item.icon ? <Icon icon={item.icon} width={"1em"} height={"1em"} className={"mr-2"}/> : null}
-                                        {item.serviceName}
-                                    </NavigationMenuLink>
-                                </Link>
+                                <NavigationMenuLink
+                                    href={item.href || "#"}
+                                    className={navigationMenuTriggerStyle()}
+                                >
+                                    {item.icon ? <Icon icon={item.icon} width="1em" height="1em" className="mr-2" /> : null}
+                                    {item.serviceName}
+                                </NavigationMenuLink>
                             </NavigationMenuItem>
-                        )
+
+                        );
                     }
                 })}
             </NavigationMenuList>
         </NavigationMenu>
-
     );
 }
 
-const ListItem = React.forwardRef<
-    React.ElementRef<"a">,
-    React.ComponentPropsWithoutRef<"a">
->(({className, title, children, ...props}, ref) => {
-    return (
-        <li>
-            <NavigationMenuLink asChild>
-                <a
-                    ref={ref}
-                    className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        className
-                    )}
-                    {...props}
-                >
-                    <div className="text-sm font-medium leading-none">{title}</div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {children}
-                    </p>
-                </a>
-            </NavigationMenuLink>
-        </li>
-    )
-})
+interface ListItemProps extends React.ComponentPropsWithoutRef<typeof Slot> {
+    title: string,
+    href?: string;
+}
+
+const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
+    ({ className, title, children, ...props }, ref) => {
+        return (
+            <li>
+                <NavigationMenuLink asChild>
+                    <Link
+                        href={props.href || "#"}
+                        className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            className
+                        )}
+                    >
+                        <div>
+                            <div className="text-sm font-medium leading-none">{title}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                {children}
+                            </p>
+                        </div>
+                    </Link>
+                </NavigationMenuLink>
+            </li>
+
+        )
+    }
+)
 ListItem.displayName = "ListItem"

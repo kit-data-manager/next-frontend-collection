@@ -1,85 +1,84 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
-  :root {
-    --background: #EFEFEF;
-    --foreground: #09090B;
+    :root {
+        --background: 0 0% 94%;
+        --foreground: 240 10% 4%;
 
-    --card: #EFEFEF;
-    --card-foreground: #09090B;
+        --card: 0 0% 94%;
+        --card-foreground: 240 10% 4%;
 
-    --popover: #FFFFFF;
-    --popover-foreground: #09090B;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 4%;
 
-    --primary: #EEEEEE;
-    --primary-foreground: #09090B;
+        --primary: 0 0% 93%;
+        --primary-foreground: 240 10% 4%;
 
-    --secondary: #EFEFEF;
-    --secondary-foreground: #09090B;
+        --secondary: 0 0% 94%;
+        --secondary-foreground: 240 10% 4%;
 
-    --muted: #F4F4F5;
-    --muted-foreground: #71717A;
+        --muted: 240 5% 96%;
+        --muted-foreground: 240 4% 46%;
 
-    --accent: #b5e941;
-    --accent-foreground: #09090B;
+        --accent: 79 78% 59%;
+        --accent-foreground: 240 10% 4%;
 
-    --destructive: #EF4444;
-    --destructive-foreground: #FAFAFA;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 98%;
 
-    --border: #0c0c0b40;
-    --input: #E4E4E7;
-    --ring: #0c0c0b40;
+        --border: 60 4% 5% / 0.25;
+        --input: 240 5% 90%;
+        --ring: 60 4% 5% / 0.25;
 
-    --radius: 1rem;
+        --success: 142 52% 51%;
+        --info: 226 55% 50%;
+        --warn: 32 93% 48%;
+        --root: 23 73% 64%;
+        --data: 274 71% 56%;
+        --contextual: 142 41% 51%;
+        --error: 0 100% 57%;
 
-    --success: rgb(63, 197, 112);
-    --info: rgb(58, 83, 196);
-    --warn: rgb(237, 123, 9);
-    --root: rgb(229, 142, 94);
-    --data: rgb(166, 67, 221);
-    --contextual: rgb(79, 182, 112);
-    --error: rgb(255, 35, 35);
-  }
+        --radius: 1rem;
+    }
 
-  .dark {
-    --background: #09090B;
-    --foreground: #FAFAFA;
 
-    --card: #1a2333;
-    --card-foreground: #FAFAFA;
+    .dark {
+        --background: 240 10% 4%;
+        --foreground: 0 0% 98%;
 
-    --popover: #09090B;
-    --popover-foreground: #FAFAFA;
+        --card: 220 33% 15%;
+        --card-foreground: 0 0% 98%;
 
-    --primary: #18181B;
-    --primary-foreground: #FAFAFA;
+        --popover: 240 10% 4%;
+        --popover-foreground: 0 0% 98%;
 
-    --secondary: #27272A;
-    --secondary-foreground: #FAFAFA;
+        --primary: 240 6% 10%;
+        --primary-foreground: 0 0% 98%;
 
-    --muted: #27272A;
-    --muted-foreground: #A1A1AA;
+        --secondary: 240 5% 16%;
+        --secondary-foreground: 0 0% 98%;
 
-    --accent: #27272A;
-    --accent-foreground: #FAFAFA;
+        --muted: 240 5% 16%;
+        --muted-foreground: 240 5% 65%;
 
-    --destructive: #7F1D1D;
-    --destructive-foreground: #FAFAFA;
+        --accent: 240 5% 16%;
+        --accent-foreground: 0 0% 98%;
 
-    --border: #27272A;
-    --input: #27272A;
-    --ring: #D4D4D8;
+        --destructive: 0 63% 30%;
+        --destructive-foreground: 0 0% 98%;
 
-    --success: rgb(34 197 94);
-    --info: rgb(58, 83, 196);
-    --warn: rgb(245,167,66);
-    --root: rgb(236,121,57);
-    --data: rgb(186,34,236);
-    --contextual: rgb(29,165,77);
-    --error: rgb(255, 35, 35);
-  }
+        --border: 240 5% 16%;
+        --input: 240 5% 16%;
+        --ring: 240 6% 84%;
+
+        --success: 142 71% 45%;
+        --info: 226 55% 50%;
+        --warn: 36 90% 61%;
+        --root: 23 82% 57%;
+        --data: 284 80% 53%;
+        --contextual: 142 70% 38%;
+        --error: 0 100% 57%;
+    }
 }
 
 input[type='number'] {

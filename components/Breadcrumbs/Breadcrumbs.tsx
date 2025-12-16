@@ -1,4 +1,6 @@
-import {HiOutlineHome} from "@react-icons/all-files/hi/HiOutlineHome";
+"use client";
+
+import { HiOutlineHome } from "react-icons/hi";
 import {Breadcrumb, BreadcrumbItem} from "flowbite-react";
 import {BreadcrumbEntry, theme} from "@/components/Breadcrumbs/Breadcrumbs.d";
 

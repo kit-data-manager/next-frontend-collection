@@ -4,8 +4,8 @@ import React, {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from "@uppy/react/dashboard";
-//import '@uppy/core/dist/style.min.css';
-//import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 import {useTheme} from "next-themes";
 import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
@@ -39,7 +39,10 @@ export default function MetadataRecordFileUploader({
             endpoint: `${baseUrl}/api/v2/metadata/`,
             method: "post",
             formData: true,
-            bundle: true
+            bundle: true,
+            getResponseData(xhr) {
+                return { url: xhr.getResponseHeader("location") };
+    }
         }));
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme);

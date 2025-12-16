@@ -3,16 +3,16 @@
 }
 
 div[data-schematype]:not([data-schematype="object"]):hover {
-    background-color: var(--secondary)!important;
+    background-color: hsl(var(--secondary))!important;
 }
 
 .je-modal{
-    background-color: var(--secondary)!important;
-    color: var(--secondary-foreground)!important;
+    background-color: hsl(var(--secondary))!important;
+    color: hsl(var(--secondary-foreground))!important;
 }
 
 div[data-theme="tailwind"] .json-editor-btn-collapse {
-    color:var(--secondary-foreground)!important;
+    color:hsl(var(--secondary-foreground))!important;
 }
 
 div[data-schematype='array'] > p, div[data-schematype='object'] > p{
@@ -23,8 +23,14 @@ div[data-schematype='array'] > p, div[data-schematype='object'] > p{
     width: 120px;
     height: 35px;
     border-radius: 0.375rem!important;
-    background-color: var(--accent)!important;
-    color: var(--accent-foreground)!important;
+    background-color: hsl(var(--accent))!important;
+    color: hsl(var(--accent-foreground))!important;
+}
+
+.json-editor-btntype-add{
+    border-radius: 0.375rem!important;
+    background-color: hsl(var(--success))!important;
+    color: hsl(var(--accent-foreground))!important;
 }
 
 .je-object__container:not(.w-full):not([data-schemaid='root']){
@@ -33,7 +39,7 @@ div[data-schematype='array'] > p, div[data-schematype='object'] > p{
 
 .je-object__container:not(.w-full) > .je-object__title > span{
     font-size: 14px;
-    color: var(--secondary-foreground);
+    color: hsl(var(--secondary-foreground));
 }
 
 p[style='color: red;']{

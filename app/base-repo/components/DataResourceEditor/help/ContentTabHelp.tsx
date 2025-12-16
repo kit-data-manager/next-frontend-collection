@@ -7,6 +7,8 @@ import {CircleSlash2, Upload} from "lucide-react";
 export function ContentTabHelp() {
     return (
         <Alert>
+            <div className="bg-error text-white p-2">Error Test</div>
+
             <Icon width={"16"}
                   height={"16"} icon={"mdi:file-edit-outline"} className="h-4 w-4 mr-2"/>
             <AlertTitle>Edit Content</AlertTitle>
@@ -18,8 +20,7 @@ export function ContentTabHelp() {
                                         width={"16"}
                                         height={"16"} icon={"material-symbols-light:download"}/> Download</Badge> single files,
                                     or you can <Badge variant="outline">
-                                        <Icon width={"16"}
-                                                                              height={"16"}
+                                        <Icon width={"16"} height={"16"}
                                                                               icon={"material-symbols-light:skull-outline"}/> Delete</Badge> files if you have WRITE permissions.
                                     Furthermore, you can mark a file as <Badge variant="thumb_unset">Thumb</Badge> image. A thumb is shown in the resources listing and can be assigned to all files of type jpg, gif, and png
                                     which are smaller than 160 Kb. Active thumb images are marked with <Badge
