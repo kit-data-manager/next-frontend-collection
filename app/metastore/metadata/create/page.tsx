@@ -89,7 +89,7 @@ export default function Page() {
                     ]}
                 />
                 <SectionCaption caption={"Create Metadata Document"}/>
-                <div className="grid flex-grow justify-items-stretch">
+                <div className="grid grow justify-items-stretch">
                     <button onClick={() => updateUserPrefs({helpVisible: !userPrefs.helpVisible})}
                             title={"Show/Hide Help"}
                             className={"justify-self-end"}>

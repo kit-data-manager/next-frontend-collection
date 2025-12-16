@@ -7,8 +7,6 @@ import {CircleSlash2, Upload} from "lucide-react";
 export function ContentTabHelp() {
     return (
         <Alert>
-            <div className="bg-error text-white p-2">Error Test</div>
-
             <Icon width={"16"}
                   height={"16"} icon={"mdi:file-edit-outline"} className="h-4 w-4 mr-2"/>
             <AlertTitle>Edit Content</AlertTitle>

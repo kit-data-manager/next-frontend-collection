@@ -11,7 +11,7 @@ export default function AcmeLogo({logoUrl}: {
     >
       {logoUrl ?
           <Image src={logoUrl} alt={logoUrl} width={64} height={64} className="h-16 w-16 rounded-r-lg"/> :
-      <GlobeAltIcon className="h-8 w-8 lg:h-16 lg:w-16 rotate-[15deg]" />
+      <GlobeAltIcon className="h-8 w-8 lg:h-16 lg:w-16 rotate-15" />
       }
     </div>
   );

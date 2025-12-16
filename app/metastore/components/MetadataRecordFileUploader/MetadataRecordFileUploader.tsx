@@ -111,7 +111,7 @@ export default function MetadataRecordFileUploader({
                           onChange={(d: object) => updateData(d)}/>
 
             </div>
-            <div className={"flex-shrink"}>
+            <div className={"shrink"}>
                 <Button variant={"contextual"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
                     <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>
                     <Icon className={"w-12 h-12 xl:hidden visible"} icon={"ri:arrow-down-double-line"}/>

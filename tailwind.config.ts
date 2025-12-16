@@ -7,10 +7,6 @@ const config = {
     "./src/**/*.{ts,tsx}",
 	"./node_modules/flowbite-react/**/*.js"
   ],
-    safelist: [
-        { pattern: /bg-(error|success|accent|primary|secondary)/ },
-        { pattern: /text-(error|success|accent|primary|secondary)/ },
-    ],
   theme: {
   	container: {
   		center: 'true',
@@ -20,62 +16,6 @@ const config = {
   		}
   	},
   	extend: {
-  		colors: {
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			background: 'hsl(var(--primary))',
-  			foreground: 'hsl(var(--primary-foreground))',
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			success: {
-  				DEFAULT: 'hsl(var(--success))'
-  			},
-  			info: {
-  				DEFAULT: 'hsl(var(--info))'
-  			},
-  			warn: {
-  				DEFAULT: 'hsl(var(--warn))'
-  			},
-  			root: {
-  				DEFAULT: 'hsl(var(--root))'
-  			},
-  			data: {
-  				DEFAULT: 'hsl(var(--data))'
-  			},
-  			contextual: {
-  				DEFAULT: 'hsl(var(--contextual))'
-  			},
-  			error: {
-  				DEFAULT: 'hsl(var(--error))'
-  			}
-  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
