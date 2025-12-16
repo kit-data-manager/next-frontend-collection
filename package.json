@@ -22,7 +22,7 @@
     "@jsonforms/react": "^3.2.1",
     "@kit-data-manager/data-view-web-component": "^0.0.23",
     "@kit-data-manager/data-view-web-component-react": "^0.0.23",
-    "@kit-data-manager/react-search-component": "^0.1.0",
+    "@kit-data-manager/react-search-component": "^0.3.0",
     "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
