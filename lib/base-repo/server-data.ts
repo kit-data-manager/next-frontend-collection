@@ -13,44 +13,59 @@ export async function fetchContentOverview() {
     let files = 0;
     let size = 0;
 
-    try {
-        const client = new Pool({
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.REPO_DB_NAME,
-            password: process.env.DB_PASSWORD,
-            port: Number(process.env.DB_PORT)
-        })
+    const pool = new Pool({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.REPO_DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: Number(process.env.DB_PORT),
+    });
 
-        //build queries
-        const uniqueUsersPromise = client.query("SELECT COUNT(DISTINCT sid) FROM acl_entry");
-        const resourcesPromise = client.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')");
-        const openResourcesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, acl_entry as acl WHERE resource.state IN ('VOLATILE', 'FIXED') AND resource.id=acl.resource_id AND acl.sid='anonymousUser'");
-        const filesPromise = client.query("SELECT COUNT(*) FROM data_resource as resource, content_information as content " +
-            "WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
-        const sizePromise = client.query("SELECT SUM(content.size) FROM data_resource as resource, content_information as content " +
-            "WHERE resource.id=content.parent_resource_id AND resource.state IN ('VOLATILE', 'FIXED')");
+    const results = await Promise.allSettled([
+        pool.query("SELECT COUNT(DISTINCT sid) FROM acl_entry"),
+        pool.query("SELECT COUNT(*) FROM data_resource WHERE state IN ('VOLATILE', 'FIXED')"),
+        pool.query(`
+    SELECT COUNT(*) 
+    FROM data_resource resource
+    JOIN acl_entry acl ON resource.id = acl.resource_id
+    WHERE resource.state IN ('VOLATILE', 'FIXED')
+    AND acl.sid = 'anonymousUser'
+  `),
+        pool.query(`
+    SELECT COUNT(*)
+    FROM data_resource resource
+    JOIN content_information content ON resource.id = content.parent_resource_id
+    WHERE resource.state IN ('VOLATILE', 'FIXED')
+  `),
+        pool.query(`
+    SELECT SUM(content.size)
+    FROM data_resource resource
+    JOIN content_information content ON resource.id = content.parent_resource_id
+    WHERE resource.state IN ('VOLATILE', 'FIXED')
+  `),
+    ]);
 
-        //wait for all query results
-        const data = await Promise.all([
-            uniqueUsersPromise,
-            resourcesPromise,
-            openResourcesPromise,
-            filesPromise,
-            sizePromise
-        ]);
-
-        //extract information from query results
-        uniqueUsers = Number(data[0].rows[0].count ?? '0');
-        resources = Number(data[1].rows[0].count ?? '0');
-        openResources = Number(data[2].rows[0].count ?? '0');
-        files = Number(data[3].rows[0].count ?? '0');
-        size = Number(data[4].rows[0].sum ?? '0');
-        closedResources = Number(resources - openResources);
-
-    } catch (error) {
-        console.error('Failed to fetch content overview. Database Error:', error);
+    if (results[0].status === "fulfilled") {
+        uniqueUsers = Number(results[0].value.rows[0].count ?? 0);
     }
+
+    if (results[1].status === "fulfilled") {
+        resources = Number(results[1].value.rows[0].count ?? 0);
+    }
+
+    if (results[2].status === "fulfilled") {
+        openResources = Number(results[2].value.rows[0].count ?? 0);
+    }
+
+    if (results[3].status === "fulfilled") {
+        files = Number(results[3].value.rows[0].count ?? 0);
+    }
+
+    if (results[4].status === "fulfilled") {
+        size = Number(results[4].value.rows[0].sum ?? 0);
+    }
+
+    closedResources = resources - openResources;
 
     //return results
     return {
@@ -63,10 +78,9 @@ export async function fetchContentOverview() {
     };
 }
 
-export async function fetchLatestActivities():Promise<Activity[]> {
+export async function fetchLatestActivities(): Promise<Activity[]> {
     noStore()
-    try {
-        const client = new Pool({
+        const pool = new Pool({
             user: process.env.DB_USER,
             host: process.env.DB_HOST,
             database: process.env.REPO_DB_NAME,
@@ -74,7 +88,9 @@ export async function fetchLatestActivities():Promise<Activity[]> {
             port: Number(process.env.DB_PORT)
         })
 
-        const activities = await client.query(' \
+
+        const results = await Promise.allSettled([
+            pool.query(' \
             SELECT \
                 sna.type, \
                 sna.managed_type, \
@@ -87,12 +103,14 @@ export async function fetchLatestActivities():Promise<Activity[]> {
             WHERE \
                 com.commit_pk = sna.commit_fk AND \
                 sna.managed_type IN (\'edu.kit.datamanager.repo.domain.ContentInformation\', \'edu.kit.datamanager.repo.domain.DataResource\') \
-            ORDER BY com.commit_date DESC LIMIT 10');
-        return activities.rows;
-    } catch (error) {
-        console.error('Failed to fetch latest activities. Database Error:', error);
-        return [];
+            ORDER BY com.commit_date DESC LIMIT 10')
+        ]);
 
+        if (results[0].status === "fulfilled") {
+            return results[0].value.rows as Activity[] ?? [] as Activity[];
+        }
+
+        return [] as Activity[];
         /*return [
             {
                 "id": 1,
@@ -138,6 +156,4 @@ export async function fetchLatestActivities():Promise<Activity[]> {
             },
         ];*/
     }
-}
-
 

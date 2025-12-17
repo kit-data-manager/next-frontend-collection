@@ -1,12 +1,3 @@
-import {
-    CircleStackIcon,
-    DocumentIcon,
-    DocumentTextIcon,
-    LockClosedIcon,
-    LockOpenIcon,
-    UserIcon
-} from '@heroicons/react/24/outline';
-import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {fetchContentOverview} from "@/lib/base-repo/server-data";
 import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
 import {InfoCard} from "@/components/StatusCard/InfoCard";
