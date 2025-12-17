@@ -29,16 +29,13 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
                 <div className="space-x-4">
                     <Button id="cancelButton"
                             onClick={handleCancel}
-                            variant="destructive"
-                          className="bg-destructive hover:underline font-bold py-2 px-4 rounded">
+                            variant="destructive">
                         {cancelLabel}
                     </Button>
                     <Button id="confirmButton"
                             onClick={confirmAction}
-                            variant="accent"
-                            className={clsx('bg-success hover:underline font-bold px-5 py-[7px] rounded',
-                                { 'opacity-50 cursor-not-allowed': !confirm})}
-                                >
+                            variant="success"
+                            className={clsx({ 'opacity-50 cursor-not-allowed': !confirm})}>
                         {confirmLabel}
                     </Button>
                 </div>

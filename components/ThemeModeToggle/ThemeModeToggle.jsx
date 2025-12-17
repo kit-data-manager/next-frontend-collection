@@ -24,13 +24,13 @@ export function ThemeModeToggle(params) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem title="Set light mode" onClick={() => setThemeInternal("light")}>
+                <DropdownMenuItem title="Set light mode" className="text-primary-foreground bg-primary" onClick={() => setThemeInternal("light")}>
                     Light
                 </DropdownMenuItem>
-                <DropdownMenuItem title="Set dark mode" onClick={() => setThemeInternal("dark")}>
+                <DropdownMenuItem title="Set dark mode" className="text-primary-foreground bg-primary"  onClick={() => setThemeInternal("dark")}>
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem title="Use system settings" onClick={() => setThemeInternal("system")}>
+                <DropdownMenuItem title="Use system settings" className="text-primary-foreground bg-primary"  onClick={() => setThemeInternal("system")}>
                     System
                 </DropdownMenuItem>
             </DropdownMenuContent>

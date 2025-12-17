@@ -9,6 +9,7 @@ import React from "react";
 import {useSession} from "next-auth/react";
 import {getStateList, getTypeGeneralList} from "@/app/base-repo/components/FilterForm/filter-utils";
 import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
 
 export default function FilterResourceForm({filter}: {
     filter: FilterForm;
@@ -35,8 +36,10 @@ export default function FilterResourceForm({filter}: {
                     <Label htmlFor="publisher" className="mb-2 block text-sm font-medium">
                         Publisher
                     </Label>
-                    <div className="relative">
-                        <input
+                    <div className="flex w-full max-w-sm">
+                        <CircleUser
+                            className="pointer-events-none m-2 absolute h-[18px] w-[18px] text-gray-500"/>
+                        <Input
                             id="publisher"
                             name="publisher"
                             type="text"
@@ -44,9 +47,8 @@ export default function FilterResourceForm({filter}: {
                             className="peer block w-auto cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             defaultValue={filter.publisher}
                         >
-                        </input>
-                        <CircleUser
-                            className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500"/>
+                        </Input>
+
                     </div>
                 </div>
 
@@ -55,8 +57,10 @@ export default function FilterResourceForm({filter}: {
                         Publication Year
                     </label>
                     <div className="relative mt-2 rounded-md">
-                        <div className="relative">
-                            <input
+                        <div className="flex w-full max-w-sm">
+                            <Calendar
+                                className="pointer-events-none m-2 absolute h-[18px] w-[18px] text-gray-500"/>
+                            <Input
                                 id="publicationYear"
                                 name="publicationYear"
                                 type="number"
@@ -65,8 +69,6 @@ export default function FilterResourceForm({filter}: {
                                 placeholder="2024"
                                 className="peer block w-auto rounded-md border py-2 pl-10 text-sm outline-2 bg-secondary placeholder:text-gray-500"
                             />
-                            <Calendar
-                                className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900"/>
                         </div>
                     </div>
                 </div>

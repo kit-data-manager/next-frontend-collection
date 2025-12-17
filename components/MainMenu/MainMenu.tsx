@@ -39,7 +39,8 @@ export default function MainMenu() {
                                                     key={`sub_menu_${idx2}`}
                                                     title={menuItem.name}
                                                     href={menuItem.href}
-                                                ><Icon icon={menuItem.icon} width={"1em"} height={"1em"} className={"mr-2"}/>
+                                                ><Icon icon={menuItem.icon} width={"1em"} height={"1em"}
+                                                       className={"mr-2"}/>
                                                     {menuItem.description}
                                                 </ListItem>
                                             )
@@ -53,10 +54,14 @@ export default function MainMenu() {
                             <NavigationMenuItem key={`menu_${item.serviceName}`}>
                                 <NavigationMenuLink
                                     href={item.href || "#"}
-                                    className={navigationMenuTriggerStyle()}
+                                    className={cn(navigationMenuTriggerStyle(), "bg-primary")}
                                 >
-                                    {item.icon ? <Icon icon={item.icon} width="1em" height="1em" className="mr-2" /> : null}
-                                    {item.serviceName}
+                                 <span className="flex items-center gap-2">
+                                     {item.icon && (
+                                    <Icon icon={item.icon} width="1em" height="1em"/>
+                                    )}
+                                     {item.serviceName}
+                                </span>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
 
@@ -87,16 +92,10 @@ const ListItem = (
     return (
         <li>
             <NavigationMenuLink asChild>
-                <Link
-                    href={props.href || "#"}
-                    className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        className
-                    )}
-                >
+                <Link href={props.href || "#"}>
                     <div>
-                        <div className="text-sm font-medium leading-none">{title}</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        <div className="text-sm font-medium text-primary-foreground mb-2 leading-none">{title}</div>
+                        <p className=" line-clamp-2 text-sm leading-snug text-muted-foreground">
                             {children}
                         </p>
                     </div>
