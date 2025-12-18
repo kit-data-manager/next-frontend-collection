@@ -295,9 +295,6 @@
             "items": {
                 "headerTemplate": "License #{{ i1 }} {{#if self.schemeId}} ({{ self.schemeId }}) {{else}} (None) {{/if}}",
                 "$ref": "/definitions/base-repo/models/scheme.json"
-            },
-            "options": {
-                "collapsed": true
             }
         },
         "sizes": {
@@ -333,6 +330,6 @@
         }
     },
     "required": [
-        "titles", "publisher", "publicationYear", "resourceType"
+        "titles", "publisher", "publicationYear", "resourceType", "rights"
     ]
 }

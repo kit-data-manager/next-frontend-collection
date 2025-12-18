@@ -8,11 +8,11 @@ import {Acl, DataResource, KeycloakUser, Permission} from "@/lib/definitions";
 import {UserPrefsType} from "@/lib/hooks/useUserPrefs";
 import type {Element} from "@/components/KanbanBoard/BoardCard";
 import {fetchUsers} from "@/lib/base-repo/client-data";
+import {AccessTabHelp} from "@/app/metastore/components/MetadataEditor/help/AccessTabHelp";
 import {useSession} from "next-auth/react";
 import {
     PermissionUpdateCheckDialog
 } from "@/app/base-repo/components/DataResourceEditor/dialogs/PermissionUpdateCheckDialog";
-import {AccessTabHelp} from "@/app/metastore/components/MetadataEditor/help/AccessTabHelp";
 import {DoUpdatePermissions} from "@/app/metastore/components/MetadataEditor/useMetadataEditor";
 import {capitalizeFirstLetter} from "@/lib/general/format-utils";
 
@@ -133,7 +133,7 @@ export function AccessTab({resource, etag, userPrefs, reloadCallback}: AccessTab
             setElements(res);
         });
         setForceReload(false);
-    }, [userFilter, data?.accessToken, data?.user.preferred_username, status, forceReload, resource.acls]);
+    }, [userFilter, data?.accessToken, data?.user.preferred_username, resource.acls, status, forceReload]);
 
     function updateUserFilter(val: string) {
         if (val && val.length > 2) {

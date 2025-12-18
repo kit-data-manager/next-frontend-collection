@@ -38,7 +38,6 @@ export default async function LatestActivities() {
                         latestActivities.map((activity, i) => {
                             // @ts-ignore
                             const Icon = iconMap[activity.type];
-                          //  const id = activity.id;
                             return (
                                 <div
                                     key={activity.id}

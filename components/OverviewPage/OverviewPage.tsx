@@ -36,7 +36,7 @@ export function OverviewPage({
                 <section className="flex flex-col overflow-hidden">
                     <SectionCaption caption="Actions" level="h2" />
 
-                    <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-3 px-4 py-4 overflow-auto">
+                    <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-3 px-14 py-4 overflow-none">
                         {actions.map(action => (
                             <ActionCard
                                 key={action.title}
@@ -53,7 +53,7 @@ export function OverviewPage({
 
 
                 {/* Bottom row: stats + activities */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 max-h-[50vh]">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <section className="flex flex-col overflow-hidden">
                         <SectionCaption caption="Usage Statistics" level="h2" />
                         <div className="flex-1 overflow-auto px-4 py-4">

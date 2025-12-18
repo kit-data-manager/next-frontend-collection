@@ -7,12 +7,13 @@ import React from "react";
 export function CreateHelp() {
     return (
         <Alert>
-            <ShieldCheck className="h-4 w-4"/>
-            <AlertTitle>Access Permissions</AlertTitle>
+            <Icon width={"16"} height={"16"} icon={"material-symbols-light:edit-square-outline"}
+                  className="h-4 w-4 mr-2"/>
+            <AlertTitle>Schema Registration</AlertTitle>
             <AlertDescription>
                                 <span>Here you can register new metadata schemas. The creation process comprises two parts:
                                     <br/><br/>
-                                    <ul className={"list-disc"}>
+                                    <ul className={"list-disc ml-4"}>
                                         <li>Creation of administrative metadata to describe the schema.</li>
                                         <li>Providing the actual metadata schema.</li>
                                     </ul>
@@ -21,16 +22,16 @@ export function CreateHelp() {
                                     a unique identifier and a title has to be provided. Additional metadata can be added later. After entering
                                     identifier and title into the form, metadata has to be added to the list of file uploads. As soon as all mandatory
                                     metadata is provided, the transfer button&nbsp;
-                                    <Badge variant="contextual_disabled">
+                                    <Badge variant="destructive">
                                                 <Icon icon={"ic:outline-double-arrow"}
-                                                      className="h-4 w-4"
-                                                      width={"24"}
-                                                      height={"24"}/></Badge> will change to  <Badge
+                                                      className="h-4 w-4 bg-destructive"
+                                                      width={"16"}
+                                                      height={"16"}/></Badge> will change to  <Badge
                                         variant="contextual">
                                                 <Icon icon={"ic:outline-double-arrow"}
-                                                      className="h-4 w-4"
-                                                      width={"24"}
-                                                      height={"24"}/></Badge> and can be used to transfer the metadata document the the upload element on the right
+                                                      className="h-4 w-4 text-primary"
+                                                      width={"16"}
+                                                      height={"16"}/></Badge> and can be used to transfer the metadata document the the upload element on the right
                                     hand side and will appear as <i>record.json</i>. <br/>
                                     Now, the actual metadata schema must be provided. Therefor, click <span
                                         className={"text-sky-400"}>+ Add more</span> in the upper right corner of the upload element

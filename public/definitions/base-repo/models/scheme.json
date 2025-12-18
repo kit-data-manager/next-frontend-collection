@@ -5,15 +5,17 @@
   "properties": {
     "id": {
       "type": "integer",
+      "readOnly": true,
       "default": null,
-      "readOnly":true,
-      "options":{
+      "options": {
         "hidden": true
       }
     },
     "schemeId": {
       "type": "string",
       "title": "Identifier",
+      "allowEmpty": false,
+      "default": "",
       "options": {
         "grid_columns": 6,
         "infoText": "The scheme identifier."
@@ -22,10 +24,15 @@
     "schemeUri": {
       "type": "string",
       "title": "URI",
+      "allowEmpty": false,
+      "default": "",
       "options": {
         "grid_columns": 6,
         "infoText": "The scheme URI."
       }
     }
-  }
+  },
+  "required": [
+    "schemeId", "schemeUri"
+  ]
 }

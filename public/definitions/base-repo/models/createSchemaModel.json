@@ -237,13 +237,15 @@
             "type": "array",
             "title":"License Information",
             "description": "License information for the schema, e.g., access license.",
+            "minItems": 1,
+            "propertyOrder": 1,
             "items": {
                 "headerTemplate": "License #{{ i1 }} {{#if self.schemeId}} ({{ self.schemeId }}) {{else}} (None) {{/if}}",
                 "$ref": "/definitions/base-repo/models/scheme.json"
             },
-            "options": {
-                "collapsed": true
-            }
+          "options": {
+            "collapsed": false
+          }
         },
         "sizes": {
             "type": "array",
