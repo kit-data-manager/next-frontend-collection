@@ -4,12 +4,13 @@ import Link from "next/link";
 import {Icon} from "@iconify-icon/react";
 import React from "react";
 
-type ActionCardProps = {
+export type ActionCardProps = {
     icon: "add" | "list" | "upload" | "search";  // The icon name, e.g., plus
     title: string;        // main label
     subtitle?: string;    // optional smaller text
     href: string; // ref
     className?: string;
+    requiresAuth: boolean;
 };
 
 const iconMap = {

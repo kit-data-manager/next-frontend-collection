@@ -1,14 +1,8 @@
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
-import {Suspense} from "react";
-import {ActionCard} from "@/components/OverviewPage/ActionCard";
+import {ReactNode, Suspense} from "react";
+import {ActionCard, ActionCardProps} from "@/components/OverviewPage/ActionCard";
 
-type Action = {
-    icon: string;
-    title: string;
-    subtitle?: string;
-    href: string;
-};
 type OverviewPageProps = {
     breadcrumbs: { label: string; href: string; active?: boolean }[];
     title: string;
@@ -16,10 +10,10 @@ type OverviewPageProps = {
     stats: ReactNode;
     statsFallback: ReactNode;
 
-    activities: ReactNode;
-    activitiesFallback: ReactNode;
+    activities?: ReactNode;
+    activitiesFallback?: ReactNode;
 
-    actions: Action[];
+    actions: ActionCardProps[];
 };
 
 export function OverviewPage({
@@ -51,6 +45,7 @@ export function OverviewPage({
                                 subtitle={action.subtitle}
                                 href={action.href}
                                 className="w-full" // ensures every card fills its grid cell
+                                requiresAuth={action.requiresAuth}
                             />
                         ))}
                     </div>
