@@ -9,16 +9,23 @@ export function InfoCard({icon, text, value}: {
     value: string;
 }) {
     return (
-        <Card className="w-full max-w-xs bg-card shadow-md rounded-lg overflow-hidden flex">
-            {/* Icon section */}
-            <div className="flex items-center justify-center bg-card brightness-150 w-1/3 h-full p-3">
-                <Icon icon={icon} color={"bg-card"} className={"h-12 w-12 mr-2"} width={"42"} height={"42"}/>
-            </div>
+        <Card className="w-full rounded-md border bg-card p-2 sm:p-3 shadow-sm">
+            <div className="flex items-start gap-2 sm:gap-3">
+                {/* Icon */}
+                <div className="flex items-center justify-center rounded-md bg-muted h-8 w-8 sm:h-9 sm:w-9">
+                    <Icon icon={icon} className="h-4 w-4"/>
+                </div>
 
-            {/* Text section */}
-            <div className="flex-1 p-4 flex flex-col justify-center">
-                <div className="text-xl font-semibold text-card-500">{value}</div>
-                <div className="text-sm text-gray-500">{text}</div>
+                {/* Value + label */}
+                <div className="flex flex-col">
+                    <span className="font-semibold leading-none text-foreground text-lg sm:text-xl">
+                        {value}
+                    </span>
+
+                    <span className="mt-1 text-muted-foreground text-[11px] sm:text-xs">
+                        {text}
+                    </span>
+                </div>
             </div>
         </Card>
     );

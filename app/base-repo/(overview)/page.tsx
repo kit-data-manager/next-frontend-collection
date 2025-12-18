@@ -1,44 +1,55 @@
 import RepositoryStats from "@/app/base-repo/components/Dashboard/RepositoryStats";
 import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";
 import * as React from 'react';
-import {Suspense} from 'react';
-import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
 import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
-import SectionCaption from "@/components/SectionCaption/SectionCaption";
+import {OverviewPage} from "@/components/OverviewPage/OverviewPage";
+import {getServerSession, Session} from "next-auth";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function Page() {
+    const basePath: string = ((withBasePath && process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "");
+    let session:Session | undefined = await getServerSession(authOptions) as Session;
+
+    const actions = [
+        {
+            icon: "add",
+            title: "Create Document",
+            subtitle: "Start a new document",
+            href: `${basePath}/base-repo/resources/create`,
+            requiresAuth: true,
+        },
+        {
+            icon: "list",
+            title: "List Documents",
+            subtitle: "View all documents",
+            href: `${basePath}/base-repo/resources`,
+            requiresAuth: false,
+        },
+        {
+            icon: "search",
+            title: "Search",
+            subtitle: "Search using the site search",
+            href: `${basePath}/search`,
+            requiresAuth: false,
+        },
+    ];
+
+    const availableActions = actions.filter(action => {
+        return !(action.requiresAuth && !session);
+    });
 
     return (
-        <main>
-            <Breadcrumbs
-                breadcrumbs={[
-                    {label: "Overview", href: '/base-repo', active: true},
-                ]}
-            />
-            <SectionCaption caption={"Overview"}/>
-
-            <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-2">
-                <div className="flex w-full flex-col">
-                    <SectionCaption caption={"Usage Statistics"} level={"h2"}/>
-
-                    <div className="grid grid-cols-2 gap-4 px-4 py-8">
-                        <Suspense fallback={<RepositoryStatsSkeleton/>}>
-                            <RepositoryStats/>
-                        </Suspense>
-                    </div>
-                </div>
-
-                <div className="flex w-full flex-col">
-                    <SectionCaption caption={"Latest Activities"} level={"h2"}/>
-
-                    <div className="flex gap-4 px-4 py-8 grow flex-col justify-between rounded-xl ">
-                        <Suspense fallback={<LatestActivitiesSkeleton/>}>
-                            <LatestActivities/>
-                        </Suspense>
-                    </div>
-                </div>
-            </div>
-        </main>
+        <OverviewPage
+            title="Overview"
+            breadcrumbs={[
+                {label: "Overview", href: '/base-repo', active: true}
+            ]}
+            stats={<RepositoryStats />}
+            statsFallback={<RepositoryStatsSkeleton />}
+            activities={<LatestActivities />}
+            activitiesFallback={<LatestActivitiesSkeleton />}
+            actions={availableActions}
+        />
     );
 }

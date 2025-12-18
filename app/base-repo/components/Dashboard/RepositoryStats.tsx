@@ -22,7 +22,7 @@ export default async function RepositoryStats() {
         {
             "text": "Resources",
             "value": formatNumber(resources),
-            "icon": "fluent-emoji-high-contrast:card-index-dividers"
+            "icon": "grommet-icons:unordered-list"
         },
         {
             "text": "Files",
@@ -47,12 +47,12 @@ export default async function RepositoryStats() {
     ]
 
     return (
-        <>
-            {stats.map((stat, i) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {stats.map((stat, i) => {
                 return (
                     <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
-        </>
+            </div>
     );
 }

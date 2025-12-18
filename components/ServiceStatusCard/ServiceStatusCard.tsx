@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import {Badge} from "@/components/ui/badge";
-import {CardHeader, Card, CardContent, CardFooter} from "@/components/ui/card";
+import {CardHeader, Card, CardContent} from "@/components/ui/card";
+import {Icon} from "@iconify-icon/react";
 
 const ServiceStatusCard =
     ({ serviceName,serviceVersion, status, link, ledStatus }) => {
@@ -27,69 +28,84 @@ const ServiceStatusCard =
   }
 
   return (
-    <Card className="w-full rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all">
-      <CardHeader>
-        <div className="bg-ring-background p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-primary-background truncate">{serviceName}</h3>
-          <p className="text-sm text-secondary-background truncate">{serviceVersion}</p>
-        </div>
+    <a href={link}>
+        <Card
+            className={classNames(
+                "relative w-full rounded-lg border border-gray-200 shadow-md hover:shadow-md transition-all",
+                link ? "cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-150" : "opacity-80"
+            )}
+        >
+            {/* Header */}
+            <CardHeader>
+                <div className="bg-ring-background p-3 rounded-lg shadow-md">
+                    <h3 className="text-lg font-semibold text-primary-background truncate">
+                        {serviceName}
+                    </h3>
+                    <p className="text-sm text-secondary-background truncate">
+                        {serviceVersion}
+                    </p>
+                </div>
+            </CardHeader>
 
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-1 mt-1">
-          {ledStatus.length === 0?
-              <div className="w-3 h-3 ">
-                {/* Spacing for uniform alignment */}
-              </div>
-          :null}
-          {ledStatus.map((led, index) => (
-              <div key={`card_${index}`} className="relative group">
-                <div
+            {/* Content */}
+            <CardContent className="flex items-center justify-between mt-2 px-3 py-2 gap-4">
+                {/* LED row */}
+                <div className="flex items-center gap-1">
+                    {ledStatus.length === 0 && <div className="w-2 h-2" />}
+                    {ledStatus.map((led, index) => (
+                        <div key={index} className="relative group">
+                            <div
+                                className={classNames(
+                                    "w-2.5 h-2.5 rounded-full transition-all",
+                                    led.status === "UP"
+                                        ? "bg-green-500"
+                                        : led.status === "DOWN"
+                                            ? "bg-red-500"
+                                            : "bg-gray-600"
+                                )}
+                                style={{
+                                    boxShadow:
+                                        "inset 2px 2px 3px rgba(0,0,0,0.3), inset -2px -2px 3px rgba(255,255,255,0.3)",
+                                    transition: "all 0.3s ease-in-out",
+                                }}
+                            />
+                            {led.tooltip && (
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 bg-black text-white text-xs px-1.5 py-0.5 rounded-md whitespace-nowrap transition-opacity duration-200">
+                                    {led.tooltip}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Status badge */}
+                <Badge
                     className={classNames(
-                        'w-3 h-3 transition-all shadow-md',
-                        led.status === "UP" ? 'bg-green-500' : led.status === "DOWN" ? 'bg-red-500' : 'bg-gray-600', 'relative',
+                        "px-2 py-1 text-white rounded-full text-sm",
+                        statusColor
                     )}
                     style={{
-                      boxShadow: led.status
-                          ? 'inset 3px 3px 5px rgba(0, 0, 0, 0.3), inset -3px -3px 5px rgba(255, 255, 255, 0.3)'  // Green: Embossed effect (light top-left, dark bottom-right)
-                          : 'inset 3px 3px 5px rgba(0, 0, 0, 0.3), inset -3px -3px 5px rgba(255, 255, 255, 0.3)', // Red: Same effect
-                      transition: 'all 0.3s ease-in-out' // Smooth transition for the embossed look
+                        boxShadow:
+                            "inset 2px 2px 3px rgba(0,0,0,0.3), inset -2px -2px 3px rgba(255,255,255,0.3)",
+                        transition: "all 0.3s ease-in-out",
                     }}
-                />
-                {/* Tooltip */}
-                {led.tooltip ?
-                <div
-                    className="absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-black text-white text-xs px-2 py-1 rounded-md mt-1 transition-opacity duration-200">
-                  {led.tooltip}
+                >
+                    {statusText}
+                </Badge>
+            </CardContent>
+
+            {/* Optional click indicator */}
+            {link && (
+                <div className="absolute top-2 right-2 text-foreground">
+                    <span className="text-xs">Click</span>
+                    <Icon icon="si:click-duotone" className="h-6 w-6 text-foreground"/>
                 </div>
-                :null }
-              </div>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between items-center">
-        <Badge className={classNames('px-3 py-1 text-white rounded-full', statusColor)}
-               style={{
-                 boxShadow: status === "active"
-                     ? 'inset 3px 3px 5px rgba(0, 0, 0, 0.3), inset -3px -3px 5px rgba(255, 255, 255, 0.3)'  // Green: Embossed effect (light top-left, dark bottom-right)
-                     : 'inset 3px 3px 5px rgba(0, 0, 0, 0.3), inset -3px -3px 5px rgba(255, 255, 255, 0.3)', // Red: Same effect
-                 transition: 'all 0.3s ease-in-out' // Smooth transition for the embossed look
-               }}
-        >
-          {statusText}
-        </Badge>
-        {link && (
-            <a
-                href={link}
-                className="text-blue-500 hover:text-blue-700 text-sm"
-                target="_self"
-                rel="noopener noreferrer"
-            >
-              Visit...
-            </a>
-        )}
-      </CardFooter>
-    </Card>
+
+            )}
+        </Card>
+
+
+    </a>
   );
 };
 
