@@ -129,7 +129,8 @@
                 }
             },
             "options": {
-                "collapsed": true
+                "collapsed": true,
+                "hidden": true
             }
         },
         "alternateIdentifiers": {

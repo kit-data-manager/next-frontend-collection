@@ -205,15 +205,13 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 data-card{
-  --mainBG: light-dark(#EEEEEE, #18181B);
-  --darkerBG: light-dark(#71717A, #111822);
-  --lighterBG: light-dark(#F4F4F5, #27272A);
+  --mainBG: var(--primary);
   --tagText: #18181B;
   font-size: 14px;
 }
 
 data-card::part(card-container) {
-  border-color: light-dark(#0c0c0b40, #27272A);
+  border-color: var(--primary);
   border-style: solid;
   border-width: 0.1em;
   border-radius: var(--radius);
@@ -222,7 +220,7 @@ data-card::part(card-container) {
 }
 
 data-card::part(child-data-card){
-  border-color: light-dark(#EFEFEF, #1a2333);
+  border-color: var(--secondary);
   border-style: solid;
   border-width: 0.1em;
   border-radius: var(--radius);
@@ -239,7 +237,7 @@ data-card::part(label-value-wrapper){
 }
 
 data-card::part(detailed-card-container){
-  background-color: light-dark(#EEEEEE, #18181B);
+  background-color: var(--primary);
 }
 
 /**Customization for mobile view*/
@@ -256,7 +254,7 @@ data-card::part(detailed-card-container){
 }
 
 data-card::part(detailed-metadata-container){
-  background-color: light-dark(#EEEEEE, #18181B);
+  background-color: var(--primary);
 }
 
 data-card::part(image-wrapper){
@@ -273,7 +271,7 @@ data-card::part(orcid-link){
 }
 
 data-card::part(action-btn-icon){
-  color: light-dark(var(--accent-foreground), var(--accent-foreground));
+  line-height: 1;
   font-weight: 500;
   text-decoration: underline!important;
 }
