@@ -76,7 +76,6 @@ export default function Page() {
 
     return (
         <main>
-
                 <Breadcrumbs
                     breadcrumbs={[
                         {label: 'Overview', href: '/metastore'},

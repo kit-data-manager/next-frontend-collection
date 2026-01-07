@@ -3,18 +3,40 @@
 import React from 'react';
 import {Icon} from "@iconify-icon/react";
 import {Activity} from "@/app/base-repo/components/Dashboard/LatestActivities";
+import {XCircleIcon} from "@heroicons/react/24/outline";
+import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel";
 
 export function ActivityList ({activities}: {
     activities: Array<Activity>;
 }) {
     return (
         <div className="w-full max-w-3xl mx-auto rounded-lg border bg-card shadow-sm overflow-y-auto max-h-[400px]">
+            <div className="px-6">
+                {
+                    activities.length < 1 ? (
+                        <div className='flex flex-row items-center justify-between py-4'>
+                            <div className="flex items-center">
+                                <XCircleIcon className='h-5 w-5 mr-5'/>
+                                <div className="min-w-0">
+                                    <p className="truncate text-sm font-semibold md:text-base">
+                                        No activities captured so far.
+                                    </p>
+                                    <span className="text-xs text-foreground sm:block">
+                                            <CreatorLabel firstname={"System"}/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ) : null
+                }
+            </div>
+
             {activities.map((activity, index) => (
                 <div
                     key={index}
                     className="flex gap-3 px-3 py-2 border-b last:border-0 items-start sm:items-center">
                     {/* Icon */}
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md">
                         <Icon
                             icon={activity.icon}
                             className="h-4 w-4"

@@ -111,7 +111,7 @@ export async function fetchLatestActivities(): Promise<Activity[]> {
         }
 
         return [] as Activity[];
-        /*return [
+       /* return [
             {
                 "id": 1,
                 "type": "INITIAL",

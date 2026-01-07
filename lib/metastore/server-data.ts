@@ -36,22 +36,32 @@ export async function fetchMetastoreOverview() {
 
         if (results[0].status === "fulfilled") {
             stats.uniqueUsers = Number(results[0].value.rows[0].count ?? 0);
+        }else if (results[0].status === "rejected") {
+            stats.uniqueUsers = 0;
         }
 
         if (results[1].status === "fulfilled") {
             stats.resources = Number(results[1].value.rows[0].count ?? 0);
+        }else if (results[1].status === "rejected") {
+            stats.resources = 0;
         }
 
         if (results[2].status === "fulfilled") {
             stats.openResources = Number(results[2].value.rows[0].count ?? 0);
+        }else if (results[2].status === "rejected") {
+            stats.openResources = 0;
         }
 
         if (results[3].status === "fulfilled") {
             stats.schemas = Number(results[3].value.rows[0].count ?? 0);
+        }else if (results[3].status === "rejected") {
+            stats.schemas = 0;
         }
 
         if (results[4].status === "fulfilled") {
             stats.metadata = Number(results[4].value.rows[0].sum ?? 0);
+        }else if (results[4].status === "rejected") {
+            stats.metadata = 0;
         }
 
         stats.closedResources = Number(stats.schemas + stats.metadata - stats.openResources);
@@ -73,7 +83,7 @@ export async function fetchLatestActivities(): Promise<Activity[]> {
         port: Number(process.env.DB_PORT)
     })
 
-    const results = await client.query(' \
+    const results = await Promise.allSettled([client.query(' \
             SELECT \
                 sna.type, \
                 sna.managed_type, \
@@ -86,7 +96,8 @@ export async function fetchLatestActivities(): Promise<Activity[]> {
             WHERE \
                 com.commit_pk = sna.commit_fk AND \
                 sna.managed_type IN (\'edu.kit.datamanager.repo.domain.ContentInformation\', \'edu.kit.datamanager.repo.domain.DataResource\') \
-            ORDER BY com.commit_date DESC LIMIT 6');
+            ORDER BY com.commit_date DESC LIMIT 6')
+        ]);
 
     if (results[0].status === "fulfilled") {
         return results[0].value.rows as Activity[] ?? [] as Activity[];

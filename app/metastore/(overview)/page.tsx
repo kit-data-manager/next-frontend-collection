@@ -1,4 +1,4 @@
-import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";
+import LatestActivities from "@/app/metastore/components/Dashboard/LatestActivities";
 import * as React from 'react';
 import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
 import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
@@ -19,6 +19,13 @@ export default async function Page() {
             subtitle: "Start a new schema",
             href: `${basePath}/metastore/schemas/create`,
             requiresAuth: true,
+        },
+        {
+            icon: "list",
+            title: "List Schemas",
+            subtitle: "View all schemas",
+            href: `${basePath}/metastore/schemas`,
+            requiresAuth: false,
         },
         {
             icon: "list",

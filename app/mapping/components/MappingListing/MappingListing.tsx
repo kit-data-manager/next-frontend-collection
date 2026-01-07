@@ -35,21 +35,23 @@ export function MappingListing({}: MappingListing2Props) {
         setForceReload(false);
         if (status != "loading") {
             setIsLoading(true);
-            fetchMappings(0, 20, undefined, undefined, data?.accessToken).then((page) => {
-                return page.resources;
-            }).then((mappings) => {
-                fetchMappingPlugins(data?.accessToken).then(plugins => {
-                    mappings.map((mapping) => {
-                        mapping.plugin = plugins.find((plugin) => mapping.mappingType === plugin.id);
-
-                    });
-
+            fetchMappings(0, 20, undefined, undefined, data?.accessToken)
+                .then(page => page.resources)
+                .then(mappings =>
+                    fetchMappingPlugins(data?.accessToken).then(plugins =>
+                        mappings.map(mapping => ({
+                            ...mapping,
+                            plugin: plugins.find(
+                                plugin => plugin.id === mapping.mappingType
+                            ),
+                        }))
+                    )
+                )
+                .then(enrichedMappings => {
+                    setMappings(enrichedMappings);
                     setIsLoading(false);
-                    setMappings(mappings);
                 });
-            })
         }
-
         setShowAlert(jobStore.mappingStatus.length > maxJobs);
     }, [status, data?.accessToken, forceReload, showAlert, jobStore.mappingStatus.length, maxJobs])
 
@@ -72,7 +74,7 @@ export function MappingListing({}: MappingListing2Props) {
     }
 
     function unregisterAllJobs(){
-        console.log("Unregisterin all MappingJobs");
+        console.log("Unregistering all MappingJobs");
         jobStore.mappingStatus.map((job) => {
             deleteMappingJobStatus(job.jobId).then((result) => {
                 if (result) {

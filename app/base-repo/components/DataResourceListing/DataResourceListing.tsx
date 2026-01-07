@@ -67,7 +67,7 @@ export default function DataResourceListing({page, size, filter, sort}: {
     }
 
     if (resources.length === 0) {
-        return ErrorPage({errorCode: Errors.Empty, backRef: "/base-repo/resources"})
+        return ErrorPage({errorCode: Errors.Empty, backRef: "/base-repo/"})
     }
 
     function doQuickShare(redirect: string) {

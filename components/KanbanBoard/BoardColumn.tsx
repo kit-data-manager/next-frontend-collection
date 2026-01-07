@@ -69,7 +69,7 @@ export const BoardColumn = ({ column, elements, isOverlay }: BoardColumnProps) =
       className={variants({
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}>
-      <CardHeader className="p-4 font-semibold text-sm border-b-2 bg-gray-100 dark:bg-secondary flex flex-row items-center justify-between">
+      <CardHeader className="p-4 font-semibold text-sm bg-accent border-b-2 flex flex-row items-center justify-between">
         <Icon icon={column.icon}
               className="h-6 w-6 mr-2"
               width={"24"}

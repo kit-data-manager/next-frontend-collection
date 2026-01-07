@@ -61,12 +61,11 @@ export default function MetadataRecordFileUploader({
                     if(xhr.status != 201){
                         throw new Error(JSON.parse(xhr.responseText).detail)
                     }
+
+                    const res: DataResource = JSON.parse(xhr.responseText);
+                    reloadCallback(`/metastore/metadata/${res.id}/edit/?target=metadata`);
                 }
             }));
-
-        installEventHandlers(uppy, data?.accessToken, () => {
-            reloadCallback(`/metastore/metadata/${metadata.id}/edit?target=metadata`);
-        });
     }, [theme, status, data?.accessToken]);
 
     if (!schema) {
@@ -81,12 +80,16 @@ export default function MetadataRecordFileUploader({
     })
 
     installEventHandlers(uppy, data?.accessToken, () => {
-        reloadCallback(`/metastore/metadata/${metadata.id}/edit?target=metadata`);
+        reloadCallback(`/metastore/metadata/`);
     });
 
     function updateData(data: object) {
-        setMetadata(data as DataResource);
-        setConfirm(data != undefined);
+        if (!data) {
+            setConfirm(false);
+        } else {
+            setMetadata(data as DataResource);
+            setConfirm(true);
+        }
     }
 
     function addMetadataToUppy() {
@@ -112,7 +115,7 @@ export default function MetadataRecordFileUploader({
 
             </div>
             <div className={"shrink"}>
-                <Button variant={"contextual"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
+                <Button variant={confirm ? "success" : "destructive"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
                     <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>
                     <Icon className={"w-12 h-12 xl:hidden visible"} icon={"ri:arrow-down-double-line"}/>
                 </Button>

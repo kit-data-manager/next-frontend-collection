@@ -36,7 +36,7 @@ export function OverviewPage({
                 <section className="flex flex-col overflow-hidden">
                     <SectionCaption caption="Actions" level="h2" />
 
-                    <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-3 px-14 py-4 overflow-none">
+                    <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-4 px-14 py-4 overflow-none">
                         {actions.map(action => (
                             <ActionCard
                                 key={action.title}
