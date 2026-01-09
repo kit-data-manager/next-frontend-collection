@@ -6,6 +6,8 @@ import SystemStats, {SystemStatsSkeleton} from "@/components/SystemStats/SystemS
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export default async function Page() {
+    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "";
+
     let session:Session | undefined = undefined;
     let authError = false;
     try {
@@ -29,7 +31,7 @@ export default async function Page() {
                 </div>
                 <SectionCaption caption={"Status"} level={"h2"}/>
                 <div
-                    className="grid justify-center gap-6 rounded-lg px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
+                    className="grid justify-center gap-12 rounded-lg px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
                     <Suspense fallback={<SystemStatsSkeleton/>}>
                         <SystemStats/>
                     </Suspense>

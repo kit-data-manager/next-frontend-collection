@@ -6,18 +6,8 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {ExtendedSession} from "@/lib/next-auth/next-auth";
 import ServiceStatusCard, {ServiceStatusCardSkeleton} from "@/components/ServiceStatusCard/ServiceStatusCard";
 
-type ServiceStats = {
-    check:boolean;
-    serviceUrl: string;
-    info: ActuatorInfo;
-    health: ActuatorHealth;
-}
-
 export default async function SystemStats() {
     const data: ExtendedSession | null = await getServerSession(authOptions);
-    //const {data, status} = useSession();
-    //const size = useWindowSize();
-
     const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
     const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
     const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";

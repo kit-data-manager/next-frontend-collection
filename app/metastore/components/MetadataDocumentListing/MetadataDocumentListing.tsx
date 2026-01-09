@@ -74,7 +74,7 @@ export default function MetadataDocumentListing({page, size, sort}: {
     }
 
     if (resources.length === 0) {
-        return ErrorPage({errorCode: Errors.Empty, backRef: "/metastore/metadata"})
+        return ErrorPage({errorCode: Errors.Empty, backRef: "/metastore/"})
     }
 
     /**

@@ -39,15 +39,13 @@ export default async function MetastoreStats() {
             "icon": "fontisto:locked"
         }
     ]
-
     return (
-        <>
-            {stats.map((stat, i) => {
-                const Icon = stat.icon;
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+        {stats.map((stat, i) => {
                 return (
                     <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
-        </>
+        </div>
     );
 }

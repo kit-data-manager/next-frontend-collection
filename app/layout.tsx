@@ -1,6 +1,6 @@
-import './global.css';
-import './autocomplete.css';
 import 'react-toastify/dist/ReactToastify.css';
+import './globals.css';
+import './autocomplete.css';
 
 import {inter} from '@/components/fonts';
 import React, {Suspense} from "react";
@@ -37,7 +37,9 @@ export default async function RootLayout({children}: {
               href="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css"/>
 
 
-        <ThemeProvider attribute="class" defaultTheme={theme} enableSystem disableTransitionOnChange>
+        <ThemeProvider  attribute="class"
+                        enableSystem
+                        disableTransitionOnChange defaultTheme={theme}>
             <SecurityProviders>
                 <AppHeader securityEnabled={securityEnabled}>
                     <Suspense fallback={<div>Loading...</div>}>

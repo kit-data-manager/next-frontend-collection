@@ -23,7 +23,14 @@ interface MetadataTabProps {
     reloadCallback:Function;
 }
 
-export function MetadataTab({createMode, resource, etag, schema, userPrefs, updateResourceCallback, reloadCallback}: MetadataTabProps) {
+export function MetadataTab({createMode,
+                                resource,
+                                etag,
+                                schema,
+                                userPrefs,
+                                updateResourceCallback,
+                                reloadCallback
+                            }: MetadataTabProps) {
     const [editorReady, setEditorReady] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const {data, status} = useSession();
@@ -44,13 +51,13 @@ export function MetadataTab({createMode, resource, etag, schema, userPrefs, upda
             {!createMode ?
                 <ConfirmCancelComponent confirmLabel={"Commit"}
                                         cancelLabel={"Cancel"}
-                                        confirmAction={() => DoUpdateDataResource(resource, etag, reloadCallback, data?.accessToken)}
+                                        confirmAction={() => (confirm ? DoUpdateDataResource(resource, etag, reloadCallback, data?.accessToken) : null)}
                                         cancelHref={`/base-repo/resources/${resource.id}`}
                                         confirm={confirm}
                 /> :
                 <ConfirmCancelComponent confirmLabel={"Create"}
                                         cancelLabel={"Cancel"}
-                                        confirmAction={() => DoCreateDataResource(resource, router, data?.accessToken)}
+                                        confirmAction={() => (confirm ? DoCreateDataResource(resource, router, data?.accessToken) : null)}
                                         cancelHref={`/base-repo/resources`}
                                         confirm={confirm}
                 />

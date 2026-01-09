@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {ThemeProvider as NextThemesProvider, useTheme} from "next-themes"
-import {type ThemeProviderProps} from "next-themes/dist/types"
+import {ThemeProvider as NextThemesProvider, useTheme, ThemeProviderProps} from "next-themes"
 import {useEffect} from "react";
 import {setCookie} from "cookies-next";
 

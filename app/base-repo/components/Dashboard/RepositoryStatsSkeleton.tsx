@@ -6,8 +6,8 @@ import {Icon} from "@iconify-icon/react";
 export function RepositoryStatsSkeleton(props: any) {
     return (
         Array(6).fill(0).map((el, index) => (
-            <>
-                <Card className="w-full max-w-xs bg-card shadow-md rounded-lg overflow-hidden flex">
+
+                <Card key={"stat" + index} className="w-full max-w-xs bg-card shadow-md rounded-lg overflow-hidden flex">
                     {/* Icon section */}
                     <div
                         className="flex items-center justify-center bg-card brightness-150 w-1/3 h-full p-3 animate-pulse">
@@ -20,7 +20,7 @@ export function RepositoryStatsSkeleton(props: any) {
                         <div className="text-sm text-gray-500 animate-pulse">...</div>
                     </div>
                 </Card>
-            </>
+
         ))
     )
 }

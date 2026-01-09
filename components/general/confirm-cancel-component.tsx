@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 
 export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confirmAction, cancelHref, confirm=false}:
                                                    {
@@ -26,18 +27,17 @@ export default function ConfirmCancelComponent({confirmLabel, cancelLabel, confi
         <>
             <div className="container py-10 px-10 sl-7 mx-0 min-w-full flex flex-col items-center">
                 <div className="space-x-4">
-                    <button id="cancelButton"
+                    <Button id="cancelButton"
                             onClick={handleCancel}
-                          className="bg-destructive hover:underline font-bold py-2 px-4 rounded">
+                            variant="destructive">
                         {cancelLabel}
-                    </button>
-                    <button id="confirmButton"
+                    </Button>
+                    <Button id="confirmButton"
                             onClick={confirmAction}
-                            className={clsx('bg-success hover:underline font-bold px-5 py-[7px] rounded',
-                                { 'opacity-50 cursor-not-allowed': !confirm})}
-                                >
+                            variant="success"
+                            className={clsx({ 'opacity-50 cursor-not-allowed': !confirm})}>
                         {confirmLabel}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </>

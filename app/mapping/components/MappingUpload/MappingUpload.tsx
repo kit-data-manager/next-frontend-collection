@@ -4,8 +4,8 @@ import {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from "@uppy/react/dashboard";
-//import '@uppy/core/dist/style.min.css';
-//import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 interface MappingUploadProps {
     mappingId: string;
@@ -22,7 +22,10 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
             endpoint: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${mappingId}`,
             method: "post",
             formData: true,
-            fieldName: "document"
+            fieldName: "document",
+            getResponseData(xhr) {
+                return { url: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${mappingId}` };
+            }
         }));
 
     if (fileTypes && fileTypes.length > 0) {

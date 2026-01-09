@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    FairDOConfig,
-    FairDOElasticSearch,
-    ResultViewProps
-} from "@kit-data-manager/react-fairdo-search";
+SearchConfig,
+    ReactSearchComponent,
+    ResultViewProps,
+} from "@kit-data-manager/react-search-component";
 import React, {useCallback, useMemo} from "react";
 import {RecordResultView} from "@/components/ElasticSearch/RecordResultView";
 import {useTheme} from "next-themes";
@@ -16,7 +16,7 @@ export default function ElasticSearch() {
     const {theme} = useTheme();
     const {data, status} = useSession();
 
-    const config: FairDOConfig = useMemo(() => {
+    const config: SearchConfig = useMemo(() => {
         return {
             alwaysSearchOnInitialLoad: true,
             host: searchUrl,
@@ -91,6 +91,6 @@ export default function ElasticSearch() {
     }
 
     return (
-        <FairDOElasticSearch config={config} resultView={resultView} dark={theme === "dark"}/>
+        <ReactSearchComponent config={config} resultView={resultView} dark={theme === "dark"}/>
     )
 }

@@ -77,7 +77,7 @@ export default function MetadataEditor({...props}) {
 
     return (
         <div className="flex col-2">
-            <div className="grid flex-grow justify-items-stretch">
+            <div className="grid grow justify-items-stretch">
                 <button onClick={() => updateUserPrefs({helpVisible: !userPrefs.helpVisible})}
                         title={"Show/Hide Help"}
                         className={"justify-self-end"}>

@@ -49,7 +49,7 @@ export default function Page({params}) {
 
     useEffect(() => {
         // do conditional chaining
-        monaco?.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+        // monaco?.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         // or make sure that it exists by other ways
         monaco?.editor.addKeybindingRules([
             {
@@ -129,7 +129,7 @@ export default function Page({params}) {
             />
             <SectionCaption caption={"View Metadata Document"}/>
 
-            <div className="grid flex-grow-1">
+            <div className="grid grow">
                 <Tabs defaultValue={"metadata"} className="w-full">
                     <TabsList>
                         <TabsTrigger value="metadata"><Upload className="h-4 w-4 mr-2"/> Metadata</TabsTrigger>

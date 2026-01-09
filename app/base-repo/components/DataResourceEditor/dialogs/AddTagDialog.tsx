@@ -31,7 +31,7 @@ export function AddTagDialog({openModal, filename, etag, actionCallback}: AddTag
                         Provide a tag to add to this content element.
                     </DialogDescription>
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Input type="text" id="tag" placeholder="newTag" className="bg-secondary border-1"
+                        <Input type="text" id="tag" placeholder="newTag" className="bg-secondary border"
                                onChange={(event: any) => setTag(event.target.value)}/>
                     </div>
                 </DialogHeader>

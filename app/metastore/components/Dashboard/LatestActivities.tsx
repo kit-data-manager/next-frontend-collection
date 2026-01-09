@@ -1,85 +1,38 @@
-import {ArrowPathIcon, PlusCircleIcon, XCircleIcon} from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import {lusitana} from '@/components/fonts';
 import {fetchLatestActivities} from "@/lib/metastore/server-data";
-import {CreatorLabel} from "@/app/base-repo/components/CreatorLabel/CreatorLabel";
 import * as React from "react";
 import {formatDateToLocal} from "@/lib/general/format-utils";
-
-const iconMap = {
-    INITIAL: PlusCircleIcon,
-    UPDATE: ArrowPathIcon,
-    TERMINAL: XCircleIcon
-};
+import ActivityList from "@/components/ActivityList/ActivityList";
+import {Activity} from "@/app/base-repo/components/Dashboard/LatestActivities";
 
 export default async function LatestActivities() {
     const latestActivities = await fetchLatestActivities();
+    let activities: Array<Activity> = [];
+
+    latestActivities.map((v) => {
+        let activity:Activity = {} as Activity;
+        const elementType = v.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"
+
+        switch (v.type) {
+            case "INITIAL":
+                activity.title = `${elementType} created`;
+                activity.icon = "grommet-icons:new";
+                break;
+            case "UPDATE":
+                activity.title = `${elementType} updated`;
+                activity.icon = "ic:baseline-autorenew";
+                break;
+            case "TERMINAL":
+                activity.title = `${elementType} deleted`;
+                activity.icon = "typcn:delete-outline";
+                break;
+        }
+
+        activity.subtitle = v.author;
+        activity.date = formatDateToLocal(v.commit_date);
+        activities.push(activity);
+    });
 
     return (
-                <div className="px-6">
-                    {
-                        latestActivities.length < 1 ? (
-                        <div className='flex flex-row items-center justify-between py-4'>
-                            <div className="flex items-center">
-                                <XCircleIcon className='h-5 w-5  mr-5 text-success'/>
-                                <div className="min-w-0">
-                                    <p className="truncate text-sm font-semibold md:text-base">
-                                       No activities captured so far.
-                                    </p>
-                                    <span className="text-xs text-muted sm:block">
-                                            <CreatorLabel firstname={"System"}/>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    ) : null
-                    }
-                    {
-                        latestActivities.map((activity, i) => {
-                            // @ts-ignore
-                            const Icon = iconMap[activity.type];
-                          //  const id = activity.id;
-                            return (
-                                <div
-                                    key={activity.id}
-                                    className='flex flex-row items-center justify-between py-4 gap-2 border-t border-b p-2'
-                                >
-                                    <div className="flex items-center">
-                                        {Icon ? <Icon title={activity.type} className={clsx(`h-5 w-5 mr-5`, {
-                                            'text-warn': activity.type === "TERMINAL",
-                                            'text-info': activity.type === "UPDATE",
-                                            'text-success': activity.type === "INITIAL"
-                                        })
-                                        }/> : null}
-                                        <div className="min-w-0">
-                                            {(activity.type === "INITIAL" || activity.type === "UPDATE") ? (
-                                                <p className="truncate text-sm font-semibold md:text-base">
-                                                    {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
-                                                    {activity.type === "UPDATE" ? " updated" : ""}
-                                                    {activity.type === "INITIAL" ? " created" : ""}
-                                                </p>
-                                            ) : (
-                                                <p className="truncate text-sm font-semibold md:text-base">
-                                                    {activity.managed_type == "edu.kit.datamanager.repo.domain.ContentInformation" ? "File" : "Resource"}
-                                                    {activity.type === "TERMINAL" ? " deleted" : ""}
-                                                </p>
-                                            )
-
-                                            }
-                                            <span className="text-xs sm:block">
-                                              {(activity.type === "TERMINAL" && activity.managed_type === "edu.kit.datamanager.repo.domain.ContentInformation") ?
-                                                  (<p>Unknown</p>) : (<CreatorLabel firstname={activity.author}/>) }
-                                        </span>
-                                        </div>
-                                    </div>
-                                    <div className="flex min-w-0 items-start">
-                                <span
-                                    className={`${lusitana.className} antialiased top-0 right-0 h-8 truncate text-xs font-small md:text-small`}>
-                                    {formatDateToLocal(activity.commit_date)}
-                                </span>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-)}
+        <ActivityList activities={activities}/>
+    )
+}

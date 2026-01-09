@@ -13,7 +13,7 @@ export function MetadataTabHelp() {
             <AlertDescription>
                                 <span>Here you can edit the resource&apos;s metadata. Below, you&apos;ll find a form with a pre-selection of available metadata.
                                     Mandatory elements are marked with a <span className={"text-error"}>*</span> and must be filled in order to allow to
-                                    <Badge variant="thumb_set" className={"text-ring"}>Commit</Badge> changes or initially store a resource.  Information for
+                                    <Badge variant="thumb_set" className={"text-ring"}>Create/Commit</Badge> changes or initially store a resource.  Information for
                                     each element can be shown by hovering over the tooltip icon <a
                                         className="tooltips">ⓘ</a>. Complex properties are collapsed
                                     and can be expanded by clicking the expand button <Badge variant="outline"><i

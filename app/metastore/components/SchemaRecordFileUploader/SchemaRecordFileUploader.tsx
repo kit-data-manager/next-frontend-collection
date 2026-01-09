@@ -4,8 +4,8 @@ import React, {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from "@uppy/react/dashboard";
-//import '@uppy/core/dist/style.min.css';
-//import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 import {useTheme} from "next-themes";
 import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
@@ -36,7 +36,10 @@ export default function SchemaRecordFileUploader({
             endpoint: `${baseUrl}/api/v2/schemas/`,
             method: "post",
             formData: true,
-            bundle: true
+            bundle: true,
+            getResponseData(xhr) {
+                return { url: xhr.getResponseHeader("location") };
+            }
         }));
 
     useEffect(() => {
@@ -83,8 +86,12 @@ export default function SchemaRecordFileUploader({
      * @param {object} data  - The resource of undefined in case of validation errors.
      */
     function updateData(data: object) {
-        setMetadata(data as DataResource);
-        setConfirm(data != undefined);
+        if (!data) {
+            setConfirm(false);
+        } else {
+            setMetadata(data as DataResource);
+            setConfirm(true);
+        }
     }
 
     /**
@@ -113,8 +120,8 @@ export default function SchemaRecordFileUploader({
                           onChange={(d: object) => updateData(d)}/>
 
             </div>
-            <div className={"flex-shrink"}>
-                <Button variant={"contextual"} title={"Add Metadata to Upload"}
+            <div className={"shrink"}>
+                <Button variant={confirm ? "success" : "destructive"} title={"Add Metadata to Upload"}
                         className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"}
                         disabled={!confirm} onClick={addMetadataToUppy}>
                     <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>

@@ -1,8 +1,5 @@
 'use client'
 
-import {DocumentDuplicateIcon, PlayIcon, PuzzlePieceIcon} from '@heroicons/react/24/outline';
-
-import {StatusCard} from "@/components/StatusCard/StatusCard";
 import {formatNumber} from "@/lib/general/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client-data";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
@@ -43,13 +40,12 @@ export default function MappingServiceStats() {
     ]
 
     return (
-        <>
-            {stats.map((stat, i) => {
-                const Icon = stat.icon;
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+        {stats.map((stat, i) => {
                 return (
                     <InfoCard key={i} icon={stat.icon} value={stat.value} text={stat.text}/>
                 );
             })}
-        </>
+        </div>
     );
 }

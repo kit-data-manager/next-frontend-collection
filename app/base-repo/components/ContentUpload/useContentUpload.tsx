@@ -32,7 +32,10 @@ export function installEventHandlers(uppy: Uppy, resourceId?: string, accessToke
                 uppy.setFileState(file.id, {
                     xhrUpload: {
                         //  ...file.xhrUpload,
-                        endpoint: `${baseUrl}/api/v1/dataresources/`
+                        endpoint: `${baseUrl}/api/v1/dataresources/`,
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`
+                        }
                     }
                 })
             }

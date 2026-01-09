@@ -4,8 +4,8 @@ import React, {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from "@uppy/react/dashboard";
-//import '@uppy/core/dist/style.min.css';
-//import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 import {useTheme} from "next-themes";
 import JsonForm from "@/components/JsonForm/jsonform";
 import {DataResource} from "@/lib/definitions";
@@ -39,7 +39,10 @@ export default function MetadataRecordFileUploader({
             endpoint: `${baseUrl}/api/v2/metadata/`,
             method: "post",
             formData: true,
-            bundle: true
+            bundle: true,
+            getResponseData(xhr) {
+                return { url: xhr.getResponseHeader("location") };
+    }
         }));
     useEffect(() => {
         setUppyTheme(theme === "system" ? "auto" : theme);
@@ -58,12 +61,11 @@ export default function MetadataRecordFileUploader({
                     if(xhr.status != 201){
                         throw new Error(JSON.parse(xhr.responseText).detail)
                     }
+
+                    const res: DataResource = JSON.parse(xhr.responseText);
+                    reloadCallback(`/metastore/metadata/${res.id}/edit/?target=metadata`);
                 }
             }));
-
-        installEventHandlers(uppy, data?.accessToken, () => {
-            reloadCallback(`/metastore/metadata/${metadata.id}/edit?target=metadata`);
-        });
     }, [theme, status, data?.accessToken]);
 
     if (!schema) {
@@ -78,12 +80,16 @@ export default function MetadataRecordFileUploader({
     })
 
     installEventHandlers(uppy, data?.accessToken, () => {
-        reloadCallback(`/metastore/metadata/${metadata.id}/edit?target=metadata`);
+        reloadCallback(`/metastore/metadata/`);
     });
 
     function updateData(data: object) {
-        setMetadata(data as DataResource);
-        setConfirm(data != undefined);
+        if (!data) {
+            setConfirm(false);
+        } else {
+            setMetadata(data as DataResource);
+            setConfirm(true);
+        }
     }
 
     function addMetadataToUppy() {
@@ -108,8 +114,8 @@ export default function MetadataRecordFileUploader({
                           onChange={(d: object) => updateData(d)}/>
 
             </div>
-            <div className={"flex-shrink"}>
-                <Button variant={"contextual"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
+            <div className={"shrink"}>
+                <Button variant={confirm ? "success" : "destructive"} title={"Add Metadata to Upload"} className={"w-full xl:w-4/6 xl:h-full xl:ml-4 xl:mr-4"} disabled={!confirm} onClick={addMetadataToUppy}>
                     <Icon className={"w-12 h-12 invisible xl:visible"} icon={"ic:outline-double-arrow"}/>
                     <Icon className={"w-12 h-12 xl:hidden visible"} icon={"ri:arrow-down-double-line"}/>
                 </Button>

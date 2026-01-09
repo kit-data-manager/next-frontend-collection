@@ -4,8 +4,8 @@ import {useEffect, useState} from "react";
 import Uppy from "@uppy/core";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from '@uppy/react/dashboard';
-//import '@uppy/core/dist/style.min.css';
-//import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 import {useRouter} from 'next/navigation'
 import {installEventHandlers} from "@/app/base-repo/components/ContentUpload/useContentUpload";
 import {useTheme} from "next-themes";
@@ -22,7 +22,15 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
     const router = useRouter();
 
     const [uppy, setUppy] = useState(() => new Uppy()
-        .use(XHRUpload, {endpoint: `${baseUrl}/api/v1/dataresources`, method: "post", formData: true, fieldName: "file"}));
+        .use(XHRUpload, {
+            endpoint: `${baseUrl}/api/v1/dataresources`,
+            method: "post",
+            formData: true,
+            fieldName: "file",
+            getResponseData(xhr) {
+                return { url: xhr.getResponseHeader("location") };
+            }
+        }));
     const {data, status} = useSession();
 
     const {theme} = useTheme();
@@ -32,7 +40,15 @@ export default function ContentUpload({id, reloadCallback}: ContentUploadProps) 
         setUppyTheme(theme === "system" ? "auto" : theme?theme : "auto");
         uppy.destroy();
         setUppy(new Uppy()
-            .use(XHRUpload, {endpoint: `${baseUrl}/api/v1/dataresources`, method: "post", formData: true, fieldName: "file"}));
+            .use(XHRUpload, {
+                endpoint: `${baseUrl}/api/v1/dataresources`,
+                method: "post",
+                formData: true,
+                fieldName: "file",
+                getResponseData(xhr) {
+                    return { url: xhr.getResponseHeader("location") };
+                }
+            }));
         installEventHandlers(uppy, id, data?.accessToken, () => {
             reloadCallback(`/base-repo/resources/${id}/edit?target=content`);
         });

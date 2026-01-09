@@ -43,7 +43,7 @@ export function MetadataTab({
                       onChange={(d: object) => DataChanged(d, setConfirm, updateResourceCallback)}/>
             <ConfirmCancelComponent confirmLabel={"Commit"}
                                     cancelLabel={"Cancel"}
-                                    confirmAction={() => DoUpdateMetadata(resource, etag, reloadCallback, data?.accessToken)}
+                                    confirmAction={() => (confirm ? DoUpdateMetadata(resource, etag, reloadCallback, data?.accessToken) : null)}
                                     cancelHref={`/metastore/metadata/`}
                                     confirm={confirm}
             />

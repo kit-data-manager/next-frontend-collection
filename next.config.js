@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 
+/**assetPrefix: "http://localhost", */
 const nextConfig = {
     typescript: {ignoreBuildErrors: false},
     trailingSlash: true,
     basePath: "",
-    assetPrefix: "https://localhost/frontend",
     images: {
         remotePatterns: [
             {
-                protocol: 'https',
+                protocol: 'http',
                 hostname: 'localhost',
                 port: '',
                 pathname: '/**',
