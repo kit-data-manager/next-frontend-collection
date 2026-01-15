@@ -25,7 +25,7 @@ export default function MainMenu() {
 
     return (
         <NavigationMenu className="px-2 py-2.5 sm:px-4">
-            <NavigationMenuList>
+            <NavigationMenuList className="flex flex-wrap gap-1 min-w-0">
                 {items.map((item: SubMenu, idx: number) => {
                     if (item.menuItems) {
                         return (<NavigationMenuItem key={`main_menu_${idx}`}>

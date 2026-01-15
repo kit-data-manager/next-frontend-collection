@@ -37,11 +37,11 @@ const ServiceStatusCard =
         >
             {/* Header */}
             <CardHeader>
-                <div className="bg-ring-background p-3 rounded-lg shadow-md">
-                    <h3 className="text-lg font-semibold text-primary-background truncate">
+                <div className="min-w-0 bg-ring-background p-3 rounded-lg shadow-md">
+                    <h3 className="truncate text-lg font-semibold text-primary-background">
                         {serviceName}
                     </h3>
-                    <p className="text-sm text-secondary-background truncate">
+                    <p className="truncate text-sm text-secondary-background">
                         {serviceVersion}
                     </p>
                 </div>
