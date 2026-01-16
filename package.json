@@ -87,7 +87,7 @@
     "typescript": "5.9.3",
     "use-debounce": "^10.0.6",
     "zod": "^4.3.5",
-    "zustand": "^5.0.9"
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@iconify-icon/react": "^3.0.3",
