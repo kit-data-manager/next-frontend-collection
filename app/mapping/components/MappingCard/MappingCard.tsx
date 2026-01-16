@@ -60,37 +60,77 @@ export function MappingCard({job, unregisterCallback}: MappingCardProps) {
     const basePath: string = (process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : "");
 
     return (
-        <Card> <Icon icon={"ph:map-pin-fill"} width={"18"} height={"18"}
-                     className="h-4 w-4 ml-2 mt-2" color={stringToColour(job.mappingId)}/>
-            <CardHeader className={"h-2/5"}>
+        <Card className="p-3 space-y-2 h-fit self-start">
+            {/* Top row: pin + status */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Icon
+                        icon="ph:map-pin-fill"
+                        width={18}
+                        height={18}
+                        className="h-4 w-4"
+                        color={stringToColour(job.mappingId)}
+                    />
 
-                <CardTitle className={"-mt-6"}>
-                    <Badge variant="nodeco">
-                        <Icon icon={icon} width={"24"} height={"24"}
-                              className="h-8 w-8 mr-2"/>{jobStatus}</Badge>
-                </CardTitle>
-                <CardDescription>
-                    <p title={job.file} className={"overflow-hidden text-sm truncate w-full"}>Input: {job.file}</p>
-                </CardDescription>
-            </CardHeader>
-            <CardContent className={"h-1/5"}>
-                <p title={jobError} className={"overflow-hidden text-sm truncate w-full"}>{jobError ? jobError : "No error"}</p>
-            </CardContent>
-            <CardFooter className={"h-2/5"}>
-                <div className={"grid grid-cols-2 w-full"}>
-                {jobOutput ?
-                    <>
-                        <Button variant={"ghost"} size={"sm"} title={"Download Job Output"} asChild>
-                            <Link className={"underline justify-self-start"} href={basePath + jobOutput}>
-                                <Icon icon={"material-symbols-light:download"} width={"24"} height={"24"} className="h-8 w-8 mr-2"/> </Link>
-                        </Button>
+                    <Badge variant="nodeco" className="flex items-center gap-1">
+                        <Icon icon={icon} width={20} height={20} className="h-5 w-5" />
+                        {jobStatus}
+                    </Badge>
+                </div>
 
-                    </>
-                    : "No download available, yet."}
-                <Button variant={"ghost"} size={"sm"} title={"Remove Mapping Job"} className={"underline justify-self-end"} onClick={removeJob}>
-                    <Icon icon={"solar:eraser-linear"} width={"24"} height={"24"} className="h-8 w-8 mr-2"/></Button>
-               </div>
-            </CardFooter>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Remove Mapping Job"
+                    onClick={removeJob}
+                >
+                    <Icon icon="solar:eraser-linear" width={20} height={20} />
+                </Button>
+            </div>
+
+            {/* Input file */}
+            <p
+                title={job.file}
+                className="text-sm text-muted-foreground truncate"
+            >
+                <span className="font-medium text-foreground">Input:</span> {job.file}
+            </p>
+
+            {/* Error / status message */}
+            <p
+                title={jobError}
+                className={`text-sm truncate ${
+                    jobError ? "text-destructive" : "text-muted-foreground"
+                }`}
+            >
+                {jobError || "No error"}
+            </p>
+
+            {/* Footer actions */}
+            <div className="flex justify-between items-center pt-1">
+                {jobOutput ? (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                        title="Download Job Output"
+                        className="gap-1"
+                    >
+                        <Link href={basePath + jobOutput}>
+                            <Icon
+                                icon="material-symbols-light:download"
+                                width={20}
+                                height={20}
+                            />
+                            Download
+                        </Link>
+                    </Button>
+                ) : (
+                    <span className="text-xs text-muted-foreground">
+        No download available
+      </span>
+                )}
+            </div>
         </Card>
     );
 

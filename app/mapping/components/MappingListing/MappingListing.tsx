@@ -126,9 +126,9 @@ export function MappingListing({}: MappingListing2Props) {
                 <MappingHelp/>
                 : undefined}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5  gap-2 lg:pt-0 flex-fill mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1.5 mt-2">
                 {!showAlert ? (
-                        <div className={""}>
+                    <div className={""}>
                             <NewJobCard addJobCallback={doOpenModal}></NewJobCard>
                         </div>
                     ) :

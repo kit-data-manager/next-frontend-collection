@@ -28,7 +28,7 @@ function federatedLogout(logoutPath: string) {
 
             const endsessionParams = new URLSearchParams({
                 id_token_hint: token.idToken as string,
-                post_logout_redirect_uri: nextConfig.assetPrefix + logoutPath || ""
+                post_logout_redirect_uri: process.env.NEXTAUTH_URL + logoutPath || ""
             })
 
             console.log("end ", endsessionParams)

@@ -24,7 +24,7 @@ export default function MappingUpload({mappingId, fileTypes= ["*/*"], singleUplo
             formData: true,
             fieldName: "document",
             getResponseData(xhr) {
-                return { url: `${mappingBaseUrl}/api/v1/mappingExecution/schedule/?mappingID=${mappingId}` };
+                return JSON.parse(xhr.responseText);
             }
         }));
 
