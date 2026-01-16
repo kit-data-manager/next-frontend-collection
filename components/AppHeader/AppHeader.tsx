@@ -37,7 +37,7 @@ export default function AppHeader({securityEnabled, children}: {
             "rounded border-2 border-red-400": admin,
             "rounded border-2 border-sky-500": anonymous
         })}>
-            <div className="grid grid-cols-[auto_1fr_auto] items-center py-4 sticky top-0 z-20 w-full bg-primary rounded-r-lg">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)_max-content] items-center py-4 sticky top-0 z-20 w-full bg-primary rounded-r-lg">
                 <div className="flex items-center">
                     <a href={basePath} className="flex items-left space-x-3 rtl:space-x-reverse">
                         <AcmeLogo logoUrl={headerLogo}/>
@@ -46,17 +46,18 @@ export default function AppHeader({securityEnabled, children}: {
                 </div>
 
                 <div className={clsx("flex items-center p-2")}>
-                    <nav className="hidden w-full lg:grid grid-cols-2 p-4 items-center mr-2">
-                        <div className="flex justify-self-stretch">
+                    <div className="hidden w-full lg:grid grid-cols-[auto_minmax(0,1fr)_fit-content(10rem)]
+                                    p-4 items-center mr-2">
+                        <div className="flex min-w-0 justify-self-stretch">
                             <MainMenu/>
                         </div>
-                        <div className="flex justify-self-end">
+                        <div className="flex shrink-0 max-w-[2.5rem] items-center justify-self-end gap-2">
                             {securityEnabled ?
-                                <LoginLogoutButton icon={true} className="mr-4"/> : null
+                                <LoginLogoutButton icon={true} className="mt-1"/> : null
                             }
-                            <ThemeModeToggle className="justify-self-end"/>
+                            <ThemeModeToggle className="justify-self-end mt-2"/>
                         </div>
-                    </nav>
+                    </div>
                 </div>
                 <div className="flex lg:hidden items-center gap-2 mr-6">
                     <MainMenuMobile/>

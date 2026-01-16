@@ -9,7 +9,7 @@ export async function fetchMappingPlugins(token?: string | undefined):Promise<Ma
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        return await myFetch(`${mappingBaseUrl}/api/v1/mappingAdministration/types`,
+        return await myFetch(`${mappingBaseUrl}/api/v1/mappingAdministration/plugins`,
             {headers: headers}).then(result => result.json());
     } catch (error) {
         console.error('Failed to fetch mapping plugins. Error:', error);

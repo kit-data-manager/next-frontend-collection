@@ -1,9 +1,9 @@
 "use client";
 
 import {
-SearchConfig,
+    SearchConfig,
     ReactSearchComponent,
-    ResultViewProps,
+    ResultViewProps, prettyPrintURL,
 } from "@kit-data-manager/react-search-component";
 import React, {useCallback, useMemo} from "react";
 import {RecordResultView} from "@/components/ElasticSearch/RecordResultView";
@@ -27,28 +27,28 @@ export default function ElasticSearch() {
                         {
                             key: "_index",
                             label: "Index",
-                            prettyPrintURLs: false
+                            singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
                             key: "metadata.resourceType.typeGeneral",
                             label: "Resource Type",
-                            prettyPrintURLs: false
+                            singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
                             key: "metadata.publicationYear",
                             label: "Publication Year",
                             type: "date_year",
-                            prettyPrintURLs: false
+                            singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
                             key: "metadata.rights.schemeId",
                             label: "License",
-                            prettyPrintURLs: false
+                            singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
                             key: "metadata.state",
                             label: "State",
-                            prettyPrintURLs: false
+                            singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
                             key: "lastUpdate",

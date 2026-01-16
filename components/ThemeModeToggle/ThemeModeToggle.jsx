@@ -6,6 +6,7 @@ import {useTheme} from "next-themes"
 
 import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
+import {Icon} from "@iconify-icon/react";
 
 export function ThemeModeToggle(params) {
     const { theme, setTheme } = useTheme();
@@ -17,11 +18,17 @@ export function ThemeModeToggle(params) {
     return (
         <DropdownMenu {...params}>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" title="Toggle dark mode" size="icon" className="justify-content-center">
-                    <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 dark:hidden" />
-                    <Moon className="hidden dark:block rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <button
+                    title="Toggle dark mode"
+                    className="inline-flex h-6 w-6 items-center justify-center"
+                >
+                    {theme === "dark" ? (
+                        <Icon width={"24"} height={"24"} className="h-6 w-6" icon="pepicons-pencil:moon-circle" />
+                    ) : (
+                        <Icon width={"24"} height={"24"} className="h-6 w-6" icon="pepicons-pencil:sun-circle" />
+                    )}
                     <span className="sr-only">Toggle theme</span>
-                </Button>
+                </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem title="Set light mode" className="text-primary-foreground bg-primary" onClick={() => setThemeInternal("light")}>

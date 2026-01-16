@@ -11,8 +11,9 @@ export default function LoginLogoutButton({icon, ...props}) {
         //authenticated || session, show logout
         if (icon) {
             return (
-                <button title="Logout" onClick={() => redirect("/api/auth/federated-logout")} {...props}>
-                    <Icon className="w-6 h-6 pointer-events:auto" width={"24"} height={"24"} icon="pepicons-pencil:key-circle-off"/>
+                <button   className="inline-flex h-6 w-6 items-center justify-center"
+                          title="Logout" onClick={() => redirect("/api/auth/federated-logout")} {...props}>
+                    <Icon  width={"24"} height={"24"} className="w-6 h-6 pointer-events:auto" icon="pepicons-pencil:key-circle-off"/>
                 </button>
             )
         }
@@ -24,8 +25,8 @@ export default function LoginLogoutButton({icon, ...props}) {
         //!authenticated || !session, show login
         if (icon) {
             return (
-                <button title="Login" onClick={() => signIn("keycloak")} {...props}>
-                    <Icon className="w-6 h-6 pointer-events:auto" width={"24"} height={"24"} icon="pepicons-pencil:key-circle"/>
+                <button title="Login"  className="inline-flex h-6 w-6 items-center justify-center" onClick={() => signIn("keycloak")} {...props}>
+                    <Icon width={"24"} height={"24"} className="w-6 h-6 pointer-events:auto" icon="pepicons-pencil:key-circle"/>
                 </button>
             )
         }
