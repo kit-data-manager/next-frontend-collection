@@ -26,32 +26,28 @@ export default function ElasticSearch() {
                     facets: [
                         {
                             key: "_index",
-                            label: "Index",
-                            singleValueMapper: v => prettyPrintURL(v + "")
+                            label: "Index"
                         },
                         {
-                            key: "metadata.resourceType.typeGeneral",
-                            label: "Resource Type",
-                            singleValueMapper: v => prettyPrintURL(v + "")
+                            key: "metadata.resourceType.typeGeneral.keyword",
+                            label: "Resource Type"
                         },
                         {
-                            key: "metadata.publicationYear",
+                            key: "metadata.publicationYear.keyword",
                             label: "Publication Year",
-                            type: "date_year",
-                            singleValueMapper: v => prettyPrintURL(v + "")
+                            type: "date_year"
                         },
                         {
-                            key: "metadata.rights.schemeId",
+                            key: "metadata.rights.schemeId.keyword",
                             label: "License",
                             singleValueMapper: v => prettyPrintURL(v + "")
                         },
                         {
-                            key: "metadata.state",
-                            label: "State",
-                            singleValueMapper: v => prettyPrintURL(v + "")
+                            key: "metadata.state.keyword",
+                            label: "State"
                         },
                         {
-                            key: "lastUpdate",
+                            key: "lastUpdate.keyword",
                             label: "Last Update",
                             type: "date_time_no_millis"
                         }
