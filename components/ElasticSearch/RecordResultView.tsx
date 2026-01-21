@@ -28,7 +28,6 @@ export function RecordResultView({
     const router = useRouter();
 
     const typedResult:ResultType = result as ResultType;
-    //console.log("reS ", typedResult._meta.rawHit._index);
 
     const res:DataResource = typedResult.metadata.raw as DataResource;
 

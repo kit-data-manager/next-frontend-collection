@@ -3,13 +3,14 @@
 import {
     SearchConfig,
     ReactSearchComponent,
-    ResultViewProps, prettyPrintURL,
+    ResultViewProps,
 } from "@kit-data-manager/react-search-component";
 import React, {useCallback, useMemo} from "react";
 import {RecordResultView} from "@/components/ElasticSearch/RecordResultView";
 import {useTheme} from "next-themes";
 import {useSession} from "next-auth/react";
 import Loader from "@/components/general/Loader";
+import indices from "@/config/search/indices.json";
 
 export default function ElasticSearch() {
     const searchUrl: string = (process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : "");
@@ -20,46 +21,7 @@ export default function ElasticSearch() {
         return {
             alwaysSearchOnInitialLoad: true,
             host: searchUrl,
-            indices: [
-                {
-                    name: "baserepo",
-                    facets: [
-                        {
-                            key: "_index",
-                            label: "Index",
-                            singleValueMapper: v => prettyPrintURL(v + "")
-                        },
-                        {
-                            key: "metadata.resourceType.typeGeneral",
-                            label: "Resource Type",
-                            singleValueMapper: v => prettyPrintURL(v + "")
-                        },
-                        {
-                            key: "metadata.publicationYear",
-                            label: "Publication Year",
-                            type: "date_year",
-                            singleValueMapper: v => prettyPrintURL(v + "")
-                        },
-                        {
-                            key: "metadata.rights.schemeId",
-                            label: "License",
-                            singleValueMapper: v => prettyPrintURL(v + "")
-                        },
-                        {
-                            key: "metadata.state",
-                            label: "State",
-                            singleValueMapper: v => prettyPrintURL(v + "")
-                        },
-                        {
-                            key: "lastUpdate",
-                            label: "Last Update",
-                            type: "date_time_no_millis"
-                        }
-                    ],
-                    resultFields: [], // Leave empty to get all fields
-                    searchFields: ["metadata.titles.value", "metadata.publisher", "metadata.descriptions.description"]
-                }
-            ],
+            indices: indices,
             sortOptions: [{
                 "field": "_score",
                 "direction": "desc",
@@ -68,6 +30,10 @@ export default function ElasticSearch() {
                 "field": "metadata.publicationYear",
                 "direction": "asc",
                 "label": "Publication Year"
+            },{
+                "field": "metadata.lastUpdate",
+                "direction": "asc",
+                "label": "Last Update"
             }
             ],
             connectionOptions: {
@@ -80,9 +46,7 @@ export default function ElasticSearch() {
 
     const resultView = useCallback((props: ResultViewProps) => {
         return (
-            <RecordResultView
-                result={props.result}
-            />
+            <RecordResultView result={props.result}/>
         )
     }, [])
 

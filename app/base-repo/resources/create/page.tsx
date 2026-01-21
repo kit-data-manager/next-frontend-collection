@@ -16,7 +16,6 @@ export default function Page() {
 
     const {status } = useSession();
 
-    console.log("STAT ", status);
     useEffect(() => {
         fetchSchema(`/definitions/base-repo/models/resourceModel.json`).then(schema => setSchema(schema));
     }, [status]);

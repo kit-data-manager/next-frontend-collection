@@ -1,0 +1,35 @@
+[
+  {
+    "name": "baserepo",
+    "facets": [
+      {
+        "key": "_index",
+        "label": "Index"
+      },
+      {
+        "key": "metadata.resourceType.typeGeneral",
+        "label": "Resource Type"
+      },
+      {
+        "key": "metadata.publicationYear",
+        "label": "Publication Year",
+        "type": "date_year"
+      },
+      {
+        "key": "metadata.rights.schemeId",
+        "label": "License"
+      },
+      {
+        "key": "metadata.state",
+        "label": "State"
+      },
+      {
+        "key": "lastUpdate",
+        "label": "Last Update",
+        "type": "date_time_no_millis"
+      }
+    ],
+    "resultFields": [],
+    "searchFields": ["metadata.titles.value", "metadata.publisher", "metadata.descriptions.description"]
+  }
+]

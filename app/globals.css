@@ -90,7 +90,10 @@
 
 :root {
         --background: hsl(0 0% 94%);
-        --foreground: hsl(240 10% 4%);
+        --foreground: hsl(0 0% 94%);
+
+        --rfs-background: hsl(0 0% 94%);
+        --rfs-foreground: hsl(0 0% 94%);
 
         --card: hsl(0 0% 94%);
         --card-foreground: hsl(240 10% 4%);
@@ -131,6 +134,9 @@
     .dark {
         --background: hsl(240 10% 4%);
         --foreground: hsl(0 0% 98%);
+
+        --rfs-background: hsl(240 10% 4%);
+        --rfs-foreground: hsl(0 0% 98%);
 
         --card: hsl(220 33% 15%);
         --card-foreground: hsl(0 0% 98%);
@@ -204,8 +210,13 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 data-card{
-  --mainBG: var(--primary);
-  --tagText: #18181B;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  margin-bottom: 2px;
+  border-color: var(--primary);
+  border-style: solid;
+  border-width: 0.1em;
+  border-radius: var(--radius);
   font-size: 14px;
 }
 
@@ -225,6 +236,14 @@ data-card::part(child-data-card){
   border-radius: var(--radius);
   box-shadow: 2px 2px 3px 0 rgb(0 0 0 / 0.1);
   margin-bottom:6px;
+}
+
+data-card::part(tag-text){
+    color: #18181B;
+}
+
+data-card::part(tag-icon){
+    color: #18181B;
 }
 
 data-card::part(detailed-label){
