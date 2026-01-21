@@ -43,8 +43,8 @@ export default async function SystemStats() {
     let validTiles = 0;
 
     if (searchAvailable) {
-        actuatorInfoSearch = await fetchActuatorInfo(searchBaseUrl.replace("/api/v1", ""), data?.accessToken);
-        actuatorHealthSearch = await fetchActuatorHealth(searchBaseUrl.replace("/api/v1", ""), data?.accessToken);
+        actuatorInfoSearch = await fetchActuatorInfo(searchBaseUrl.replace("/api/v1/", ""), data?.accessToken);
+        actuatorHealthSearch = await fetchActuatorHealth(searchBaseUrl.replace("/api/v1/", ""), data?.accessToken);
         validTiles++;
     }
 
