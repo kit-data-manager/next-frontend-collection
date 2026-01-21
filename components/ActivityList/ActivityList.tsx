@@ -45,7 +45,7 @@ export function ActivityList ({activities}: {
 
                     {/* Text */}
                     <div className="flex min-w-0 flex-1 flex-col">
-                        <div className="text-sm font-medium text-foreground leading-tight truncate sm:truncate-none">
+                        <div className="text-sm font-medium text-primary-foreground leading-tight truncate sm:truncate-none">
                             {activity.title}
                         </div>
                         <div className="text-xs text-muted-foreground leading-tight truncate">
