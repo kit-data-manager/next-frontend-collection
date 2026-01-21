@@ -31,7 +31,6 @@ function federatedLogout(logoutPath: string) {
                 post_logout_redirect_uri: process.env.NEXTAUTH_URL + logoutPath || ""
             })
 
-            console.log("end ", endsessionParams)
             return redirect(`${endsessionURL}?${endsessionParams}`)
         } else {
             return redirect(`${endsessionURL}`)
