@@ -13,12 +13,12 @@ export function InfoCard({icon, text, value}: {
             <div className="flex items-start gap-2 sm:gap-3">
                 {/* Icon */}
                 <div className="flex items-center justify-center rounded-md h-8 w-8 sm:h-9 sm:w-9">
-                    <Icon icon={icon} className="h-4 w-4"/>
+                    <Icon icon={icon} className="h-4 w-4 text-primary-foreground"/>
                 </div>
 
                 {/* Value + label */}
                 <div className="flex flex-col">
-                    <span className="font-semibold leading-none text-foreground text-lg sm:text-xl">
+                    <span className="font-semibold leading-none text-primary-foreground text-lg sm:text-xl">
                         {value}
                     </span>
 

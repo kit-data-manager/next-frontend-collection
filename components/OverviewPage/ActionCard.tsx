@@ -31,12 +31,12 @@ export function ActionCard({icon, title, subtitle, href, className}: ActionCardP
             >
                 {/* Icon */}
                 <div className="flex h-12 w-12 items-center justify-center rounded-md bg-muted flex-shrink-0">
-                    <Icon icon={iconName} className="h-4 w-4 text-foreground"/>
+                    <Icon icon={iconName} className="h-4 w-4 text-primary-foreground"/>
                 </div>
 
                 {/* Text */}
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                        <span className="truncate text-base font-semibold text-foreground">
+                        <span className="truncate text-base font-semibold text-primary-foreground">
                             {title}
                         </span>
                     {subtitle && (

@@ -38,10 +38,10 @@ const ServiceStatusCard =
             {/* Header */}
             <CardHeader>
                 <div className="min-w-0 bg-ring-background p-3 rounded-lg shadow-md">
-                    <h3 className="truncate text-lg font-semibold text-primary-background">
+                    <h3 className="truncate text-lg font-semibold text-primary-foreground">
                         {serviceName}
                     </h3>
-                    <p className="truncate text-sm text-secondary-background">
+                    <p className="truncate text-sm text-primary-foreground">
                         {serviceVersion}
                     </p>
                 </div>
@@ -96,9 +96,9 @@ const ServiceStatusCard =
 
             {/* Optional click indicator */}
             {link && (
-                <div className="absolute top-2 right-2 text-foreground">
+                <div className="absolute top-2 right-2 text-primary-foreground">
                     <span className="text-xs">Click</span>
-                    <Icon icon="si:click-duotone" className="h-6 w-6 text-foreground"/>
+                    <Icon icon="si:click-duotone" className="h-6 w-6 text-primary-foreground"/>
                 </div>
 
             )}
