@@ -7,6 +7,7 @@ import {ViewResourceAction} from "@/lib/actions/base-repo/viewResourceAction";
 import {runAction} from "@/lib/actions/action-executor";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
+import {ViewMetadataDocumentAction} from "@/lib/actions/metastore/viewMetadataDocumentAction";
 
 export interface RecordResultViewProps {
     /**
@@ -29,24 +30,35 @@ type MetaStoreResultType = {
 
 function extractDataResource(result): DataResource {
     if ("metadata" in result) {
-        // ResultType1
+        // RepoResultType
         return result.metadata.raw;
     } else {
-        // ResultType2
+        // MetaStoreResultType
         return result.metadataRecord.raw;
     }
 }
 
 function extractContentInformation(result): ContentInformation[] {
     if ("metadata" in result) {
-        // ResultType1
+        // RepoResultType
         return result.content.raw;
     } else {
-        // ResultType2
+        // MetaStoreResultType
         return [];
     }
 }
+function getActionsByResultType(result): ActionButtonInterface[] {
+    const actionEvents: ActionButtonInterface[] = [];
+    if ("metadata" in result) {
+        // RepoResultType
+        actionEvents.push(new ViewResourceAction(result.id).getDataCardAction());
+    } else {
+        // MetaStoreResultType
+        actionEvents.push(new ViewMetadataDocumentAction(result.id).getDataCardAction());
+    }
 
+    return actionEvents;
+}
 
 export function RecordResultView({
                                      result
@@ -66,8 +78,7 @@ export function RecordResultView({
         });
     }
 
-    const actionEvents: ActionButtonInterface[] = [];
-    actionEvents.push(new ViewResourceAction(res.id).getDataCardAction());
+    const actionEvents: ActionButtonInterface[] = getActionsByResultType(result);
 
     return (
         <>
