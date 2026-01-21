@@ -15,11 +15,38 @@ export interface RecordResultViewProps {
     result: Record<string, unknown>
 }
 
-type ResultType = {
+type RepoResultType = {
     _meta: {rawHit: {_index:string;}}
     metadata:{raw:DataResource}
     content:{raw:ContentInformation[]}
 }
+
+type MetaStoreResultType = {
+    _meta: {rawHit: {_index:string;}}
+    metadataRecord:{raw:DataResource}
+    metadataDocument:{raw:ContentInformation[]}
+}
+
+function extractDataResource(result): DataResource {
+    if ("metadata" in result) {
+        // ResultType1
+        return result.metadata.raw;
+    } else {
+        // ResultType2
+        return result.metadataRecord.raw;
+    }
+}
+
+function extractContentInformation(result): ContentInformation[] {
+    if ("metadata" in result) {
+        // ResultType1
+        return result.content.raw;
+    } else {
+        // ResultType2
+        return [];
+    }
+}
+
 
 export function RecordResultView({
                                      result
@@ -27,12 +54,9 @@ export function RecordResultView({
     const {data, status} = useSession();
     const router = useRouter();
 
-    const typedResult:ResultType = result as ResultType;
-
-    const res:DataResource = typedResult.metadata.raw as DataResource;
-
+    const res:DataResource = extractDataResource(result);
     const dataViewProps = propertiesForDataResource(res);
-    dataViewProps.imageUrl = thumbFromContentArray(typedResult.content.raw as ContentInformation[]);
+    dataViewProps.imageUrl = thumbFromContentArray(extractContentInformation(result) as ContentInformation[]);
 
     function cardCallbackAction(ev, res){
         const eventIdentifier: string = ev.detail.eventIdentifier;

@@ -4,10 +4,12 @@ import {formatDateToLocal} from "@/lib/general/format-utils";
 
 export const titleForDataResource = (resource: DataResource) => {
     let titleValue = {"value": "Resource #" + resource.id} as TextPropType;
+    let haveTitle:boolean = false;
     if (resource.titles) {
         resource.titles.map((title, i) => {
-            if (!title.titleType) {
+            if (!haveTitle || !title.titleType) {
                 titleValue = {"value": title.value} as TextPropType;
+                haveTitle = true;
             }
         });
     } else {
