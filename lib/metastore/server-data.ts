@@ -59,7 +59,7 @@ export async function fetchMetastoreOverview() {
         }
 
         if (results[4].status === "fulfilled") {
-            stats.metadata = Number(results[4].value.rows[0].sum ?? 0);
+            stats.metadata = Number(results[4].value.rows[0].count ?? 0);
         }else if (results[4].status === "rejected") {
             stats.metadata = 0;
         }
