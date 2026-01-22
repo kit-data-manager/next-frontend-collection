@@ -1,6 +1,6 @@
 import {formatNumber} from "@/lib/general/format-utils";
 import {fetchMetastoreOverview} from "@/lib/metastore/server-data";
-import {InfoCard} from "@/components/StatusCard/InfoCard";
+import {InfoCard} from "@/components/InfoCard/InfoCard";
 import {MetastoreStatsType} from "@/lib/definitions";
 
 export default async function MetastoreStats() {

@@ -30,7 +30,6 @@ export default function DataResourceCard({
                                          }: ResourceCardProps) {
     const {data, status} = useSession();
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");
-
     const [childrenData, setChildrenData] = useState([] as DataCard[]);
     const [childrenLabel, setChildrenLabel] = useState("Loading...");
     const [thumb, setThumb] = useState(`${basePath}/data.png`);

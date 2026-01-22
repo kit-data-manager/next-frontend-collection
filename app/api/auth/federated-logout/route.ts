@@ -12,8 +12,8 @@ function federatedLogout(logoutPath: string) {
         try {
             token = await jwt.getToken({ req, secret: process.env.NEXTAUTH_SECRET })
         } catch (error) {
-            console.error(error)
-            redirect(process.env.NEXTAUTH_URL || "/")
+            console.error("Failed to properly logout.", error);
+            redirect("/logout")
         }
 
         if (!token) {
