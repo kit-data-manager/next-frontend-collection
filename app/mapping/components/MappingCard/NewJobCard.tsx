@@ -31,7 +31,7 @@ export function NewJobCard({addJobCallback}: MappingCardProps) {
             className={variants({
                 dragging: undefined,
             })}>
-            <CardContent className="flex place-content-center h-full whitespace-pre-wrap">
+            <CardContent className="flex place-content-center text-accent h-full whitespace-pre-wrap">
                 <Button
                     variant="ghost"
                     onClick={() => addJobCallback()}

@@ -4,7 +4,7 @@ import {formatNumber} from "@/lib/general/format-utils";
 import {fetchMappingPlugins, fetchMappings} from "@/lib/mapping/client-data";
 import useMappingStore, {JobStore} from "@/app/mapping/components/MappingListing/MappingStore";
 import {useEffect, useState} from "react";
-import {InfoCard} from "@/components/StatusCard/InfoCard";
+import {InfoCard} from "@/components/InfoCard/InfoCard";
 
 export default function MappingServiceStats() {
 

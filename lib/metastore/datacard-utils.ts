@@ -71,7 +71,7 @@ const tagsForMetadataRecord = (resource: DataResource) => {
 
     //@TODO add link to schema using related identifiers
 
-    const schemaIdentifier: RelatedIdentifier | undefined = resource.relatedIdentifiers.find((identifier) => identifier.relationType === "HAS_METADATA");
+    const schemaIdentifier: RelatedIdentifier | undefined = resource.relatedIdentifiers?.find((identifier) => identifier.relationType === "HAS_METADATA");
     if (schemaIdentifier) {
         const schemaId: string | undefined = schemaIdentifier.value?.substring(schemaIdentifier.value?.lastIndexOf("/") + 1, schemaIdentifier.value?.indexOf("?"));
         const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : "");

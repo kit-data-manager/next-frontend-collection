@@ -1,12 +1,12 @@
 import RepositoryStats from "@/app/base-repo/components/Dashboard/RepositoryStats";
 import LatestActivities from "@/app/base-repo/components/Dashboard/LatestActivities";
 import * as React from 'react';
-import LatestActivitiesSkeleton from "@/app/base-repo/components/Dashboard/LatestActivitiesSkeleton";
-import RepositoryStatsSkeleton from "@/app/base-repo/components/Dashboard/RepositoryStatsSkeleton";
+import RepositoryStatsSkeleton from "@/components/Skeletons/RepositoryStatsSkeleton";
 import {OverviewPage} from "@/components/OverviewPage/OverviewPage";
 import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {ActionCardProps} from "@/components/OverviewPage/ActionCard";
+import {ActivityListSkeleton} from "@/components/Skeletons/ActivityListSkeleton";
 
 export default async function Page() {
     const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "";
@@ -15,15 +15,15 @@ export default async function Page() {
     const actions:ActionCardProps[] = [
         {
             icon: "add",
-            title: "Create Document",
-            subtitle: "Start a new document",
+            title: "Create Resource",
+            subtitle: "Start a new resource",
             href: `${basePath}/base-repo/resources/create`,
             requiresAuth: true,
         },
         {
             icon: "list",
-            title: "List Documents",
-            subtitle: "View all documents",
+            title: "List Resources",
+            subtitle: "View all resources",
             href: `${basePath}/base-repo/resources`,
             requiresAuth: false,
         },
@@ -49,7 +49,7 @@ export default async function Page() {
             stats={<RepositoryStats />}
             statsFallback={<RepositoryStatsSkeleton />}
             activities={<LatestActivities />}
-            activitiesFallback={<LatestActivitiesSkeleton />}
+            activitiesFallback={<ActivityListSkeleton />}
             actions={availableActions}
         />
     );

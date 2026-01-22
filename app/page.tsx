@@ -1,13 +1,11 @@
 import {inter} from '@/components/fonts';
-import React, {Suspense} from "react";
+import React from "react";
 import {getServerSession, Session} from "next-auth";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
-import SystemStats, {SystemStatsSkeleton} from "@/components/SystemStats/SystemStats";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import SystemStats from "@/components/SystemStats/SystemStats";
 
 export default async function Page() {
-    const basePath: string = (process.env.NEXT_PUBLIC_BASE_PATH) ? process.env.NEXT_PUBLIC_BASE_PATH : "";
-
     let session:Session | undefined = undefined;
     let authError = false;
     try {
@@ -33,9 +31,7 @@ export default async function Page() {
                 <SectionCaption caption={"Status"} level={"h2"}/>
                 <div
                     className="grid justify-center gap-12 rounded-lg px-6 py-0 md:h-1/5 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
-                    <Suspense fallback={<SystemStatsSkeleton/>}>
                         <SystemStats/>
-                    </Suspense>
                 </div>
             </div>
         </main>

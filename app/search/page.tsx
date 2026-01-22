@@ -9,7 +9,7 @@ export default async function Page() {
     const searchEnabled = process.env.NEXT_PUBLIC_SEARCH_BASE_URL != undefined;
 
     return (
-        <main>
+        <main className="flex h-full flex-col">
             <Breadcrumbs
                 breadcrumbs={[
                     {label: "Site Search", href: '/search', active: true},

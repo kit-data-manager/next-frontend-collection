@@ -1,246 +1,122 @@
-import {fetchActuatorHealth, fetchActuatorInfo, fetchKeyCloakStatus} from "@/lib/base-repo/client-data";
-import {ActuatorHealth, ActuatorInfo, KeycloakInfo} from "@/lib/definitions";
-import {lusitana} from "@/components/fonts";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {ExtendedSession} from "@/lib/next-auth/next-auth";
-import ServiceStatusCard, {ServiceStatusCardSkeleton} from "@/components/ServiceStatusCard/ServiceStatusCard";
+import {
+    fetchActuatorHealth,
+    fetchActuatorInfo,
+    fetchKeyCloakStatus,
+} from "@/lib/base-repo/client-data";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import ServiceStatusCard from "@/components/ServiceStatusCard/ServiceStatusCard";
+import { lusitana } from "@/components/fonts";
+
 
 export default async function SystemStats() {
-    const data: ExtendedSession | null = await getServerSession(authOptions);
-    const repoInstanceName: string = process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ? process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME : "Data Repository";
-    const metastoreInstanceName = process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ? process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME : "Metadata Repository";
-    const mappingInstanceName = process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ? process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME : "Mapping Service";
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-    const searchAvailable: boolean = !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL;
-    const repoAvailable: boolean = (process.env.NEXT_PUBLIC_REPO_AVAILABLE ? process.env.NEXT_PUBLIC_REPO_AVAILABLE : "false") == "true";
-    const metaStoreAvailable: boolean = (process.env.NEXT_PUBLIC_METASTORE_AVAILABLE ? process.env.NEXT_PUBLIC_METASTORE_AVAILABLE : "false") == "true";
-    const mappingAvailable: boolean = (process.env.NEXT_PUBLIC_MAPPING_AVAILABLE ? process.env.NEXT_PUBLIC_MAPPING_AVAILABLE : "false") == "true";
-    const typedPidMakerAvailable: boolean = (process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE ? process.env.NEXT_PUBLIC_TYPED_PID_MAKERG_AVAILABLE : "false") == "true";
 
-    const searchBaseUrl: string = process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : '';
-    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
+    const services = [
+        {
+            name: process.env.NEXT_PUBLIC_REPO_INSTANCE_NAME ?? "Data Repository",
+            available: process.env.NEXT_PUBLIC_REPO_AVAILABLE === "true",
+            baseUrl: process.env.NEXT_PUBLIC_REPO_BASE_URL,
+            link: `${basePath}/base-repo`,
+            leds: ["harddisk", "database", "elastic", "rabbitMq"],
+        },
+        {
+            name: process.env.NEXT_PUBLIC_METASTORE_INSTANCE_NAME ?? "Metadata Repository",
+            available: process.env.NEXT_PUBLIC_METASTORE_AVAILABLE === "true",
+            baseUrl: process.env.NEXT_PUBLIC_METASTORE_BASE_URL,
+            link: `${basePath}/metastore`,
+            leds: ["harddisk", "database", "elastic", "rabbitMq"],
+        },
+        {
+            name: process.env.NEXT_PUBLIC_MAPPING_INSTANCE_NAME ?? "Mapping Service",
+            available: process.env.NEXT_PUBLIC_MAPPING_AVAILABLE === "true",
+            baseUrl: process.env.NEXT_PUBLIC_MAPPING_BASE_URL,
+            link: `${basePath}/mapping`,
+            leds: ["harddisk", "database", "elastic", "rabbitMq"],
+        },
+        {
+            name: "Site Search",
+            available: !!process.env.NEXT_PUBLIC_SEARCH_BASE_URL,
+            baseUrl: process.env.NEXT_PUBLIC_SEARCH_BASE_URL?.replace("/api/v1/", ""),
+            link: `${basePath}/search`,
+            leds: ["elastic"],
+        },
+        {
+            name: "FAIR DO Repo",
+            available: process.env.NEXT_PUBLIC_TYPED_PID_MAKER_AVAILABLE === "true",
+            baseUrl: process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL,
+            link: `${basePath}/typed-pid-maker`,
+            leds: ["harddisk", "database", "elastic", "rabbitMq"],
+        },
+    ];
 
-    const metaStoreBaseUrl: string = process.env.NEXT_PUBLIC_METASTORE_BASE_URL ? process.env.NEXT_PUBLIC_METASTORE_BASE_URL : '';
-    const typedPidMakerBaseUrl: string = process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL ? process.env.NEXT_PUBLIC_TYPED_PID_MAKER_BASE_URL : '';
-    const mappingBaseUrl: string = process.env.NEXT_PUBLIC_MAPPING_BASE_URL ? process.env.NEXT_PUBLIC_MAPPING_BASE_URL : '';
-    const keycloakUrl: string = process.env.KEYCLOAK_ISSUER ? process.env.KEYCLOAK_ISSUER : '';
+    //fetch actuators
+    const results = await Promise.all(
+        services.map(async (svc) => {
+            if (!svc.available || !svc.baseUrl)
+                return null;
 
-    const basePath:string = process.env.NEXT_PUBLIC_BASE_PATH ? process.env.NEXT_PUBLIC_BASE_PATH : '';
+            const info = await fetchActuatorInfo(svc.baseUrl, token);
+            const health = await fetchActuatorHealth(svc.baseUrl, token);
 
-    let actuatorInfoSearch: ActuatorInfo | undefined = undefined;
-    let actuatorHealthSearch: ActuatorHealth | undefined = undefined;
-    let actuatorInfoBaseRepo: ActuatorInfo | undefined = undefined;
-    let actuatorHealthBaseRepo: ActuatorHealth | undefined = undefined;
-    let actuatorInfoMetaStore: ActuatorInfo | undefined = undefined;
-    let actuatorHealthMetaStore: ActuatorHealth | undefined = undefined;
-    let actuatorInfoMappingService: ActuatorInfo | undefined = undefined;
-    let actuatorHealthMappingService: ActuatorHealth | undefined = undefined;
-    let actuatorInfoTypedPIDMaker: ActuatorInfo | undefined = undefined;
-    let actuatorHealthTypedPIDMaker: ActuatorHealth | undefined = undefined;
+            return { ...svc, info, health };
+        })
+    );
 
-    let keycloakInfo: KeycloakInfo | undefined = undefined;
-    let validTiles = 0;
+    //obtain keycloak status
+    let keycloak: any = null;
 
-    if (searchAvailable) {
-        actuatorInfoSearch = await fetchActuatorInfo(searchBaseUrl.replace("/api/v1/", ""), data?.accessToken);
-        actuatorHealthSearch = await fetchActuatorHealth(searchBaseUrl.replace("/api/v1/", ""), data?.accessToken);
-        validTiles++;
+    if (process.env.KEYCLOAK_ISSUER) {
+        const kc = await fetchKeyCloakStatus(process.env.KEYCLOAK_ISSUER);
+        keycloak = {
+            name: "Keycloak",
+            info: { version: `Realm: ${kc.realm}`, status: kc.status },
+            health: {},
+            link: undefined,
+            leds: [],
+        };
     }
 
-    if (repoAvailable) {
-        actuatorInfoBaseRepo = await fetchActuatorInfo(repoBaseUrl, data?.accessToken);
-        actuatorHealthBaseRepo = await fetchActuatorHealth(repoBaseUrl, data?.accessToken);
-        validTiles++;
-    }
+    const finalServices = [...results.filter(Boolean), keycloak].filter(Boolean);
 
-    if (metaStoreAvailable) {
-        actuatorInfoMetaStore = await fetchActuatorInfo(metaStoreBaseUrl, data?.accessToken);
-        actuatorHealthMetaStore = await fetchActuatorHealth(metaStoreBaseUrl, data?.accessToken);
-        validTiles++;
-    }
-
-    if (mappingAvailable) {
-        actuatorInfoMappingService = await fetchActuatorInfo(mappingBaseUrl, data?.accessToken);
-        actuatorHealthMappingService = await fetchActuatorHealth(mappingBaseUrl, data?.accessToken);
-        validTiles++;
-    }
-
-    if (typedPidMakerAvailable) {
-        actuatorInfoTypedPIDMaker = await fetchActuatorInfo(typedPidMakerBaseUrl, data?.accessToken);
-        actuatorHealthTypedPIDMaker = await fetchActuatorHealth(typedPidMakerBaseUrl, data?.accessToken);
-        validTiles++;
-    }
-
-    if (keycloakUrl != '') {
-        keycloakInfo = await fetchKeyCloakStatus(keycloakUrl);
-        validTiles++;
-    }
-
-    let remainder = validTiles % 4;
-    let missingCols: number = remainder > 0 ? 4 - remainder : 0;
-    let missing: number[] = [];
-    if (missingCols != 0) {
-        missing = Array(missingCols).fill(0);
-    }
+    const remainder = finalServices.length % 4;
+    const missing = remainder > 0 ? 4 - remainder : 0;
 
     return (
         <>
-            {actuatorInfoSearch ?
+            {finalServices.map((svc: any, i: number) => (
                 <ServiceStatusCard
-                    key={"search_card"}
-                    serviceName={"Site Search"}
-                    serviceVersion={actuatorInfoSearch.status === 1 ? `${actuatorInfoSearch.version}` : `Unknown`}
-                    status={actuatorInfoSearch.status === 1 ? "active" : actuatorInfoSearch.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoSearch.status === 1 ? `${basePath}/search` : undefined}
-                    ledStatus={[
-                        {status: actuatorHealthSearch?.elastic.status, tooltip: actuatorHealthSearch?.elastic.details},
-                    ]}
-                /> : null
-            }
+                    key={i}
+                    serviceName={svc.name}
+                    serviceVersion={svc.info?.status === 1 ? svc.info.version : "Unknown"}
+                    status={
+                        svc.info?.status === 1
+                            ? "active"
+                            : svc.info?.status === 0
+                                ? "maintenance"
+                                : "inactive"
+                    }
+                    link={svc.info?.status === 1 ? svc.link : undefined}
+                    ledStatus={
+                        svc.leds.map((key: string) => ({
+                            status: svc.health?.[key]?.status,
+                            tooltip: svc.health?.[key]?.details,
+                        })) ?? []
+                    }
+                />
+            ))}
 
-            {actuatorInfoBaseRepo ?
-                <ServiceStatusCard
-                    key={"repo_card"}
-                    serviceName={repoInstanceName}
-                    serviceVersion={actuatorInfoBaseRepo.status === 1 ? `${actuatorInfoBaseRepo.version}` : `Unknown`}
-                    status={actuatorInfoBaseRepo.status === 1 ? "active" : actuatorInfoBaseRepo.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoBaseRepo.status === 1 ? `${basePath}/base-repo` : undefined}
-                    ledStatus={[
-                        {
-                            status: actuatorHealthBaseRepo?.harddisk.status,
-                            tooltip: actuatorHealthBaseRepo?.harddisk.details
-                        },
-                        {
-                            status: actuatorHealthBaseRepo?.database.status,
-                            tooltip: actuatorHealthBaseRepo?.database.details
-                        },
-                        {
-                            status: actuatorHealthBaseRepo?.elastic.status,
-                            tooltip: actuatorHealthBaseRepo?.elastic.details
-                        },
-                        {
-                            status: actuatorHealthBaseRepo?.rabbitMq.status,
-                            tooltip: actuatorHealthBaseRepo?.rabbitMq.details
-                        }
-                    ]}
-                /> : null
-            }
-
-            {actuatorInfoMetaStore ?
-                <ServiceStatusCard
-                    key={"metastore_card"}
-                    serviceName={metastoreInstanceName}
-                    serviceVersion={actuatorInfoMetaStore.status === 1 ? `${actuatorInfoMetaStore.version}` : `Unknown`}
-                    status={actuatorInfoMetaStore.status === 1 ? "active" : actuatorInfoMetaStore.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoMetaStore.status === 1 ? `${basePath}/metastore` : undefined}
-                    ledStatus={[
-                        {
-                            status: actuatorHealthMetaStore?.harddisk.status,
-                            tooltip: actuatorHealthMetaStore?.harddisk.details
-                        },
-                        {
-                            status: actuatorHealthMetaStore?.database.status,
-                            tooltip: actuatorHealthMetaStore?.database.details
-                        },
-                        {
-                            status: actuatorHealthMetaStore?.elastic.status,
-                            tooltip: actuatorHealthMetaStore?.elastic.details
-                        },
-                        {
-                            status: actuatorHealthMetaStore?.rabbitMq.status,
-                            tooltip: actuatorHealthMetaStore?.rabbitMq.details
-                        }
-                    ]}
-                /> : null
-            }
-
-            {actuatorInfoMappingService ?
-                <ServiceStatusCard
-                    key={"mapping_card"}
-                    serviceName={mappingInstanceName}
-                    serviceVersion={actuatorInfoMappingService.status === 1 ? `${actuatorInfoMappingService.version}` : `Unknown`}
-                    status={actuatorInfoMappingService.status === 1 ? "active" : actuatorInfoMappingService.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoMappingService.status === 1 ? `${basePath}/mapping` : undefined}
-                    ledStatus={[
-                        {
-                            status: actuatorHealthMappingService?.harddisk.status,
-                            tooltip: actuatorHealthMappingService?.harddisk.details
-                        },
-                        {
-                            status: actuatorHealthMappingService?.database.status,
-                            tooltip: actuatorHealthMappingService?.database.details
-                        },
-                        {
-                            status: actuatorHealthMappingService?.elastic.status,
-                            tooltip: actuatorHealthMappingService?.elastic.details
-                        },
-                        {
-                            status: actuatorHealthMappingService?.rabbitMq.status,
-                            tooltip: actuatorHealthMappingService?.rabbitMq.details
-                        }
-                    ]}
-                /> : null
-            }
-
-            {actuatorInfoTypedPIDMaker ?
-                <ServiceStatusCard
-                    key={"tpidm_card"}
-                    serviceName={"FAIR DO Repo"}
-                    serviceVersion={actuatorInfoTypedPIDMaker.status === 1 ? `${actuatorInfoTypedPIDMaker.version}` : `Unknown`}
-                    status={actuatorInfoTypedPIDMaker.status === 1 ? "active" : actuatorInfoTypedPIDMaker.status === 0 ? "maintenance" : "inactive"}
-                    link={actuatorInfoTypedPIDMaker.status === 1 ? `${basePath}/typed-pid-maker` : undefined}
-                    ledStatus={[
-                        {
-                            status: actuatorHealthTypedPIDMaker?.harddisk.status,
-                            tooltip: actuatorHealthTypedPIDMaker?.harddisk.details
-                        },
-                        {
-                            status: actuatorHealthTypedPIDMaker?.database.status,
-                            tooltip: actuatorHealthTypedPIDMaker?.database.details
-                        },
-                        {
-                            status: actuatorHealthTypedPIDMaker?.elastic.status,
-                            tooltip: actuatorHealthTypedPIDMaker?.elastic.details
-                        },
-                        {
-                            status: actuatorHealthTypedPIDMaker?.rabbitMq.status,
-                            tooltip: actuatorHealthTypedPIDMaker?.rabbitMq.details
-                        }
-                    ]}
-                /> : null
-            }
-
-            {keycloakInfo ?
-                <ServiceStatusCard
-                    key={"keycloak_card"}
-                    serviceName={"Keycloak"}
-                    serviceVersion={`Realm: ${keycloakInfo.realm}`}
-                    status={keycloakInfo.status === 1 ? "active" : keycloakInfo.status === 0 ? "maintenance" : "inactive"}
-                    ledStatus={[]}
-                    link={undefined}
-                /> : null
-            }
-
-            {
-                missing.map((el, index) => {
-                    return (<div key={index}
-                                 className={`${lusitana.className} opacity-10 w-full bg-card text-card-foreground border border-gray-200 shadow-md justify-start items-center gap-2 p-4 rounded-md`}>
-                        </div>
-                    )
-                })
-            }
+            {Array.from({ length: missing }).map((_, i) => (
+                <div
+                    key={i}
+                    className={`${lusitana.className} opacity-10 w-full bg-card
+                      border border-gray-200 shadow-md p-4 rounded-md`}
+                />
+            ))}
         </>
     );
-}
-
-export function SystemStatsSkeleton() {
-    return (
-        <>
-            <ServiceStatusCardSkeleton />
-            <ServiceStatusCardSkeleton />
-            <ServiceStatusCardSkeleton />
-            <ServiceStatusCardSkeleton />
-        </>
-    )
 }

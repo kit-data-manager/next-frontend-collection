@@ -2,7 +2,7 @@ import React from "react"
 import 'react-loading-skeleton/dist/skeleton.css'
 import {Icon} from "@iconify-icon/react";
 
-export function LatestActivitiesSkeleton() {
+export function ActivityListSkeleton(props:any){
     const activities:Array<number> = [1,2,3,4,5,6];
     return (
         <div className="w-full max-w-3xl mx-auto rounded-lg border bg-card text-card-foreground shadow-sm overflow-y-auto h-[400px]">
@@ -26,7 +26,7 @@ export function LatestActivitiesSkeleton() {
                 </div>
             ))}
         </div>
-)
+    )
 }
 
-export default LatestActivitiesSkeleton
+export default ActivityListSkeleton

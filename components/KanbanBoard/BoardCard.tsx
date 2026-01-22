@@ -68,7 +68,7 @@ export function BoardCard({element, isOverlay}: BoardCardProps) {
                 dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
                 special: element.anonymous ? "anonymous" : element.self ? "self" : undefined,
             })}>
-            <CardContent className="p-4 flex items-center align-middle text-left whitespace-pre-wrap">
+            <CardContent className="p-4 flex items-center align-middle text-primary-foreground text-left whitespace-pre-wrap">
                 <Button
                     variant="ghost"
                     {...attributes}

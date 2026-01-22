@@ -1,6 +1,6 @@
 import {fetchContentOverview} from "@/lib/base-repo/server-data";
 import {formatNumber, humanFileSize} from "@/lib/general/format-utils";
-import {InfoCard} from "@/components/StatusCard/InfoCard";
+import {InfoCard} from "@/components/InfoCard/InfoCard";
 
 export default async function RepositoryStats() {
 

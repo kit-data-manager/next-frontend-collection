@@ -3,7 +3,7 @@ import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {OverviewPage} from "@/components/OverviewPage/OverviewPage";
 import MappingServiceStats from "@/app/mapping/components/Dashboard/MappingServiceStats";
-import MappingServiceStatsSkeleton from "@/app/mapping/components/Dashboard/MappingServiceStatsSkeleton";
+import MappingServiceStatsSkeleton from "@/components/Skeletons/MappingServiceStatsSkeleton";
 import {ActionCardProps} from "@/components/OverviewPage/ActionCard";
 
 export default async function Page() {
@@ -17,12 +17,21 @@ export default async function Page() {
         subtitle: "Start a new mapping",
         href: `${basePath}/mapping/map`,
         requiresAuth: true
-    }
+        }
     ];
 
     const availableActions = actions.filter(action => {
         return !(action.requiresAuth && !session);
     });
+
+    if(availableActions.length === 0) {
+        availableActions.push(  {
+            icon: "login",
+            title: "Login required",
+            subtitle: "Please login first",
+            requiresAuth: false
+        });
+    }
 
     return (
         <OverviewPage

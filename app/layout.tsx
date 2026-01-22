@@ -1,6 +1,5 @@
 import 'react-toastify/dist/ReactToastify.css';
 import './globals.css';
-import './autocomplete.css';
 
 import {inter} from '@/components/fonts';
 import React, {Suspense} from "react";

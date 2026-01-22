@@ -5,15 +5,16 @@ import {Icon} from "@iconify-icon/react";
 import React from "react";
 
 export type ActionCardProps = {
-    icon: "add" | "list" | "upload" | "search";  // The icon name, e.g., plus
+    icon: "add" | "list" | "upload" | "search" | "login";  // The icon name, e.g., plus
     title: string;        // main label
     subtitle?: string;    // optional smaller text
-    href: string; // ref
+    href?: string; // ref
     className?: string;
     requiresAuth: boolean;
 };
 
 const iconMap = {
+    login: "ic:round-login",
     add: "grommet-icons:new",
     list: "grommet-icons:unordered-list",
     upload: "grommet-icons:upload",
@@ -27,7 +28,7 @@ export function ActionCard({icon, title, subtitle, href, className}: ActionCardP
         <Link href={href || "#"}>
             <div
                 className={`flex items-center gap-4 rounded-md border bg-accent p-4 shadow-sm
-    hover:shadow-md hover:scale-105 transition-all duration-150 ${className}`}
+                    hover:shadow-md hover:scale-105 transition-all duration-150 ${className}`}
             >
                 {/* Icon */}
                 <div className="flex h-12 w-12 items-center justify-center rounded-md bg-muted flex-shrink-0">

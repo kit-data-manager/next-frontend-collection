@@ -1,5 +1,6 @@
 import {DataResource, Permission, State} from "@/lib/definitions";
 import {permissionToNumber, resourcePermissionForUser} from "@/lib/general/permission-utils";
+import {User} from "next-auth";
 
 export const enum REPO_EVENTS {
     "VIEW_RESOURCE" = "viewResource",
@@ -18,8 +19,8 @@ export const downloadEventIdentifier = (resourceId: string): string => {
     return `/api/base-repo/download?resourceId=${resourceId}&type=zip`;
 }
 
-export function userCanView(resource: DataResource, userId: string | undefined, groups: string[] | undefined): boolean {
-    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, userId, groups);
+export function userCanView(resource: DataResource, user: User | undefined): boolean {
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, user?.preferred_username, user?.groups);
     switch (resource.state) {
         case State.VOLATILE:
         case State.FIXED:
@@ -33,8 +34,8 @@ export function userCanView(resource: DataResource, userId: string | undefined, 
     }
 }
 
-export function userCanEdit(resource: DataResource, userId: string | undefined, groups: string[] | undefined): boolean {
-    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, userId, groups);
+export function userCanEdit(resource: DataResource, user: User | undefined): boolean {
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, user?.preferred_username, user?.groups);
 
     switch (resource.state) {
         case State.VOLATILE:
@@ -48,8 +49,8 @@ export function userCanEdit(resource: DataResource, userId: string | undefined, 
     }
 }
 
-export function userCanDownload(resource: DataResource, userId: string | undefined, groups: string[] | undefined): boolean {
-    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, userId, groups);
+export function userCanDownload(resource: DataResource, user: User | undefined): boolean {
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, user?.preferred_username, user?.groups);
     switch (resource.state) {
         case State.VOLATILE:
         case State.FIXED:
@@ -62,8 +63,8 @@ export function userCanDownload(resource: DataResource, userId: string | undefin
     }
 }
 
-export function userCanDelete(resource: DataResource, userId: string | undefined, groups: string[] | undefined): boolean {
-    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, userId, groups);
+export function userCanDelete(resource: DataResource, user: User | undefined): boolean {
+    let permission: 0 | 1 | 2 | 3 = resourcePermissionForUser(resource, user?.preferred_username, user?.groups);
     switch (resource.state) {
         case State.VOLATILE:
         case State.FIXED:
