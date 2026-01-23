@@ -51,10 +51,10 @@ function getActionsByResultType(result): ActionButtonInterface[] {
     const actionEvents: ActionButtonInterface[] = [];
     if ("metadata" in result) {
         // RepoResultType
-        actionEvents.push(new ViewResourceAction(result.id).getDataCardAction());
+        actionEvents.push(new ViewResourceAction(result.metadata.raw.id).getDataCardAction());
     } else {
         // MetaStoreResultType
-        actionEvents.push(new ViewMetadataDocumentAction(result.metadataRecord.id).getDataCardAction());
+        actionEvents.push(new ViewMetadataDocumentAction(result.metadataRecord.raw.id).getDataCardAction());
     }
 
     return actionEvents;
