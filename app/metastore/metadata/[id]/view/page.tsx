@@ -98,7 +98,7 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/metadata"})
     }
     //actionEvents.push(new CreateMetadataAction(resource.id, resource.resourceType.value === "JSON_Metadata" ? "json" : "xml", resource.version).getDataCardAction());
-    if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanEdit(resource, data?.user)) {
         actionEvents.push(new EditMetadataDocumentAction(resource.id).getDataCardAction());
     }
 
@@ -110,7 +110,7 @@ export default function Page({params}) {
         }
     }*/
 
-    if (userCanDownload(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanDownload(resource, data?.user)) {
         actionEvents.push(new DownloadMetadataDocumentAction(resource.id, "document", resource.resourceType.value === "JSON_Metadata" ? "json" : "xml").getDataCardAction());
     }
 
