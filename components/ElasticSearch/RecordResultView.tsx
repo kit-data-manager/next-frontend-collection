@@ -54,7 +54,7 @@ function getActionsByResultType(result): ActionButtonInterface[] {
         actionEvents.push(new ViewResourceAction(result.id).getDataCardAction());
     } else {
         // MetaStoreResultType
-        actionEvents.push(new ViewMetadataDocumentAction(result.id).getDataCardAction());
+        actionEvents.push(new ViewMetadataDocumentAction(result.metadataRecord.id).getDataCardAction());
     }
 
     return actionEvents;
