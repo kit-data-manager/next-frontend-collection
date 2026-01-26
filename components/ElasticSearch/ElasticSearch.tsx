@@ -3,7 +3,7 @@
 import {
     SearchConfig,
     ReactSearchComponent,
-    ResultViewProps,
+    ResultViewProps
 } from "@kit-data-manager/react-search-component";
 import React, {useCallback, useMemo} from "react";
 import {RecordResultView} from "@/components/ElasticSearch/RecordResultView";
@@ -12,16 +12,29 @@ import {useSession} from "next-auth/react";
 import Loader from "@/components/general/Loader";
 import indices from "@/config/search/indices.json";
 
+function enrichIndicesData(data) {
+    return data.map(repo => ({
+        ...repo,
+        facets: repo.facets?.map(facet =>
+            facet.key === "_index"
+                ? { ...facet, singleValueMapper:  (v) => repo["label"]? repo["label"]:v }
+                : facet
+        )
+    }));
+}
+
 export default function ElasticSearch() {
     const searchUrl: string = (process.env.NEXT_PUBLIC_SEARCH_BASE_URL ? process.env.NEXT_PUBLIC_SEARCH_BASE_URL : "");
     const {theme} = useTheme();
     const {data, status} = useSession();
 
+    const enrichedIndices = enrichIndicesData(indices);
+
     const config: SearchConfig = useMemo(() => {
         return {
             alwaysSearchOnInitialLoad: true,
             host: searchUrl,
-            indices: indices,
+            indices: enrichedIndices,
             sortOptions: [{
                 "field": "_score",
                 "direction": "desc",

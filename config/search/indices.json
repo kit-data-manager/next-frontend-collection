@@ -1,6 +1,7 @@
 [
   {
     "name": "baserepo",
+    "label": "Data Repository",
     "facets": [
       {
         "key": "_index",
