@@ -7,8 +7,6 @@ import {
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import ServiceStatusCard from "@/components/ServiceStatusCard/ServiceStatusCard";
-import { lusitana } from "@/components/fonts";
-
 
 export default async function SystemStats() {
     const session = await getServerSession(authOptions);
@@ -113,7 +111,7 @@ export default async function SystemStats() {
             {Array.from({ length: missing }).map((_, i) => (
                 <div
                     key={i}
-                    className={`${lusitana.className} opacity-10 w-full bg-card
+                    className={`opacity-10 w-full bg-card
                       border border-gray-200 shadow-md p-4 rounded-md`}
                 />
             ))}

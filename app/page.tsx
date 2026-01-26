@@ -1,4 +1,3 @@
-import {inter} from '@/components/fonts';
 import React from "react";
 import {getServerSession, Session} from "next-auth";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
@@ -25,7 +24,7 @@ export default async function Page() {
         <main>
             <div className="mt-4 flex grow flex-col gap-4 lg:flex-col">
                 <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 lg:px-20">
-                    <div className={`${inter.className} antialiased text-l lg:text-l lg:leading-normal`} dangerouslySetInnerHTML={{__html: welcome}}>
+                    <div className={`antialiased text-l lg:text-l lg:leading-normal`} dangerouslySetInnerHTML={{__html: welcome}}>
                     </div>
                 </div>
                 <SectionCaption caption={"Status"} level={"h2"}/>
