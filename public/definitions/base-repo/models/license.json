@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "title": "Entry",
+  "format": "grid-strict",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "readOnly": true,
+      "default": null,
+      "options": {
+        "hidden": true
+      }
+    },
+    "schemeId": {
+      "type": "string",
+      "title": "Identifier",
+      "allowEmpty": false,
+      "default": "CC-BY-4.0",
+      "options": {
+        "grid_columns": 6,
+        "infoText": "The license identifier."
+      }
+    },
+    "schemeUri": {
+      "type": "string",
+      "title": "URI",
+      "allowEmpty": false,
+      "default": "https://spdx.org/licenses/CC-BY-4.0.html",
+      "options": {
+        "grid_columns": 6,
+        "infoText": "The license URI."
+      }
+    }
+  },
+  "required": [
+    "schemeId", "schemeUri"
+  ]
+}

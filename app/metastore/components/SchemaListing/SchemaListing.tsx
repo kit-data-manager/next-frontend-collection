@@ -19,7 +19,7 @@ export default function SchemaListing(props) {
             {...props}
             backRef="/metastore/"
             fetchPage={(page, size, sort, token) =>
-                fetchMetadataRecords("schema", page, size, sort, token)
+                fetchMetadataRecords("schema", page, size, undefined, sort, token)
             }
             buildActions={(resource: DataResource, session) => {
                 const actions: ActionButtonInterface[] = [];

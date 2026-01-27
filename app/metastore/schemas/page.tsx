@@ -1,7 +1,7 @@
 import {CirclePlus} from "lucide-react"
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import Link from "next/link";
-import {DataResourcesSearchParams, DataResourcesSearchParamsPromise, SchemaSearchParams} from "@/lib/definitions";
+import {DataResourcesSearchParams, DataResourcesSearchParamsPromise} from "@/lib/definitions";
 import {valueOrDefault} from "@/lib/general/search-param-helper";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {Button} from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {PageSizeBox} from "@/components/PageSizeBox/PageSizeBox";
 import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import SchemaListing from "@/app/metastore/components/SchemaListing/SchemaListing";
+import {MetadataFilterForm} from "@/app/metastore/components/MetadataFilterForm/MetadataFilterForm.d";
 
 export default async function Page({searchParams}: {
     searchParams?: DataResourcesSearchParamsPromise;
