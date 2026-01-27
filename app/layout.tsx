@@ -1,7 +1,7 @@
 import 'react-toastify/dist/ReactToastify.css';
 import './globals.css';
 
-import {inter} from '@/components/fonts';
+import {sourceSans3} from '@/components/fonts';
 import React, {Suspense} from "react";
 import {SecurityProviders} from "@/components/Providers/SecurityProviders";
 import {ThemeProvider} from "@/components/Providers/ThemeProvider";
@@ -24,7 +24,7 @@ export default async function RootLayout({children}: {
         <head>
             <title>Next Frontend</title>
         </head>
-        <body className={`${inter.className} antialiased`}>
+        <body className={`${sourceSans3.className} antialiased`}>
         <script src={"https://cdn.tailwindcss.com/"} async/>
         <script src={"https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"} async/>
         <script src={"https://unpkg.com/@trevoreyre/autocomplete-js"} async/>

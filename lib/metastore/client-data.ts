@@ -1,4 +1,6 @@
 import {DataResource, DataResourcePage} from "@/lib/definitions";
+import {FilterForm} from "@/app/base-repo/components/FilterForm/FilterForm.d";
+import {MetadataFilterForm} from "@/app/metastore/components/MetadataFilterForm/MetadataFilterForm.d";
 
 /**
  * Fetch a list of metadata records. This function applies to schema and document records, the accessed endpoint is determined by the 'type' argument.
@@ -7,10 +9,11 @@ import {DataResource, DataResourcePage} from "@/lib/definitions";
  * @param {("schema" | "document")} type  - The type of records to return, i.e., "schema" or "document"
  * @param {number} page - The page number to return.
  * @param {number} size - the page size, i.e., the max number of elements per page.
+ * @param {filter} filter - The filter for results.
  * @param {string} [sort] - The optional sort order in the form 'fieldName,direction', e.g., lastUpdate,desc, which is also the default.
  * @param {string} [accessToken] - An optional bearer token for authorization.
  */
-export async function fetchMetadataRecords(type: "schema" | "document", page: number, size: number, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
+export async function fetchMetadataRecords(type: "schema" | "document", page: number, size: number, filter?: MetadataFilterForm, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {
         const realPage = Math.max(page - 1, 0);
         let sorting = sort;
@@ -25,9 +28,21 @@ export async function fetchMetadataRecords(type: "schema" | "document", page: nu
             headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
-        const endpoint = `${metastoreBaseUrl}/api/v2/${type === "schema" ? "schemas" : "metadata"}/?page=${realPage}&size=${size}&sort=${sorting}`;
+        let endpoint:string= '';
+        if(filter?.schemaId == undefined){
+            endpoint = `${metastoreBaseUrl}/api/v2/${type === "schema" ? "schemas" : "metadata"}/?
+            page=${realPage}
+            &size=${size}
+            &sort=${sorting}`;
+        }else{
+            endpoint = `${metastoreBaseUrl}/api/v2/${type === "schema" ? "schemas" : "metadata"}/?
+            page=${realPage}
+            &schemaId=${filter?.schemaId}
+            &size=${size}
+            &sort=${sorting}`;
+        }
 
-        return await fetch(endpoint,
+       return await fetch(endpoint,
             {
                 method: "GET",
                 headers: headers

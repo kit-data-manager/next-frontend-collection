@@ -129,6 +129,8 @@
         --error: hsl(0 100% 57%);
 
         --radius: 1rem;
+        --font-sans: var(--font-inter);
+        --font-serif: var(--font-lusitana);
     }
 
     .dark {
@@ -170,7 +172,14 @@
         --data: hsl(284 80% 53%);
         --contextual: hsl(142 70% 38%);
         --error: hsl(0 100% 57%);
+
+        --font-sans: var(--font-source-sans);
+        --font-serif: var(--font-lusitana);
     }
+
+body {
+    font-family: var(--font-sans);
+}
 
 input[type='number'] {
   -moz-appearance: textfield;

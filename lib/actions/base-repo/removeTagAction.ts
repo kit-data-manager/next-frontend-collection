@@ -21,7 +21,6 @@ export class RemoveTagAction extends Action {
         const filename = parts[2].replace(/%5F/g, '_');
         const etag = parts[3];
         const tagIndex = parts[4];
-        console.log("REM ET ", etag);
         const baseUrl: string = (process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : "http://localhost:8080");
 
         const headers = {
