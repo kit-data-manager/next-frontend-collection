@@ -13,14 +13,21 @@ import Loader from "@/components/general/Loader";
 import indices from "@/config/search/indices.json";
 
 function enrichIndicesData(data) {
-    return data.map(repo => ({
-        ...repo,
-        facets: repo.facets?.map(facet =>
-            facet.key === "_index"
-                ? { ...facet, singleValueMapper:  (v) => repo["label"]? repo["label"]:v }
-                : facet
-        )
-    }));
+    return data.map(repo => {
+        const label = repo.label;
+
+        return {
+            ...repo,
+            facets: repo.facets?.map(facet =>
+                facet.key === "_index"
+                    ? {
+                        ...facet,
+                        singleValueMapper: v => label ?? v
+                    }
+                    : facet
+            )
+        };
+    });
 }
 
 export default function ElasticSearch() {
