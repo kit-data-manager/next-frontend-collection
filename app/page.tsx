@@ -3,6 +3,8 @@ import {getServerSession, Session} from "next-auth";
 import SectionCaption from "@/components/SectionCaption/SectionCaption";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import SystemStats from "@/components/SystemStats/SystemStats";
+import fs from "fs/promises";
+import path from "path";
 
 export default async function Page() {
     let session:Session | undefined = undefined;
@@ -12,14 +14,16 @@ export default async function Page() {
     } catch (error) {
         authError = true;
     }
+    const filePath = path.join(process.cwd(), "content", "welcome.html");
+    const welcome = await fs.readFile(filePath, "utf8");
 
     let username = (!authError && session && session.user) ? session.user.name : "Anonymous User";
-    const welcome =  process.env.NEXT_PUBLIC_WELCOME ?  process.env.NEXT_PUBLIC_WELCOME : `<strong>Welcome ${username}</strong>.<br/><br/> This is an instance of the ` +
+    /*const welcome =  process.env.NEXT_PUBLIC_WELCOME ?  process.env.NEXT_PUBLIC_WELCOME : `<strong>Welcome ${username}</strong>.<br/><br/> This is an instance of the ` +
         "<a href='https://github.com/kit-data-manager/next-frontend-collection'>"+
         "Next Frontend Collection"+
         "</a>. To navigate to one of the available services, please use the main menu or click on the status card of the according service. " +
         "For some operations on this frontend you may have to be logged in. Use the login button on the upper right for authenticating with one  " +
-        "of the configured methods. You can always come back to this page by clicking the page logo or title.";
+        "of the configured methods. You can always come back to this page by clicking the page logo or title.";*/
     return (
         <main>
             <div className="mt-4 flex grow flex-col gap-4 lg:flex-col">
