@@ -14,15 +14,13 @@ import indices from "@/config/search/indices.json";
 
 function enrichIndicesData(data) {
     return data.map(repo => {
-        const label = repo.label;
-
         return {
             ...repo,
             facets: repo.facets?.map(facet =>
                 facet.key === "_index"
                     ? {
                         ...facet,
-                        singleValueMapper: v => label ?? v
+                        singleValueMapper: ((capturedLabel) => (v) => capturedLabel ?? v)(repo.label)
                     }
                     : facet
             )
