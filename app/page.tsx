@@ -18,17 +18,12 @@ export default async function Page() {
     const welcome = await fs.readFile(filePath, "utf8");
 
     let username = (!authError && session && session.user) ? session.user.name : "Anonymous User";
-    /*const welcome =  process.env.NEXT_PUBLIC_WELCOME ?  process.env.NEXT_PUBLIC_WELCOME : `<strong>Welcome ${username}</strong>.<br/><br/> This is an instance of the ` +
-        "<a href='https://github.com/kit-data-manager/next-frontend-collection'>"+
-        "Next Frontend Collection"+
-        "</a>. To navigate to one of the available services, please use the main menu or click on the status card of the according service. " +
-        "For some operations on this frontend you may have to be logged in. Use the login button on the upper right for authenticating with one  " +
-        "of the configured methods. You can always come back to this page by clicking the page logo or title.";*/
     return (
         <main>
             <div className="mt-4 flex grow flex-col gap-4 lg:flex-col">
                 <div className="flex justify-center gap-6 rounded-lg px-6 pt-10 md:h-3/5 lg:px-20">
-                    <div className={`antialiased text-l lg:text-l lg:leading-normal`} dangerouslySetInnerHTML={{__html: welcome}}>
+                    <div className={`antialiased text-l lg:text-l lg:leading-normal [&_ul]:list-disc [&_ul]:pl-6
+                    [&_ol]:list-decimal [&_ol]:pl-6`} dangerouslySetInnerHTML={{__html: welcome}}>
                     </div>
                 </div>
                 <SectionCaption caption={"Status"} level={"h2"}/>

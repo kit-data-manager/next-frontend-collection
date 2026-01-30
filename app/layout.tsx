@@ -35,10 +35,9 @@ export default async function RootLayout({children}: {
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/src/themes/html.min.css"/>
 
-
-        <ThemeProvider  attribute="class"
-                        enableSystem
-                        disableTransitionOnChange defaultTheme={theme}>
+        <ThemeProvider attribute="class"
+                       enableSystem
+                       disableTransitionOnChange defaultTheme={theme}>
             <SecurityProviders>
                 <AppHeader securityEnabled={securityEnabled}>
                     <Suspense fallback={<div>Loading...</div>}>

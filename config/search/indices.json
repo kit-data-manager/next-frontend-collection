@@ -8,7 +8,7 @@
         "label": "Index"
       },
       {
-        "key": "metadata.resourceType.typeGeneral",
+        "key": "metadata.resourceType.typeGeneral.raw",
         "label": "Resource Type"
       },
       {
@@ -17,11 +17,11 @@
         "type": "date_year"
       },
       {
-        "key": "metadata.rights.schemeId",
+        "key": "metadata.rights.schemeId.raw",
         "label": "License"
       },
       {
-        "key": "metadata.state",
+        "key": "metadata.state.raw",
         "label": "State"
       },
       {
