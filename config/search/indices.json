@@ -8,7 +8,7 @@
         "label": "Index"
       },
       {
-        "key": "metadata.resourceType.typeGeneral.raw",
+        "key": "metadata.resourceType.typeGeneral.keyword",
         "label": "Resource Type"
       },
       {
@@ -17,11 +17,45 @@
         "type": "date_year"
       },
       {
-        "key": "metadata.rights.schemeId.raw",
+        "key": "metadata.rights.schemeId.keyword",
         "label": "License"
       },
       {
-        "key": "metadata.state.raw",
+        "key": "metadata.state.keyword",
+        "label": "State"
+      },
+      {
+        "key": "lastUpdate",
+        "label": "Last Update",
+        "type": "date_time_no_millis"
+      }
+    ],
+    "resultFields": [],
+    "searchFields": ["metadata.titles.value", "metadata.publisher", "metadata.descriptions.description"]
+  },
+  {
+    "name": "metastore-sem",
+    "label": "SEM",
+    "facets": [
+      {
+        "key": "_index",
+        "label": "Index"
+      },
+      {
+        "key": "metadata.resourceType.typeGeneral.keyword",
+        "label": "Resource Type"
+      },
+      {
+        "key": "metadata.publicationYear",
+        "label": "Publication Year",
+        "type": "date_year"
+      },
+      {
+        "key": "metadata.rights.schemeId.keyword",
+        "label": "License"
+      },
+      {
+        "key": "metadata.state.keyword",
         "label": "State"
       },
       {

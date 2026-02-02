@@ -13,6 +13,9 @@ import Loader from "@/components/general/Loader";
 import indices from "@/config/search/indices.json";
 
 function enrichIndicesData(data) {
+    const indexLabelMap  = new Map(data.map(item => [item.name, item.label]));
+    const singleValueMapperFunction = (index) => indexLabelMap.get(index);
+
     return data.map(repo => {
         return {
             ...repo,
@@ -20,7 +23,7 @@ function enrichIndicesData(data) {
                 facet.key === "_index"
                     ? {
                         ...facet,
-                        singleValueMapper: ((capturedLabel) => (v) => capturedLabel ?? v)(repo.label)
+                        singleValueMapper: (v) => singleValueMapperFunction(v)
                     }
                     : facet
             )
