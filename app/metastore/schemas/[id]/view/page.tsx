@@ -101,11 +101,11 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/metastore/schemas"})
     }
     actionEvents.push(new CreateMetadataAction(resource.id, resource.resourceType.value === "JSON_Schema" ? "json" : "xml", resource.version).getDataCardAction());
-    if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanEdit(resource, data?.user)) {
         actionEvents.push(new EditSchemaAction(resource.id).getDataCardAction());
     }
 
-    if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanDelete(resource, data?.user)) {
         if (resource.state === State.REVOKED) {
             actionEvents.push(new DeleteSchemaAction(resource.id, etag).getDataCardAction());
         } else {
@@ -113,7 +113,7 @@ export default function Page({params}) {
         }
     }
 
-    if (userCanDownload(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanDownload(resource, data?.user)) {
         actionEvents.push(new DownloadSchemaAction(resource.id, "schema", resource.resourceType.value === "JSON_Schema" ? "json" : "xml").getDataCardAction());
     }
 

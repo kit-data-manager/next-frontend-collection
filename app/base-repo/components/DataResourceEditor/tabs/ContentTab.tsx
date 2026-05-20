@@ -34,8 +34,8 @@ export function ContentTab({resource, content, userPrefs, session, cardCallbackA
                                 <ContentInformationCard
                                     key={i}
                                     content={element}
-                                    enableDownload={userCanDownload(resource, session?.user.preferred_username, session?.user.groups)}
-                                    enableDelete={userCanDelete(resource, session?.user.preferred_username, session?.user.groups)}
+                                    enableDownload={userCanDownload(resource, session?.user)}
+                                    enableDelete={userCanDelete(resource, session?.user)}
                                     cardCallbackAction={(ev) => cardCallbackAction(ev, element)}></ContentInformationCard>
                             )
                         })}

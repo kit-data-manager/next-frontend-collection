@@ -78,11 +78,11 @@ export default function Page({params}) {
         return ErrorPage({errorCode: Errors.Forbidden, backRef: "/base-repo/resources"})
     }
 
-    if (userCanEdit(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanEdit(resource, data?.user)) {
         actionEvents.push(new EditResourceAction(resource.id).getDataCardAction());
     }
 
-    if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanDelete(resource, data?.user)) {
         if (resource.state == State.REVOKED) {
             actionEvents.push(new DeleteResourceAction(resource.id, etag).getDataCardAction());
         } else {
@@ -90,7 +90,7 @@ export default function Page({params}) {
         }
     }
 
-    if (userCanDownload(resource, data?.user.preferred_username, data?.user.groups)) {
+    if (userCanDownload(resource, data?.user)) {
         actionEvents.push(new DownloadResourceAction(resource.id).getDataCardAction());
     }
 
