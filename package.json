@@ -14,7 +14,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@fortawesome/fontawesome-free": "^7.2.0",
     "@heroicons/react": "^2.0.18",
     "@iconify/react": "^6.0.2",
     "@jsonforms/core": "^3.7.0",
