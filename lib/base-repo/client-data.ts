@@ -11,6 +11,7 @@ import {
 import {filterFormToDataResource} from "@/app/base-repo/components/FilterForm/filter-utils";
 import {fetchWithBasePath} from "@/lib/general/utils";
 import {humanFileSize} from "@/lib/general/format-utils";
+import {buildApiUrl, createHeaders} from "@/lib/base-repo/utils";
 
 export async function fetchDataResources(page: number, size: number, filter?: FilterForm, sort?: string, accessToken?: string | undefined): Promise<DataResourcePage> {
     try {
@@ -75,19 +76,9 @@ export async function fetchDataResources(page: number, size: number, filter?: Fi
 
 export async function fetchDataResource(resourceId: string, accessToken?: string | undefined): Promise<DataResource> {
     try {
-        const headers = {
-            "Accept": "application/json",
-        };
-
-        if (accessToken) {
-            headers["Authorization"] = `Bearer ${accessToken}`;
-        }
-
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-
-        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
+        return fetch(buildApiUrl(`/api/v1/dataresources/${resourceId}`), {
             method: "GET",
-            headers: headers
+            headers: createHeaders(accessToken)
         }).then(res => {
             return {
                 etag: res.headers.get('etag'),
@@ -104,59 +95,10 @@ export async function fetchDataResource(resourceId: string, accessToken?: string
     }
 }
 
-export function getAclDiff(sids: string[], acl: Acl[]) {
-    const sidDiff: string[] = [];
-
-    sids.map((sid: string) => {
-        if (!acl.find((element) => element.sid === sid)) {
-            sidDiff.push(sid);
-        }
-    })
-    return sidDiff;
-}
-
-export async function patchDataResourceForQuickShare(resourceId: string, etag: string, sids: string[], accessToken?: string | undefined) {
-    const patch: any[] = [];
-    sids.map((sid: string) => {
-        patch.push({"op": "add", "path": `/acls/-`, value: {'sid': sid, 'permission': "READ"}});
-    })
-
-    const headers = {
-        "If-Match": etag,
-        "Content-Type": "application/json-patch+json",
-    };
-
-    if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-
-    try {
-        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
-            method: "PATCH",
-            headers: headers,
-            body: JSON.stringify(patch)
-        }).then(res => res.status);
-    } catch (error) {
-        console.error('Failed to patch resource. Error:', error);
-        return Promise.reject("Failed to patch resource.");
-    }
-}
-
 export async function patchDataResourceAcls(resourceId: string, etag: string, patch: any[], accessToken?: string | undefined) {
     try {
-        const headers = {
-            "If-Match": etag,
-            "Content-Type": "application/json-patch+json",
-        };
-
-        if (accessToken) {
-            headers["Authorization"] = `Bearer ${accessToken}`;
-        }
-        const repoBaseUrl: string = process.env.NEXT_PUBLIC_REPO_BASE_URL ? process.env.NEXT_PUBLIC_REPO_BASE_URL : '';
-
-        return fetch(`${repoBaseUrl}/api/v1/dataresources/${resourceId}`, {
+        const headers = createHeaders(accessToken, "application/json-patch+json", etag);
+        return fetch(buildApiUrl(`/api/v1/dataresources/${resourceId}`), {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify(patch)
