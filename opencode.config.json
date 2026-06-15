@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "KIT AI Toolbox": {
+      "options": {
+        "baseURL": "https://ki-toolbox.scc.kit.edu/api"
+      }
+    }
+  }
+}
