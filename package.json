@@ -49,7 +49,7 @@
     "@uppy/core": "^5.2.0",
     "@uppy/dashboard": "^5.1.1",
     "@uppy/react": "^5.2.0",
-    "@uppy/xhr-upload": "^5.1.1",
+    "@uppy/xhr-upload": "^5.2.0",
     "@vercel/postgres": "^0.10.0",
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
