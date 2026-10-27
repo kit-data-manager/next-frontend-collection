@@ -42,7 +42,7 @@
     "@rjsf/core": "^6.5.2",
     "@rjsf/react-bootstrap": "^6.5.2",
     "@tailwindcss/forms": "^0.5.11",
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/react-query": "^5.104.5",
     "@types/node": "24.13.2",
     "@typescript-eslint/parser": "^8.61.0",
@@ -106,7 +106,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-packagejson": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.3.3"
   },
   "engines": {
     "node": ">=24.15.0"
