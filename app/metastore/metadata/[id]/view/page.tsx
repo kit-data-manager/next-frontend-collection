@@ -102,7 +102,7 @@ export default function Page({params}) {
         actionEvents.push(new EditMetadataDocumentAction(resource.id).getDataCardAction());
     }
 
-    /*if (userCanDelete(resource, data?.user.preferred_username, data?.user.groups)) {
+    /*if (userCanDelete(resource, data?.user)) {
         if (resource.state === State.REVOKED) {
             actionEvents.push(new DeleteMetadataDocumentAction(resource.id, etag).getDataCardAction());
         } else {
