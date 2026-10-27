@@ -16,7 +16,7 @@
     "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@heroicons/react": "^2.0.18",
-    "@iconify/react": "^6.0.2",
+    "@iconify/react": "^6.0.3",
     "@jsonforms/core": "^3.7.0",
     "@jsonforms/examples": "^3.7.0",
     "@jsonforms/material-renderers": "^3.7.0",
