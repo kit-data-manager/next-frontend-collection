@@ -84,7 +84,7 @@
     "react-loading-skeleton": "^3.5.0",
     "react-toastify": "^11.1.0",
     "styled-components": "^6.6.0",
-    "swr": "^2.4.1",
+    "swr": "^2.5.1",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.9.3",
     "use-debounce": "^10.1.1",
